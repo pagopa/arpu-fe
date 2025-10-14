@@ -3,8 +3,8 @@ import * as z from 'zod';
 import { FieldBean } from './mockServiziDinamici';
 
 // SANDBOX
-const sand = require('@nyariv/sandboxjs');
-const Sandbox = sand.default;
+import sand from '@nyariv/sandboxjs';
+const Sandbox = sand;
 const sandbox = new Sandbox();
 
 // FIELDBEANS INPUTS
@@ -35,15 +35,19 @@ export const getErrorMessage = (issues: z.ZodIssue[], fieldName: string) =>
     .toString();
 
 /** usata per la causale */
-export const buildDinamicValue = (stringTemplate: string, templateVars, fields?: FieldBean[]) => {
-  const updatedFields = {};
+export const buildDinamicValue = (
+  stringTemplate: string,
+  templateVars: object,
+  fields?: FieldBean[]
+) => {
+  const updatedFields: { [key: string]: unknown } = {};
 
   if (fields) {
     fields.forEach((field) => {
       const name = field.name;
       const causaleFunction = field.extraAttr?.causale_function;
       const hasCausaleFunction = Boolean(causaleFunction);
-      if (hasCausaleFunction) {
+      if (hasCausaleFunction && causaleFunction) {
         updatedFields[name] = computeValue(causaleFunction, templateVars);
       }
     });
@@ -56,7 +60,7 @@ export const buildDinamicValue = (stringTemplate: string, templateVars, fields?:
   });
 };
 
-export const computeValue = (code, scope = {}) => sandbox.compile(code)(scope).run();
+export const computeValue = (code: string, scope = {}) => sandbox.compile(code)(scope).run();
 /** set the form schema for validation */
 let schemaObject = {};
 export const BuildFormSchema = (fields: Array<FieldBean>) => {
