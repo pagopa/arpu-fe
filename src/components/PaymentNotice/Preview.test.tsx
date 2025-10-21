@@ -7,6 +7,8 @@ import { PaymentNotice } from './index';
 import { i18nTestSetup } from '__tests__/i18nTestSetup';
 import { ArcRoutes } from 'routes/routes';
 import { Signal } from '@preact/signals-react';
+import { useMediaQuery } from '@mui/material';
+import { Mock } from 'vitest';
 
 i18nTestSetup({});
 
@@ -18,6 +20,11 @@ vi.mock('@pagopa/mui-italia', async () => {
     IllusSharingInfo
   };
 });
+
+vi.mock(import('@mui/material'), async (importOriginal) => ({
+  ...(await importOriginal()),
+  useMediaQuery: vi.fn()
+}));
 
 const navigate = vi.fn();
 vi.mock('react-router-dom', () => ({
@@ -46,34 +53,14 @@ describe('PaymentNotice.Preview Component', () => {
   });
 
   it('renders the illustration on large screens', () => {
+    (useMediaQuery as Mock).mockReturnValue(true);
     renderWithTheme(<PaymentNotice.Preview />);
-
-    // Simulate a large screen
-    window.matchMedia = vi.fn().mockImplementation((query) => ({
-      matches: query.includes('min-width'),
-      media: query,
-      onchange: null,
-      addListener: vi.fn(),
-      removeListener: vi.fn()
-    }));
-
-    renderWithTheme(<PaymentNotice.Preview />);
-
     expect(screen.getByText('Illustration')).toBeInTheDocument();
   });
 
   it('does not render the illustration on small screens', () => {
-    // Simulate a small screen
-    window.matchMedia = vi.fn().mockImplementation((query) => ({
-      matches: !query.includes('min-width'),
-      media: query,
-      onchange: null,
-      addListener: vi.fn(),
-      removeListener: vi.fn()
-    }));
-
+    (useMediaQuery as Mock).mockReturnValue(false);
     renderWithTheme(<PaymentNotice.Preview />);
-
     expect(screen.queryByText('Illustration')).not.toBeInTheDocument();
   });
 

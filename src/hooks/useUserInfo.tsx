@@ -5,7 +5,7 @@ import { STATE } from 'store/types';
 import utils from 'utils';
 
 export const useUserInfo = () => {
-  const { setState } = useStore();
+  const { setState, state } = useStore();
 
   const { data, isSuccess } = utils.loaders.getUserInfoOnce();
 
@@ -17,5 +17,14 @@ export const useUserInfo = () => {
     }
   }, [isSuccess]);
 
-  return { userInfo: data };
+  if (state.userInfo) {
+    return { userInfo: state.userInfo };
+  } else {
+    if (isSuccess && data) {
+      delete data.email;
+      const user: UserMemo = { name: data.name, familyName: data.familyName, userId: data.userId };
+      return { userInfo: user };
+    }
+    return { userInfo: null };
+  }
 };
