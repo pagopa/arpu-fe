@@ -1,4 +1,7 @@
-import { paymentTypeDrawerVisibilityStore, togglePaymentTypeDrawerVisibility } from './PaymentTypeDrawerVisibilityStore';
+import {
+  paymentTypeDrawerVisibilityStore,
+  togglePaymentTypeDrawerVisibility
+} from './PaymentTypeDrawerVisibilityStore';
 
 describe('PaymenTypeDrawerVisibility', () => {
   it('should start with the rigth default value', () => {
