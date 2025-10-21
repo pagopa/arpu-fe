@@ -34,8 +34,9 @@ export const getErrorMessage = (issues: z.ZodIssue[], fieldName: string) =>
     .map(({ message }) => message)
     .toString();
 
-function formatString(formatString: string, dataObject: { [key: string]: any }): string {
+function formatString(formatString: string, dataObject: { [key: string]: unknown }): string {
   return formatString.replace(/[$]?{([^{}]*)}/g, (match, key) => {
+    /*eslint no-prototype-builtins: "off"*/
     if (dataObject.hasOwnProperty(key)) {
       return String(dataObject[key]);
     }
