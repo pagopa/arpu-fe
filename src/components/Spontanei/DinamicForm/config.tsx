@@ -34,6 +34,15 @@ export const getErrorMessage = (issues: z.ZodIssue[], fieldName: string) =>
     .map(({ message }) => message)
     .toString();
 
+function formatString(formatString: string, dataObject: { [key: string]: any }): string {
+  return formatString.replace(/[$]?{([^{}]*)}/g, (match, key) => {
+    if (dataObject.hasOwnProperty(key)) {
+      return String(dataObject[key]);
+    }
+    return match;
+  });
+}
+
 /** usata per la causale */
 export const buildDinamicValue = (
   stringTemplate: string,
@@ -52,12 +61,7 @@ export const buildDinamicValue = (
       }
     });
   }
-
-  const normalizedTemplate = stringTemplate.replace(/\${/g, '${this.');
-  return new Function('return `' + normalizedTemplate + '`;').call({
-    ...templateVars,
-    ...updatedFields
-  });
+  return formatString(stringTemplate, { ...templateVars, ...updatedFields });
 };
 
 export const computeValue = (code: string, scope = {}) => sandbox.compile(code)(scope).run();
