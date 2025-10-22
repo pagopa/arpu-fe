@@ -7,16 +7,16 @@ interface SelezionaEnteProps {
   setEnte: (ente: { paFullName: string; paTaxCode: string } | null) => void;
 }
 
-interface EnteOption {
+interface OrgOption {
   label: string;
   value: string;
 }
 const SelezionaEnte = (props: SelezionaEnteProps) => {
-  const { data } = utils.loaders.getOrganizations();
   const { t } = useTranslation();
 
-  const options: EnteOption[] =
-    data?.organizations?.map((org) => ({ label: org.paFullName, value: org.paTaxCode })) || [];
+  const { data : orgs } = utils.loaders.getOrganizationsWithSpontaneous(1);
+  const options: OrgOption[] = 
+    orgs?.map((org) => ({ label: org.orgName, value: org.orgFiscalCode })) || [];
 
   return (
     <Card variant="outlined">
@@ -27,8 +27,8 @@ const SelezionaEnte = (props: SelezionaEnteProps) => {
           onChange={(_, opt) => {
             if (opt) {
               props.setEnte({
-                paFullName: (opt as EnteOption).label,
-                paTaxCode: (opt as EnteOption).value
+                paFullName: (opt as OrgOption).label,
+                paTaxCode: (opt as OrgOption).value
               });
             } else {
               props.setEnte(null);
