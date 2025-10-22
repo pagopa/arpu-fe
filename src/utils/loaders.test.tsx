@@ -101,6 +101,24 @@ describe('api loaders', () => {
         expect(result.current.data).toEqual(dataMock);
       });
     });
+
+    it('getOrganizations calls API and schema parser correctly', async () => {
+      const dataMock = createMock(schemas.organizationsListDTOSchema);
+
+      const apiMock = vi
+        .spyOn(utils.apiClient.organizations, 'getOrganizations')
+        .mockResolvedValue({ data: dataMock } as AxiosResponse);
+
+      const { result } = renderHook(() => loaders.getOrganizations(), {
+        wrapper
+      });
+
+      await waitFor(() => {
+        expect(apiMock).toHaveBeenCalled();
+        expect(result.current.isSuccess).toBeTruthy();
+        expect(result.current.data).toEqual(dataMock);
+      });
+    });
   });
 
   describe('transactionReceipt', () => {

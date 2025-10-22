@@ -324,5 +324,51 @@
     "notice": "Dettaglio operazione",
     "courtesy": "Pagina di cortesia",
     "userpage": "I tuoi dati"
+  },
+  "spontanei": {
+    "form": {
+      "title": "Configura pagamento spontaneo",
+      "description": "Compila i campi richiesti e procedi col pagamento.",
+      "steps": {
+        "step1": {
+          "step": "Seleziona l’ente",
+          "title": "Seleziona l’ente beneficiario",
+          "description": "Inizia a digitare il nome dell’ente beneficiario del pagamento e selezionalo dalla lista.",
+          "search": "Cerca per nome dell'ente"
+        },
+        "step2": {
+          "step": "Seleziona il servizio",
+          "title": "Seleziona il servizio",
+          "description": "Inizia a digitare il nome del servizio per il quale vuoi effettuare il pagamento e selezionalo dalla lista.",
+          "search": "Cerca per nome del servizio"
+        },
+        "step3": {
+          "step": "Configura il pagamento",
+          "title": "Configura il pagamento",
+          "description": "Inserisci l’importo da pagare, se necessario, e aggiungi una causale."
+        },
+        "step4": {
+          "step": "Riepilogo",
+          "title": "Riepilogo",
+          "description": "Aggiungi l'avviso nel carrello e procedi con il pagamento"
+        }
+      },
+      "continue": "Continua",
+      "abort": "Esci",
+      "back": "Indietro"
+    },
+    "drawer": {
+      "title": "PAGA UN AVVISO",
+      "card1": {
+        "title": "Hai ricevuto un avviso di pagamento?",
+        "description": "Sei già in possesso dei codici o di un QR Code per procedere al pagamento",
+        "cta": "Vai al pagamento"
+      },
+      "card2": {
+        "title": "Vuoi effettuare un pagamento spontaneo?",
+        "description": "Vuoi pagare la Pubblica Amministrazione perchè ti va e perchè sei un buono",
+        "cta": "Configura il pagamento"
+      }
+    }
   }
 }

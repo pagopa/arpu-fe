@@ -5,6 +5,7 @@ import { ZodSchema } from 'zod';
 import * as zodSchema from '../../generated/zod-schema';
 import { Params } from 'react-router-dom';
 import converters from './converters';
+import { PaymentNoticePayloadDTO } from '../../generated/apiClient';
 
 const parseAndLog = <T>(schema: ZodSchema, data: T, throwError: boolean = true): void | never => {
   const result = schema.safeParse(data);
@@ -153,6 +154,18 @@ export const getTokenOneidentity = async (request: Request) => {
   }
 };
 
+export const getOrganizations = () =>
+  useQuery({
+    queryKey: ['getOrganizations'],
+    queryFn: async () => {
+      const { data: organizations } = await utils.apiClient.organizations.getOrganizations();
+      return organizations;
+    }
+  });
+
+export const generateNotice = (body: PaymentNoticePayloadDTO) =>
+  utils.apiClient.paymentNotices.postGeneratePaymentNotice(body);
+
 export default {
   getPaymentNotices,
   getPaymentNoticeDetails,
@@ -161,5 +174,7 @@ export default {
   getNoticeDetails,
   getNoticesList,
   getUserInfo,
-  getUserInfoOnce
+  getUserInfoOnce,
+  getOrganizations,
+  generateNotice
 };
