@@ -1,8 +1,7 @@
 import config from 'utils/config';
 const deployPath = config.deployPath;
 
-const pathname = window.location.pathname;
-const brokerId = pathname.split('/')[2] || '1';
+const brokerId = config.brokerId;
 
 export const ArcRoutes = {
   DASHBOARD: `${deployPath}/${brokerId}`,
