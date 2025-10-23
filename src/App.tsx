@@ -34,7 +34,7 @@ const withGuard = (Component: () => React.JSX.Element) => (
 
 const router = createBrowserRouter([
   {
-    element: <ApiClient client={utils.apiClient} />,
+    element: <ApiClient client={[utils.apiClient, utils.arpuBeApiClient]} />,
     children: [
       {
         path: '*',

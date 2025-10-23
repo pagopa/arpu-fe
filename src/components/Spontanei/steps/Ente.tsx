@@ -2,6 +2,7 @@ import React from 'react';
 import { Autocomplete, Card, Stack, TextField, Typography } from '@mui/material';
 import utils from 'utils';
 import { useTranslation } from 'react-i18next';
+import { useParams } from 'react-router-dom';
 
 interface SelezionaEnteProps {
   setEnte: (ente: { paFullName: string; paTaxCode: string } | null) => void;
@@ -13,9 +14,10 @@ interface OrgOption {
 }
 const SelezionaEnte = (props: SelezionaEnteProps) => {
   const { t } = useTranslation();
+  const { brokerId = '1' } = useParams();
+  const { data: orgs } = utils.loaders.getOrganizationsWithSpontaneous(parseInt(brokerId));
 
-  const { data : orgs } = utils.loaders.getOrganizationsWithSpontaneous(1);
-  const options: OrgOption[] = 
+  const options: OrgOption[] =
     orgs?.map((org) => ({ label: org.orgName, value: org.orgFiscalCode })) || [];
 
   return (
@@ -36,7 +38,7 @@ const SelezionaEnte = (props: SelezionaEnteProps) => {
           }}
           id="free-solo-demo"
           freeSolo
-          options={[...options, { label: 'Regione del Veneto', value: 'VENETO' }]}
+          options={options}
           renderInput={(params) => <TextField {...params} label="Cerca per nome dell'ente" />}
         />
       </Stack>
