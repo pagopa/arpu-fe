@@ -254,10 +254,10 @@ describe('Payment Notices API', () => {
       expect(query.result.current.data).toEqual(mockNoticeDetails);
     });
   });
-  
+
   it('getOrganizationsWithSpontaneous calls API and schema parser correctly', async () => {
     const dataMock = createMock(zod.array(organizationsWithSpontaneousDTOSchema));
-    
+
     const apiMock = vi
       .spyOn(utils.arpuBeApiClient.brokers, 'getOrganizationsWithSpontaneous')
       .mockResolvedValue({ data: dataMock } as AxiosResponse);
@@ -270,5 +270,4 @@ describe('Payment Notices API', () => {
       expect(query.result.current.data).toEqual(dataMock);
     });
   });
-
 });
