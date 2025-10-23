@@ -1,20 +1,23 @@
 import config from 'utils/config';
 const deployPath = config.deployPath;
 
+const pathname = window.location.pathname;
+const brokerId = pathname.split('/')[2] || '1';
+
 export const ArcRoutes = {
-  DASHBOARD: `${deployPath}/`,
-  TRANSACTION: `${deployPath}/ricevute/:id`,
-  TRANSACTIONS: `${deployPath}/ricevute/`,
-  PAYMENT_NOTICES: `${deployPath}/avvisi/`,
-  PAYMENT_NOTICE_DETAIL: `${deployPath}/avvisi/:id/:paTaxCode`,
-  USER: `${deployPath}/profilo`,
-  COURTESY_PAGE: `${deployPath}/errore/:error`,
-  LOGIN: `${deployPath}/accesso`,
-  ASSISTANCE: `${deployPath}/assistenza`,
+  DASHBOARD: `${deployPath}/${brokerId}`,
+  TRANSACTION: `${deployPath}/${brokerId}/ricevute/:id`,
+  TRANSACTIONS: `${deployPath}/${brokerId}/ricevute/`,
+  PAYMENT_NOTICES: `${deployPath}/${brokerId}/avvisi/`,
+  PAYMENT_NOTICE_DETAIL: `${deployPath}/${brokerId}/avvisi/:id/:paTaxCode`,
+  USER: `${deployPath}/${brokerId}/profilo`,
+  COURTESY_PAGE: `${deployPath}/${brokerId}/errore/:error`,
+  LOGIN: `${deployPath}/${brokerId}/accesso`,
+  ASSISTANCE: `${deployPath}/${brokerId}/assistenza`,
   AUTH_CALLBACK: `${deployPath}/auth-callback`,
-  TOS: `${deployPath}/termini-di-servizio`,
-  PRIVACY_POLICY: `${deployPath}/informativa-privacy`,
-  SPONTANEI: `${deployPath}/spontanei`
+  TOS: `${deployPath}/${brokerId}/termini-di-servizio`,
+  PRIVACY_POLICY: `${deployPath}/${brokerId}/informativa-privacy`,
+  SPONTANEI: `${deployPath}/${brokerId}/spontanei`
 };
 
 export enum ArcErrors {

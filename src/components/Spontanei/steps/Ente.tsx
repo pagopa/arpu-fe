@@ -2,21 +2,23 @@ import React from 'react';
 import { Autocomplete, Card, Stack, TextField, Typography } from '@mui/material';
 import utils from 'utils';
 import { useTranslation } from 'react-i18next';
+import { useParams } from 'react-router-dom';
 
 interface SelezionaEnteProps {
   setEnte: (ente: { paFullName: string; paTaxCode: string } | null) => void;
 }
 
-interface EnteOption {
+interface OrgOption {
   label: string;
   value: string;
 }
 const SelezionaEnte = (props: SelezionaEnteProps) => {
-  const { data } = utils.loaders.getOrganizations();
   const { t } = useTranslation();
+  const { brokerId = '1' } = useParams();
+  const { data: orgs } = utils.loaders.getOrganizationsWithSpontaneous(parseInt(brokerId, 10));
 
-  const options: EnteOption[] =
-    data?.organizations?.map((org) => ({ label: org.paFullName, value: org.paTaxCode })) || [];
+  const options: OrgOption[] =
+    orgs?.map((org) => ({ label: org.orgName, value: org.orgFiscalCode })) || [];
 
   return (
     <Card variant="outlined">
@@ -27,8 +29,8 @@ const SelezionaEnte = (props: SelezionaEnteProps) => {
           onChange={(_, opt) => {
             if (opt) {
               props.setEnte({
-                paFullName: (opt as EnteOption).label,
-                paTaxCode: (opt as EnteOption).value
+                paFullName: (opt as OrgOption).label,
+                paTaxCode: (opt as OrgOption).value
               });
             } else {
               props.setEnte(null);
@@ -36,7 +38,7 @@ const SelezionaEnte = (props: SelezionaEnteProps) => {
           }}
           id="free-solo-demo"
           freeSolo
-          options={[...options, { label: 'Regione del Veneto', value: 'VENETO' }]}
+          options={options}
           renderInput={(params) => <TextField {...params} label="Cerca per nome dell'ente" />}
         />
       </Stack>

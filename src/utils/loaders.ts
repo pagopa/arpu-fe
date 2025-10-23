@@ -166,6 +166,16 @@ export const getOrganizations = () =>
 export const generateNotice = (body: PaymentNoticePayloadDTO) =>
   utils.apiClient.paymentNotices.postGeneratePaymentNotice(body);
 
+export const getOrganizationsWithSpontaneous = (brokerId: number) =>
+  useQuery({
+    queryKey: ['getOrganizationsWithSpontaneous'],
+    queryFn: async () => {
+      const { data } =
+        await utils.arpuBeApiClient.brokers.getOrganizationsWithSpontaneous(brokerId);
+      return data;
+    }
+  });
+
 export default {
   getPaymentNotices,
   getPaymentNoticeDetails,
@@ -176,5 +186,6 @@ export default {
   getUserInfo,
   getUserInfoOnce,
   getOrganizations,
-  generateNotice
+  generateNotice,
+  getOrganizationsWithSpontaneous
 };
