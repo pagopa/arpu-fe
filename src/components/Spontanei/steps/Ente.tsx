@@ -15,7 +15,7 @@ interface OrgOption {
 const SelezionaEnte = (props: SelezionaEnteProps) => {
   const { t } = useTranslation();
   const { brokerId = '1' } = useParams();
-  const { data: orgs } = utils.loaders.getOrganizationsWithSpontaneous(parseInt(brokerId));
+  const { data: orgs } = utils.loaders.getOrganizationsWithSpontaneous(parseInt(brokerId, 10));
 
   const options: OrgOption[] =
     orgs?.map((org) => ({ label: org.orgName, value: org.orgFiscalCode })) || [];
