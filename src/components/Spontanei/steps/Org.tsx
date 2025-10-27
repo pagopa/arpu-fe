@@ -3,22 +3,24 @@ import { Autocomplete, Card, Stack, TextField, Typography } from '@mui/material'
 import utils from 'utils';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
+import { OrganizationsWithSpontaneousDTO } from '../../../../generated/arpu-be/data-contracts';
 
-interface SelezionaEnteProps {
-  setEnte: (ente: { paFullName: string; paTaxCode: string } | null) => void;
+interface OrgSelectEnteProps {
+  setOrg: (org: OrganizationsWithSpontaneousDTO | null) => void;
 }
 
-interface OrgOption {
-  label: string;
-  value: string;
+interface OrgOptions {
+  label: OrganizationsWithSpontaneousDTO['orgName'];
+  value: OrganizationsWithSpontaneousDTO['organizationId'];
 }
-const SelezionaEnte = (props: SelezionaEnteProps) => {
+
+const OrgSelect = (props: OrgSelectEnteProps) => {
   const { t } = useTranslation();
   const { brokerId = '1' } = useParams();
   const { data: orgs } = utils.loaders.getOrganizationsWithSpontaneous(parseInt(brokerId, 10));
 
-  const options: OrgOption[] =
-    orgs?.map((org) => ({ label: org.orgName, value: org.orgFiscalCode })) || [];
+  const options: OrgOptions[] =
+    orgs?.map((org) => ({ label: org.orgName, value: org.organizationId })) || [];
 
   return (
     <Card variant="outlined">
@@ -28,12 +30,11 @@ const SelezionaEnte = (props: SelezionaEnteProps) => {
         <Autocomplete
           onChange={(_, opt) => {
             if (opt) {
-              props.setEnte({
-                paFullName: (opt as OrgOption).label,
-                paTaxCode: (opt as OrgOption).value
-              });
+              props.setOrg(
+                orgs?.find((o) => o.organizationId === (opt as OrgOptions).value) || null
+              );
             } else {
-              props.setEnte(null);
+              props.setOrg(null);
             }
           }}
           id="free-solo-demo"
@@ -46,4 +47,4 @@ const SelezionaEnte = (props: SelezionaEnteProps) => {
   );
 };
 
-export default SelezionaEnte;
+export default OrgSelect;

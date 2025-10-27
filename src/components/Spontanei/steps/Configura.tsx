@@ -3,7 +3,7 @@ import React from 'react';
 import { useTranslation } from 'react-i18next';
 import StaticFormSection from '../DinamicForm/StaticFormSection';
 import { Payment } from '../Form';
-import { Servizio, ServizioDinamico } from './Servizio';
+import { Servizio, ServizioDinamico } from './SpontaneusDebtTypeSelect';
 import { useField } from 'formik';
 interface Configura {
   servizio: Servizio | ServizioDinamico | null;

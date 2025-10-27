@@ -2,8 +2,8 @@ import React, { useEffect, useRef } from 'react';
 import { Button, Container, Stack, Typography } from '@mui/material';
 import { ArrowBack } from '@mui/icons-material';
 import Steps from './steps';
-import SelezionaEnte from './steps/Ente';
-import SelezionaServizio, { Servizio, ServizioDinamico } from './steps/Servizio';
+import OrgSelect from './steps/Org';
+import SpontaneusDebtTypeSelect from './steps/SpontaneusDebtTypeSelect';
 import ConfiguraPagamento from './steps/Configura';
 import Riepilogo from './steps/Riepilogo';
 import { useTranslation } from 'react-i18next';
@@ -15,6 +15,7 @@ import { useUserEmail } from 'hooks/useUserEmail';
 import { useUserInfo } from 'hooks/useUserInfo';
 import { Formik, useFormik } from 'formik';
 import utils from 'utils';
+import { DebtPositionTypeOrgsWithSpontaneousDTO } from '../../../generated/arpu-be/data-contracts';
 
 export type Payment = {
   causale: string;
@@ -32,8 +33,9 @@ export type Payment = {
 
 const Spontanei = () => {
   const [step, setStep] = React.useState(0);
-  const [ente, setEnte] = React.useState<{ paFullName: string; paTaxCode: string } | null>(null);
-  const [servizio, setServizio] = React.useState<Servizio | ServizioDinamico | null>(null);
+  const [org, setOrg] = React.useState<{ orgName: string; organizationId: number } | null>(null);
+  const [SpontaneusDebtType, setSpontaneusDebtType] =
+    React.useState<DebtPositionTypeOrgsWithSpontaneousDTO | null>(null);
   const [spontaneo, setSpontaneo] = React.useState<PaymentNoticeDetailsDTO | null>(null);
 
   const { t } = useTranslation();
@@ -83,16 +85,12 @@ const Spontanei = () => {
     if (step === 2 && formikRef.current?.values) {
       const { amount, payee, payeeId, causale } = formikRef.current.values;
       const { data } = await utils.loaders.generateNotice({
-        paFullName: ente?.paFullName || '',
-        paTaxCode: ente?.paTaxCode || '',
+        paFullName: org?.orgName || '',
+        paTaxCode: `${org?.organizationId}` || '',
         amount: amount * 100,
         description: `${payee}#${payeeId}#${causale}`
       });
       setSpontaneo(data);
-    }
-    if (step === 1 && servizio === 'Bollo Auto') {
-      window.open('https://www.tributi.regione.lombardia.it/PagoBollo/#/', '');
-      return;
     }
     setStep(step + 1);
   };
@@ -104,8 +102,7 @@ const Spontanei = () => {
 
   useEffect(() => {
     if (step == 1) formikRef.current?.resetForm();
-    if (step === 2 && servizio === 'Rinnovo Licenza Caccia')
-      formikRef.current?.setFieldValue('amount', 200);
+    formikRef.current?.setFieldValue('amount', 200);
   }, [step]);
 
   const validate = (values: Payment) => {
@@ -132,19 +129,19 @@ const Spontanei = () => {
             <Typography>{t('spontanei.form.description')}</Typography>
             <Stack spacing={4} mt={4}>
               <Steps activeStep={step} />
-              {step === 0 && <SelezionaEnte setEnte={setEnte} />}
-              {step === 1 && (
-                <SelezionaServizio
-                  setServizio={setServizio}
-                  enteConServiziDinamici={ente?.paTaxCode === 'VENETO'}
+              {step === 0 && <OrgSelect setOrg={setOrg} />}
+              {step === 1 && org?.organizationId && (
+                <SpontaneusDebtTypeSelect
+                  setSpontaneusDebtTypes={setSpontaneusDebtType}
+                  organizationId={org.organizationId}
                 />
               )}
-              {step === 2 && ente?.paTaxCode !== 'VENETO' && (
+              {/* {step === 2 && ente?.paTaxCode !== 'VENETO' && (
                 <ConfiguraPagamento servizio={servizio} />
               )}
               {step === 2 && ente?.paTaxCode === 'VENETO' && (
                 <ConfiguraPagamentoDinamico servizio={servizio as ServizioDinamico} />
-              )}
+              )} */}
               {step === 3 && spontaneo && <Riepilogo spontaneo={spontaneo} />}
               {step !== 3 && (
                 <Stack direction="row" justifyContent={'space-between'}>
@@ -155,16 +152,7 @@ const Spontanei = () => {
                     startIcon={<ArrowBack />}>
                     {step === 0 ? t('spontanei.form.abort') : t('spontanei.form.back')}
                   </Button>
-                  <Button
-                    size="large"
-                    variant="contained"
-                    onClick={onContinue}
-                    disabled={
-                      (step === 0 && !ente) ||
-                      (step == 1 && !servizio) ||
-                      (step == 2 && !formState.dirty) ||
-                      !formState.isValid
-                    }>
+                  <Button size="large" variant="contained" onClick={onContinue}>
                     {t('spontanei.form.continue')}
                   </Button>
                 </Stack>
