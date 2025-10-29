@@ -23,7 +23,10 @@ const DebtTypeSelect = () => {
       value: debtType.organizationId
     })) || [];
 
-  const handleDebtTypeChange = (_event: any, value: string | debtTypeOptions | null) => {
+  const handleDebtTypeChange = (
+    _event: React.SyntheticEvent<Element, Event>,
+    value: string | debtTypeOptions | null
+  ) => {
     if (value && typeof value !== 'string' && context) {
       const selectedDebtType =
         DebtPositionTypeOrgsWithSpontaneous?.find(

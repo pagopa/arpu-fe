@@ -10,7 +10,10 @@ import { AxiosResponse } from 'axios';
 // importing schemas from utils
 // causes an import resolution issue
 import * as schemas from '../../generated/zod-schema';
-import { debtPositionTypeOrgsWithSpontaneousDTOSchema, organizationsWithSpontaneousDTOSchema } from '../../generated/arpu-be/zod-schema';
+import {
+  debtPositionTypeOrgsWithSpontaneousDTOSchema,
+  organizationsWithSpontaneousDTOSchema
+} from '../../generated/arpu-be/zod-schema';
 // zodock can create mock object
 // from a zod schema
 // if a field is set as optionaal

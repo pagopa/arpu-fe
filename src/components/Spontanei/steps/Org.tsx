@@ -21,7 +21,10 @@ const OrgSelect = () => {
 
   const context = useContext<FormContextType | null>(FormContext);
 
-  const handleOrgChange = (_event: any, value: string | OrgOptions | null) => {
+  const handleOrgChange = (
+    _event: React.SyntheticEvent<Element, Event>,
+    value: string | OrgOptions | null
+  ) => {
     if (value && typeof value !== 'string' && context) {
       const selectedOrg =
         orgs?.find((o) => o.organizationId === (value as OrgOptions).value) || null;
