@@ -23,10 +23,11 @@ const OrgSelect = () => {
 
   const handleOrgChange = (_event: any, value: string | OrgOptions | null) => {
     if (value && typeof value !== 'string' && context) {
-      const selectedOrg = orgs?.find((o) => o.organizationId === (value as OrgOptions).value) || null;
+      const selectedOrg =
+        orgs?.find((o) => o.organizationId === (value as OrgOptions).value) || null;
       return context.setOrg(selectedOrg);
     }
-  }
+  };
 
   return (
     <Card variant="outlined">

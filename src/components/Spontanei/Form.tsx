@@ -16,7 +16,10 @@ import { useUserEmail } from 'hooks/useUserEmail';
 import { useUserInfo } from 'hooks/useUserInfo';
 import { Formik, useFormik } from 'formik';
 import utils from 'utils';
-import { DebtPositionTypeOrgsWithSpontaneousDTO, OrganizationsWithSpontaneousDTO } from '../../../generated/arpu-be/data-contracts';
+import {
+  DebtPositionTypeOrgsWithSpontaneousDTO,
+  OrganizationsWithSpontaneousDTO
+} from '../../../generated/arpu-be/data-contracts';
 
 export type Payment = {
   causale: string;
@@ -35,8 +38,9 @@ export type Payment = {
 const Spontanei = () => {
   const [step, setStep] = React.useState(0);
   const [org, setOrg] = React.useState<OrganizationsWithSpontaneousDTO | null>(null);
-  const [debtType, setDebtType] =
-    React.useState<DebtPositionTypeOrgsWithSpontaneousDTO | null>(null);
+  const [debtType, setDebtType] = React.useState<DebtPositionTypeOrgsWithSpontaneousDTO | null>(
+    null
+  );
   const [spontaneo, setSpontaneo] = React.useState<PaymentNoticeDetailsDTO | null>(null);
 
   const { t } = useTranslation();
@@ -122,35 +126,35 @@ const Spontanei = () => {
         onSubmit={console.log}
         validate={validate}
         innerRef={formikRef}>
-          <FormContext.Provider value={{ org, setOrg, debtType, setDebtType }}>
-            <Stack>
-              <Typography variant="h6" mb={1}>
-                {t('spontanei.form.title')}
-              </Typography>
-              <Typography>{t('spontanei.form.description')}</Typography>
-              <Stack spacing={4} mt={4}>
-                <Steps activeStep={step} />
-                {step === 0 && <OrgSelect />}
-                {step === 1 && <DebtTypeSelect />}
-                {step === 2 && <DebtTypeConfig />}
-                {step === 3 && spontaneo && <Riepilogo spontaneo={spontaneo} />}
-                {step !== 3 && (
-                  <Stack direction="row" justifyContent={'space-between'}>
-                    <Button
-                      size="large"
-                      variant="outlined"
-                      onClick={onBack}
-                      startIcon={<ArrowBack />}>
-                      {step === 0 ? t('spontanei.form.abort') : t('spontanei.form.back')}
-                    </Button>
-                    <Button size="large" variant="contained" onClick={onContinue}>
-                      {t('spontanei.form.continue')}
-                    </Button>
-                  </Stack>
-                )}
-              </Stack>
+        <FormContext.Provider value={{ org, setOrg, debtType, setDebtType }}>
+          <Stack>
+            <Typography variant="h6" mb={1}>
+              {t('spontanei.form.title')}
+            </Typography>
+            <Typography>{t('spontanei.form.description')}</Typography>
+            <Stack spacing={4} mt={4}>
+              <Steps activeStep={step} />
+              {step === 0 && <OrgSelect />}
+              {step === 1 && <DebtTypeSelect />}
+              {step === 2 && <DebtTypeConfig />}
+              {step === 3 && spontaneo && <Riepilogo spontaneo={spontaneo} />}
+              {step !== 3 && (
+                <Stack direction="row" justifyContent={'space-between'}>
+                  <Button
+                    size="large"
+                    variant="outlined"
+                    onClick={onBack}
+                    startIcon={<ArrowBack />}>
+                    {step === 0 ? t('spontanei.form.abort') : t('spontanei.form.back')}
+                  </Button>
+                  <Button size="large" variant="contained" onClick={onContinue}>
+                    {t('spontanei.form.continue')}
+                  </Button>
+                </Stack>
+              )}
             </Stack>
-          </FormContext.Provider>
+          </Stack>
+        </FormContext.Provider>
       </Formik>
     </Container>
   );

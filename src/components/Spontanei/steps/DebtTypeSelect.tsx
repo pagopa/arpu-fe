@@ -10,28 +10,29 @@ interface debtTypeOptions {
   value: DebtPositionTypeOrgsWithSpontaneousDTO['organizationId'];
 }
 
-
 const DebtTypeSelect = () => {
   const context = useContext<FormContextType | null>(FormContext);
   const { t } = useTranslation();
-  
+
   const { data: DebtPositionTypeOrgsWithSpontaneous } =
     utils.loaders.getDebtPositionTypeOrgsWithSpontaneous(context?.org?.organizationId || 0);
 
-  const debtTypeOptions: debtTypeOptions[] = DebtPositionTypeOrgsWithSpontaneous?.map((debtType) => ({
-    label: debtType.description,
-    value: debtType.organizationId,
-  })) || [];
-  
-  
+  const debtTypeOptions: debtTypeOptions[] =
+    DebtPositionTypeOrgsWithSpontaneous?.map((debtType) => ({
+      label: debtType.description,
+      value: debtType.organizationId
+    })) || [];
+
   const handleDebtTypeChange = (_event: any, value: string | debtTypeOptions | null) => {
     if (value && typeof value !== 'string' && context) {
       const selectedDebtType =
-        DebtPositionTypeOrgsWithSpontaneous?.find((debtType) => debtType.organizationId === (value as debtTypeOptions).value) || null;
+        DebtPositionTypeOrgsWithSpontaneous?.find(
+          (debtType) => debtType.organizationId === (value as debtTypeOptions).value
+        ) || null;
       return context.setDebtType(selectedDebtType);
     }
-  }
-    
+  };
+
   return (
     <Card variant="outlined">
       <Stack spacing={2} padding={4}>

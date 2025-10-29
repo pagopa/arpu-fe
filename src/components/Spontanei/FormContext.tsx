@@ -1,5 +1,8 @@
-import { createContext } from "react";
-import { DebtPositionTypeOrgsWithSpontaneousDTO, OrganizationsWithSpontaneousDTO } from "../../../generated/arpu-be/data-contracts";
+import { createContext } from 'react';
+import {
+  DebtPositionTypeOrgsWithSpontaneousDTO,
+  OrganizationsWithSpontaneousDTO
+} from '../../../generated/arpu-be/data-contracts';
 
 export type FormContextType = {
   org: OrganizationsWithSpontaneousDTO | null;
@@ -9,6 +12,6 @@ export type FormContextType = {
 };
 
 const FormContext = createContext<FormContextType | null>(null);
-FormContext.displayName = "SpontaneousDebtTypesFormContext";
+FormContext.displayName = 'SpontaneousDebtTypesFormContext';
 
 export default FormContext;
