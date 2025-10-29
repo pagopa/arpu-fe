@@ -2,20 +2,21 @@ import React, { useEffect, useRef } from 'react';
 import { Button, Container, Stack, Typography } from '@mui/material';
 import { ArrowBack } from '@mui/icons-material';
 import Steps from './steps';
+import FormContext from './FormContext';
 import OrgSelect from './steps/Org';
-import SpontaneusDebtTypeSelect from './steps/SpontaneusDebtTypeSelect';
-import ConfiguraPagamento from './steps/Configura';
+import DebtTypeSelect from './steps/DebtTypeSelect';
+import DebtTypeConfig from './steps/DebtTypeConfig';
 import Riepilogo from './steps/Riepilogo';
+
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import * as z from 'zod';
 import { PaymentNoticeDetailsDTO } from '../../../generated/apiClient';
-import ConfiguraPagamentoDinamico from './steps/ConfiguraDinamico';
 import { useUserEmail } from 'hooks/useUserEmail';
 import { useUserInfo } from 'hooks/useUserInfo';
 import { Formik, useFormik } from 'formik';
 import utils from 'utils';
-import { DebtPositionTypeOrgsWithSpontaneousDTO } from '../../../generated/arpu-be/data-contracts';
+import { DebtPositionTypeOrgsWithSpontaneousDTO, OrganizationsWithSpontaneousDTO } from '../../../generated/arpu-be/data-contracts';
 
 export type Payment = {
   causale: string;
@@ -33,8 +34,8 @@ export type Payment = {
 
 const Spontanei = () => {
   const [step, setStep] = React.useState(0);
-  const [org, setOrg] = React.useState<{ orgName: string; organizationId: number } | null>(null);
-  const [SpontaneusDebtType, setSpontaneusDebtType] =
+  const [org, setOrg] = React.useState<OrganizationsWithSpontaneousDTO | null>(null);
+  const [debtType, setDebtType] =
     React.useState<DebtPositionTypeOrgsWithSpontaneousDTO | null>(null);
   const [spontaneo, setSpontaneo] = React.useState<PaymentNoticeDetailsDTO | null>(null);
 
@@ -121,45 +122,35 @@ const Spontanei = () => {
         onSubmit={console.log}
         validate={validate}
         innerRef={formikRef}>
-        {(formState) => (
-          <Stack>
-            <Typography variant="h6" mb={1}>
-              {t('spontanei.form.title')}
-            </Typography>
-            <Typography>{t('spontanei.form.description')}</Typography>
-            <Stack spacing={4} mt={4}>
-              <Steps activeStep={step} />
-              {step === 0 && <OrgSelect setOrg={setOrg} />}
-              {step === 1 && org?.organizationId && (
-                <SpontaneusDebtTypeSelect
-                  setSpontaneusDebtTypes={setSpontaneusDebtType}
-                  organizationId={org.organizationId}
-                />
-              )}
-              {/* {step === 2 && ente?.paTaxCode !== 'VENETO' && (
-                <ConfiguraPagamento servizio={servizio} />
-              )}
-              {step === 2 && ente?.paTaxCode === 'VENETO' && (
-                <ConfiguraPagamentoDinamico servizio={servizio as ServizioDinamico} />
-              )} */}
-              {step === 3 && spontaneo && <Riepilogo spontaneo={spontaneo} />}
-              {step !== 3 && (
-                <Stack direction="row" justifyContent={'space-between'}>
-                  <Button
-                    size="large"
-                    variant="outlined"
-                    onClick={onBack}
-                    startIcon={<ArrowBack />}>
-                    {step === 0 ? t('spontanei.form.abort') : t('spontanei.form.back')}
-                  </Button>
-                  <Button size="large" variant="contained" onClick={onContinue}>
-                    {t('spontanei.form.continue')}
-                  </Button>
-                </Stack>
-              )}
+          <FormContext.Provider value={{ org, setOrg, debtType, setDebtType }}>
+            <Stack>
+              <Typography variant="h6" mb={1}>
+                {t('spontanei.form.title')}
+              </Typography>
+              <Typography>{t('spontanei.form.description')}</Typography>
+              <Stack spacing={4} mt={4}>
+                <Steps activeStep={step} />
+                {step === 0 && <OrgSelect />}
+                {step === 1 && <DebtTypeSelect />}
+                {step === 2 && <DebtTypeConfig />}
+                {step === 3 && spontaneo && <Riepilogo spontaneo={spontaneo} />}
+                {step !== 3 && (
+                  <Stack direction="row" justifyContent={'space-between'}>
+                    <Button
+                      size="large"
+                      variant="outlined"
+                      onClick={onBack}
+                      startIcon={<ArrowBack />}>
+                      {step === 0 ? t('spontanei.form.abort') : t('spontanei.form.back')}
+                    </Button>
+                    <Button size="large" variant="contained" onClick={onContinue}>
+                      {t('spontanei.form.continue')}
+                    </Button>
+                  </Stack>
+                )}
+              </Stack>
             </Stack>
-          </Stack>
-        )}
+          </FormContext.Provider>
       </Formik>
     </Container>
   );

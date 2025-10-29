@@ -1,26 +1,32 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import { Autocomplete, Card, Stack, TextField, Typography } from '@mui/material';
 import utils from 'utils';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
 import { OrganizationsWithSpontaneousDTO } from '../../../../generated/arpu-be/data-contracts';
-
-interface OrgSelectEnteProps {
-  setOrg: (org: OrganizationsWithSpontaneousDTO | null) => void;
-}
+import FormContext, { FormContextType } from '../FormContext';
 
 interface OrgOptions {
   label: OrganizationsWithSpontaneousDTO['orgName'];
   value: OrganizationsWithSpontaneousDTO['organizationId'];
 }
 
-const OrgSelect = (props: OrgSelectEnteProps) => {
+const OrgSelect = () => {
   const { t } = useTranslation();
   const { brokerId = '1' } = useParams();
   const { data: orgs } = utils.loaders.getOrganizationsWithSpontaneous(parseInt(brokerId, 10));
 
-  const options: OrgOptions[] =
+  const orgOptions: OrgOptions[] =
     orgs?.map((org) => ({ label: org.orgName, value: org.organizationId })) || [];
+
+  const context = useContext<FormContextType | null>(FormContext);
+
+  const handleOrgChange = (_event: any, value: string | OrgOptions | null) => {
+    if (value && typeof value !== 'string' && context) {
+      const selectedOrg = orgs?.find((o) => o.organizationId === (value as OrgOptions).value) || null;
+      return context.setOrg(selectedOrg);
+    }
+  }
 
   return (
     <Card variant="outlined">
@@ -28,18 +34,10 @@ const OrgSelect = (props: OrgSelectEnteProps) => {
         <Typography variant="h6">{t('spontanei.form.steps.step1.title')}</Typography>
         <Typography>{t('spontanei.form.steps.step1.description')}</Typography>
         <Autocomplete
-          onChange={(_, opt) => {
-            if (opt) {
-              props.setOrg(
-                orgs?.find((o) => o.organizationId === (opt as OrgOptions).value) || null
-              );
-            } else {
-              props.setOrg(null);
-            }
-          }}
+          onChange={handleOrgChange}
           id="free-solo-demo"
           freeSolo
-          options={options}
+          options={orgOptions}
           renderInput={(params) => <TextField {...params} label="Cerca per nome dell'ente" />}
         />
       </Stack>
