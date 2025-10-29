@@ -106,7 +106,10 @@ const config: Config = {
   /** Running version, usually valued by pipelines */
   version: VERSION,
   showNotices: PARSED_SHOW_NOTICES,
-  brokerId: window.location.pathname.split('/')[2] === "auth-callback" ? '' : window.location.pathname.split('/')[2]
+  brokerId:
+    window.location.pathname.split('/')[2] === 'auth-callback'
+      ? ''
+      : window.location.pathname.split('/')[2]
 };
 
 export default config;
