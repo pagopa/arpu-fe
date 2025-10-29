@@ -1,4 +1,4 @@
-import { ServizioDinamico } from '../steps/Servizio';
+import { ServizioDinamico } from '../steps/DebtTypeSelect';
 import Easy from './easy.json';
 import Medium from './medium.json';
 import Hard from './hard.json';

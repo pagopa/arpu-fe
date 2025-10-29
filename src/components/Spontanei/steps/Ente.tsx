@@ -1,8 +1,8 @@
 import React from 'react';
 import { Autocomplete, Card, Stack, TextField, Typography } from '@mui/material';
 import utils from 'utils';
+import config from 'utils/config';
 import { useTranslation } from 'react-i18next';
-import { useParams } from 'react-router-dom';
 
 interface SelezionaEnteProps {
   setEnte: (ente: { paFullName: string; paTaxCode: string } | null) => void;
@@ -14,7 +14,7 @@ interface OrgOption {
 }
 const SelezionaEnte = (props: SelezionaEnteProps) => {
   const { t } = useTranslation();
-  const { brokerId = '1' } = useParams();
+  const { brokerId = '1' } = config;
   const { data: orgs } = utils.loaders.getOrganizationsWithSpontaneous(parseInt(brokerId, 10));
 
   const options: OrgOption[] =

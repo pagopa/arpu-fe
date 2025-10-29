@@ -3,14 +3,9 @@ import React from 'react';
 import { useTranslation } from 'react-i18next';
 import StaticFormSection from '../DinamicForm/StaticFormSection';
 import { Payment } from '../Form';
-import { Servizio, ServizioDinamico } from './Servizio';
 import { useField } from 'formik';
-interface Configura {
-  servizio: Servizio | ServizioDinamico | null;
-}
 
-const ConfiguraPagamento = (props: Configura) => {
-  const { servizio } = props;
+const DebtTypeConfig = () => {
   const { t } = useTranslation();
   const [payee, payeeMeta] = useField<Payment['payee']>('payee');
   const [payeeId, payeeIdMeta] = useField<Payment['payeeId']>('payeeId');
@@ -51,7 +46,6 @@ const ConfiguraPagamento = (props: Configura) => {
             {...amount}
             error={amountMeta.touched && Boolean(amountMeta.error)}
             helperText={amountMeta.touched && amountMeta.error}
-            disabled={servizio === 'Rinnovo Licenza Caccia'}
           />
           <TextField
             label="Causale"
@@ -69,4 +63,4 @@ const ConfiguraPagamento = (props: Configura) => {
   );
 };
 
-export default ConfiguraPagamento;
+export default DebtTypeConfig;

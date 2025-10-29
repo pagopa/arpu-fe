@@ -1,7 +1,7 @@
 import { Card, Stack, Typography } from '@mui/material';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import { ServizioDinamico } from './Servizio';
+import { ServizioDinamico } from './DebtTypeSelect';
 import mockServiziDinamiciForm from '../DinamicForm/mockServiziDinamici';
 import DinamicForm from '../DinamicForm';
 

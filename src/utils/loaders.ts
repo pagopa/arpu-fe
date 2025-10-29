@@ -176,6 +176,18 @@ export const getOrganizationsWithSpontaneous = (brokerId: number) =>
     }
   });
 
+export const getDebtPositionTypeOrgsWithSpontaneous = (organizationId: number) =>
+  useQuery({
+    queryKey: ['getDebtPositionTypeOrgsWithSpontaneous'],
+    queryFn: async () => {
+      const { data } =
+        await utils.arpuBeApiClient.spontaneous.getDebtPositionTypeOrgsWithSpontaneous(
+          organizationId
+        );
+      return data;
+    }
+  });
+
 export default {
   getPaymentNotices,
   getPaymentNoticeDetails,
@@ -187,5 +199,6 @@ export default {
   getUserInfoOnce,
   getOrganizations,
   generateNotice,
-  getOrganizationsWithSpontaneous
+  getOrganizationsWithSpontaneous,
+  getDebtPositionTypeOrgsWithSpontaneous
 };

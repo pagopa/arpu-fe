@@ -32,6 +32,7 @@ const ENTITIES_LOGO_CDN_schema = z.string().url();
 const LOGIN_URL_schema = z.string().url();
 const VERSION_schema = z.string();
 const SHOW_NOTICES_schema = z.enum(['0', '1']);
+
 try {
   ENV_Schema.parse(process.env.ENV);
   APIHOST_schema.parse(process.env.APIHOST);
@@ -62,6 +63,7 @@ type Config = {
   tokenHeaderExcludePaths: string[];
   version: string;
   showNotices: boolean;
+  brokerId: string;
 };
 
 const assistanceLink: string = 'nomeprodotto@assistenza.pagopa.it';
@@ -103,7 +105,11 @@ const config: Config = {
   tokenHeaderExcludePaths: ['/token/oneidentity'],
   /** Running version, usually valued by pipelines */
   version: VERSION,
-  showNotices: PARSED_SHOW_NOTICES
+  showNotices: PARSED_SHOW_NOTICES,
+  brokerId:
+    window.location.pathname.split('/')[2] === 'auth-callback'
+      ? ''
+      : window.location.pathname.split('/')[2]
 };
 
 export default config;
