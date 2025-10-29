@@ -10,7 +10,7 @@ import { AxiosResponse } from 'axios';
 // importing schemas from utils
 // causes an import resolution issue
 import * as schemas from '../../generated/zod-schema';
-import { organizationsWithSpontaneousDTOSchema } from '../../generated/arpu-be/zod-schema';
+import { debtPositionTypeOrgsWithSpontaneousDTOSchema, organizationsWithSpontaneousDTOSchema } from '../../generated/arpu-be/zod-schema';
 // zodock can create mock object
 // from a zod schema
 // if a field is set as optionaal
@@ -263,6 +263,22 @@ describe('Payment Notices API', () => {
       .mockResolvedValue({ data: dataMock } as AxiosResponse);
 
     const query = renderHook(() => loaders.getOrganizationsWithSpontaneous(1), { wrapper });
+
+    await waitFor(() => {
+      expect(apiMock).toHaveBeenCalledWith(1);
+      expect(query.result.current.isSuccess).toBeTruthy();
+      expect(query.result.current.data).toEqual(dataMock);
+    });
+  });
+
+  it('getDebtPositionTypeOrgsWithSpontaneous calls API and schema parser correctly', async () => {
+    const dataMock = createMock(zod.array(debtPositionTypeOrgsWithSpontaneousDTOSchema));
+
+    const apiMock = vi
+      .spyOn(utils.arpuBeApiClient.spontaneous, 'getDebtPositionTypeOrgsWithSpontaneous')
+      .mockResolvedValue({ data: dataMock } as AxiosResponse);
+
+    const query = renderHook(() => loaders.getDebtPositionTypeOrgsWithSpontaneous(1), { wrapper });
 
     await waitFor(() => {
       expect(apiMock).toHaveBeenCalledWith(1);
