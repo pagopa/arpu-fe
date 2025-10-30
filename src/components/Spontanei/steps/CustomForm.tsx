@@ -1,14 +1,11 @@
 import { Card, Stack, Typography } from '@mui/material';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import { ServizioDinamico } from './DebtTypeSelect';
-import mockServiziDinamiciForm from '../DinamicForm/mockServiziDinamici';
 import DinamicForm from '../DinamicForm';
+import { SpontaneousFormField } from '../../../../generated/arpu-be/data-contracts';
 
-const ConfiguraPagamentoDinamico = (props: { servizio: ServizioDinamico }) => {
+const CustomForm = (props: { fields: SpontaneousFormField[]; amountFieldName?: string }) => {
   const { t } = useTranslation();
-  const { servizio } = props;
-  const form = mockServiziDinamiciForm[servizio];
 
   return (
     <Card variant="outlined">
@@ -16,14 +13,11 @@ const ConfiguraPagamentoDinamico = (props: { servizio: ServizioDinamico }) => {
         <Typography variant="h6">{t('spontanei.form.steps.step3.title')}</Typography>
         <Typography>{t('spontanei.form.steps.step3.description')}</Typography>
         <Stack direction="column" justifyContent={'space-between'} spacing={2}>
-          <DinamicForm
-            fieldBeans={form.fieldBeans}
-            campoTotaleInclusoInXSD={form.campoTotaleInclusoInXSD}
-          />
+          <DinamicForm fieldBeans={props.fields} campoTotaleInclusoInXSD={props.amountFieldName} />
         </Stack>
       </Stack>
     </Card>
   );
 };
 
-export default ConfiguraPagamentoDinamico;
+export default CustomForm;

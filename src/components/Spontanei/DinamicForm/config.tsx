@@ -1,6 +1,6 @@
 import React from 'react';
 import * as z from 'zod';
-import { FieldBean } from './mockServiziDinamici';
+import { SpontaneousFormField } from '../../../../generated/arpu-be/data-contracts';
 
 // SANDBOX
 import sand from '@nyariv/sandboxjs';
@@ -16,8 +16,9 @@ import CURRENCYLABEL from './FieldBeans/CURRENCYLABEL';
 import MULTIFIELD from './FieldBeans/MULTIFIELD';
 import NONE from './FieldBeans/NONE';
 import TAB from './FieldBeans/TAB';
+import { RenderType } from '../../../../generated/arpu-be/apiClient';
 
-export type FieldName = FieldBean['name'];
+export type FieldName = SpontaneousFormField['name'];
 
 export type FormState = Record<FieldName, string>;
 
@@ -48,7 +49,7 @@ function formatString(formatString: string, dataObject: { [key: string]: unknown
 export const buildDinamicValue = (
   stringTemplate: string,
   templateVars: object,
-  fields?: FieldBean[]
+  fields?: SpontaneousFormField[]
 ) => {
   const updatedFields: { [key: string]: unknown } = {};
 
@@ -68,7 +69,7 @@ export const buildDinamicValue = (
 export const computeValue = (code: string, scope = {}) => sandbox.compile(code)(scope).run();
 /** set the form schema for validation */
 let schemaObject = {};
-export const BuildFormSchema = (fields: Array<FieldBean>) => {
+export const BuildFormSchema = (fields: Array<SpontaneousFormField>) => {
   fields.forEach((field) => {
     if (field.subfields) BuildFormSchema(field.subfields);
     const name = field.name;
@@ -93,7 +94,7 @@ export const BuildFormSchema = (fields: Array<FieldBean>) => {
 
 /** set the form state considering the initial value */
 let intialState = {};
-export const BuildFormState = (fields: Array<FieldBean>) => {
+export const BuildFormState = (fields: Array<SpontaneousFormField>) => {
   fields.forEach(({ name, defaultValue, subfields, htmlRender }) => {
     if (subfields) BuildFormState(subfields);
     /* I fields MULTFIELD sono solo contenitori di altri fields
@@ -117,7 +118,7 @@ export const BuildFormState = (fields: Array<FieldBean>) => {
 };
 
 /** Render a single input */
-export const BuildInput = (element: FieldBean, allElements?: FieldBean[]) => {
+export const BuildInput = (element: SpontaneousFormField, allElements?: SpontaneousFormField[]) => {
   switch (element.htmlRender) {
     case 'TAB':
       return <TAB input={element} />;
@@ -142,14 +143,14 @@ export const BuildInput = (element: FieldBean, allElements?: FieldBean[]) => {
 };
 
 /** Render a group of inputs */
-export const BuildFormInputs = (elements: Array<FieldBean>, addTotaleField = false) => {
+export const BuildFormInputs = (elements: Array<SpontaneousFormField>, addTotaleField = false) => {
   const fields = elements;
 
   if (addTotaleField) {
     fields.push({
       name: 'importo',
       required: true,
-      htmlRender: 'TEXT',
+      htmlRender: RenderType.TEXT,
       htmlClass: 'center',
       htmlLabel: 'Importo',
       defaultValue: '',
@@ -175,5 +176,5 @@ export const BuildFormInputs = (elements: Array<FieldBean>, addTotaleField = fal
 };
 
 export type FieldBeanPros = {
-  input: FieldBean;
+  input: SpontaneousFormField;
 };
