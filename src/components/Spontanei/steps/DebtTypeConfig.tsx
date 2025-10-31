@@ -4,6 +4,7 @@ import utils from 'utils';
 import { useParams } from 'react-router-dom';
 import StandardForm from './StandardForm';
 import CustomForm from './CustomForm';
+import ExternalUrlForm from './ExternalUrlForm';
 
 const DebtTypeConfig = () => {
   const context = useContext<FormContextType | null>(FormContext);
@@ -33,7 +34,7 @@ const DebtTypeConfig = () => {
           />
         );
       case 'EXTERNAL_URL':
-        return 'extrernal url form type not implemented yet';
+        return <ExternalUrlForm link={data?.externalPaymentUrl || ''} />;
       default:
         return null;
     }
