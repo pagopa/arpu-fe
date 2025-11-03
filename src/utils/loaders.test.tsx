@@ -289,4 +289,22 @@ describe('Payment Notices API', () => {
       expect(query.result.current.data).toEqual(dataMock);
     });
   });
+
+  it('getDebtPositionTypeOrgsWithSpontaneousDetail calls API and schema parser correctly', async () => {
+    const dataMock = createMock(debtPositionTypeOrgsWithSpontaneousDTOSchema);
+
+    const apiMock = vi
+      .spyOn(utils.arpuBeApiClient.brokers, 'getDebtPositionTypeOrgsWithSpontaneousDetail')
+      .mockResolvedValue({ data: dataMock } as AxiosResponse);
+
+    const query = renderHook(() => loaders.getDebtPositionTypeOrgsWithSpontaneousDetail(1, 2, 3), {
+      wrapper
+    });
+
+    await waitFor(() => {
+      expect(apiMock).toHaveBeenCalledWith(1, 2, 3);
+      expect(query.result.current.isSuccess).toBeTruthy();
+      expect(query.result.current.data).toEqual(dataMock);
+    });
+  });
 });

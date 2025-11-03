@@ -20,7 +20,7 @@ const DebtTypeSelect = () => {
   const debtTypeOptions: debtTypeOptions[] =
     DebtPositionTypeOrgsWithSpontaneous?.map((debtType) => ({
       label: debtType.description,
-      value: debtType.organizationId
+      value: debtType.debtPositionTypeOrgId
     })) || [];
 
   const handleDebtTypeChange = (
@@ -30,7 +30,7 @@ const DebtTypeSelect = () => {
     if (value && typeof value !== 'string' && context) {
       const selectedDebtType =
         DebtPositionTypeOrgsWithSpontaneous?.find(
-          (debtType) => debtType.organizationId === (value as debtTypeOptions).value
+          (debtType) => debtType.debtPositionTypeOrgId === (value as debtTypeOptions).value
         ) || null;
       return context.setDebtType(selectedDebtType);
     }

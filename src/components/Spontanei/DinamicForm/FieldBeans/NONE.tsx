@@ -16,7 +16,16 @@ const NONE = (props: FieldBeanPros & { allFields: FieldBean[] }) => {
     ? buildDinamicValue(hasJoinTemplate, values, allFields)
     : field.value;
 
-  return <TextField label={htmlLabel} variant="outlined" disabled value={value} name={name} />;
+  return (
+    <TextField
+      label={htmlLabel}
+      variant="outlined"
+      disabled
+      value={value}
+      name={name}
+      sx={{ display: 'none' }}
+    />
+  );
 };
 
 export default NONE;
