@@ -1,23 +1,24 @@
 import React, { useEffect, useRef } from 'react';
 import { Button, Container, Stack, Typography } from '@mui/material';
 import { ArrowBack } from '@mui/icons-material';
+
+
 import Steps from './steps';
 import FormContext from './FormContext';
 import OrgSelect from './steps/Org';
 import DebtTypeSelect from './steps/DebtTypeSelect';
 import DebtTypeConfig from './steps/DebtTypeConfig';
-import Riepilogo from './steps/Riepilogo';
+import Summary from './steps/Summary';
 
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import * as z from 'zod';
-import { PaymentNoticeDetailsDTO } from '../../../generated/apiClient';
 import { useUserEmail } from 'hooks/useUserEmail';
 import { useUserInfo } from 'hooks/useUserInfo';
 import { Formik, useFormik } from 'formik';
-import utils from 'utils';
 import {
   DebtPositionTypeOrgsWithSpontaneousDTO,
+  FormTypeEnum,
   OrganizationsWithSpontaneousDTO
 } from '../../../generated/arpu-be/data-contracts';
 
@@ -35,13 +36,25 @@ export type Payment = {
   payerEmail: string;
 };
 
+export type PaymentNoticeInfo = {
+  name: string;
+  surname: string;
+  fiscalCode: string;
+  amount: number;
+  description: string;
+}
+
 const Spontanei = () => {
-  const [step, setStep] = React.useState(0);
+  // Step state
+  const [step, setStep] = React.useState(1);
+  // Step 1: selected organization
   const [org, setOrg] = React.useState<OrganizationsWithSpontaneousDTO | null>(null);
+  // Step 2: selected debt type
   const [debtType, setDebtType] = React.useState<DebtPositionTypeOrgsWithSpontaneousDTO | null>(
     null
   );
-  const [spontaneo, setSpontaneo] = React.useState<PaymentNoticeDetailsDTO | null>(null);
+  // Step 3: payment notice
+  const [paymentNoticeInfo, setPaymentNoticeInfo] = React.useState<PaymentNoticeInfo | null>(null);
 
   const { t } = useTranslation();
   const navigate = useNavigate();
@@ -86,22 +99,10 @@ const Spontanei = () => {
     payerEmail: z.string().email('Email non valida')
   });
 
-  const onContinue = async () => {
-    if (step === 2 && formikRef.current?.values) {
-      const { amount, payee, payeeId, causale } = formikRef.current.values;
-      const { data } = await utils.loaders.generateNotice({
-        paFullName: org?.orgName || '',
-        paTaxCode: `${org?.organizationId}` || '',
-        amount: amount * 100,
-        description: `${payee}#${payeeId}#${causale}`
-      });
-      setSpontaneo(data);
-    }
-    setStep(step + 1);
-  };
+  const onContinue = () => setStep(step + 1);
 
   const onBack = () => {
-    if (step === 0) return navigate(-1);
+    if (step === 1) return navigate(-1);
     setStep(step - 1);
   };
 
@@ -126,19 +127,19 @@ const Spontanei = () => {
         onSubmit={console.log}
         validate={validate}
         innerRef={formikRef}>
-        <FormContext.Provider value={{ org, setOrg, debtType, setDebtType }}>
+        <FormContext.Provider value={{ org, setOrg, debtType, setDebtType, paymentNoticeInfo, setPaymentNoticeInfo }}>
           <Stack>
             <Typography variant="h6" mb={1}>
-              {t('spontanei.form.title')}
+              { step !== 4 ? t('spontanei.form.title') : t('spontanei.form.summaryTitle')}
             </Typography>
-            <Typography>{t('spontanei.form.description')}</Typography>
+            <Typography>{ step !== 4 ? t('spontanei.form.description') : t('spontanei.form.summaryDescription')}</Typography>
             <Stack spacing={4} mt={4}>
-              <Steps activeStep={step} />
-              {step === 0 && <OrgSelect />}
-              {step === 1 && <DebtTypeSelect />}
-              {step === 2 && <DebtTypeConfig />}
-              {step === 3 && spontaneo && <Riepilogo spontaneo={spontaneo} />}
-              {step !== 3 && (
+              <Steps activeStep={step-1} />
+              {step === 1 && <OrgSelect />}
+              {step === 2 && <DebtTypeSelect />}
+              {step === 3 && <DebtTypeConfig />}
+              {step === 4 && <Summary />}
+              {step !== 5 && (
                 <Stack direction="row" justifyContent={'space-between'}>
                   <Button
                     size="large"

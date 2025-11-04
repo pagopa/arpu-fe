@@ -1,4 +1,4 @@
-import React, { useContext } from 'react';
+import React, { useContext, useEffect } from 'react';
 import FormContext, { FormContextType } from '../FormContext';
 import utils from 'utils';
 import { useParams } from 'react-router-dom';
@@ -44,3 +44,5 @@ const DebtTypeConfig = () => {
 };
 
 export default DebtTypeConfig;
+
+

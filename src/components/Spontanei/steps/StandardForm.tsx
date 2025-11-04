@@ -1,10 +1,12 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import { Card, Stack, TextField, Typography } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import StaticFormSection from '../DinamicForm/StaticFormSection';
 import { Payment } from '../Form';
 import { useField } from 'formik';
 import { useEffect } from 'react';
+import utils from 'utils';
+import FormContext, { FormContextType } from '../FormContext';
 
 const StandardForm = (props: { fixedAmount?: number }) => {
   const { t } = useTranslation();
@@ -12,14 +14,26 @@ const StandardForm = (props: { fixedAmount?: number }) => {
   const [payeeId, payeeIdMeta] = useField<Payment['payeeId']>('payeeId');
   const [amount, amountMeta, amountHelpers] = useField<Payment['amount']>('amount');
   const [causale, causaleMeta] = useField<Payment['causale']>('causale');
+  const context = useContext<FormContextType | null>(FormContext);
 
   useEffect(() => {
     if (props.fixedAmount !== undefined) {
-      amountHelpers.setValue(props.fixedAmount / 100);
+      amountHelpers.setValue(props.fixedAmount);
     } else {
       amountHelpers.setValue(0);
     }
   }, [props.fixedAmount]);
+
+  useEffect(() => {
+      context?.setPaymentNoticeInfo({
+        ...context.paymentNoticeInfo!,
+        amount: amount.value,
+        description: causale.value,
+        name: payee.value,
+        surname: '',
+        fiscalCode: payeeId.value,
+      });
+  }, [causale.value, amount.value, payee.value, payeeId.value]);
 
   return (
     <Card variant="outlined">
@@ -50,10 +64,10 @@ const StandardForm = (props: { fixedAmount?: number }) => {
           <TextField
             label="Importo (€)"
             variant="outlined"
-            type="number"
             required
             disabled={props.fixedAmount !== undefined}
             {...amount}
+            value={utils.converters.toEuro(amount.value)}
             error={amountMeta.touched && Boolean(amountMeta.error)}
             helperText={amountMeta.touched && amountMeta.error}
           />
