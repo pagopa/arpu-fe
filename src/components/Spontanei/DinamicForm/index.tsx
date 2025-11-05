@@ -12,14 +12,13 @@ import { PaymentNoticeInfo } from '../Form';
 type DinamicFormProps = FormServizioDimaico;
 
 const DinamicForm = ({ fieldBeans, campoTotaleInclusoInXSD }: DinamicFormProps) => {
-    const [, , amountHelpers] = useField<PaymentNoticeInfo['amount']>('amount');
-    const [, , descriptionHelpers] = useField<PaymentNoticeInfo['description']>('description');
+  const [, , amountHelpers] = useField<PaymentNoticeInfo['amount']>('amount');
+  const [, , descriptionHelpers] = useField<PaymentNoticeInfo['description']>('description');
 
   const hasCustomImportField =
     fieldBeans.some((field) => field.name === 'importo') || Boolean(campoTotaleInclusoInXSD);
   const fields = BuildFormInputs(fieldBeans, !hasCustomImportField);
   const schema = BuildFormSchema(fieldBeans);
-
 
   const validate = (values) => {
     // causale update
