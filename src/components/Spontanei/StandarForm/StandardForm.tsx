@@ -1,8 +1,8 @@
-import React from 'react';
+import React, { useRef } from 'react';
 import { Card, Stack, TextField, Typography } from '@mui/material';
 import { useTranslation } from 'react-i18next';
-import StaticFormSection from '../DebtorSection';
-import { Formik, useField } from 'formik';
+import DebtorSection from '../DebtorSection';
+import { Formik, useField, useFormik, useFormikContext } from 'formik';
 import { useEffect } from 'react';
 import utils from 'utils';
 import { PaymentNoticeInfo } from '..';
@@ -14,11 +14,22 @@ const initialValues = {
   payeeDescription: ''
 };
 
+function isEmpty(obj) {
+  for (const prop in obj) {
+    if (Object.hasOwn(obj, prop)) {
+      return false;
+    }
+  }
+
+  return true;
+}
+
 const StandardForm = (props: { fixedAmount?: number }) => {
   const { t } = useTranslation();
+  const { validateForm, submitForm } = useFormikContext();
   const [amount, amountMeta, amountHelpers] = useField<PaymentNoticeInfo['amount']>('amount');
   const [, , descriptionHelpers] = useField<PaymentNoticeInfo['description']>('description');
-  const [hasError, setHasError] = React.useState(true);
+  const formikRef = useRef<ReturnType<typeof useFormik<typeof initialValues>>>(null);
 
   useEffect(() => {
     if (props.fixedAmount !== undefined) {
@@ -33,28 +44,33 @@ const StandardForm = (props: { fixedAmount?: number }) => {
       `${values.payeeFullName}#${values.payeeFiscalCode}#${values.payeeDescription}`
     );
     const errors: Partial<typeof initialValues> = {};
-    setHasError(false);
     if (!values.payeeFullName) {
       errors.payeeFullName = t('spontanei.form.validation.required');
-      setHasError(true);
     }
     if (!values.payeeFiscalCode) {
       errors.payeeFiscalCode = t('spontanei.form.validation.required');
-      setHasError(true);
     }
     if (!values.payeeDescription) {
       errors.payeeDescription = t('spontanei.form.validation.required');
-      setHasError(true);
     }
     return errors;
   };
 
-  const shouldContinue = () => !hasError;
+  const shouldContinue = async () => {
+    await submitForm();
+    const globalFormErrors = await validateForm();
+    const localFormErrors = await formikRef.current?.validateForm();
+    return isEmpty(globalFormErrors || {}) && isEmpty(localFormErrors || {});
+  };
 
   return (
     <>
-      <Formik initialValues={initialValues} validate={validate} onSubmit={console.log}>
-        {({ values, errors, touched, handleChange, handleBlur }) => (
+      <Formik
+        initialValues={initialValues}
+        validate={validate}
+        onSubmit={console.log}
+        innerRef={formikRef}>
+        {({ values, errors, touched, handleChange, handleBlur, submitForm }) => (
           <Card variant="outlined">
             <Stack spacing={2} padding={4}>
               <Typography variant="h6">{t('spontanei.form.steps.step3.title')}</Typography>
@@ -117,7 +133,7 @@ const StandardForm = (props: { fixedAmount?: number }) => {
       </Formik>
       <Card variant="outlined">
         <Stack spacing={2} padding={4}>
-          <StaticFormSection />
+          <DebtorSection />
         </Stack>
       </Card>
       <Controls shouldContinue={shouldContinue} />

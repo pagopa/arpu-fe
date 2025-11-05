@@ -11,7 +11,7 @@ import { PaymentNoticeInfo } from '..';
 
 type DinamicFormProps = FormServizioDimaico;
 
-const DinamicForm = ({ fieldBeans, campoTotaleInclusoInXSD, setHasError }: DinamicFormProps) => {
+const DinamicForm = ({ fieldBeans, campoTotaleInclusoInXSD, formikRef }: DinamicFormProps) => {
   const [, , amountHelpers] = useField<PaymentNoticeInfo['amount']>('amount');
   const [, , descriptionHelpers] = useField<PaymentNoticeInfo['description']>('description');
 
@@ -21,7 +21,6 @@ const DinamicForm = ({ fieldBeans, campoTotaleInclusoInXSD, setHasError }: Dinam
   const schema = BuildFormSchema(fieldBeans);
 
   const validate = (values) => {
-    setHasError(false);
     // causale update
     const { sys_type } = values;
     descriptionHelpers.setValue(sys_type);
@@ -40,7 +39,6 @@ const DinamicForm = ({ fieldBeans, campoTotaleInclusoInXSD, setHasError }: Dinam
     const errors = {};
     const result = schema.safeParse(values);
     if (!result.success) {
-      setHasError(true);
       result.error.issues.forEach((issue) => (errors[issue.path[0]] = issue.message));
     }
     return errors;
@@ -50,6 +48,7 @@ const DinamicForm = ({ fieldBeans, campoTotaleInclusoInXSD, setHasError }: Dinam
     <>
       <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale="it">
         <Formik
+          innerRef={formikRef}
           onSubmit={console.log}
           initialValues={BuildFormState(fieldBeans)}
           validate={validate}>

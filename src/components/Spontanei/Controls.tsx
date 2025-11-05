@@ -4,7 +4,7 @@ import { Button, Stack } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import FormContext, { FormContextType } from './FormContext';
 
-const Controls = (props: { shouldContinue: () => boolean }) => {
+const Controls = (props: { shouldContinue: () => Promise<boolean> }) => {
   const { t } = useTranslation();
   const context = useContext<FormContextType | null>(FormContext);
   const step = context?.step || 0;
@@ -13,8 +13,11 @@ const Controls = (props: { shouldContinue: () => boolean }) => {
     context?.setStep(step - 1);
   };
 
-  const onContinue = () => {
-    props.shouldContinue() && context?.setStep(step + 1);
+  const onContinue = async () => {
+    const canContinue = await props.shouldContinue();
+    if (canContinue) {
+      context?.setStep(step + 1);
+    } 
   };
 
   return (

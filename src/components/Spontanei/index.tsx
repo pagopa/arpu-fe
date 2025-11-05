@@ -58,25 +58,27 @@ const Spontanei = () => {
     description: ''
   };
 
-  const paymentSchema = z.object({
-    causale: z.string().min(2, 'Causale troppo corta').max(50, 'Causale troppo corta'),
+  const PaymentNoticeInfoSchema = z.object({
+    description: z.string().min(1, 'Causale troppo corta'),
     amount: z.number().min(1, 'Importo non valido'),
-    payee: z.string().min(1, 'campo obbligatorio'),
-    payeeId: z
+    fullName: z.string().min(1, 'campo obbligatorio'),
+    fiscalCode: z
       .string()
       .regex(
         /(^[A-Za-z]{6}[0-9]{2}[A-Za-z]{1}[0-9]{2}[A-Za-z]{1}[0-9]{3}[A-Za-z]{1}$)|(^[0-9]{11}$)/,
         'Codice Fiscale o Partita IVA errato'
       ),
-    payer: z.string().min(1, 'campo obbligatorio'),
-    payerId: z
-      .string()
-      .regex(
-        /(^[A-Za-z]{6}[0-9]{2}[A-Za-z]{1}[0-9]{2}[A-Za-z]{1}[0-9]{3}[A-Za-z]{1}$)|(^[0-9]{11}$)/,
-        'Codice Fiscale o Partita IVA errato'
-      ),
-    payerEmail: z.string().email('Email non valida')
+    email: z.string().email('Email non valida')
   });
+
+  const validate = (values: PaymentNoticeInfo) => {
+    const errors: Partial<PaymentNoticeInfo> = {};
+    const result = PaymentNoticeInfoSchema.safeParse(values);
+    if (!result.success) {
+      result.error.issues.forEach((issue) => (errors[issue.path[0]] = issue.message));
+    }
+    return errors;
+  };
 
   useEffect(() => {
     if (step == 1) formikRef.current?.resetForm();
@@ -84,7 +86,7 @@ const Spontanei = () => {
 
   return (
     <Container>
-      <Formik initialValues={defaultPaymentNoticeInfo} onSubmit={console.log}>
+      <Formik initialValues={defaultPaymentNoticeInfo} validate={validate} onSubmit={console.log}>
         <FormContext.Provider value={{ org, setOrg, debtType, setDebtType, step, setStep }}>
           <Stack>
             <Typography variant="h6" mb={1}>

@@ -1,14 +1,35 @@
 import { Card, Stack, Typography } from '@mui/material';
-import React from 'react';
+import React, { useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import DinamicForm from '../DinamicForm';
 import { SpontaneousFormField } from '../../../../generated/arpu-be/data-contracts';
 import StaticFormSection from '../DebtorSection';
 import Controls from '../Controls';
+import { useFormikContext } from 'formik';
+
+
+function isEmpty(obj) {
+  for (const prop in obj) {
+    if (Object.hasOwn(obj, prop)) {
+      return false;
+    }
+  }
+
+  return true;
+}
 
 const CustomForm = (props: { fields: SpontaneousFormField[]; amountFieldName?: string }) => {
   const { t } = useTranslation();
-  const [hasError, setHasError] = React.useState(false);
+  const { validateForm, submitForm } = useFormikContext();
+  const formikRef = useRef(null);
+  
+  const shouldContinue = async () => {
+    await submitForm();
+    const globalFormErrors = await validateForm();
+    await formikRef.current?.submitForm();
+    const localFormErrors = await formikRef.current?.validateForm();
+    return isEmpty(globalFormErrors || {}) && isEmpty(localFormErrors || {});
+  };
 
   return (
     <>
@@ -20,13 +41,13 @@ const CustomForm = (props: { fields: SpontaneousFormField[]; amountFieldName?: s
             <DinamicForm
               fieldBeans={props.fields}
               campoTotaleInclusoInXSD={props.amountFieldName}
-              setHasError={setHasError}
+              formikRef={formikRef}
             />
             <StaticFormSection />
           </Stack>
         </Stack>
       </Card>
-      <Controls shouldContinue={() => !hasError} />
+      <Controls shouldContinue={shouldContinue} />
     </>
   );
 };
