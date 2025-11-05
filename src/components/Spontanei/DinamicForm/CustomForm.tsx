@@ -7,7 +7,6 @@ import StaticFormSection from '../DebtorSection';
 import Controls from '../Controls';
 import { useFormikContext } from 'formik';
 
-
 function isEmpty(obj) {
   for (const prop in obj) {
     if (Object.hasOwn(obj, prop)) {
@@ -22,7 +21,7 @@ const CustomForm = (props: { fields: SpontaneousFormField[]; amountFieldName?: s
   const { t } = useTranslation();
   const { validateForm, submitForm } = useFormikContext();
   const formikRef = useRef(null);
-  
+
   const shouldContinue = async () => {
     await submitForm();
     const globalFormErrors = await validateForm();

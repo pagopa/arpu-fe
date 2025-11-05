@@ -3,5 +3,5 @@ import { SpontaneousFormField } from '../../../../generated/arpu-be/data-contrac
 export type FormServizioDimaico = {
   fieldBeans: SpontaneousFormField[];
   campoTotaleInclusoInXSD?: string;
-  formikRef?: React.Ref<any>;
+  formikRef?: React.Ref<unknown>;
 };

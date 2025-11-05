@@ -70,7 +70,7 @@ const StandardForm = (props: { fixedAmount?: number }) => {
         validate={validate}
         onSubmit={console.log}
         innerRef={formikRef}>
-        {({ values, errors, touched, handleChange, handleBlur, submitForm }) => (
+        {({ values, errors, touched, handleChange, handleBlur }) => (
           <Card variant="outlined">
             <Stack spacing={2} padding={4}>
               <Typography variant="h6">{t('spontanei.form.steps.step3.title')}</Typography>

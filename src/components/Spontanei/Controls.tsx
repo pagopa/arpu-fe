@@ -17,7 +17,7 @@ const Controls = (props: { shouldContinue: () => Promise<boolean> }) => {
     const canContinue = await props.shouldContinue();
     if (canContinue) {
       context?.setStep(step + 1);
-    } 
+    }
   };
 
   return (
