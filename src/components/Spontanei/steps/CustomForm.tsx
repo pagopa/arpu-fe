@@ -3,6 +3,7 @@ import React from 'react';
 import { useTranslation } from 'react-i18next';
 import DinamicForm from '../DinamicForm';
 import { SpontaneousFormField } from '../../../../generated/arpu-be/data-contracts';
+import StaticFormSection from '../StaticFormSection';
 
 const CustomForm = (props: { fields: SpontaneousFormField[]; amountFieldName?: string }) => {
   const { t } = useTranslation();
@@ -14,6 +15,7 @@ const CustomForm = (props: { fields: SpontaneousFormField[]; amountFieldName?: s
         <Typography>{t('spontanei.form.steps.step3.description')}</Typography>
         <Stack direction="column" justifyContent={'space-between'} spacing={2}>
           <DinamicForm fieldBeans={props.fields} campoTotaleInclusoInXSD={props.amountFieldName} />
+          <StaticFormSection />
         </Stack>
       </Stack>
     </Card>

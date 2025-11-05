@@ -2,7 +2,6 @@ import React, { useEffect, useRef } from 'react';
 import { Button, Container, Stack, Typography } from '@mui/material';
 import { ArrowBack } from '@mui/icons-material';
 
-
 import Steps from './steps';
 import FormContext from './FormContext';
 import OrgSelect from './steps/Org';
@@ -18,31 +17,18 @@ import { useUserInfo } from 'hooks/useUserInfo';
 import { Formik, useFormik } from 'formik';
 import {
   DebtPositionTypeOrgsWithSpontaneousDTO,
-  FormTypeEnum,
-  OrganizationsWithSpontaneousDTO
+  OrganizationsWithSpontaneousDTO,
+  PersonEntityType
 } from '../../../generated/arpu-be/data-contracts';
 
-export type Payment = {
-  causale: string;
-  amount: number;
-  payee: string;
-  payeeId: string;
-  /** PERSONA FISICA - PERSONA GIURIDICA */
-  type: 'PF' | 'PG';
-  /** NOME E COGNOME - RAGIONE SOCIALE */
-  payer: string;
-  /** CODICE FISCALE - PARTITA IVA */
-  payerId: string;
-  payerEmail: string;
-};
-
 export type PaymentNoticeInfo = {
-  name: string;
-  surname: string;
+  fullName: string;
+  entityType: PersonEntityType;
+  email?: string;
   fiscalCode: string;
   amount: number;
   description: string;
-}
+};
 
 const Spontanei = () => {
   // Step state
@@ -53,30 +39,26 @@ const Spontanei = () => {
   const [debtType, setDebtType] = React.useState<DebtPositionTypeOrgsWithSpontaneousDTO | null>(
     null
   );
-  // Step 3: payment notice
-  const [paymentNoticeInfo, setPaymentNoticeInfo] = React.useState<PaymentNoticeInfo | null>(null);
 
   const { t } = useTranslation();
   const navigate = useNavigate();
 
-  const formikRef = useRef<ReturnType<typeof useFormik<Payment>>>(null);
+  const formikRef = useRef<ReturnType<typeof useFormik<PaymentNoticeInfo>>>(null);
 
   const payerEmail = useUserEmail() || '';
   const { userInfo } = useUserInfo();
   const name = userInfo?.name || '';
   const surname = userInfo?.familyName || '';
-  const payer = `${name} ${surname}`;
-  const payerId = userInfo?.fiscalCode || '';
+  const payerFullName = `${name} ${surname}`;
+  const payerFiscalCode = userInfo?.fiscalCode || '';
 
-  const defaultPayment: Payment = {
-    causale: '',
+  const defaultPaymentNoticeInfo: PaymentNoticeInfo = {
+    fullName: payerFullName,
+    entityType: PersonEntityType.F,
+    email: payerEmail,
+    fiscalCode: payerFiscalCode,
     amount: 0,
-    payee: '',
-    payeeId: '',
-    type: 'PF',
-    payer,
-    payerId,
-    payerEmail
+    description: ''
   };
 
   const paymentSchema = z.object({
@@ -108,10 +90,9 @@ const Spontanei = () => {
 
   useEffect(() => {
     if (step == 1) formikRef.current?.resetForm();
-    formikRef.current?.setFieldValue('amount', 200);
   }, [step]);
 
-  const validate = (values: Payment) => {
+  const validate = (values: PaymentNoticeInfo) => {
     const errors = {};
     const result = paymentSchema.safeParse(values);
     if (!result.success) {
@@ -123,18 +104,22 @@ const Spontanei = () => {
   return (
     <Container>
       <Formik
-        initialValues={defaultPayment}
+        initialValues={defaultPaymentNoticeInfo}
         onSubmit={console.log}
         validate={validate}
         innerRef={formikRef}>
-        <FormContext.Provider value={{ org, setOrg, debtType, setDebtType, paymentNoticeInfo, setPaymentNoticeInfo }}>
+        <FormContext.Provider value={{ org, setOrg, debtType, setDebtType }}>
           <Stack>
             <Typography variant="h6" mb={1}>
-              { step !== 4 ? t('spontanei.form.title') : t('spontanei.form.summaryTitle')}
+              {step !== 4 ? t('spontanei.form.title') : t('spontanei.form.summaryTitle')}
             </Typography>
-            <Typography>{ step !== 4 ? t('spontanei.form.description') : t('spontanei.form.summaryDescription')}</Typography>
+            <Typography>
+              {step !== 4
+                ? t('spontanei.form.description')
+                : t('spontanei.form.summaryDescription')}
+            </Typography>
             <Stack spacing={4} mt={4}>
-              <Steps activeStep={step-1} />
+              <Steps activeStep={step - 1} />
               {step === 1 && <OrgSelect />}
               {step === 2 && <DebtTypeSelect />}
               {step === 3 && <DebtTypeConfig />}

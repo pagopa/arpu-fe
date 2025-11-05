@@ -1,20 +1,22 @@
-import React, { useContext } from 'react';
+import React from 'react';
 import { Card, Stack, TextField, Typography } from '@mui/material';
 import { useTranslation } from 'react-i18next';
-import StaticFormSection from '../DinamicForm/StaticFormSection';
-import { Payment } from '../Form';
-import { useField } from 'formik';
+import StaticFormSection from '../StaticFormSection';
+import { Formik, useField } from 'formik';
 import { useEffect } from 'react';
 import utils from 'utils';
-import FormContext, { FormContextType } from '../FormContext';
+import { PaymentNoticeInfo } from '../Form';
+
+const initialValues = {
+  payeeFiscalCode: '',
+  payeeFullName: '',
+  payeeDescription: ''
+};
 
 const StandardForm = (props: { fixedAmount?: number }) => {
   const { t } = useTranslation();
-  const [payee, payeeMeta] = useField<Payment['payee']>('payee');
-  const [payeeId, payeeIdMeta] = useField<Payment['payeeId']>('payeeId');
-  const [amount, amountMeta, amountHelpers] = useField<Payment['amount']>('amount');
-  const [causale, causaleMeta] = useField<Payment['causale']>('causale');
-  const context = useContext<FormContextType | null>(FormContext);
+  const [amount, amountMeta, amountHelpers] = useField<PaymentNoticeInfo['amount']>('amount');
+  const [, , descriptionHelpers] = useField<PaymentNoticeInfo['description']>('description');
 
   useEffect(() => {
     if (props.fixedAmount !== undefined) {
@@ -24,66 +26,93 @@ const StandardForm = (props: { fixedAmount?: number }) => {
     }
   }, [props.fixedAmount]);
 
-  useEffect(() => {
-      context?.setPaymentNoticeInfo({
-        ...context.paymentNoticeInfo!,
-        amount: amount.value,
-        description: causale.value,
-        name: payee.value,
-        surname: '',
-        fiscalCode: payeeId.value,
-      });
-  }, [causale.value, amount.value, payee.value, payeeId.value]);
+  const validate = (values: typeof initialValues) => {
+    descriptionHelpers.setValue(
+      `${values.payeeFullName}#${values.payeeFiscalCode}#${values.payeeDescription}`
+    );
+    const errors: Partial<typeof initialValues> = {};
+    if (!values.payeeFullName) {
+      errors.payeeFullName = t('spontanei.form.validation.required');
+    }
+    if (!values.payeeFiscalCode) {
+      errors.payeeFiscalCode = t('spontanei.form.validation.required');
+    }
+    if (!values.payeeDescription) {
+      errors.payeeDescription = t('spontanei.form.validation.required');
+    }
+    return errors;
+  };
 
   return (
-    <Card variant="outlined">
-      <Stack spacing={2} padding={4}>
-        <Typography variant="h6">{t('spontanei.form.steps.step3.title')}</Typography>
-        <Typography>{t('spontanei.form.steps.step3.description')}</Typography>
-        <Stack direction="row" justifyContent={'space-between'} spacing={2}>
-          <TextField
-            label="Nome Cognome / Ragione Sociale"
-            variant="outlined"
-            required
-            {...payee}
-            error={payeeMeta.touched && Boolean(payeeMeta.error)}
-            helperText={payeeMeta.touched && payeeMeta.error}
-            sx={{ width: '-webkit-fill-available' }}
-          />
-          <TextField
-            label="Codice Fiscale / Partita IVA"
-            variant="outlined"
-            required
-            {...payeeId}
-            error={payeeIdMeta.touched && Boolean(payeeIdMeta.error)}
-            helperText={payeeIdMeta.touched && payeeIdMeta.error}
-            sx={{ width: '-webkit-fill-available' }}
-          />
+    <>
+      <Formik initialValues={initialValues} validate={validate} onSubmit={console.log}>
+        {({ values, errors, touched, handleChange, handleBlur }) => (
+          <Card variant="outlined">
+            <Stack spacing={2} padding={4}>
+              <Typography variant="h6">{t('spontanei.form.steps.step3.title')}</Typography>
+              <Typography>{t('spontanei.form.steps.step3.description')}</Typography>
+              <Stack direction="row" justifyContent={'space-between'} spacing={2}>
+                <TextField
+                  label="Nome Cognome / Ragione Sociale"
+                  variant="outlined"
+                  required
+                  name="payeeFullName"
+                  value={values.payeeFullName}
+                  onChange={handleChange}
+                  onBlur={handleBlur}
+                  error={Boolean(errors.payeeFullName)}
+                  helperText={touched.payeeFullName && errors.payeeFullName}
+                  sx={{ width: '-webkit-fill-available' }}
+                />
+                <TextField
+                  label="Codice Fiscale / Partita IVA"
+                  variant="outlined"
+                  required
+                  name="payeeFiscalCode"
+                  value={values.payeeFiscalCode}
+                  onChange={handleChange}
+                  onBlur={handleBlur}
+                  error={Boolean(errors.payeeFiscalCode)}
+                  helperText={touched.payeeFiscalCode && errors.payeeFiscalCode}
+                  sx={{ width: '-webkit-fill-available' }}
+                />
+              </Stack>
+              <Stack direction="row" justifyContent={'space-between'} spacing={2}>
+                <TextField
+                  label="Importo (€)"
+                  variant="outlined"
+                  required
+                  name="amount"
+                  disabled={props.fixedAmount !== undefined}
+                  value={utils.converters.toEuro(amount.value)}
+                  onChange={handleChange}
+                  onBlur={handleBlur}
+                  error={amountMeta.touched && Boolean(amountMeta.error)}
+                  helperText={amountMeta.touched && amountMeta.error}
+                />
+                <TextField
+                  label="Causale"
+                  variant="outlined"
+                  required
+                  name="payeeDescription"
+                  value={values.payeeDescription}
+                  onChange={handleChange}
+                  onBlur={handleBlur}
+                  error={Boolean(errors.payeeDescription)}
+                  helperText={touched.payeeDescription && errors.payeeDescription}
+                  sx={{ width: '-webkit-fill-available' }}
+                />
+              </Stack>
+            </Stack>
+          </Card>
+        )}
+      </Formik>
+      <Card variant="outlined">
+        <Stack spacing={2} padding={4}>
+          <StaticFormSection />
         </Stack>
-        <Stack direction="row" justifyContent={'space-between'} spacing={2}>
-          <TextField
-            label="Importo (€)"
-            variant="outlined"
-            required
-            disabled={props.fixedAmount !== undefined}
-            {...amount}
-            value={utils.converters.toEuro(amount.value)}
-            error={amountMeta.touched && Boolean(amountMeta.error)}
-            helperText={amountMeta.touched && amountMeta.error}
-          />
-          <TextField
-            label="Causale"
-            variant="outlined"
-            required
-            {...causale}
-            error={causaleMeta.touched && Boolean(causaleMeta.error)}
-            helperText={causaleMeta.touched && causaleMeta.error}
-            sx={{ width: '-webkit-fill-available' }}
-          />
-        </Stack>
-        <StaticFormSection />
-      </Stack>
-    </Card>
+      </Card>
+    </>
   );
 };
 

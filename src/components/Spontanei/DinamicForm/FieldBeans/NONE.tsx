@@ -24,15 +24,7 @@ const NONE = (props: FieldBeanPros & { allFields: FieldBean[] }) => {
     // });
   }, [value]);
 
-  return (
-    <TextField
-      label={htmlLabel}
-      variant="outlined"
-      disabled
-      value={value}
-      name={name}
-    />
-  );
+  return <TextField label={htmlLabel} variant="outlined" disabled value={value} name={name} />;
 };
 
 export default NONE;
