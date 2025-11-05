@@ -1,10 +1,10 @@
 import React from 'react';
 import { Stack, TextField, ToggleButton, ToggleButtonGroup, Typography } from '@mui/material';
 import { useField } from 'formik';
-import { PaymentNoticeInfo } from './Form';
+import { PaymentNoticeInfo } from '.';
 import { PersonEntityType } from '../../../generated/arpu-be/apiClient';
 
-const StaticFormSection = () => {
+const DebtorSection = () => {
   const [fullName, fullNameMeta] = useField<PaymentNoticeInfo['fullName']>('fullName');
   const [fiscalCode, fiscalCodeMeta] = useField<PaymentNoticeInfo['fiscalCode']>('fiscalCode');
   const [email, emailMeta] = useField<PaymentNoticeInfo['email']>('email');
@@ -62,4 +62,4 @@ const StaticFormSection = () => {
   );
 };
 
-export default StaticFormSection;
+export default DebtorSection;

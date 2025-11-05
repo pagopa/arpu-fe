@@ -7,11 +7,11 @@ import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers';
 
 import 'dayjs/locale/it';
-import { PaymentNoticeInfo } from '../Form';
+import { PaymentNoticeInfo } from '..';
 
 type DinamicFormProps = FormServizioDimaico;
 
-const DinamicForm = ({ fieldBeans, campoTotaleInclusoInXSD }: DinamicFormProps) => {
+const DinamicForm = ({ fieldBeans, campoTotaleInclusoInXSD, setHasError }: DinamicFormProps) => {
   const [, , amountHelpers] = useField<PaymentNoticeInfo['amount']>('amount');
   const [, , descriptionHelpers] = useField<PaymentNoticeInfo['description']>('description');
 
@@ -21,6 +21,7 @@ const DinamicForm = ({ fieldBeans, campoTotaleInclusoInXSD }: DinamicFormProps) 
   const schema = BuildFormSchema(fieldBeans);
 
   const validate = (values) => {
+    setHasError(false);
     // causale update
     const { sys_type } = values;
     descriptionHelpers.setValue(sys_type);
@@ -39,6 +40,7 @@ const DinamicForm = ({ fieldBeans, campoTotaleInclusoInXSD }: DinamicFormProps) 
     const errors = {};
     const result = schema.safeParse(values);
     if (!result.success) {
+      setHasError(true);
       result.error.issues.forEach((issue) => (errors[issue.path[0]] = issue.message));
     }
     return errors;

@@ -4,7 +4,8 @@ import { useTranslation } from 'react-i18next';
 import FormContext, { FormContextType } from '../FormContext';
 import utils from 'utils';
 import { useField } from 'formik';
-import { PaymentNoticeInfo } from '../Form';
+import { PaymentNoticeInfo } from '..';
+import Controls from '../Controls';
 
 const SummaryStructure = (props: { title: string; children: React.ReactNode }) => (
   <Card sx={{ marginBottom: 2 }}>
@@ -53,12 +54,15 @@ const PaymentSummary = () => {
   const [description] = useField<PaymentNoticeInfo['description']>('description');
   const [fiscalCode] = useField<PaymentNoticeInfo['fiscalCode']>('fiscalCode');
   return (
-    <SummaryStructure title={t('Dati del pagamento')}>
-      <SummaryItem label="Nome" value={fullName.value} />
-      <SummaryItem label="Codice Fiscale" value={fiscalCode.value} />
-      <SummaryItem label="Oggetto del pagamento" value={description.value} />
-      <SummaryItem label="Importo" value={utils.converters.toEuro(amount.value)} />
-    </SummaryStructure>
+    <>
+      <SummaryStructure title={t('Dati del pagamento')}>
+        <SummaryItem label="Nome" value={fullName.value} />
+        <SummaryItem label="Codice Fiscale" value={fiscalCode.value} />
+        <SummaryItem label="Oggetto del pagamento" value={description.value} />
+        <SummaryItem label="Importo" value={utils.converters.toEuro(amount.value)} />
+      </SummaryStructure>
+      <Controls shouldContinue={() => false} />
+    </>
   );
 };
 

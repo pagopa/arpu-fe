@@ -1,11 +1,12 @@
 import React from 'react';
 import { Card, Stack, TextField, Typography } from '@mui/material';
 import { useTranslation } from 'react-i18next';
-import StaticFormSection from '../StaticFormSection';
+import StaticFormSection from '../DebtorSection';
 import { Formik, useField } from 'formik';
 import { useEffect } from 'react';
 import utils from 'utils';
-import { PaymentNoticeInfo } from '../Form';
+import { PaymentNoticeInfo } from '..';
+import Controls from '../Controls';
 
 const initialValues = {
   payeeFiscalCode: '',
@@ -17,6 +18,7 @@ const StandardForm = (props: { fixedAmount?: number }) => {
   const { t } = useTranslation();
   const [amount, amountMeta, amountHelpers] = useField<PaymentNoticeInfo['amount']>('amount');
   const [, , descriptionHelpers] = useField<PaymentNoticeInfo['description']>('description');
+  const [hasError, setHasError] = React.useState(true);
 
   useEffect(() => {
     if (props.fixedAmount !== undefined) {
@@ -31,17 +33,23 @@ const StandardForm = (props: { fixedAmount?: number }) => {
       `${values.payeeFullName}#${values.payeeFiscalCode}#${values.payeeDescription}`
     );
     const errors: Partial<typeof initialValues> = {};
+    setHasError(false);
     if (!values.payeeFullName) {
       errors.payeeFullName = t('spontanei.form.validation.required');
+      setHasError(true);
     }
     if (!values.payeeFiscalCode) {
       errors.payeeFiscalCode = t('spontanei.form.validation.required');
+      setHasError(true);
     }
     if (!values.payeeDescription) {
       errors.payeeDescription = t('spontanei.form.validation.required');
+      setHasError(true);
     }
     return errors;
   };
+
+  const shouldContinue = () => !hasError;
 
   return (
     <>
@@ -112,6 +120,7 @@ const StandardForm = (props: { fixedAmount?: number }) => {
           <StaticFormSection />
         </Stack>
       </Card>
+      <Controls shouldContinue={shouldContinue} />
     </>
   );
 };

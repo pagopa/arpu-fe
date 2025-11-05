@@ -1,16 +1,14 @@
 import React, { useEffect, useRef } from 'react';
-import { Button, Container, Stack, Typography } from '@mui/material';
-import { ArrowBack } from '@mui/icons-material';
+import { Container, Stack, Typography } from '@mui/material';
 
 import Steps from './steps';
 import FormContext from './FormContext';
-import OrgSelect from './steps/Org';
+import OrgSelect from './steps/OrgSelect';
 import DebtTypeSelect from './steps/DebtTypeSelect';
 import DebtTypeConfig from './steps/DebtTypeConfig';
 import Summary from './steps/Summary';
 
 import { useTranslation } from 'react-i18next';
-import { useNavigate } from 'react-router-dom';
 import * as z from 'zod';
 import { useUserEmail } from 'hooks/useUserEmail';
 import { useUserInfo } from 'hooks/useUserInfo';
@@ -41,7 +39,6 @@ const Spontanei = () => {
   );
 
   const { t } = useTranslation();
-  const navigate = useNavigate();
 
   const formikRef = useRef<ReturnType<typeof useFormik<PaymentNoticeInfo>>>(null);
 
@@ -81,34 +78,14 @@ const Spontanei = () => {
     payerEmail: z.string().email('Email non valida')
   });
 
-  const onContinue = () => setStep(step + 1);
-
-  const onBack = () => {
-    if (step === 1) return navigate(-1);
-    setStep(step - 1);
-  };
-
   useEffect(() => {
     if (step == 1) formikRef.current?.resetForm();
   }, [step]);
 
-  const validate = (values: PaymentNoticeInfo) => {
-    const errors = {};
-    const result = paymentSchema.safeParse(values);
-    if (!result.success) {
-      result.error.issues.forEach((issue) => (errors[issue.path[0]] = issue.message));
-    }
-    return errors;
-  };
-
   return (
     <Container>
-      <Formik
-        initialValues={defaultPaymentNoticeInfo}
-        onSubmit={console.log}
-        validate={validate}
-        innerRef={formikRef}>
-        <FormContext.Provider value={{ org, setOrg, debtType, setDebtType }}>
+      <Formik initialValues={defaultPaymentNoticeInfo} onSubmit={console.log}>
+        <FormContext.Provider value={{ org, setOrg, debtType, setDebtType, step, setStep }}>
           <Stack>
             <Typography variant="h6" mb={1}>
               {step !== 4 ? t('spontanei.form.title') : t('spontanei.form.summaryTitle')}
@@ -124,20 +101,6 @@ const Spontanei = () => {
               {step === 2 && <DebtTypeSelect />}
               {step === 3 && <DebtTypeConfig />}
               {step === 4 && <Summary />}
-              {step !== 5 && (
-                <Stack direction="row" justifyContent={'space-between'}>
-                  <Button
-                    size="large"
-                    variant="outlined"
-                    onClick={onBack}
-                    startIcon={<ArrowBack />}>
-                    {step === 0 ? t('spontanei.form.abort') : t('spontanei.form.back')}
-                  </Button>
-                  <Button size="large" variant="contained" onClick={onContinue}>
-                    {t('spontanei.form.continue')}
-                  </Button>
-                </Stack>
-              )}
             </Stack>
           </Stack>
         </FormContext.Provider>
