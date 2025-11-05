@@ -5,6 +5,8 @@ import {
 } from '../../../generated/arpu-be/data-contracts';
 
 export type FormContextType = {
+  step: number;
+  setStep: React.Dispatch<React.SetStateAction<number>>;
   org: OrganizationsWithSpontaneousDTO | null;
   setOrg: React.Dispatch<React.SetStateAction<OrganizationsWithSpontaneousDTO | null>>;
   debtType: DebtPositionTypeOrgsWithSpontaneousDTO | null;

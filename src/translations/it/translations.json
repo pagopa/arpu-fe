@@ -327,8 +327,10 @@
   },
   "spontanei": {
     "form": {
-      "title": "Configura pagamento spontaneo",
+      "title": "Effettua un pagamento spontaneo",
       "description": "Compila i campi richiesti e procedi col pagamento.",
+      "summaryTitle": "Riepilogo",
+      "summaryDescription": "Rivedi qui i dati inseriti per effettuare il tuo pagamento spontaneo.",
       "steps": {
         "step1": {
           "step": "Seleziona l’ente",
@@ -350,7 +352,12 @@
         "step4": {
           "step": "Riepilogo",
           "title": "Riepilogo",
-          "description": "Aggiungi l'avviso nel carrello e procedi con il pagamento"
+          "description": "Aggiungi l'avviso nel carrello e procedi con il pagamento."
+        },
+        "step5": {
+          "step": "Completa il pagamento",
+          "title": "Completa il pagamento",
+          "description": "Seleziona una delle opzioni per completare il pagamento."
         }
       },
       "continue": "Continua",

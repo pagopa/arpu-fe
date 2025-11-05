@@ -2,9 +2,9 @@ import React, { useContext } from 'react';
 import FormContext, { FormContextType } from '../FormContext';
 import utils from 'utils';
 import { useParams } from 'react-router-dom';
-import StandardForm from './StandardForm';
-import CustomForm from './CustomForm';
-import ExternalUrlForm from './ExternalUrlForm';
+import StandardForm from '../StandarForm/StandardForm';
+import CustomForm from '../DinamicForm/CustomForm';
+import ExternalUrlForm from '../ExternalUrlForm/ExternalUrlForm';
 
 const DebtTypeConfig = () => {
   const context = useContext<FormContextType | null>(FormContext);

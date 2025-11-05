@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next';
 import utils from 'utils';
 import { DebtPositionTypeOrgsWithSpontaneousDTO } from '../../../../generated/arpu-be/data-contracts';
 import FormContext, { FormContextType } from '../FormContext';
+import Controls from '../Controls';
 
 interface debtTypeOptions {
   label: DebtPositionTypeOrgsWithSpontaneousDTO['description'];
@@ -37,18 +38,21 @@ const DebtTypeSelect = () => {
   };
 
   return (
-    <Card variant="outlined">
-      <Stack spacing={2} padding={4}>
-        <Typography variant="h6">{t('spontanei.form.steps.step2.title')}</Typography>
-        <Typography>{t('spontanei.form.steps.step2.description')}</Typography>
-        <Autocomplete
-          onChange={handleDebtTypeChange}
-          freeSolo
-          options={debtTypeOptions}
-          renderInput={(params) => <TextField {...params} label="Cerca per nome del servizio" />}
-        />
-      </Stack>
-    </Card>
+    <>
+      <Card variant="outlined">
+        <Stack spacing={2} padding={4}>
+          <Typography variant="h6">{t('spontanei.form.steps.step2.title')}</Typography>
+          <Typography>{t('spontanei.form.steps.step2.description')}</Typography>
+          <Autocomplete
+            onChange={handleDebtTypeChange}
+            freeSolo
+            options={debtTypeOptions}
+            renderInput={(params) => <TextField {...params} label="Cerca per nome del servizio" />}
+          />
+        </Stack>
+      </Card>
+      <Controls shouldContinue={() => context?.debtType !== null} />
+    </>
   );
 };
 

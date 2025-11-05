@@ -1,4 +1,4 @@
-import Form from '../../components/Spontanei/Form';
+import Form from '../../components/Spontanei';
 
 const Spontanei = Form;
 
