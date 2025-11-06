@@ -61,7 +61,7 @@ const PaymentSummary = () => {
         <SummaryItem label="Oggetto del pagamento" value={description.value} />
         <SummaryItem label="Importo" value={utils.converters.toEuro(amount.value)} />
       </SummaryStructure>
-      <Controls shouldContinue={() => false} />
+      <Controls shouldContinue={async () => true} />
     </>
   );
 };

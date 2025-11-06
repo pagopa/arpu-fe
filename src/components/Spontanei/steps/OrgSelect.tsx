@@ -33,7 +33,7 @@ const OrgSelect = () => {
     }
   };
 
-  const shouldContinue = () => context?.org !== null;
+  const shouldContinue = async () => context?.org !== null;
 
   return (
     <>

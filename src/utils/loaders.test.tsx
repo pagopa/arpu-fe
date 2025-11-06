@@ -11,6 +11,8 @@ import { AxiosResponse } from 'axios';
 // causes an import resolution issue
 import * as schemas from '../../generated/zod-schema';
 import {
+  debtPositionRequestDTOSchema,
+  debtPositionResponseDTOSchema,
   debtPositionTypeOrgsWithSpontaneousDTOSchema,
   organizationsWithSpontaneousDTOSchema
 } from '../../generated/arpu-be/zod-schema';
@@ -305,6 +307,25 @@ describe('Payment Notices API', () => {
       expect(apiMock).toHaveBeenCalledWith(1, 2, 3);
       expect(query.result.current.isSuccess).toBeTruthy();
       expect(query.result.current.data).toEqual(dataMock);
+    });
+  });
+
+  it('createSpontaneousDebtPosition calls API and schema parser correctly', async () => {
+    const bodyMock = createMock(debtPositionRequestDTOSchema);
+    const responseMock = createMock(debtPositionResponseDTOSchema);
+
+    const apiMock = vi
+      .spyOn(utils.arpuBeApiClient.brokers, 'createSpontaneousDebtPosition')
+      .mockResolvedValue({ data: responseMock } as AxiosResponse);
+
+    const query = renderHook(() => loaders.createSpontaneousDebtPosition(1, bodyMock), {
+      wrapper
+    });
+
+    await waitFor(() => {
+      expect(apiMock).toHaveBeenCalledWith(1, bodyMock);
+      expect(query.result.current.isSuccess).toBeTruthy();
+      expect(query.result.current.data).toEqual(responseMock);
     });
   });
 });
