@@ -310,9 +310,9 @@ describe('Payment Notices API', () => {
     });
   });
 
-    it('createSpontaneousDebtPosition calls API and schema parser correctly', async () => {
+  it('createSpontaneousDebtPosition calls API and schema parser correctly', async () => {
     const bodyMock = createMock(debtPositionRequestDTOSchema);
-    const responseMock = createMock(debtPositionResponseDTOSchema)
+    const responseMock = createMock(debtPositionResponseDTOSchema);
 
     const apiMock = vi
       .spyOn(utils.arpuBeApiClient.brokers, 'createSpontaneousDebtPosition')
