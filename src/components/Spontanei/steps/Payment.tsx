@@ -150,7 +150,7 @@ const Payment = () => {
                   {t('spontanei.form.steps.step5.download.description')}
                 </Typography>
               </Stack>
-              <Button variant="text" startIcon={<FileDownloadIcon />} >
+              <Button variant="text" startIcon={<FileDownloadIcon />}>
                 {t('spontanei.form.steps.step5.download.downloadButton')}
               </Button>
             </Stack>
