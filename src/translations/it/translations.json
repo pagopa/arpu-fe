@@ -357,7 +357,18 @@
         "step5": {
           "step": "Completa il pagamento",
           "title": "Completa il pagamento",
-          "description": "Seleziona una delle opzioni per completare il pagamento."
+          "description": "Seleziona una delle opzioni per completare il pagamento.",
+          "pay": {
+            "title": "Paga online con pagoPA",
+            "description": "Effettua il pagamento subito in modo digitale.",
+            "addItemToCartButton": "Aggiungi al carrello",
+            "payButton": "Paga ora"
+          },
+          "download": {
+            "title": "Scarica l’avviso di pagamento",
+            "description": "Potrai usarlo per pagare successivamente presso sportelli, banche, o altri punti convenzionati.",
+            "downloadButton": "Scarica l’avviso"
+          }
         }
       },
       "continue": "Continua",

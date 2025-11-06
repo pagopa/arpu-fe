@@ -18,6 +18,7 @@ import {
   OrganizationsWithSpontaneousDTO,
   PersonEntityType
 } from '../../../generated/arpu-be/data-contracts';
+import Payment from './steps/Payment';
 
 export type PaymentNoticeInfo = {
   fullName: string;
@@ -103,6 +104,7 @@ const Spontanei = () => {
               {step === 2 && <DebtTypeSelect />}
               {step === 3 && <DebtTypeConfig />}
               {step === 4 && <Summary />}
+              {step === 5 && <Payment />}
             </Stack>
           </Stack>
         </FormContext.Provider>

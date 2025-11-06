@@ -51,7 +51,7 @@ const DebtTypeSelect = () => {
           />
         </Stack>
       </Card>
-      <Controls shouldContinue={() => context?.debtType !== null} />
+      <Controls shouldContinue={async () => context?.debtType !== null} />
     </>
   );
 };

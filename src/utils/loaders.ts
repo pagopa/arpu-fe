@@ -5,7 +5,7 @@ import { ZodSchema } from 'zod';
 import * as zodSchema from '../../generated/zod-schema';
 import { Params } from 'react-router-dom';
 import converters from './converters';
-import { PaymentNoticePayloadDTO } from '../../generated/apiClient';
+import { DebtPositionRequestDTO } from '../../generated/arpu-be/data-contracts';
 
 const parseAndLog = <T>(schema: ZodSchema, data: T, throwError: boolean = true): void | never => {
   const result = schema.safeParse(data);
@@ -163,8 +163,17 @@ export const getOrganizations = () =>
     }
   });
 
-export const generateNotice = (body: PaymentNoticePayloadDTO) =>
-  utils.apiClient.paymentNotices.postGeneratePaymentNotice(body);
+export const createSpontaneousDebtPosition = (brokerId: number, body: DebtPositionRequestDTO) =>
+  useQuery({
+    queryKey: ['createSpontaneousDebtPosition'],
+    queryFn: async () => {
+      const { data } = await utils.arpuBeApiClient.brokers.createSpontaneousDebtPosition(
+        brokerId,
+        body
+      );
+      return data;
+    }
+  });
 
 export const getOrganizationsWithSpontaneous = (brokerId: number) =>
   useQuery({
@@ -216,7 +225,7 @@ export default {
   getUserInfo,
   getUserInfoOnce,
   getOrganizations,
-  generateNotice,
+  createSpontaneousDebtPosition,
   getOrganizationsWithSpontaneous,
   getDebtPositionTypeOrgsWithSpontaneous,
   getDebtPositionTypeOrgsWithSpontaneousDetail

@@ -4,7 +4,18 @@ import { Button, Stack } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import FormContext, { FormContextType } from './FormContext';
 
-const Controls = (props: { shouldContinue: () => Promise<boolean> }) => {
+type HideContinue = {
+  hideContinue: true;
+};
+
+type ShouldContinue = {
+  hideContinue?: false;
+  shouldContinue: () => Promise<boolean>;
+};
+
+type Props = HideContinue | ShouldContinue;
+
+const Controls = (props: Props) => {
   const { t } = useTranslation();
   const context = useContext<FormContextType | null>(FormContext);
   const step = context?.step || 0;
@@ -14,7 +25,7 @@ const Controls = (props: { shouldContinue: () => Promise<boolean> }) => {
   };
 
   const onContinue = async () => {
-    const canContinue = await props.shouldContinue();
+    const canContinue = await (props as ShouldContinue).shouldContinue();
     if (canContinue) {
       context?.setStep(step + 1);
     }
@@ -25,9 +36,11 @@ const Controls = (props: { shouldContinue: () => Promise<boolean> }) => {
       <Button size="large" variant="outlined" onClick={onBack} startIcon={<ArrowBack />}>
         {step === 0 ? t('spontanei.form.abort') : t('spontanei.form.back')}
       </Button>
-      <Button size="large" variant="contained" onClick={onContinue}>
-        {t('spontanei.form.continue')}
-      </Button>
+      {!props.hideContinue && (
+        <Button size="large" variant="contained" onClick={onContinue}>
+          {t('spontanei.form.continue')}
+        </Button>
+      )}
     </Stack>
   );
 };
