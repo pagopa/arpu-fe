@@ -373,20 +373,26 @@
       },
       "continue": "Continua",
       "abort": "Esci",
-      "back": "Indietro"
-    },
-    "drawer": {
-      "title": "PAGA UN AVVISO",
-      "card1": {
-        "title": "Hai ricevuto un avviso di pagamento?",
-        "description": "Sei già in possesso dei codici o di un QR Code per procedere al pagamento",
-        "cta": "Vai al pagamento"
-      },
-      "card2": {
-        "title": "Vuoi effettuare un pagamento spontaneo?",
-        "description": "Vuoi pagare la Pubblica Amministrazione perchè ti va e perchè sei un buono",
-        "cta": "Configura il pagamento"
+      "back": "Indietro",
+      "drawer": {
+        "title": "PAGA UN AVVISO",
+        "card1": {
+          "title": "Hai ricevuto un avviso di pagamento?",
+          "description": "Sei già in possesso dei codici o di un QR Code per procedere al pagamento",
+          "cta": "Vai al pagamento"
+        },
+        "card2": {
+          "title": "Vuoi effettuare un pagamento spontaneo?",
+          "description": "Vuoi pagare la Pubblica Amministrazione perchè ti va e perchè sei un buono",
+          "cta": "Configura il pagamento"
+        }
       }
+    },
+    "download": {
+      "title": "Il download dell’avviso è in corso",
+      "help": "Se non parte automaticamente, clicca <link1>qui.</link1>",
+      "info": "Scopri i canali abilitati",
+      "close": "Chiudi"
     }
   }
 }

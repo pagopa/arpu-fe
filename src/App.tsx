@@ -25,6 +25,7 @@ import loaders, { getTokenOneidentity } from 'utils/loaders';
 import { PreLoginLayout } from 'components/PreLoginLayout';
 import { ApiClient } from 'components/ApiClient';
 import Spontanei from 'routes/Spontanei';
+import Download from 'components/Spontanei/Download';
 
 const withGuard = (Component: () => React.JSX.Element) => (
   <RouteGuard itemKeys={['accessToken']} storage={window.localStorage}>
@@ -185,13 +186,28 @@ const router = createBrowserRouter([
           },
           {
             path: ArcRoutes.SPONTANEI,
-            element: <Spontanei />,
-            handle: {
-              backButton: true,
-              sidebar: {
-                visibile: false
+            children: [
+              {
+                index: true,
+                element: <Spontanei />,
+                handle: {
+                  backButton: true,
+                  sidebar: {
+                    visibile: false
+                  }
+                }
+              },
+              {
+                path: 'download',
+                element: <Download />,
+                handle: {
+                  backButton: false,
+                  sidebar: {
+                    visibile: false
+                  }
+                }
               }
-            }
+            ]
           }
         ]
       }
