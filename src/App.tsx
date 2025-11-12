@@ -198,7 +198,7 @@ const router = createBrowserRouter([
                 }
               },
               {
-                path: 'download',
+                path: 'download/:orgId/:iuv',
                 element: <Download />,
                 handle: {
                   backButton: false,

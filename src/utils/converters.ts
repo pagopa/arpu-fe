@@ -296,6 +296,11 @@ export const capitalizeFirstLetter = (str: string): string => {
     .join(' ');
 };
 
+function extractFilename(header: string): string | null {
+  const filenameMatch = /filename=["']?([^"';]+)["']?/i.exec(header);
+  return filenameMatch ? filenameMatch[1].trim() : null;
+}
+
 export default {
   normalizePaymentNotice,
   normalizePaymentNoticeDetails,
@@ -305,5 +310,6 @@ export default {
   cartItemsToCartsRequest,
   toEuro,
   withMissingValue,
-  capitalizeFirstLetter: withMissingValue(capitalizeFirstLetter)
+  capitalizeFirstLetter: withMissingValue(capitalizeFirstLetter),
+  extractFilename
 };

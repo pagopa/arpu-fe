@@ -29,7 +29,8 @@ const Payment = () => {
 
   const organizationId = context?.org?.organizationId;
   const debtPositionTypeOrgId = context?.debtType?.debtPositionTypeOrgId;
-
+  
+  const navigate = useNavigate();
   const { brokerId = '1' } = useParams();
 
   if (!organizationId || !debtPositionTypeOrgId || !brokerId) {
@@ -87,8 +88,6 @@ const Payment = () => {
     toggleCartDrawer();
   };
 
-  const navigate = useNavigate();
-
   const carts = usePostCarts({
     onSuccess: (url) => {
       window.location.replace(url);
@@ -111,6 +110,14 @@ const Payment = () => {
     };
     carts.mutate({ notices: [item], email: email.value });
   };
+
+  const goToDownloadPaymentNoticePage = () => {
+    if(!debtPositionResponse) return;
+    const { organizationId, paymentDetails } = debtPositionResponse;
+    const { iuv } = paymentDetails;
+    if(!iuv) return
+    navigate(`${ArcRoutes.SPONTANEI}/download/${organizationId}/${iuv}`);
+  }
 
   return (
     <>
@@ -150,7 +157,7 @@ const Payment = () => {
                   {t('spontanei.form.steps.step5.download.description')}
                 </Typography>
               </Stack>
-              <Button variant="text" startIcon={<FileDownloadIcon />}>
+              <Button variant="text" startIcon={<FileDownloadIcon />} onClick={goToDownloadPaymentNoticePage}>
                 {t('spontanei.form.steps.step5.download.downloadButton')}
               </Button>
             </Stack>

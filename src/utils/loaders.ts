@@ -1,4 +1,4 @@
-import { useQuery, QueryKey } from '@tanstack/react-query';
+import { useQuery, QueryKey, useMutation } from '@tanstack/react-query';
 import { STATE } from 'store/types';
 import utils from 'utils';
 import { ZodSchema } from 'zod';
@@ -215,6 +215,32 @@ export const getDebtPositionTypeOrgsWithSpontaneousDetail = (
     }
   });
 
+type GetPaymentNoticeQueryParam = {
+    /** @format int64 */
+    installmentId?: number;
+    iuv?: string;
+    iud?: string;
+  }
+
+export const getPaymentNotice = (brokerId: number, organizationId: number, query: GetPaymentNoticeQueryParam) => useMutation({
+  mutationKey: ['getPaymentNotice'],
+  mutationFn: async () => {
+
+    const response = await utils.arpuBeApiClient.brokers.getPaymentNotice(
+      brokerId,
+      organizationId,
+      query,
+      { format: 'blob' } 
+    )
+
+      const contentDisposition = response.headers['content-disposition'] || '';
+      const filename = utils.converters.extractFilename(contentDisposition);
+      return { data: response.data, filename };
+  }
+}) 
+
+
+
 export default {
   getPaymentNotices,
   getPaymentNoticeDetails,
@@ -228,5 +254,7 @@ export default {
   createSpontaneousDebtPosition,
   getOrganizationsWithSpontaneous,
   getDebtPositionTypeOrgsWithSpontaneous,
-  getDebtPositionTypeOrgsWithSpontaneousDetail
+  getDebtPositionTypeOrgsWithSpontaneousDetail,
+  getPaymentNotice
 };
+

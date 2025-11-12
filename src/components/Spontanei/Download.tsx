@@ -1,10 +1,28 @@
 import { Button, Container, Link, Stack, Typography } from '@mui/material';
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Trans, useTranslation } from 'react-i18next';
 import IllusHourGlass from './IllusHourGlass';
+import utils from 'utils';
+import { useParams} from 'react-router-dom';
 
 const Download = () => {
   const { t } = useTranslation();
+  const { orgId, iuv } = useParams();
+ 
+  const mutation = utils.loaders.getPaymentNotice(1,  parseInt(orgId || '0', 10), { iuv });
+  
+  const download = async () => {
+    try {
+      const { data, filename } = await mutation.mutateAsync();
+      utils.files.downloadBlob(data, filename || `${iuv}.pdf`)
+    } catch {
+      utils.notify.emit('qualcosa è andato storto')
+    }
+  }
+
+
+  useEffect( () => { download() }, []);
+ 
   return (
     <Container>
       <Stack alignItems="center" mt={22.5} mb={22.5} gap={4}>
@@ -15,7 +33,7 @@ const Download = () => {
             <Trans
               i18nKey={t('spontanei.download.help')}
               components={{
-                link1: <Link href="#" fontWeight={800} />
+                link1: <Link href="#" onClick={download} fontWeight={800} />
               }}
             />
           </Typography>
