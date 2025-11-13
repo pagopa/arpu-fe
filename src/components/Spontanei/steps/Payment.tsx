@@ -6,7 +6,7 @@ import { addItem, isItemInCart, toggleCartDrawer } from 'store/CartStore';
 import notify from 'utils/notify';
 import { useStore } from 'store/GlobalStore';
 import utils from 'utils';
-import { useNavigate, useParams } from 'react-router-dom';
+import { generatePath, useNavigate, useParams } from 'react-router-dom';
 import { DebtPositionRequestDTO } from '../../../../generated/arpu-be/data-contracts';
 import { useField } from 'formik';
 import { PaymentNoticeInfo } from '..';
@@ -113,10 +113,10 @@ const Payment = () => {
 
   const goToDownloadPaymentNoticePage = () => {
     if (!debtPositionResponse) return;
-    const { organizationId, paymentDetails } = debtPositionResponse;
+    const { organizationId: orgId, paymentDetails } = debtPositionResponse;
     const { iuv } = paymentDetails;
     if (!iuv) return;
-    navigate(`${ArcRoutes.SPONTANEI}/download/${organizationId}/${iuv}`);
+    navigate(generatePath(ArcRoutes.PAYMENTS_ON_THE_FLY_DOWNLOAD, { orgId, iuv }));
   };
 
   return (

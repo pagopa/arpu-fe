@@ -185,7 +185,7 @@ const router = createBrowserRouter([
             }
           },
           {
-            path: ArcRoutes.SPONTANEI,
+            path: ArcRoutes.PAYMENTS_ON_THE_FLY,
             children: [
               {
                 index: true,

@@ -3,20 +3,23 @@ const deployPath = config.deployPath;
 
 const brokerId = config.brokerId;
 
+const rootPrefix = `${deployPath}/${brokerId}`
+
 export const ArcRoutes = {
-  DASHBOARD: `${deployPath}/${brokerId}`,
-  TRANSACTION: `${deployPath}/${brokerId}/ricevute/:id`,
-  TRANSACTIONS: `${deployPath}/${brokerId}/ricevute/`,
-  PAYMENT_NOTICES: `${deployPath}/${brokerId}/avvisi/`,
-  PAYMENT_NOTICE_DETAIL: `${deployPath}/${brokerId}/avvisi/:id/:paTaxCode`,
-  USER: `${deployPath}/${brokerId}/profilo`,
-  COURTESY_PAGE: `${deployPath}/${brokerId}/errore/:error`,
-  LOGIN: `${deployPath}/${brokerId}/accesso`,
-  ASSISTANCE: `${deployPath}/${brokerId}/assistenza`,
-  AUTH_CALLBACK: `${deployPath}/auth-callback`,
-  TOS: `${deployPath}/${brokerId}/termini-di-servizio`,
-  PRIVACY_POLICY: `${deployPath}/${brokerId}/informativa-privacy`,
-  SPONTANEI: `${deployPath}/${brokerId}/spontanei`
+  DASHBOARD: rootPrefix,
+  TRANSACTION: `${rootPrefix}/ricevute/:id`,
+  TRANSACTIONS: `${rootPrefix}/ricevute/`,
+  PAYMENT_NOTICES: `${rootPrefix}/avvisi/`,
+  PAYMENT_NOTICE_DETAIL: `${rootPrefix}/avvisi/:id/:paTaxCode`,
+  USER: `${rootPrefix}/profilo`,
+  COURTESY_PAGE: `${rootPrefix}/errore/:error`,
+  LOGIN: `${rootPrefix}/accesso`,
+  ASSISTANCE: `${rootPrefix}/assistenza`,
+  AUTH_CALLBACK: `${rootPrefix}/auth-callback`,
+  TOS: `${rootPrefix}/termini-di-servizio`,
+  PRIVACY_POLICY: `${rootPrefix}/informativa-privacy`,
+  PAYMENTS_ON_THE_FLY: `${rootPrefix}/spontanei`,
+  PAYMENTS_ON_THE_FLY_DOWNLOAD: `${rootPrefix}/download/:orgId/:iuv`
 };
 
 export enum ArcErrors {
