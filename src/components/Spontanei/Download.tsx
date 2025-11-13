@@ -3,26 +3,28 @@ import React, { useEffect } from 'react';
 import { Trans, useTranslation } from 'react-i18next';
 import IllusHourGlass from './IllusHourGlass';
 import utils from 'utils';
-import { useNavigate, useParams} from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { ArcRoutes } from 'routes/routes';
 
 const Download = () => {
   const { t } = useTranslation();
   const { orgId, iuv } = useParams();
-  const navigate = useNavigate()
-  const mutation = utils.loaders.getPaymentNotice(1,  parseInt(orgId || '0', 10), { iuv });
-  
+  const navigate = useNavigate();
+  const mutation = utils.loaders.getPaymentNotice(1, parseInt(orgId || '0', 10), { iuv });
+
   const download = async () => {
     try {
       const { data, filename } = await mutation.mutateAsync();
-      utils.files.downloadBlob(data, filename || `${iuv}.pdf`)
+      utils.files.downloadBlob(data, filename || `${iuv}.pdf`);
     } catch {
-      utils.notify.emit('qualcosa è andato storto')
+      utils.notify.emit('qualcosa è andato storto');
     }
-  }
+  };
 
-  useEffect( () => { download() }, []);
- 
+  useEffect(() => {
+    download();
+  }, []);
+
   return (
     <Container>
       <Stack alignItems="center" mt={22.5} mb={22.5} gap={4}>

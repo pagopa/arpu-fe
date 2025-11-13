@@ -29,7 +29,7 @@ const Payment = () => {
 
   const organizationId = context?.org?.organizationId;
   const debtPositionTypeOrgId = context?.debtType?.debtPositionTypeOrgId;
-  
+
   const navigate = useNavigate();
   const { brokerId = '1' } = useParams();
 
@@ -112,12 +112,12 @@ const Payment = () => {
   };
 
   const goToDownloadPaymentNoticePage = () => {
-    if(!debtPositionResponse) return;
+    if (!debtPositionResponse) return;
     const { organizationId, paymentDetails } = debtPositionResponse;
     const { iuv } = paymentDetails;
-    if(!iuv) return
+    if (!iuv) return;
     navigate(`${ArcRoutes.SPONTANEI}/download/${organizationId}/${iuv}`);
-  }
+  };
 
   return (
     <>
@@ -157,7 +157,10 @@ const Payment = () => {
                   {t('spontanei.form.steps.step5.download.description')}
                 </Typography>
               </Stack>
-              <Button variant="text" startIcon={<FileDownloadIcon />} onClick={goToDownloadPaymentNoticePage}>
+              <Button
+                variant="text"
+                startIcon={<FileDownloadIcon />}
+                onClick={goToDownloadPaymentNoticePage}>
                 {t('spontanei.form.steps.step5.download.downloadButton')}
               </Button>
             </Stack>

@@ -216,30 +216,32 @@ export const getDebtPositionTypeOrgsWithSpontaneousDetail = (
   });
 
 type GetPaymentNoticeQueryParam = {
-    /** @format int64 */
-    installmentId?: number;
-    iuv?: string;
-    iud?: string;
-  }
+  /** @format int64 */
+  installmentId?: number;
+  iuv?: string;
+  iud?: string;
+};
 
-export const getPaymentNotice = (brokerId: number, organizationId: number, query: GetPaymentNoticeQueryParam) => useMutation({
-  mutationKey: ['getPaymentNotice'],
-  mutationFn: async () => {
-
-    const response = await utils.arpuBeApiClient.brokers.getPaymentNotice(
-      brokerId,
-      organizationId,
-      query,
-      { format: 'blob' } 
-    )
+export const getPaymentNotice = (
+  brokerId: number,
+  organizationId: number,
+  query: GetPaymentNoticeQueryParam
+) =>
+  useMutation({
+    mutationKey: ['getPaymentNotice'],
+    mutationFn: async () => {
+      const response = await utils.arpuBeApiClient.brokers.getPaymentNotice(
+        brokerId,
+        organizationId,
+        query,
+        { format: 'blob' }
+      );
 
       const contentDisposition = response.headers['content-disposition'] || '';
       const filename = utils.converters.extractFilename(contentDisposition);
       return { data: response.data, filename };
-  }
-}) 
-
-
+    }
+  });
 
 export default {
   getPaymentNotices,
@@ -257,4 +259,3 @@ export default {
   getDebtPositionTypeOrgsWithSpontaneousDetail,
   getPaymentNotice
 };
-

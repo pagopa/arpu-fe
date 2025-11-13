@@ -3,8 +3,8 @@ import utils from 'utils';
 /**
  * Downloads a file
  */
-const downloadFile =  (file: File, filename: string) => {
-  console.log(file.name)
+const downloadFile = (file: File, filename: string) => {
+  console.log(file.name);
   const url = URL.createObjectURL(file);
 
   // Create a temporary <a> tag for downloading
@@ -34,7 +34,7 @@ const downloadReceiptPDF = async (transactionId: string) => {
   }
 
   const { data, filename } = response;
-  downloadFile(data, filename)
+  downloadFile(data, filename);
 };
 
 export const downloadBlob = (blob: Blob, fileName: string): void => {
