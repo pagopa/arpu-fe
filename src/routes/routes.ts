@@ -3,7 +3,7 @@ const deployPath = config.deployPath;
 
 const brokerId = config.brokerId;
 
-const rootPrefix = `${deployPath}/${brokerId}`
+const rootPrefix = `${deployPath}/${brokerId}`;
 
 export const ArcRoutes = {
   DASHBOARD: rootPrefix,
@@ -19,7 +19,7 @@ export const ArcRoutes = {
   TOS: `${rootPrefix}/termini-di-servizio`,
   PRIVACY_POLICY: `${rootPrefix}/informativa-privacy`,
   PAYMENTS_ON_THE_FLY: `${rootPrefix}/spontanei`,
-  PAYMENTS_ON_THE_FLY_DOWNLOAD: `${rootPrefix}/download/:orgId/:iuv`
+  PAYMENTS_ON_THE_FLY_DOWNLOAD: `${rootPrefix}/spontanei/download/:orgId/:iuv`
 };
 
 export enum ArcErrors {
