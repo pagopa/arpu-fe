@@ -42,7 +42,7 @@ const Transaction = (props: TransactionProps) => {
       hover
       role="button"
       data-testid="transaction-details-button"
-      onClick={() => navigate(`${ArcRoutes.TRANSACTIONS}${id}`)}>
+      onClick={() => navigate(`${ArcRoutes.RECEIPTS}${id}`)}>
       <StyledTableCell>
         <Stack direction="row" spacing={{ xs: 0, sm: 2 }} alignItems="center">
           <PayeeIcon src={payee.srcImg} alt={payee.altImg} visible={smUp} />

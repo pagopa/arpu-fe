@@ -11,7 +11,7 @@ import config from 'utils/config';
 import { useSearch } from 'hooks/useSearch';
 import { ReceiptDataGrid } from './ReceiptDataGrid';
 
-export default function NoticesListPage() {
+export const Receipts = () => {
   const { t } = useTranslation();
   // TODO: retrieve brokerId from context when available
   const brokerId = Number(config.brokerId);
@@ -34,7 +34,7 @@ export default function NoticesListPage() {
       </Stack>
 
       <QueryLoader loaderComponent={<TransactionListSkeleton />} loading={query.isPending}>
-        {query?.data?.content.length ? (
+        {query?.data?.content?.length ? (
           <ReceiptDataGrid data={query.data} />
         ) : (
           <NoData
@@ -45,4 +45,4 @@ export default function NoticesListPage() {
       </QueryLoader>
     </>
   );
-}
+};

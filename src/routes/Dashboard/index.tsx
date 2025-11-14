@@ -81,7 +81,7 @@ const Dashboard = () => {
           </Typography>
           <Button
             component={Link}
-            to={ArcRoutes.TRANSACTIONS}
+            to={ArcRoutes.RECEIPTS}
             sx={{
               width: theme.spacing(10),
               justifyContent: 'flex-start',

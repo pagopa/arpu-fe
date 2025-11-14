@@ -55,7 +55,7 @@ export const ReceiptDataGrid = ({ data }: DataGridProps) => {
       align: 'right',
       headerAlign: 'right',
       renderCell: ({ id }) => (
-        <Link to={generatePath(ArcRoutes.TRANSACTION, { id })} aria-label={t('commons.detail')}>
+        <Link to={generatePath(ArcRoutes.RECEIPT, { id })} aria-label={t('commons.detail')}>
           <IconButton size="small">
             <ChevronRight />
           </IconButton>
