@@ -14,7 +14,7 @@ export const Footer = () => {
   const { language, changeLanguage } = useLanguage();
 
   return (
-    <>
+    <div>
       <FooterPostLogin
         companyLink={{ ariaLabel: 'PagoPA SPA' }}
         links={[
@@ -79,6 +79,6 @@ export const Footer = () => {
           </>
         }
       />
-    </>
+    </div>
   );
 };
