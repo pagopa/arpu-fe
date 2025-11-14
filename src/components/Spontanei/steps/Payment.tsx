@@ -6,7 +6,7 @@ import { addItem, isItemInCart, toggleCartDrawer } from 'store/CartStore';
 import notify from 'utils/notify';
 import { useStore } from 'store/GlobalStore';
 import utils from 'utils';
-import { useNavigate, useParams } from 'react-router-dom';
+import { generatePath, useNavigate, useParams } from 'react-router-dom';
 import { DebtPositionRequestDTO } from '../../../../generated/arpu-be/data-contracts';
 import { useField } from 'formik';
 import { PaymentNoticeInfo } from '..';
@@ -30,6 +30,7 @@ const Payment = () => {
   const organizationId = context?.org?.organizationId;
   const debtPositionTypeOrgId = context?.debtType?.debtPositionTypeOrgId;
 
+  const navigate = useNavigate();
   const { brokerId = '1' } = useParams();
 
   if (!organizationId || !debtPositionTypeOrgId || !brokerId) {
@@ -87,8 +88,6 @@ const Payment = () => {
     toggleCartDrawer();
   };
 
-  const navigate = useNavigate();
-
   const carts = usePostCarts({
     onSuccess: (url) => {
       window.location.replace(url);
@@ -110,6 +109,14 @@ const Payment = () => {
       description: remittanceInformation
     };
     carts.mutate({ notices: [item], email: email.value });
+  };
+
+  const goToDownloadPaymentNoticePage = () => {
+    if (!debtPositionResponse) return;
+    const { organizationId: orgId, paymentDetails } = debtPositionResponse;
+    const { iuv } = paymentDetails;
+    if (!iuv) return;
+    navigate(generatePath(ArcRoutes.PAYMENTS_ON_THE_FLY_DOWNLOAD, { orgId, iuv }));
   };
 
   return (
@@ -150,7 +157,10 @@ const Payment = () => {
                   {t('spontanei.form.steps.step5.download.description')}
                 </Typography>
               </Stack>
-              <Button variant="text" startIcon={<FileDownloadIcon />}>
+              <Button
+                variant="text"
+                startIcon={<FileDownloadIcon />}
+                onClick={goToDownloadPaymentNoticePage}>
                 {t('spontanei.form.steps.step5.download.downloadButton')}
               </Button>
             </Stack>

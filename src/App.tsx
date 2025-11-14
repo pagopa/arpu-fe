@@ -185,7 +185,7 @@ const router = createBrowserRouter([
             }
           },
           {
-            path: ArcRoutes.SPONTANEI,
+            path: ArcRoutes.PAYMENTS_ON_THE_FLY,
             children: [
               {
                 index: true,
@@ -198,7 +198,7 @@ const router = createBrowserRouter([
                 }
               },
               {
-                path: 'download',
+                path: 'download/:orgId/:iuv',
                 element: <Download />,
                 handle: {
                   backButton: false,

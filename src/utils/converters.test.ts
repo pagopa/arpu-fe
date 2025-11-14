@@ -245,3 +245,13 @@ describe('capitalizeFirstLetter function', () => {
     expect(utils.converters.capitalizeFirstLetter(undefined)).toEqual(utils.config.missingValue);
   });
 });
+
+describe('extractFilename function', () => {
+  it('should convert correctly', () => {
+    expect(
+      utils.converters.extractFilename("attachment; filename='99999999982_01000000020909069.pdf'")
+    ).toEqual('99999999982_01000000020909069.pdf');
+    expect(utils.converters.extractFilename('')).toEqual(null);
+    expect(utils.converters.extractFilename('wrong string')).toEqual(null);
+  });
+});

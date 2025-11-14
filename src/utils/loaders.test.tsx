@@ -280,13 +280,15 @@ describe('Payment Notices API', () => {
     const dataMock = createMock(zod.array(debtPositionTypeOrgsWithSpontaneousDTOSchema));
 
     const apiMock = vi
-      .spyOn(utils.arpuBeApiClient.spontaneous, 'getDebtPositionTypeOrgsWithSpontaneous')
+      .spyOn(utils.arpuBeApiClient.brokers, 'getDebtPositionTypeOrgsWithSpontaneous')
       .mockResolvedValue({ data: dataMock } as AxiosResponse);
 
-    const query = renderHook(() => loaders.getDebtPositionTypeOrgsWithSpontaneous(1), { wrapper });
+    const query = renderHook(() => loaders.getDebtPositionTypeOrgsWithSpontaneous(1, 3), {
+      wrapper
+    });
 
     await waitFor(() => {
-      expect(apiMock).toHaveBeenCalledWith(1);
+      expect(apiMock).toHaveBeenCalledWith(1, 3);
       expect(query.result.current.isSuccess).toBeTruthy();
       expect(query.result.current.data).toEqual(dataMock);
     });
@@ -326,6 +328,25 @@ describe('Payment Notices API', () => {
       expect(apiMock).toHaveBeenCalledWith(1, bodyMock);
       expect(query.result.current.isSuccess).toBeTruthy();
       expect(query.result.current.data).toEqual(responseMock);
+    });
+  });
+
+  it('getPaymentNotice mutation calls API and extract filename correctly', async () => {
+    const apiMock = vi.spyOn(utils.arpuBeApiClient.brokers, 'getPaymentNotice').mockResolvedValue({
+      data: 'Test',
+      headers: { 'content-disposition': "attachment; filename='test.pdf'" }
+    } as unknown as AxiosResponse);
+
+    const mutation = renderHook(() => loaders.getPaymentNotice(1, 3, { iuv: '1' }), {
+      wrapper
+    });
+
+    await mutation.result.current.mutateAsync();
+
+    await waitFor(() => {
+      expect(apiMock).toHaveBeenCalledWith(1, 3, { iuv: '1' }, { format: 'blob' });
+      expect(mutation.result.current.isSuccess).toBeTruthy();
+      expect(mutation.result.current.data).toEqual({ data: 'Test', filename: 'test.pdf' });
     });
   });
 });
