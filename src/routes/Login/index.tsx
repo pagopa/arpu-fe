@@ -19,17 +19,12 @@ const Login = () => {
   const theme = useTheme();
   const { t } = useTranslation();
 
+  const logIn = () => window.location.replace(utils.config.loginUrl);
+
   useEffect(() => {
-    if (utils.storage.user.hasToken()) {
-      return window.location.replace(ArcRoutes.DASHBOARD);
-    }
-    // In development it's better to disable this redirect
-    // to allow the developer to set a proper valid
-    // acessToken and navigate the application on localhost
-    if (utils.config.env !== 'LOCAL' || window.location.hostname !== 'localhost') {
-      window.location.replace(utils.config.loginUrl);
-    }
+    if (utils.storage.user.hasToken()) window.location.replace(ArcRoutes.DASHBOARD);
   }, []);
+
   return (
     <Grid container minHeight={580}>
       <Grid size={{ xs: 12, md: 8 }} bgcolor={theme.palette.background.default} pt={16} pb={16}>
@@ -44,7 +39,11 @@ const Login = () => {
               </Typography>
               <Card elevation={16}>
                 <CardContent>
-                  <Button variant="contained" size="large" startIcon={<PermIdentityOutlinedIcon />}>
+                  <Button
+                    variant="contained"
+                    size="large"
+                    startIcon={<PermIdentityOutlinedIcon />}
+                    onClick={logIn}>
                     {t('app.login.auth.CTA')}
                   </Button>
                 </CardContent>
