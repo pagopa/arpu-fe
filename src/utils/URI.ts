@@ -98,5 +98,6 @@ export default {
   decode,
   encode,
   set,
-  resetUrlParams
+  resetUrlParams,
+  sanitizeKeyChars
 };
