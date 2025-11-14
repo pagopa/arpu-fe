@@ -70,7 +70,7 @@ describe('useSearch', () => {
   });
 
   it('calls mutateAsync again on hash param change', () => {
-    const { rerender } = setup({ page: 1 });
+    const { rerender } = setup({ page: 1 } as any);
 
     expect(mutateAsyncMock).toHaveBeenCalledTimes(1);
 

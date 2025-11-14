@@ -6,7 +6,6 @@ import '@testing-library/jest-dom';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
 import { BrowserRouter } from 'react-router-dom';
 import { useMediaQuery } from '@mui/material';
-import * as converters from 'utils/converters';
 import { createMock } from 'zodock';
 import { pagedDebtorReceiptsDTOSchema } from '../../../generated/arpu-be/zod-schema';
 import { PagedDebtorReceiptsDTO } from '../../../generated/arpu-be/data-contracts';
