@@ -40,6 +40,7 @@ const Login = () => {
               <Card elevation={16}>
                 <CardContent>
                   <Button
+                    data-testid="logInButton"
                     variant="contained"
                     size="large"
                     startIcon={<PermIdentityOutlinedIcon />}
