@@ -280,13 +280,15 @@ describe('Payment Notices API', () => {
     const dataMock = createMock(zod.array(debtPositionTypeOrgsWithSpontaneousDTOSchema));
 
     const apiMock = vi
-      .spyOn(utils.arpuBeApiClient.spontaneous, 'getDebtPositionTypeOrgsWithSpontaneous')
+      .spyOn(utils.arpuBeApiClient.brokers, 'getDebtPositionTypeOrgsWithSpontaneous')
       .mockResolvedValue({ data: dataMock } as AxiosResponse);
 
-    const query = renderHook(() => loaders.getDebtPositionTypeOrgsWithSpontaneous(1), { wrapper });
+    const query = renderHook(() => loaders.getDebtPositionTypeOrgsWithSpontaneous(1, 3), {
+      wrapper
+    });
 
     await waitFor(() => {
-      expect(apiMock).toHaveBeenCalledWith(1);
+      expect(apiMock).toHaveBeenCalledWith(1, 3);
       expect(query.result.current.isSuccess).toBeTruthy();
       expect(query.result.current.data).toEqual(dataMock);
     });

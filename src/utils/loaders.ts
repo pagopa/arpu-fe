@@ -185,14 +185,14 @@ export const getOrganizationsWithSpontaneous = (brokerId: number) =>
     }
   });
 
-export const getDebtPositionTypeOrgsWithSpontaneous = (organizationId: number) =>
+export const getDebtPositionTypeOrgsWithSpontaneous = (brokerId: number, organizationId: number) =>
   useQuery({
     queryKey: ['getDebtPositionTypeOrgsWithSpontaneous'],
     queryFn: async () => {
-      const { data } =
-        await utils.arpuBeApiClient.spontaneous.getDebtPositionTypeOrgsWithSpontaneous(
-          organizationId
-        );
+      const { data } = await utils.arpuBeApiClient.brokers.getDebtPositionTypeOrgsWithSpontaneous(
+        brokerId,
+        organizationId
+      );
       return data;
     }
   });
