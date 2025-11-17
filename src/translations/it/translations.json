@@ -49,12 +49,17 @@
       "modalDescription": "Se esci, la richiesta di assistenza andrà persa."
     },
     "login": {
-      "title": "Area Riservata pagoPA",
-      "description": "La tua area personale in cui gestire i pagamenti pagoPA e scaricare le ricevute.",
-      "terms": "Accedendo accetti i <link1>Termini e condizioni d’uso</link1> del servizio e confermi di avere letto l'<link2>Informativa Privacy </link2> ",
-      "areYouAnEnterprise": "Sei un'impresa?",
-      "accessYourArea": "Accedi alla tua area",
-      "login": "Accedi"
+      "auth": {
+        "title": "Accedi al tuo profilo personale",
+        "description": "Gestisci i tuoi avvisi di pagamento pagoPA e consulta le ricevute in modo semplice e veloce.",
+        "CTA": "Accedi al profilo"
+      },
+      "noAuth": {
+        "title": "Vai di fretta?",
+        "description": "Fai un pagamento spontaneo o recupera la ricevuta di un pagamento già fatto, tutto senza fare login.",
+        "CTA1": "Fai un pagamento",
+        "CTA2": "Recupera una ricevuta"
+      }
     },
     "dashboard": {
       "title": "Ciao, {{username}}",

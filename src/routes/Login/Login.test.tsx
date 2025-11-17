@@ -1,5 +1,5 @@
 import React from 'react';
-import { render } from '@testing-library/react';
+import { fireEvent, render, screen } from '@testing-library/react';
 import Login from '.';
 import '@testing-library/jest-dom';
 import utils from 'utils';
@@ -12,12 +12,13 @@ describe('LoginRoute', () => {
   });
 
   it('renders nothing without crashing', async () => {
-    const { container } = render(<Login />);
-    expect(container).toBeEmptyDOMElement();
+    render(<Login />);
   });
 
   it('redirects to OI', async () => {
     render(<Login />);
+    const logInButton = screen.getByTestId('logInButton');
+    fireEvent.click(logInButton);
     expect(replaceSpy).toBeCalledWith(utils.config.loginUrl);
   });
 
