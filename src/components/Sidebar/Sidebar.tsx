@@ -57,7 +57,7 @@ export const Sidebar: React.FC = () => {
     {
       label: t('menu.receipts.menuTitle'),
       icon: () => <ReceiptLongIcon sx={{ marginLeft: '-1px' }} />,
-      route: ArcRoutes.TRANSACTIONS
+      route: ArcRoutes.RECEIPTS
     }
   ];
 

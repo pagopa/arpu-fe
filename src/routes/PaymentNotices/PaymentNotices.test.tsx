@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import React from 'react';
 import { render } from '@testing-library/react';
 import { PaymentNotices } from '.';
@@ -7,7 +8,7 @@ import * as GlobalStore from 'store/GlobalStore';
 import converters from 'utils/converters';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { Mock } from 'vitest';
-import { State, StoreContextProps } from 'store/types';
+import { StoreContextProps } from 'store/types';
 import loaders from 'utils/loaders';
 import { useMediaQuery } from '@mui/material';
 import utils from 'utils';
@@ -30,7 +31,7 @@ describe('PaymentNoticeRoute', () => {
 
   beforeEach(() => {
     vi.spyOn(GlobalStore, 'useStore').mockReturnValue({
-      state: { paymentNotice: undefined } as State,
+      state: { paymentNotice: undefined } as any,
       setState: vi.fn()
     } as StoreContextProps);
   });

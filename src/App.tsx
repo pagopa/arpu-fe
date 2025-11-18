@@ -8,7 +8,6 @@ import DashboardRoute from './routes/Dashboard';
 import { theme } from '@pagopa/mui-italia';
 import UserRoute from 'routes/User';
 import { RouteHandleObject } from 'models/Breadcrumbs';
-import NoticesList from 'routes/NoticesList';
 import { ErrorBoundary } from 'components/ErrorBoundary';
 import { ErrorFallback } from 'components/ErrorFallback';
 import { HealthCheck } from 'components/HealthCheck';
@@ -26,6 +25,7 @@ import { PreLoginLayout } from 'components/PreLoginLayout';
 import { ApiClient } from 'components/ApiClient';
 import Spontanei from 'routes/Spontanei';
 import Download from 'components/Spontanei/Download';
+import { Receipts } from 'routes/Receipts';
 
 const withGuard = (Component: () => React.JSX.Element) => (
   <RouteGuard itemKeys={['accessToken']} storage={window.localStorage}>
@@ -125,14 +125,14 @@ const router = createBrowserRouter([
             errorElement: <ErrorFallback />
           },
           {
-            path: ArcRoutes.TRANSACTION,
+            path: ArcRoutes.RECEIPT,
             element: withGuard(TransactionRoute),
             loader: ({ params }) => Promise.resolve(params.id),
             errorElement: <ErrorFallback />,
             handle: {
               crumbs: {
                 elements: [
-                  { name: 'transactions', fontWeight: 600, href: ArcRoutes.TRANSACTIONS },
+                  { name: 'transactions', fontWeight: 600, href: ArcRoutes.RECEIPTS },
                   {
                     name: 'transactionDetail',
                     fontWeight: 400,
@@ -143,8 +143,8 @@ const router = createBrowserRouter([
             } as RouteHandleObject
           },
           {
-            path: ArcRoutes.TRANSACTIONS,
-            element: withGuard(NoticesList),
+            path: ArcRoutes.RECEIPTS,
+            element: withGuard(Receipts),
             errorElement: <ErrorFallback />
           },
           ...(utils.config.showNotices
