@@ -51,7 +51,6 @@ export type CustomDataGridProps<T extends GridValidRowModel> = {
   pageSizeOptions?: Array<number>;
   initialSortModel?: GridSortModel;
   totalPages: number;
-  disablePagination?: boolean;
 } & Omit<
   DataGridProps,
   'pagination' | 'paginationModel' | 'onPaginationModelChange' | 'sortModel' | 'onSortModelChange'
@@ -65,7 +64,6 @@ export const CustomDataGrid = <T extends GridValidRowModel>({
   pageSizeOptions = [5, 10, 20],
   initialSortModel = [],
   totalPages = 1,
-  disablePagination = false,
   ...restProps
 }: CustomDataGridProps<T>) => {
   // Read from URL hash params directly
@@ -154,18 +152,16 @@ export const CustomDataGrid = <T extends GridValidRowModel>({
         onSortModelChange={handleSortModelChange}
         hideFooterSelectedRowCount
         slots={{
-          pagination: disablePagination
-            ? null
-            : () => (
-                <CustomPagination
-                  sizePageOptions={pageSizeOptions}
-                  defaultPageOption={pageSize}
-                  totalPages={totalPages}
-                  currentPage={page}
-                  onPageChange={handlePageChange}
-                  onPageSizeChange={handlePageSizeChange}
-                />
-              )
+          pagination: () => (
+            <CustomPagination
+              sizePageOptions={pageSizeOptions}
+              defaultPageOption={pageSize}
+              totalPages={totalPages}
+              currentPage={page}
+              onPageChange={handlePageChange}
+              onPageSizeChange={handlePageSizeChange}
+            />
+          )
         }}
         {...restProps}
       />

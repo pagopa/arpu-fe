@@ -11,7 +11,6 @@ export const setupInterceptors = (client: Client) => {
       const accessToken = window.localStorage.getItem('accessToken');
       if (accessToken && !tokenHeaderExcludePaths.includes(routeUrl)) {
         request.headers['Authorization'] = `Bearer ${accessToken}`;
-        //request.headers['x-fiscal-code'] = 'PLOMRC01P30L736Y';
       }
       return request;
     },
