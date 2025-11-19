@@ -66,7 +66,6 @@ const getPagedDebtorReceipts = (brokerId: number) =>
         sort: args.sort
       };
       const { data } = await utils.arpuBeApiClient.brokers.getPagedDebtorReceipts(brokerId, query);
-      parseAndLog(zodSchema.noticesListDTOSchema, data);
       return data;
     }
   });
@@ -81,7 +80,6 @@ const getLastReceipts = (brokerId: number) =>
         sort: ['paymentDateTime,desc']
       };
       const { data } = await utils.arpuBeApiClient.brokers.getPagedDebtorReceipts(brokerId, query);
-      parseAndLog(zodSchema.noticesListDTOSchema, data);
       return data;
     }
   });
