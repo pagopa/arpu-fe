@@ -13,32 +13,21 @@ import { Empty, Retry, TransactionsList } from 'components/Transactions';
 import { useUserInfo } from 'hooks/useUserInfo';
 import { Helmet } from 'react-helmet';
 import { resetCart } from 'store/CartStore';
+import config from 'utils/config';
 
 const Dashboard = () => {
   const { t } = useTranslation();
-  const { data, isError, refetch } = utils.loaders.getNoticesList(
-    {
-      size: 5,
-      ordering: 'DESC'
-    },
-    ''
-  );
+  // TODO: retrieve brokerId from context when available
+  const brokerId = Number(config.brokerId);
+  const { data, isError, refetch } = utils.loaders.getLastReceipts(brokerId);
   const theme = useTheme();
   const { userInfo } = useUserInfo();
   const [searchParams, setSearchParams] = useSearchParams();
 
-  const rows =
-    data &&
-    utils.converters.prepareRowsData({
-      notices: data.notices,
-      status: { label: t('app.transactions.paid') },
-      payee: { multi: t('app.transactions.multiEntities') }
-    });
-
   const Content = () => {
-    if (isError || !rows) return <Retry action={refetch} />;
-    if (rows.length === 0) return <Empty />;
-    return <TransactionsList rows={rows} hideDateOrdering />;
+    if (isError || !data?.content) return <Retry action={refetch} />;
+    if (data?.content?.length === 0) return <Empty />;
+    return <TransactionsList rows={data?.content} hideDateOrdering />;
   };
 
   useEffect(() => {

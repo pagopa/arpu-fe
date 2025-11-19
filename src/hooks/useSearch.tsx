@@ -22,11 +22,13 @@ export type UseSearchProps<T, TData = unknown, TError = unknown> = {
  */
 export function useSearch<T, TData = unknown, TError = unknown>({
   filters,
-  query
+  query,
+  initialPage = 0,
+  initialSize = 10
 }: UseSearchProps<T, TData, TError>) {
   const {
-    page: hashPage = 1,
-    size = 10,
+    page: hashPage,
+    size: hashSize,
     sortDirection,
     sortField
   } = useHashParamsListener() as {
@@ -36,8 +38,8 @@ export function useSearch<T, TData = unknown, TError = unknown>({
     sortField: string;
   };
 
-  const page = hashPage > 0 ? hashPage - 1 : 0;
-
+  const page = hashPage ? hashPage - 1 : initialPage;
+  const size = hashSize ?? initialSize;
   const sort = sortDirection && sortField ? [`${sortField},${sortDirection}`] : [];
 
   useEffect(() => {
@@ -52,14 +54,14 @@ export function useSearch<T, TData = unknown, TError = unknown>({
   const applyFilters = (appliedFilters?: T) => {
     const params = utils.URI.encode({
       ...appliedFilters,
-      page: null,
-      size: null,
+      page: initialPage,
+      size: initialSize,
       sort: null
     });
     utils.URI.set(params, { replace: true });
     query.mutateAsync({
       filters: appliedFilters,
-      pagination: { size: 10, page: 0 },
+      pagination: { size: initialSize, page: initialPage },
       sort: []
     });
   };

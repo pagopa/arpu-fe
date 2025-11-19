@@ -2,37 +2,23 @@ import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 import React from 'react';
 import TableCell from '@mui/material/TableCell';
 import TableRow from '@mui/material/TableRow';
-import { Box, ChipOwnProps, Stack, Typography, useMediaQuery } from '@mui/material';
+import { Box, Stack, Typography, useMediaQuery } from '@mui/material';
 import { styled, Theme } from '@mui/material/styles';
 import { useNavigate } from 'react-router-dom';
 import { theme } from '@pagopa/mui-italia';
 import { ArcRoutes } from 'routes/routes';
 import { PayeeIcon } from 'components/PayeeIcon';
-
-export interface TransactionProps {
-  payee: {
-    name: string;
-    srcImg?: string;
-    altImg?: string;
-  };
-  date: string;
-  status: {
-    label: ChipOwnProps['label'];
-    color: ChipOwnProps['color'];
-  };
-  amount: string;
-  id: string;
-}
+import { DebtorReceiptDTO } from '../../../generated/arpu-be/data-contracts';
+import { formatDateOrMissingValue, fromTaxCodeToSrcImage } from 'utils/converters';
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
   borderBottomColor: theme.palette.divider,
   cursor: 'pointer'
 }));
 
-const Transaction = (props: TransactionProps) => {
+const Transaction = ({ orgName, orgFiscalCode, paymentDateTime, receiptId }: DebtorReceiptDTO) => {
   const sm = useMediaQuery((theme: Theme) => theme.breakpoints.up('sm'));
   const navigate = useNavigate();
-  const { payee, amount, id, date } = props;
   const smUp = useMediaQuery(theme.breakpoints.up('sm'));
   const mdUp = useMediaQuery(theme.breakpoints.up('md'));
   const tableCellCssDisplayProperty = mdUp ? 'table-cell' : 'none';
@@ -42,10 +28,10 @@ const Transaction = (props: TransactionProps) => {
       hover
       role="button"
       data-testid="transaction-details-button"
-      onClick={() => navigate(`${ArcRoutes.RECEIPTS}${id}`)}>
+      onClick={() => navigate(`${ArcRoutes.RECEIPTS}/${receiptId}`)}>
       <StyledTableCell>
         <Stack direction="row" spacing={{ xs: 0, sm: 2 }} alignItems="center">
-          <PayeeIcon src={payee.srcImg} alt={payee.altImg} visible={smUp} />
+          <PayeeIcon src={fromTaxCodeToSrcImage(orgFiscalCode)} alt={orgName} visible={smUp} />
           <Box sx={{ maxWidth: '30vw' }}>
             <Typography
               variant="body2"
@@ -56,11 +42,11 @@ const Transaction = (props: TransactionProps) => {
                 textOverflow: 'ellipsis',
                 width: '100%'
               }}>
-              {payee.name}
+              {orgName}
             </Typography>
             {!mdUp && (
               <Typography variant="caption" color="text.secondary">
-                {date}
+                {formatDateOrMissingValue(paymentDateTime)}
               </Typography>
             )}
           </Box>
@@ -68,13 +54,7 @@ const Transaction = (props: TransactionProps) => {
       </StyledTableCell>
 
       <StyledTableCell sx={{ display: tableCellCssDisplayProperty }}>
-        <Typography variant="body2">{date}</Typography>
-      </StyledTableCell>
-
-      <StyledTableCell align={!mdUp ? 'right' : 'left'}>
-        <Typography variant="body2" fontWeight={600} whiteSpace="nowrap">
-          {amount}
-        </Typography>
+        <Typography variant="body2">{formatDateOrMissingValue(paymentDateTime)}</Typography>
       </StyledTableCell>
 
       {sm && (

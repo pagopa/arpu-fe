@@ -71,6 +71,21 @@ const getPagedDebtorReceipts = (brokerId: number) =>
     }
   });
 
+const getLastReceipts = (brokerId: number) =>
+  useQuery({
+    queryKey: ['getLastReceipts'],
+    queryFn: async () => {
+      const query = {
+        page: 0,
+        size: 3,
+        sort: ['paymentDateTime,desc']
+      };
+      const { data } = await utils.arpuBeApiClient.brokers.getPagedDebtorReceipts(brokerId, query);
+      parseAndLog(zodSchema.noticesListDTOSchema, data);
+      return data;
+    }
+  });
+
 const getNoticeDetails = (id: string) =>
   useQuery({
     queryKey: ['noticeDetails'],
@@ -267,6 +282,7 @@ export default {
   getNoticeDetails,
   getNoticesList,
   getPagedDebtorReceipts,
+  getLastReceipts,
   getUserInfo,
   getUserInfoOnce,
   getOrganizations,

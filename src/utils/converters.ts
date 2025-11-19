@@ -1,4 +1,3 @@
-import { TransactionProps } from 'components/Transactions/Transaction';
 import {
   PaymentNoticeDTO,
   PaymentNoticesListDTO,
@@ -23,6 +22,7 @@ import {
 } from 'models/PaymentNotice';
 import { CartItem } from 'models/Cart';
 import { ArcRoutes } from 'routes/routes';
+import { TransactionProps } from 'components/Transactions';
 
 // This high order function is useful to 'decorate' existing function to add
 // the functionality to manage undefined (not optional) parameters and output a global character instead
