@@ -1,6 +1,5 @@
 import React from 'react';
 import { Paper, Typography, Stack } from '@mui/material';
-import PaymentButton from 'components/PaymentButton';
 import { useTranslation } from 'react-i18next';
 
 const Empty = () => {
@@ -12,7 +11,6 @@ const Empty = () => {
           {t('app.transactions.empty.title')}
         </Typography>
         <Typography variant="body2">{t('app.transactions.empty.subtitle')}</Typography>
-        <PaymentButton />
       </Stack>
     </Paper>
   );
