@@ -68,16 +68,18 @@ const Dashboard = () => {
           <Typography variant="h6" component="h2" marginInlineStart={1}>
             {t('app.dashboard.lastTransactions')}
           </Typography>
-          <Button
-            component={Link}
-            to={ArcRoutes.RECEIPTS}
-            sx={{
-              width: theme.spacing(10),
-              justifyContent: 'flex-start',
-              p: 0
-            }}>
-            {t('app.dashboard.seeAllTransactions')}
-          </Button>
+          {data?.content?.length && data.content.length > 0 ? (
+            <Button
+              component={Link}
+              to={ArcRoutes.RECEIPTS}
+              sx={{
+                width: theme.spacing(10),
+                justifyContent: 'flex-start',
+                p: 0
+              }}>
+              {t('app.dashboard.seeAllTransactions')}
+            </Button>
+          ) : null}
         </Stack>
       </Stack>
       <Box
