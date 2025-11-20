@@ -26,6 +26,7 @@ const Payment = () => {
   const [fiscalCode] = useField<PaymentNoticeInfo['fiscalCode']>('fiscalCode');
   const [entityType] = useField<PaymentNoticeInfo['entityType']>('entityType');
   const [email] = useField<PaymentNoticeInfo['email']>('email');
+  const isAnonumuos = utils.storage.user.isAnonymous();
 
   const organizationId = context?.org?.organizationId;
   const debtPositionTypeOrgId = context?.debtType?.debtPositionTypeOrgId;
@@ -65,10 +66,9 @@ const Payment = () => {
     ]
   };
 
-  const { data: debtPositionResponse } = utils.loaders.createSpontaneousDebtPosition(
-    Number(brokerId),
-    body
-  );
+  const { data: debtPositionResponse } = isAnonumuos
+    ? utils.loaders.public.createPublicSpontaneousDebtPosition(Number(brokerId), body)
+    : utils.loaders.createSpontaneousDebtPosition(Number(brokerId), body);
 
   const addToCart = () => {
     if (!debtPositionResponse) return;
@@ -116,7 +116,9 @@ const Payment = () => {
     const { organizationId: orgId, paymentDetails } = debtPositionResponse;
     const { iuv } = paymentDetails;
     if (!iuv) return;
-    navigate(generatePath(ArcRoutes.PAYMENTS_ON_THE_FLY_DOWNLOAD, { orgId, iuv }));
+    isAnonumuos
+      ? navigate(generatePath(ArcRoutes.public.PAYMENTS_ON_THE_FLY_DOWNLOAD, { orgId, iuv }))
+      : navigate(generatePath(ArcRoutes.PAYMENTS_ON_THE_FLY_DOWNLOAD, { orgId, iuv }));
   };
 
   return (

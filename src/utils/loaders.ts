@@ -204,6 +204,21 @@ export const createSpontaneousDebtPosition = (brokerId: number, body: DebtPositi
     }
   });
 
+export const createPublicSpontaneousDebtPosition = (
+  brokerId: number,
+  body: DebtPositionRequestDTO
+) =>
+  useQuery({
+    queryKey: ['createSpontaneousDebtPosition'],
+    queryFn: async () => {
+      const { data } = await utils.arpuBeApiClient.public.createPublicSpontaneousDebtPosition(
+        brokerId,
+        body
+      );
+      return data;
+    }
+  });
+
 export const getOrganizationsWithSpontaneous = (brokerId: number) =>
   useQuery({
     queryKey: ['getOrganizationsWithSpontaneous'],
@@ -336,6 +351,7 @@ export default {
   public: {
     getPublicOrganizationsWithSpontaneous,
     getPublicDebtPositionTypeOrgsWithSpontaneous,
-    getPublicDebtPositionTypeOrgsWithSpontaneousDetail
+    getPublicDebtPositionTypeOrgsWithSpontaneousDetail,
+    createPublicSpontaneousDebtPosition
   }
 };
