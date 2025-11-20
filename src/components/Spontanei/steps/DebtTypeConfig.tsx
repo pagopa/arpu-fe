@@ -10,13 +10,20 @@ const DebtTypeConfig = () => {
   const context = useContext<FormContextType | null>(FormContext);
   const organizationId = context?.org?.organizationId || 0;
   const debtPositionTypeOrgId = context?.debtType?.debtPositionTypeOrgId || 0;
+  const isAnonumuos = utils.storage.user.isAnonymous();
   const { brokerId = '1' } = useParams();
 
-  const { data } = utils.loaders.getDebtPositionTypeOrgsWithSpontaneousDetail(
-    parseInt(brokerId, 10),
-    organizationId,
-    debtPositionTypeOrgId
-  );
+  const { data } = isAnonumuos
+    ? utils.loaders.public.getPublicDebtPositionTypeOrgsWithSpontaneousDetail(
+        parseInt(brokerId, 10),
+        organizationId,
+        debtPositionTypeOrgId
+      )
+    : utils.loaders.getDebtPositionTypeOrgsWithSpontaneousDetail(
+        parseInt(brokerId, 10),
+        organizationId,
+        debtPositionTypeOrgId
+      );
 
   const type = data?.formType;
 

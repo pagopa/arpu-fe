@@ -214,6 +214,31 @@ const router = createBrowserRouter([
             ]
           }
         ]
+      },
+      {
+        path: ArcRoutes.public.PAYMENTS_ON_THE_FLY,
+        children: [
+          {
+            index: true,
+            element: <Spontanei />,
+            handle: {
+              backButton: true,
+              sidebar: {
+                visibile: false
+              }
+            }
+          },
+          {
+            path: 'download/:orgId/:iuv',
+            element: <Download />,
+            handle: {
+              backButton: false,
+              sidebar: {
+                visibile: false
+              }
+            }
+          }
+        ]
       }
     ]
   }

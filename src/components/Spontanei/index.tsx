@@ -19,6 +19,7 @@ import {
   PersonEntityType
 } from '../../../generated/arpu-be/data-contracts';
 import Payment from './steps/Payment';
+import utils from 'utils';
 
 export type PaymentNoticeInfo = {
   fullName: string;
@@ -38,17 +39,18 @@ const Spontanei = () => {
   const [debtType, setDebtType] = React.useState<DebtPositionTypeOrgsWithSpontaneousDTO | null>(
     null
   );
+  const isAnonumuos = utils.storage.user.isAnonymous();
 
   const { t } = useTranslation();
 
   const formikRef = useRef<ReturnType<typeof useFormik<PaymentNoticeInfo>>>(null);
 
-  const payerEmail = useUserEmail() || '';
-  const { userInfo } = useUserInfo();
+  const payerEmail = isAnonumuos ? '' : useUserEmail() || '';
+  const { userInfo } = isAnonumuos ? { userInfo: null } : useUserInfo();
   const name = userInfo?.name || '';
   const surname = userInfo?.familyName || '';
   const payerFullName = `${name} ${surname}`;
-  const payerFiscalCode = userInfo?.fiscalCode || '';
+  const payerFiscalCode = ''; //TO BE FIXED
 
   const defaultPaymentNoticeInfo: PaymentNoticeInfo = {
     fullName: payerFullName,

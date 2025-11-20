@@ -214,6 +214,16 @@ export const getOrganizationsWithSpontaneous = (brokerId: number) =>
     }
   });
 
+export const getPublicOrganizationsWithSpontaneous = (brokerId: number) =>
+  useQuery({
+    queryKey: ['getPublicOrganizationsWithSpontaneous'],
+    queryFn: async () => {
+      const { data } =
+        await utils.arpuBeApiClient.public.getPublicOrganizationsWithSpontaneous(brokerId);
+      return data;
+    }
+  });
+
 export const getDebtPositionTypeOrgsWithSpontaneous = (brokerId: number, organizationId: number) =>
   useQuery({
     queryKey: ['getDebtPositionTypeOrgsWithSpontaneous'],
@@ -222,6 +232,22 @@ export const getDebtPositionTypeOrgsWithSpontaneous = (brokerId: number, organiz
         brokerId,
         organizationId
       );
+      return data;
+    }
+  });
+
+export const getPublicDebtPositionTypeOrgsWithSpontaneous = (
+  brokerId: number,
+  organizationId: number
+) =>
+  useQuery({
+    queryKey: ['getPublicDebtPositionTypeOrgsWithSpontaneous'],
+    queryFn: async () => {
+      const { data } =
+        await utils.arpuBeApiClient.public.getPublicDebtPositionTypeOrgsWithSpontaneous(
+          brokerId,
+          organizationId
+        );
       return data;
     }
   });
@@ -236,6 +262,24 @@ export const getDebtPositionTypeOrgsWithSpontaneousDetail = (
     queryFn: async () => {
       const { data } =
         await utils.arpuBeApiClient.brokers.getDebtPositionTypeOrgsWithSpontaneousDetail(
+          brokerId,
+          organizationId,
+          debtPositionTypeOrgId
+        );
+      return data;
+    }
+  });
+
+export const getPublicDebtPositionTypeOrgsWithSpontaneousDetail = (
+  brokerId: number,
+  organizationId: number,
+  debtPositionTypeOrgId: number
+) =>
+  useQuery({
+    queryKey: ['getPublicDebtPositionTypeOrgsWithSpontaneousDetail'],
+    queryFn: async () => {
+      const { data } =
+        await utils.arpuBeApiClient.public.getPublicDebtPositionTypeOrgsWithSpontaneousDetail(
           brokerId,
           organizationId,
           debtPositionTypeOrgId
@@ -288,5 +332,10 @@ export default {
   getOrganizationsWithSpontaneous,
   getDebtPositionTypeOrgsWithSpontaneous,
   getDebtPositionTypeOrgsWithSpontaneousDetail,
-  getPaymentNotice
+  getPaymentNotice,
+  public: {
+    getPublicOrganizationsWithSpontaneous,
+    getPublicDebtPositionTypeOrgsWithSpontaneous,
+    getPublicDebtPositionTypeOrgsWithSpontaneousDetail
+  }
 };
