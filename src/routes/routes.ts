@@ -15,7 +15,7 @@ export const ArcRoutes = {
   COURTESY_PAGE: `${rootPrefix}/errore/:error`,
   LOGIN: `${rootPrefix}/accesso`,
   ASSISTANCE: `${rootPrefix}/assistenza`,
-  AUTH_CALLBACK: `${rootPrefix}/auth-callback`,
+  AUTH_CALLBACK: `${deployPath}/auth-callback`,
   TOS: `${rootPrefix}/termini-di-servizio`,
   PRIVACY_POLICY: `${rootPrefix}/informativa-privacy`,
   PAYMENTS_ON_THE_FLY: `${rootPrefix}/spontanei`,
