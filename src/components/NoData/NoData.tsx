@@ -1,7 +1,7 @@
 import React from 'react';
 import { Typography, Paper } from '@mui/material';
 
-const NoData = (props: { title: string; text: string }) => {
+export const NoData = (props: { title: string; text: string }) => {
   const { title, text } = props;
   return (
     <Paper elevation={0} sx={{ margin: '4px', padding: 2 }}>
@@ -23,5 +23,3 @@ const NoData = (props: { title: string; text: string }) => {
     </Paper>
   );
 };
-
-export default NoData;

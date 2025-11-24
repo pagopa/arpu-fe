@@ -2,7 +2,6 @@ import {
   PaymentNoticeDTO,
   PaymentNoticesListDTO,
   PaymentOptionDTO,
-  NoticesListDTO,
   NoticeDetailsDTO,
   InfoNoticeDTO,
   PaymentNoticeDetailsDTO
@@ -22,7 +21,6 @@ import {
 } from 'models/PaymentNotice';
 import { CartItem } from 'models/Cart';
 import { ArcRoutes } from 'routes/routes';
-import { TransactionProps } from 'components/Transactions';
 
 // This high order function is useful to 'decorate' existing function to add
 // the functionality to manage undefined (not optional) parameters and output a global character instead
@@ -48,41 +46,6 @@ const toEuro = (amount: number, decimalDigits: number = 2, fractionDigits: numbe
 export const toEuroOrMissingValue = withMissingValue(toEuro);
 export const formatDateOrMissingValue = withMissingValue(datetools.formatDate);
 export const propertyOrMissingValue = withMissingValue((property: string) => property);
-
-interface PrepareRowsData {
-  notices: NoticesListDTO['notices'];
-  status: {
-    label: string;
-    color?: string;
-  };
-  payee: {
-    /** text to shown when more than an entities are in involved within a single transaction */
-    multi: string;
-    /** alt text for entity logo */
-    altImg?: string;
-  };
-}
-
-/** This function transforms Transaction[] list returned by transaction service into transactionProps[] item */
-const prepareRowsData = (data: PrepareRowsData): TransactionProps[] => {
-  return (
-    data.notices?.map((element) => ({
-      date: formatDateOrMissingValue(element.noticeDate),
-      amount: toEuroOrMissingValue(element.amount),
-      id: propertyOrMissingValue(element.eventId),
-      payee: {
-        name: element.payeeName || data.payee.multi,
-        srcImg: element.payeeTaxCode && fromTaxCodeToSrcImage(element.payeeTaxCode),
-        altImg: data.payee.altImg || `Logo Ente`
-      },
-      // needs to be updated when status can be different from success
-      status: {
-        label: data.status.label,
-        color: 'success'
-      }
-    })) || []
-  );
-};
 
 const prepareNoticeDetailData = (noticeDetail: NoticeDetailsDTO): NoticeDetail | undefined => {
   const { infoNotice, carts } = noticeDetail;
@@ -306,7 +269,6 @@ export default {
   normalizePaymentNoticeDetails,
   prepareNoticeDetailData,
   prepareNoticesData,
-  prepareRowsData,
   cartItemsToCartsRequest,
   toEuro,
   withMissingValue,

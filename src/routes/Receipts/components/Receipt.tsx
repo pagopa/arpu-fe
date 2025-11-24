@@ -8,15 +8,20 @@ import { useNavigate } from 'react-router-dom';
 import { theme } from '@pagopa/mui-italia';
 import { ArcRoutes } from 'routes/routes';
 import { PayeeIcon } from 'components/PayeeIcon';
-import { DebtorReceiptDTO } from '../../../generated/arpu-be/data-contracts';
 import { formatDateOrMissingValue, fromTaxCodeToSrcImage } from 'utils/converters';
+import { DebtorReceiptDTO } from '../../../../generated/arpu-be/data-contracts';
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
   borderBottomColor: theme.palette.divider,
   cursor: 'pointer'
 }));
 
-const Transaction = ({ orgName, orgFiscalCode, paymentDateTime, receiptId }: DebtorReceiptDTO) => {
+export const Receipt = ({
+  orgName,
+  orgFiscalCode,
+  paymentDateTime,
+  receiptId
+}: DebtorReceiptDTO) => {
   const sm = useMediaQuery((theme: Theme) => theme.breakpoints.up('sm'));
   const navigate = useNavigate();
   const smUp = useMediaQuery(theme.breakpoints.up('sm'));
@@ -65,5 +70,3 @@ const Transaction = ({ orgName, orgFiscalCode, paymentDateTime, receiptId }: Deb
     </TableRow>
   );
 };
-
-export default Transaction;

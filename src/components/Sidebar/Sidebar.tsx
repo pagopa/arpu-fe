@@ -68,7 +68,6 @@ export const Sidebar: React.FC = () => {
           alignItems="normal"
           display="flex"
           flexDirection="column"
-          item
           component="nav"
           aria-expanded={!collapsed}
           aria-label={t('menu.navigationMenu')}

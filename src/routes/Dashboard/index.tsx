@@ -9,11 +9,13 @@ import QueryLoader from 'components/QueryLoader';
 import { PaymentNotice } from 'components/PaymentNotice';
 import { TransactionListSkeleton } from 'components/Skeleton';
 import PaymentButton from 'components/PaymentButton';
-import { Empty, Retry, TransactionsList } from 'components/Transactions';
 import { useUserInfo } from 'hooks/useUserInfo';
 import { Helmet } from 'react-helmet';
 import { resetCart } from 'store/CartStore';
 import config from 'utils/config';
+import { Retry } from 'components/Retry';
+import { Receipts } from 'routes/Receipts/components/Receipts';
+import { NoData } from 'components/NoData/NoData';
 
 const Dashboard = () => {
   const { t } = useTranslation();
@@ -26,8 +28,13 @@ const Dashboard = () => {
 
   const Content = () => {
     if (isError || !data?.content) return <Retry action={refetch} />;
-    if (data?.content?.length === 0) return <Empty />;
-    return <TransactionsList rows={data?.content} hideDateOrdering />;
+
+    if (data?.content?.length === 0)
+      return (
+        <NoData title={t('app.receipts.empty.title')} text={t('app.receipts.empty.subtitle')} />
+      );
+
+    return <Receipts rows={data?.content} hideDateOrdering />;
   };
 
   useEffect(() => {

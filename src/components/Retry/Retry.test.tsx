@@ -1,7 +1,7 @@
 import React from 'react';
 import { render, screen, fireEvent } from '@testing-library/react';
-import { Retry } from './';
 import '@testing-library/jest-dom';
+import { Retry } from '../Retry';
 
 describe('Retry Component', () => {
   it('renders without crashing', () => {

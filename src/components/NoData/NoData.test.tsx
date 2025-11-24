@@ -1,6 +1,6 @@
 import React from 'react';
 import { render, screen } from '@testing-library/react';
-import NoData from './NoData';
+import { NoData } from './NoData';
 import '@testing-library/jest-dom';
 
 describe('NoData component', () => {

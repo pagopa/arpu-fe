@@ -8,7 +8,7 @@ import { PaymentNoticeDetailsType } from 'models/PaymentNotice';
 import { Typography } from '@mui/material';
 import QueryLoader from 'components/QueryLoader';
 import { PaymentNoticeDetails } from 'components/Skeleton';
-import Retry from 'components/Transactions/Retry';
+import { Retry } from 'components/Retry';
 
 type NoticeDetailLoader = () => UseQueryResult<PaymentNoticeDetailsType, Error>;
 

@@ -73,10 +73,11 @@
         "cta": "Scarica app IO"
       }
     },
-    "transactions": {
-      "all": "Tutte",
-      "paidByMe": "Pagate da me",
-      "ownedByMe": "Intestate a me",
+    "retry": {
+      "title": "Non riusciamo a recuperare i dati a causa di un problema.",
+      "action": "Riprova"
+    },
+    "receipts": {
       "searchByName": "Cerca per nome",
       "searchBy": "Cerca per",
       "orderBy": "Ordina per",
@@ -94,10 +95,6 @@
       "empty": {
         "title": "Qui vedrai le tue ricevute",
         "subtitle": "Le troverai qui dopo aver pagato una posizione debitoria presso un qualsiasi canale abilitato."
-      },
-      "error": {
-        "title": "Non riusciamo a recuperare i dati a causa di un problema.",
-        "retry": "Riprova"
       }
     },
     "paymentNotice": {
