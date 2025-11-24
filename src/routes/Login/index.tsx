@@ -67,7 +67,7 @@ const Login = () => {
               <Card elevation={16}>
                 <CardContent>
                   <Stack gap={2}>
-                    <Button variant="contained" size="large">
+                    <Button variant="contained" size="large" color="primary">
                       {t('app.login.noAuth.CTA1')}
                     </Button>
                     <Button variant="contained" size="large">

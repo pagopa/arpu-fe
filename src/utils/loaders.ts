@@ -331,6 +331,28 @@ export const getPaymentNotice = (
     }
   });
 
+export const getPublicPaymentNotice = (
+  brokerId: number,
+  organizationId: number,
+  query: GetPaymentNoticeQueryParam,
+  debtorFiscalCode: string
+) =>
+  useMutation({
+    mutationKey: ['getPaymentNotice'],
+    mutationFn: async () => {
+      const response = await utils.arpuBeApiClient.public.getPublicPaymentNotice(
+        brokerId,
+        organizationId,
+        query,
+        { format: 'blob', headers: { 'X-fiscal-code': debtorFiscalCode } }
+      );
+
+      const contentDisposition = response.headers['content-disposition'] || '';
+      const filename = utils.converters.extractFilename(contentDisposition);
+      return { data: response.data, filename };
+    }
+  });
+
 export default {
   getPaymentNotices,
   getPaymentNoticeDetails,
@@ -352,6 +374,7 @@ export default {
     getPublicOrganizationsWithSpontaneous,
     getPublicDebtPositionTypeOrgsWithSpontaneous,
     getPublicDebtPositionTypeOrgsWithSpontaneousDetail,
-    createPublicSpontaneousDebtPosition
+    createPublicSpontaneousDebtPosition,
+    getPublicPaymentNotice
   }
 };

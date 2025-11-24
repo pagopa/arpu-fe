@@ -117,7 +117,9 @@ const Payment = () => {
     const { iuv } = paymentDetails;
     if (!iuv) return;
     isAnonumuos
-      ? navigate(generatePath(ArcRoutes.public.PAYMENTS_ON_THE_FLY_DOWNLOAD, { orgId, iuv }))
+      ? navigate(generatePath(ArcRoutes.public.PAYMENTS_ON_THE_FLY_DOWNLOAD, { orgId, iuv }), {
+          state: { debtorFiscalCode: fiscalCode.value }
+        })
       : navigate(generatePath(ArcRoutes.PAYMENTS_ON_THE_FLY_DOWNLOAD, { orgId, iuv }));
   };
 
