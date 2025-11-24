@@ -24,7 +24,8 @@ import { PreLoginLayout } from 'components/PreLoginLayout';
 import { ApiClient } from 'components/ApiClient';
 import Spontanei from 'routes/Spontanei';
 import Download from 'components/Spontanei/Download';
-import { Receipts } from 'routes/Receipts/list';
+import { ReceiptsList } from 'routes/Receipts/list';
+import { ReceiptDetail } from 'routes/Receipts/detail';
 
 const withGuard = (Component: () => React.JSX.Element) => (
   <RouteGuard itemKeys={['accessToken']} storage={window.localStorage}>
@@ -124,8 +125,13 @@ const router = createBrowserRouter([
             errorElement: <ErrorFallback />
           },
           {
+            path: ArcRoutes.RECEIPT,
+            element: withGuard(ReceiptDetail),
+            errorElement: <ErrorFallback />
+          },
+          {
             path: ArcRoutes.RECEIPTS,
-            element: withGuard(Receipts),
+            element: withGuard(ReceiptsList),
             errorElement: <ErrorFallback />
           },
           ...(utils.config.showNotices

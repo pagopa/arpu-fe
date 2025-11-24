@@ -11,7 +11,7 @@ import { ReceiptDataGrid } from './ReceiptDataGrid';
 import { NoData } from '../../../components/NoData/NoData';
 import { Retry } from 'components/Retry';
 
-export const Receipts = () => {
+export const ReceiptsList = () => {
   const { t } = useTranslation();
   // TODO: retrieve brokerId from context when available
   const brokerId = Number(config.brokerId);

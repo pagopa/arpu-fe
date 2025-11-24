@@ -5,7 +5,7 @@ import { MemoryRouter } from 'react-router-dom';
 import '@testing-library/jest-dom';
 import { useMediaQuery } from '@mui/material';
 import { i18nTestSetup } from '__tests__/i18nTestSetup';
-import { ReceiptsProps, Receipts } from './Receipts';
+import { ReceiptsProps, ReceiptsPreview } from './ReceiptsPreview';
 import { DebtorReceiptDTO } from '../../../../generated/arpu-be/data-contracts';
 
 i18nTestSetup({});
@@ -76,11 +76,11 @@ const mockReceiptsData: DebtorReceiptDTO[] = [
 
 const ReceiptsWithRouter = (props: ReceiptsProps) => (
   <MemoryRouter>
-    <Receipts {...props} />
+    <ReceiptsPreview {...props} />
   </MemoryRouter>
 );
 
-describe('Receipts table component', () => {
+describe('ReceiptsPreview table component', () => {
   beforeEach(() => {
     vi.clearAllMocks();
   });

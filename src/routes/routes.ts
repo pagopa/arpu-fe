@@ -7,7 +7,7 @@ const rootPrefix = `${deployPath}/${brokerId}`;
 
 export const ArcRoutes = {
   DASHBOARD: rootPrefix,
-  RECEIPT: `${rootPrefix}/ricevute/:id`,
+  RECEIPT: `${rootPrefix}/ricevute/:receiptId/:organizationId`,
   RECEIPTS: `${rootPrefix}/ricevute/`,
   PAYMENT_NOTICES: `${rootPrefix}/avvisi/`,
   PAYMENT_NOTICE_DETAIL: `${rootPrefix}/avvisi/:id/:paTaxCode`,

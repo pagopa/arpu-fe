@@ -14,8 +14,8 @@ import { Helmet } from 'react-helmet';
 import { resetCart } from 'store/CartStore';
 import config from 'utils/config';
 import { Retry } from 'components/Retry';
-import { Receipts } from 'routes/Receipts/components/Receipts';
 import { NoData } from 'components/NoData/NoData';
+import { ReceiptsPreview } from 'routes/Receipts/components/ReceiptsPreview';
 
 const Dashboard = () => {
   const { t } = useTranslation();
@@ -34,7 +34,7 @@ const Dashboard = () => {
         <NoData title={t('app.receipts.empty.title')} text={t('app.receipts.empty.subtitle')} />
       );
 
-    return <Receipts rows={data?.content} hideDateOrdering />;
+    return <ReceiptsPreview rows={data?.content} hideDateOrdering />;
   };
 
   useEffect(() => {

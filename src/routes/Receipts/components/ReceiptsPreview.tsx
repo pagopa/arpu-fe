@@ -14,7 +14,7 @@ export interface ReceiptsProps {
   hideDateOrdering?: boolean;
 }
 
-export const Receipts = (props: ReceiptsProps) => {
+export const ReceiptsPreview = (props: ReceiptsProps) => {
   const { t } = useTranslation();
   const mdUp = useMediaQuery((theme: Theme) => theme.breakpoints.up('md'));
 
@@ -35,7 +35,7 @@ export const Receipts = (props: ReceiptsProps) => {
           </TableRow>
         </TableHead>
         <TableBody sx={{ bgcolor: 'background.paper' }}>
-          {props?.rows && props.rows.map((row) => <Receipt {...row} key={row.receiptId} />)}
+          {props?.rows && props.rows.map((row) => <Receipt receipt={row} key={row.receiptId} />)}
         </TableBody>
       </Table>
     </TableContainer>

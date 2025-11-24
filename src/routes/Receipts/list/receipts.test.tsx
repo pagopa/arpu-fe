@@ -1,12 +1,12 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import React from 'react';
 import { render, waitFor, screen } from '@testing-library/react';
-import { Receipts } from '.';
 import '@testing-library/jest-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { Mock } from 'vitest';
 import utils from 'utils';
 import { useSearch } from 'hooks/useSearch';
+import { ReceiptsList } from '.';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -105,7 +105,7 @@ describe('Receipts Component', () => {
   it('renders without crashing', () => {
     render(
       <QueryClientProvider client={queryClient}>
-        <Receipts />
+        <ReceiptsList />
       </QueryClientProvider>
     );
 
@@ -120,7 +120,7 @@ describe('Receipts Component', () => {
 
     render(
       <QueryClientProvider client={queryClient}>
-        <Receipts />
+        <ReceiptsList />
       </QueryClientProvider>
     );
 
@@ -136,7 +136,7 @@ describe('Receipts Component', () => {
 
     render(
       <QueryClientProvider client={queryClient}>
-        <Receipts />
+        <ReceiptsList />
       </QueryClientProvider>
     );
 
@@ -161,7 +161,7 @@ describe('Receipts Component', () => {
 
     render(
       <QueryClientProvider client={queryClient}>
-        <Receipts />
+        <ReceiptsList />
       </QueryClientProvider>
     );
 
@@ -180,7 +180,7 @@ describe('Receipts Component', () => {
 
     render(
       <QueryClientProvider client={queryClient}>
-        <Receipts />
+        <ReceiptsList />
       </QueryClientProvider>
     );
 
@@ -196,7 +196,7 @@ describe('Receipts Component', () => {
   it('calls getPagedDebtorReceipts with correct brokerId', () => {
     render(
       <QueryClientProvider client={queryClient}>
-        <Receipts />
+        <ReceiptsList />
       </QueryClientProvider>
     );
 
@@ -206,7 +206,7 @@ describe('Receipts Component', () => {
   it('renders page title in helmet', () => {
     render(
       <QueryClientProvider client={queryClient}>
-        <Receipts />
+        <ReceiptsList />
       </QueryClientProvider>
     );
 
@@ -228,7 +228,7 @@ describe('Receipts Component', () => {
 
     render(
       <QueryClientProvider client={queryClient}>
-        <Receipts />
+        <ReceiptsList />
       </QueryClientProvider>
     );
 
@@ -252,7 +252,7 @@ describe('Receipts Component', () => {
 
     render(
       <QueryClientProvider client={queryClient}>
-        <Receipts />
+        <ReceiptsList />
       </QueryClientProvider>
     );
 
@@ -273,7 +273,7 @@ describe('Receipts Component', () => {
 
     render(
       <QueryClientProvider client={queryClient}>
-        <Receipts />
+        <ReceiptsList />
       </QueryClientProvider>
     );
 

@@ -44,7 +44,7 @@ describe('Receipt row table component', () => {
 
     render(
       <BrowserRouter>
-        <Receipt {...mockReceiptData} />
+        <Receipt receipt={mockReceiptData} />
       </BrowserRouter>
     );
 
@@ -62,7 +62,7 @@ describe('Receipt row table component', () => {
 
     render(
       <BrowserRouter>
-        <Receipt {...mockReceiptData} />
+        <Receipt receipt={mockReceiptData} />
       </BrowserRouter>
     );
 
@@ -74,7 +74,7 @@ describe('Receipt row table component', () => {
 
     render(
       <BrowserRouter>
-        <Receipt {...mockReceiptData} />
+        <Receipt receipt={mockReceiptData} />
       </BrowserRouter>
     );
 
