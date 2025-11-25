@@ -90,29 +90,29 @@ const Spontanei = () => {
   return (
     <Container>
       <Box padding={3} width={'100%'} component="main">
-      <Formik initialValues={defaultPaymentNoticeInfo} validate={validate} onSubmit={console.log}>
-        <FormContext.Provider value={{ org, setOrg, debtType, setDebtType, step, setStep }}>
-          <Stack>
-            <Typography variant="h6" mb={1}>
-              {step !== 4 ? t('spontanei.form.title') : t('spontanei.form.summaryTitle')}
-            </Typography>
-            <Typography>
-              {step !== 4
-                ? t('spontanei.form.description')
-                : t('spontanei.form.summaryDescription')}
-            </Typography>
-            <Stack spacing={4} mt={4}>
-              <Steps activeStep={step - 1} />
-              {step === 1 && <OrgSelect />}
-              {step === 2 && <DebtTypeSelect />}
-              {step === 3 && <DebtTypeConfig />}
-              {step === 4 && <Summary />}
-              {step === 5 && <Payment />}
+        <Formik initialValues={defaultPaymentNoticeInfo} validate={validate} onSubmit={console.log}>
+          <FormContext.Provider value={{ org, setOrg, debtType, setDebtType, step, setStep }}>
+            <Stack>
+              <Typography variant="h6" mb={1}>
+                {step !== 4 ? t('spontanei.form.title') : t('spontanei.form.summaryTitle')}
+              </Typography>
+              <Typography>
+                {step !== 4
+                  ? t('spontanei.form.description')
+                  : t('spontanei.form.summaryDescription')}
+              </Typography>
+              <Stack spacing={4} mt={4}>
+                <Steps activeStep={step - 1} />
+                {step === 1 && <OrgSelect />}
+                {step === 2 && <DebtTypeSelect />}
+                {step === 3 && <DebtTypeConfig />}
+                {step === 4 && <Summary />}
+                {step === 5 && <Payment />}
+              </Stack>
             </Stack>
-          </Stack>
-        </FormContext.Provider>
-      </Formik>
-     </Box>
+          </FormContext.Provider>
+        </Formik>
+      </Box>
     </Container>
   );
 };
