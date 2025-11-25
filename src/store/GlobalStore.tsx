@@ -9,7 +9,7 @@ const StoreContext = createContext<StoreContextProps | undefined>(undefined);
 export const StoreProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const combinedState: State = {
     [STATE.USER_INFO]: userInfoState.state?.value,
-    [STATE.CART]: cartState.value,
+    [STATE.CART]: cartState?.value,
     [STATE.PAYMENT_TYPE_DRAWER_VISIBILITY_STATUS]: paymentTypeDrawerVisibilityStore.value
   };
 

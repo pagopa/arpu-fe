@@ -1,6 +1,6 @@
 import { CartItem, CartState } from 'models/Cart';
-import utils from 'utils';
 import { usePersistentSignal } from 'hooks/usePersistentSignal';
+import { SessionItems } from 'utils/storage';
 
 const MAXCARTITEMS = 5;
 const ITEMID = 'iuv';
@@ -11,13 +11,10 @@ const defaultCart: CartState = {
   items: []
 };
 
-export const { state: cartState } = usePersistentSignal<CartState>(
-  utils.storage.SessionItems.CART,
-  {
-    storage: sessionStorage,
-    initialValue: defaultCart
-  }
-);
+export const { state: cartState } = usePersistentSignal<CartState>(SessionItems.CART, {
+  storage: sessionStorage,
+  initialValue: defaultCart
+});
 
 export function setCart(cart: CartState) {
   cartState.value = cart;

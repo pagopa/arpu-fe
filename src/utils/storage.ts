@@ -1,6 +1,6 @@
 import { signal } from '@preact/signals-react';
 
-enum SessionItems {
+export enum SessionItems {
   OPTIN = 'OPTIN',
   CART = 'CART'
 }
