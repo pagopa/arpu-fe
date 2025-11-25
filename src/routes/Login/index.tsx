@@ -14,6 +14,7 @@ import {
 import React from 'react';
 import PermIdentityOutlinedIcon from '@mui/icons-material/PermIdentityOutlined';
 import { useTranslation } from 'react-i18next';
+import { useNavigate } from 'react-router-dom';
 
 const Login = () => {
   const theme = useTheme();
@@ -24,6 +25,10 @@ const Login = () => {
   useEffect(() => {
     if (utils.storage.user.hasToken()) window.location.replace(ArcRoutes.DASHBOARD);
   }, []);
+
+  const navigate = useNavigate();
+
+  const handleCTA1 = () => navigate(ArcRoutes.public.PAYMENTS_ON_THE_FLY);
 
   return (
     <Grid container minHeight={580}>
@@ -67,7 +72,7 @@ const Login = () => {
               <Card elevation={16}>
                 <CardContent>
                   <Stack gap={2}>
-                    <Button variant="contained" size="large">
+                    <Button variant="contained" size="large" color="primary" onClick={handleCTA1}>
                       {t('app.login.noAuth.CTA1')}
                     </Button>
                     <Button variant="contained" size="large">

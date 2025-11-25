@@ -1,5 +1,5 @@
 import React, { useEffect, useRef } from 'react';
-import { Container, Stack, Typography } from '@mui/material';
+import { Box, Container, Stack, Typography } from '@mui/material';
 
 import Steps from './steps';
 import FormContext from './FormContext';
@@ -19,6 +19,7 @@ import {
   PersonEntityType
 } from '../../../generated/arpu-be/data-contracts';
 import Payment from './steps/Payment';
+import utils from 'utils';
 
 export type PaymentNoticeInfo = {
   fullName: string;
@@ -38,17 +39,18 @@ const Spontanei = () => {
   const [debtType, setDebtType] = React.useState<DebtPositionTypeOrgsWithSpontaneousDTO | null>(
     null
   );
+  const isAnonymous = utils.storage.user.isAnonymous();
 
   const { t } = useTranslation();
 
   const formikRef = useRef<ReturnType<typeof useFormik<PaymentNoticeInfo>>>(null);
 
-  const payerEmail = useUserEmail() || '';
-  const { userInfo } = useUserInfo();
+  const payerEmail = isAnonymous ? '' : useUserEmail() || '';
+  const { userInfo } = isAnonymous ? { userInfo: null } : useUserInfo();
   const name = userInfo?.name || '';
   const surname = userInfo?.familyName || '';
   const payerFullName = `${name} ${surname}`;
-  const payerFiscalCode = userInfo?.fiscalCode || '';
+  const payerFiscalCode = ''; //TO BE FIXED
 
   const defaultPaymentNoticeInfo: PaymentNoticeInfo = {
     fullName: payerFullName,
@@ -87,28 +89,30 @@ const Spontanei = () => {
 
   return (
     <Container>
-      <Formik initialValues={defaultPaymentNoticeInfo} validate={validate} onSubmit={console.log}>
-        <FormContext.Provider value={{ org, setOrg, debtType, setDebtType, step, setStep }}>
-          <Stack>
-            <Typography variant="h6" mb={1}>
-              {step !== 4 ? t('spontanei.form.title') : t('spontanei.form.summaryTitle')}
-            </Typography>
-            <Typography>
-              {step !== 4
-                ? t('spontanei.form.description')
-                : t('spontanei.form.summaryDescription')}
-            </Typography>
-            <Stack spacing={4} mt={4}>
-              <Steps activeStep={step - 1} />
-              {step === 1 && <OrgSelect />}
-              {step === 2 && <DebtTypeSelect />}
-              {step === 3 && <DebtTypeConfig />}
-              {step === 4 && <Summary />}
-              {step === 5 && <Payment />}
+      <Box padding={3} width={'100%'} component="main">
+        <Formik initialValues={defaultPaymentNoticeInfo} validate={validate} onSubmit={console.log}>
+          <FormContext.Provider value={{ org, setOrg, debtType, setDebtType, step, setStep }}>
+            <Stack>
+              <Typography variant="h6" mb={1}>
+                {step !== 4 ? t('spontanei.form.title') : t('spontanei.form.summaryTitle')}
+              </Typography>
+              <Typography>
+                {step !== 4
+                  ? t('spontanei.form.description')
+                  : t('spontanei.form.summaryDescription')}
+              </Typography>
+              <Stack spacing={4} mt={4}>
+                <Steps activeStep={step - 1} />
+                {step === 1 && <OrgSelect />}
+                {step === 2 && <DebtTypeSelect />}
+                {step === 3 && <DebtTypeConfig />}
+                {step === 4 && <Summary />}
+                {step === 5 && <Payment />}
+              </Stack>
             </Stack>
-          </Stack>
-        </FormContext.Provider>
-      </Formik>
+          </FormContext.Provider>
+        </Formik>
+      </Box>
     </Container>
   );
 };

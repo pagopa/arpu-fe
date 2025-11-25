@@ -15,13 +15,18 @@ interface debtTypeOptions {
 const DebtTypeSelect = () => {
   const context = useContext<FormContextType | null>(FormContext);
   const { brokerId = '1' } = useParams();
+  const isAnonymous = utils.storage.user.isAnonymous();
   const { t } = useTranslation();
 
-  const { data: DebtPositionTypeOrgsWithSpontaneous } =
-    utils.loaders.getDebtPositionTypeOrgsWithSpontaneous(
-      parseInt(brokerId, 10),
-      context?.org?.organizationId || 0
-    );
+  const { data: DebtPositionTypeOrgsWithSpontaneous } = isAnonymous
+    ? utils.loaders.public.getPublicDebtPositionTypeOrgsWithSpontaneous(
+        parseInt(brokerId, 10),
+        context?.org?.organizationId || 0
+      )
+    : utils.loaders.getDebtPositionTypeOrgsWithSpontaneous(
+        parseInt(brokerId, 10),
+        context?.org?.organizationId || 0
+      );
 
   const debtTypeOptions: debtTypeOptions[] =
     DebtPositionTypeOrgsWithSpontaneous?.map((debtType) => ({

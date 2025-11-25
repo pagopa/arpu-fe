@@ -15,7 +15,11 @@ interface OrgOptions {
 const OrgSelect = () => {
   const { t } = useTranslation();
   const { brokerId = '1' } = useParams();
-  const { data: orgs } = utils.loaders.getOrganizationsWithSpontaneous(parseInt(brokerId, 10));
+  const isAnonymous = utils.storage.user.isAnonymous();
+
+  const { data: orgs } = isAnonymous
+    ? utils.loaders.public.getPublicOrganizationsWithSpontaneous(parseInt(brokerId, 10))
+    : utils.loaders.getOrganizationsWithSpontaneous(parseInt(brokerId, 10));
 
   const orgOptions: OrgOptions[] =
     orgs?.map((org) => ({ label: org.orgName, value: org.organizationId })) || [];

@@ -43,6 +43,12 @@ const clear = () => {
 
 const optin = signal<boolean>(Boolean(getSessionItem(SessionItems.OPTIN)));
 
+const isAnonymous = () => {
+  const hasToken = Boolean(getStorageItem(StorageItems.TOKEN));
+  const isOnPublicRoute = window.location.href.indexOf('/public') > 0;
+  return !hasToken && isOnPublicRoute;
+};
+
 export default {
   SessionItems,
   pullPaymentsOptIn: {
@@ -61,6 +67,7 @@ export default {
   },
   user: {
     hasToken: () => Boolean(getStorageItem(StorageItems.TOKEN)),
+    isAnonymous,
     /** clear both session and local storage */
     logOut: clear,
     setToken: (token: string) => setStorageItem(StorageItems.TOKEN, token)

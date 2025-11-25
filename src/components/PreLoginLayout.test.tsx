@@ -7,20 +7,28 @@ import { i18nTestSetup } from '__tests__/i18nTestSetup';
 i18nTestSetup({});
 
 const mockedChangeLanguage = vi.fn();
+
 global.fetch = vi.fn().mockImplementation(() =>
   Promise.resolve({
     ok: true,
     json: () => 'data'
   })
 );
+
 vi.mock('./utils/config', () => ({
   assistanceLink: 'string'
 }));
+
 vi.mock('./utils/hooks', () => ({
   useLanguage: () => ({
     language: 'en',
     changeLanguage: mockedChangeLanguage
   })
+}));
+
+vi.mock('react-router-dom', () => ({
+  useMatches: () => [],
+  useNavigate: vi.fn()
 }));
 
 describe('PreLoginLayout Component', () => {

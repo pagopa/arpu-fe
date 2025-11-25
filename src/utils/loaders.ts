@@ -190,12 +190,37 @@ export const createSpontaneousDebtPosition = (brokerId: number, body: DebtPositi
     }
   });
 
+export const createPublicSpontaneousDebtPosition = (
+  brokerId: number,
+  body: DebtPositionRequestDTO
+) =>
+  useQuery({
+    queryKey: ['createSpontaneousDebtPosition'],
+    queryFn: async () => {
+      const { data } = await utils.arpuBeApiClient.public.createPublicSpontaneousDebtPosition(
+        brokerId,
+        body
+      );
+      return data;
+    }
+  });
+
 export const getOrganizationsWithSpontaneous = (brokerId: number) =>
   useQuery({
     queryKey: ['getOrganizationsWithSpontaneous'],
     queryFn: async () => {
       const { data } =
         await utils.arpuBeApiClient.brokers.getOrganizationsWithSpontaneous(brokerId);
+      return data;
+    }
+  });
+
+export const getPublicOrganizationsWithSpontaneous = (brokerId: number) =>
+  useQuery({
+    queryKey: ['getPublicOrganizationsWithSpontaneous'],
+    queryFn: async () => {
+      const { data } =
+        await utils.arpuBeApiClient.public.getPublicOrganizationsWithSpontaneous(brokerId);
       return data;
     }
   });
@@ -212,6 +237,22 @@ export const getDebtPositionTypeOrgsWithSpontaneous = (brokerId: number, organiz
     }
   });
 
+export const getPublicDebtPositionTypeOrgsWithSpontaneous = (
+  brokerId: number,
+  organizationId: number
+) =>
+  useQuery({
+    queryKey: ['getPublicDebtPositionTypeOrgsWithSpontaneous'],
+    queryFn: async () => {
+      const { data } =
+        await utils.arpuBeApiClient.public.getPublicDebtPositionTypeOrgsWithSpontaneous(
+          brokerId,
+          organizationId
+        );
+      return data;
+    }
+  });
+
 export const getDebtPositionTypeOrgsWithSpontaneousDetail = (
   brokerId: number,
   organizationId: number,
@@ -222,6 +263,24 @@ export const getDebtPositionTypeOrgsWithSpontaneousDetail = (
     queryFn: async () => {
       const { data } =
         await utils.arpuBeApiClient.brokers.getDebtPositionTypeOrgsWithSpontaneousDetail(
+          brokerId,
+          organizationId,
+          debtPositionTypeOrgId
+        );
+      return data;
+    }
+  });
+
+export const getPublicDebtPositionTypeOrgsWithSpontaneousDetail = (
+  brokerId: number,
+  organizationId: number,
+  debtPositionTypeOrgId: number
+) =>
+  useQuery({
+    queryKey: ['getPublicDebtPositionTypeOrgsWithSpontaneousDetail'],
+    queryFn: async () => {
+      const { data } =
+        await utils.arpuBeApiClient.public.getPublicDebtPositionTypeOrgsWithSpontaneousDetail(
           brokerId,
           organizationId,
           debtPositionTypeOrgId
@@ -258,6 +317,28 @@ export const getPaymentNotice = (
     }
   });
 
+export const getPublicPaymentNotice = (
+  brokerId: number,
+  organizationId: number,
+  query: GetPaymentNoticeQueryParam,
+  debtorFiscalCode: string
+) =>
+  useMutation({
+    mutationKey: ['getPaymentNotice'],
+    mutationFn: async () => {
+      const response = await utils.arpuBeApiClient.public.getPublicPaymentNotice(
+        brokerId,
+        organizationId,
+        query,
+        { format: 'blob', headers: { 'X-fiscal-code': debtorFiscalCode } }
+      );
+
+      const contentDisposition = response.headers['content-disposition'] || '';
+      const filename = utils.converters.extractFilename(contentDisposition);
+      return { data: response.data, filename };
+    }
+  });
+
 export default {
   getPaymentNotices,
   getPaymentNoticeDetails,
@@ -273,5 +354,12 @@ export default {
   getOrganizationsWithSpontaneous,
   getDebtPositionTypeOrgsWithSpontaneous,
   getDebtPositionTypeOrgsWithSpontaneousDetail,
-  getPaymentNotice
+  getPaymentNotice,
+  public: {
+    getPublicOrganizationsWithSpontaneous,
+    getPublicDebtPositionTypeOrgsWithSpontaneous,
+    getPublicDebtPositionTypeOrgsWithSpontaneousDetail,
+    createPublicSpontaneousDebtPosition,
+    getPublicPaymentNotice
+  }
 };

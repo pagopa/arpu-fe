@@ -1,15 +1,30 @@
 import React, { ReactNode } from 'react';
-import { Stack } from '@mui/material';
+import { Box, Stack } from '@mui/material';
 import utils from 'utils';
 import { HeaderAccount } from '@pagopa/mui-italia';
 import { Footer } from './Footer';
-import { Outlet } from 'react-router-dom';
+import { Outlet, useMatches } from 'react-router-dom';
+import { BackButton } from './BackButton';
+import { RouteHandleObject } from 'models/Breadcrumbs';
+
+const defaultRouteHandle: RouteHandleObject = {
+  sidebar: { visible: true },
+  crumbs: { routeName: '', elements: [] },
+  backButton: false
+};
 
 export function PreLoginLayout({ children }: { children?: ReactNode }) {
   const ASSISTANCE_MAIL = utils.config.assistanceLink;
   const onAssistanceClick = () => {
     window.open(`mailto:${ASSISTANCE_MAIL}`);
   };
+
+  const matches = useMatches();
+
+  const { backButton, backButtonText, backButtonFunction } = {
+    ...defaultRouteHandle,
+    ...(matches.find((match) => Boolean(match.handle))?.handle || {})
+  } as RouteHandleObject;
 
   return (
     <Stack>
@@ -18,7 +33,10 @@ export function PreLoginLayout({ children }: { children?: ReactNode }) {
         onAssistanceClick={onAssistanceClick}
         enableLogin={false}
       />
-      {children || <Outlet />}
+      <Box width={'100%'} component="main">
+        {backButton && <BackButton onClick={backButtonFunction} text={backButtonText} />}
+        {children || <Outlet />}
+      </Box>
       <Footer />
     </Stack>
   );

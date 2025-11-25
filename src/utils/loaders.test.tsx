@@ -349,4 +349,115 @@ describe('Payment Notices API', () => {
       expect(mutation.result.current.data).toEqual({ data: 'Test', filename: 'test.pdf' });
     });
   });
+
+  it('getPublicDebtPositionTypeOrgsWithSpontaneous calls API and schema parser correctly', async () => {
+    const dataMock = createMock(zod.array(debtPositionTypeOrgsWithSpontaneousDTOSchema));
+
+    const apiMock = vi
+      .spyOn(utils.arpuBeApiClient.public, 'getPublicDebtPositionTypeOrgsWithSpontaneous')
+      .mockResolvedValue({ data: dataMock } as AxiosResponse);
+
+    const query = renderHook(
+      () => loaders.public.getPublicDebtPositionTypeOrgsWithSpontaneous(1, 3),
+      {
+        wrapper
+      }
+    );
+
+    await waitFor(() => {
+      expect(apiMock).toHaveBeenCalledWith(1, 3);
+      expect(query.result.current.isSuccess).toBeTruthy();
+      expect(query.result.current.data).toEqual(dataMock);
+    });
+  });
+
+  it('createPublicSpontaneousDebtPosition calls API and schema parser correctly', async () => {
+    const bodyMock = createMock(debtPositionRequestDTOSchema);
+    const responseMock = createMock(debtPositionResponseDTOSchema);
+
+    const apiMock = vi
+      .spyOn(utils.arpuBeApiClient.public, 'createPublicSpontaneousDebtPosition')
+      .mockResolvedValue({ data: responseMock } as AxiosResponse);
+
+    const query = renderHook(
+      () => loaders.public.createPublicSpontaneousDebtPosition(1, bodyMock),
+      {
+        wrapper
+      }
+    );
+
+    await waitFor(() => {
+      expect(apiMock).toHaveBeenCalledWith(1, bodyMock);
+      expect(query.result.current.isSuccess).toBeTruthy();
+      expect(query.result.current.data).toEqual(responseMock);
+    });
+  });
+
+  it('getPublicOrganizationsWithSpontaneous calls API and schema parser correctly', async () => {
+    const dataMock = createMock(zod.array(organizationsWithSpontaneousDTOSchema));
+
+    const apiMock = vi
+      .spyOn(utils.arpuBeApiClient.public, 'getPublicOrganizationsWithSpontaneous')
+      .mockResolvedValue({ data: dataMock } as AxiosResponse);
+
+    const query = renderHook(() => loaders.public.getPublicOrganizationsWithSpontaneous(1), {
+      wrapper
+    });
+
+    await waitFor(() => {
+      expect(apiMock).toHaveBeenCalledWith(1);
+      expect(query.result.current.isSuccess).toBeTruthy();
+      expect(query.result.current.data).toEqual(dataMock);
+    });
+  });
+
+  it('getPublicDebtPositionTypeOrgsWithSpontaneousDetail calls API and schema parser correctly', async () => {
+    const dataMock = createMock(debtPositionTypeOrgsWithSpontaneousDTOSchema);
+
+    const apiMock = vi
+      .spyOn(utils.arpuBeApiClient.public, 'getPublicDebtPositionTypeOrgsWithSpontaneousDetail')
+      .mockResolvedValue({ data: dataMock } as AxiosResponse);
+
+    const query = renderHook(
+      () => loaders.public.getPublicDebtPositionTypeOrgsWithSpontaneousDetail(1, 2, 3),
+      {
+        wrapper
+      }
+    );
+
+    await waitFor(() => {
+      expect(apiMock).toHaveBeenCalledWith(1, 2, 3);
+      expect(query.result.current.isSuccess).toBeTruthy();
+      expect(query.result.current.data).toEqual(dataMock);
+    });
+  });
+
+  it('getPublicPaymentNotice mutation calls API and extract filename correctly', async () => {
+    const apiMock = vi
+      .spyOn(utils.arpuBeApiClient.public, 'getPublicPaymentNotice')
+      .mockResolvedValue({
+        data: 'Test',
+        headers: { 'content-disposition': "attachment; filename='test.pdf'" }
+      } as unknown as AxiosResponse);
+
+    const mutation = renderHook(
+      () => loaders.public.getPublicPaymentNotice(1, 3, { iuv: '1' }, 'FISCALCODE'),
+      {
+        wrapper
+      }
+    );
+
+    await mutation.result.current.mutateAsync();
+
+    await waitFor(() => {
+      expect(apiMock).toHaveBeenCalledWith(
+        1,
+        3,
+        { iuv: '1' },
+        { format: 'blob', headers: { 'X-fiscal-code': 'FISCALCODE' } }
+      );
+      expect(mutation.result.current.isSuccess).toBeTruthy();
+      expect(mutation.result.current.data).toEqual({ data: 'Test', filename: 'test.pdf' });
+    });
+  });
 });

@@ -19,7 +19,11 @@ export const ArcRoutes = {
   TOS: `${rootPrefix}/termini-di-servizio`,
   PRIVACY_POLICY: `${rootPrefix}/informativa-privacy`,
   PAYMENTS_ON_THE_FLY: `${rootPrefix}/spontanei`,
-  PAYMENTS_ON_THE_FLY_DOWNLOAD: `${rootPrefix}/spontanei/download/:orgId/:iuv`
+  PAYMENTS_ON_THE_FLY_DOWNLOAD: `${rootPrefix}/spontanei/download/:orgId/:iuv`,
+  public: {
+    PAYMENTS_ON_THE_FLY: `${rootPrefix}/public/spontanei`,
+    PAYMENTS_ON_THE_FLY_DOWNLOAD: `${rootPrefix}/public/spontanei/download/:orgId/:iuv`
+  }
 };
 
 export enum ArcErrors {

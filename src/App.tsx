@@ -59,7 +59,10 @@ const router = createBrowserRouter([
           <PreLoginLayout>
             <Login />
           </PreLoginLayout>
-        )
+        ),
+        handle: {
+          backButton: false
+        } as RouteHandleObject
       },
       {
         path: ArcRoutes.AUTH_CALLBACK,
@@ -199,6 +202,32 @@ const router = createBrowserRouter([
                 }
               }
             ]
+          }
+        ]
+      },
+      {
+        path: ArcRoutes.public.PAYMENTS_ON_THE_FLY,
+        element: <PreLoginLayout />,
+        children: [
+          {
+            index: true,
+            element: <Spontanei />,
+            handle: {
+              backButton: true,
+              sidebar: {
+                visibile: false
+              }
+            }
+          },
+          {
+            path: 'download/:orgId/:iuv',
+            element: <Download />,
+            handle: {
+              backButton: false,
+              sidebar: {
+                visibile: false
+              }
+            }
           }
         ]
       }
