@@ -1,5 +1,5 @@
 import React, { useEffect, useRef } from 'react';
-import { Container, Stack, Typography } from '@mui/material';
+import { Box, Container, Stack, Typography } from '@mui/material';
 
 import Steps from './steps';
 import FormContext from './FormContext';
@@ -39,14 +39,14 @@ const Spontanei = () => {
   const [debtType, setDebtType] = React.useState<DebtPositionTypeOrgsWithSpontaneousDTO | null>(
     null
   );
-  const isAnonumuos = utils.storage.user.isAnonymous();
+  const isAnonymous = utils.storage.user.isAnonymous();
 
   const { t } = useTranslation();
 
   const formikRef = useRef<ReturnType<typeof useFormik<PaymentNoticeInfo>>>(null);
 
-  const payerEmail = isAnonumuos ? '' : useUserEmail() || '';
-  const { userInfo } = isAnonumuos ? { userInfo: null } : useUserInfo();
+  const payerEmail = isAnonymous ? '' : useUserEmail() || '';
+  const { userInfo } = isAnonymous ? { userInfo: null } : useUserInfo();
   const name = userInfo?.name || '';
   const surname = userInfo?.familyName || '';
   const payerFullName = `${name} ${surname}`;
@@ -89,6 +89,7 @@ const Spontanei = () => {
 
   return (
     <Container>
+      <Box padding={3} width={'100%'} component="main">
       <Formik initialValues={defaultPaymentNoticeInfo} validate={validate} onSubmit={console.log}>
         <FormContext.Provider value={{ org, setOrg, debtType, setDebtType, step, setStep }}>
           <Stack>
@@ -111,6 +112,7 @@ const Spontanei = () => {
           </Stack>
         </FormContext.Provider>
       </Formik>
+     </Box>
     </Container>
   );
 };

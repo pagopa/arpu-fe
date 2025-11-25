@@ -59,7 +59,10 @@ const router = createBrowserRouter([
           <PreLoginLayout>
             <Login />
           </PreLoginLayout>
-        )
+        ),
+        handle: {
+          backButton: false
+        } as RouteHandleObject
       },
       {
         path: ArcRoutes.AUTH_CALLBACK,

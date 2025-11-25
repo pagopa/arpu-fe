@@ -21,7 +21,7 @@ export function PreLoginLayout({ children }: { children?: ReactNode }) {
 
   const matches = useMatches();
 
-  const { backButtonText, backButtonFunction } = {
+  const { backButton, backButtonText, backButtonFunction } = {
     ...defaultRouteHandle,
     ...(matches.find((match) => Boolean(match.handle))?.handle || {})
   } as RouteHandleObject;
@@ -33,8 +33,8 @@ export function PreLoginLayout({ children }: { children?: ReactNode }) {
         onAssistanceClick={onAssistanceClick}
         enableLogin={false}
       />
-      <Box padding={3} width={'100%'} component="main">
-        <BackButton onClick={backButtonFunction} text={backButtonText} />
+      <Box width={'100%'} component="main">
+        {backButton && <BackButton onClick={backButtonFunction} text={backButtonText} />}
         {children || <Outlet />}
       </Box>
       <Footer />

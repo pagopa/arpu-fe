@@ -15,9 +15,9 @@ interface OrgOptions {
 const OrgSelect = () => {
   const { t } = useTranslation();
   const { brokerId = '1' } = useParams();
-  const isAnonumuos = utils.storage.user.isAnonymous();
+  const isAnonymous = utils.storage.user.isAnonymous();
 
-  const { data: orgs } = isAnonumuos
+  const { data: orgs } = isAnonymous
     ? utils.loaders.public.getPublicOrganizationsWithSpontaneous(parseInt(brokerId, 10))
     : utils.loaders.getOrganizationsWithSpontaneous(parseInt(brokerId, 10));
 

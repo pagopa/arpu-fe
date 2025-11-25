@@ -15,10 +15,10 @@ interface debtTypeOptions {
 const DebtTypeSelect = () => {
   const context = useContext<FormContextType | null>(FormContext);
   const { brokerId = '1' } = useParams();
-  const isAnonumuos = utils.storage.user.isAnonymous();
+  const isAnonymous = utils.storage.user.isAnonymous();
   const { t } = useTranslation();
 
-  const { data: DebtPositionTypeOrgsWithSpontaneous } = isAnonumuos
+  const { data: DebtPositionTypeOrgsWithSpontaneous } = isAnonymous
     ? utils.loaders.public.getPublicDebtPositionTypeOrgsWithSpontaneous(
         parseInt(brokerId, 10),
         context?.org?.organizationId || 0

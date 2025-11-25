@@ -26,7 +26,7 @@ const Payment = () => {
   const [fiscalCode] = useField<PaymentNoticeInfo['fiscalCode']>('fiscalCode');
   const [entityType] = useField<PaymentNoticeInfo['entityType']>('entityType');
   const [email] = useField<PaymentNoticeInfo['email']>('email');
-  const isAnonumuos = utils.storage.user.isAnonymous();
+  const isAnonymous = utils.storage.user.isAnonymous();
 
   const organizationId = context?.org?.organizationId;
   const debtPositionTypeOrgId = context?.debtType?.debtPositionTypeOrgId;
@@ -66,7 +66,7 @@ const Payment = () => {
     ]
   };
 
-  const { data: debtPositionResponse } = isAnonumuos
+  const { data: debtPositionResponse } = isAnonymous
     ? utils.loaders.public.createPublicSpontaneousDebtPosition(Number(brokerId), body)
     : utils.loaders.createSpontaneousDebtPosition(Number(brokerId), body);
 
@@ -116,7 +116,7 @@ const Payment = () => {
     const { organizationId: orgId, paymentDetails } = debtPositionResponse;
     const { iuv } = paymentDetails;
     if (!iuv) return;
-    isAnonumuos
+    isAnonymous
       ? navigate(generatePath(ArcRoutes.public.PAYMENTS_ON_THE_FLY_DOWNLOAD, { orgId, iuv }), {
           state: { debtorFiscalCode: fiscalCode.value }
         })
