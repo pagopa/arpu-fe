@@ -47,8 +47,9 @@ export const ReceiptDetail = () => {
               value={propertyOrMissingValue(data?.remittanceInformation)}
             />
             <DataRow label={t('app.receiptDetail.iuv')} value={propertyOrMissingValue(data?.iuv)} />
-            <DataRow label={t('app.receiptDetail.beneficiary')} value={'-'} />
-            <DataRow label={t('app.receiptDetail.beneficiaryFiscalCode')} value={'-'} />
+            {/* TODO: add beneficiary and beneficiaryFiscalCode when available*/}
+            {/* <DataRow label={t('app.receiptDetail.beneficiary')} value={'-'} />*/}
+            {/* <DataRow label={t('app.receiptDetail.beneficiaryFiscalCode')} value={'-'} />*/}
             <DataRow
               label={t('app.receiptDetail.debtor')}
               value={propertyOrMissingValue(data?.debtor.fullName)}
