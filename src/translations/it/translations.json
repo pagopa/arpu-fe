@@ -34,6 +34,23 @@
         "info": "Puoi pagare fino a 5 avvisi insieme"
       }
     },
+    "receiptDetail": {
+      "title": "Dettaglio Operazione",
+      "download": "Scarica ricevuta",
+      "amount": "Importo",
+      "remittanceInformation": "Oggetto del pagamento",
+      "iuv": "Codice Avviso",
+      "beneficiary": "Ente beneficiario",
+      "beneficiaryFiscalCode": "Codice Fiscale Ente",
+      "debtor": "Intestatario",
+      "debtorFiscalCode": "Codice Fiscale Debitore",
+      "paymentInformation": "INFORMAZIONI SULLA TRANSAZIONE",
+      "psp": "Gestore della transazione (PSP)",
+      "paymentDate": "Data e ora",
+      "authorizationCode": "Codice autorizzativo",
+      "iur": "IUR",
+      "iud": "IUD"
+    },
     "assistance": {
       "title": "Come possiamo aiutarti?",
       "description": "Se hai bisogno di supporto sull’utilizzo del portale, inserisci i dati richiesti per ricevere assistenza.",
@@ -64,7 +81,7 @@
     "dashboard": {
       "title": "Ciao, {{username}}",
       "greetings": "Benvenuto",
-      "newPayment": "Paga un avviso",
+      "newPayment": "Fai un pagamento",
       "lastTransactions": "Le tue ricevute",
       "seeAllTransactions": "Vedi tutte",
       "IOAlert": {
@@ -73,10 +90,11 @@
         "cta": "Scarica app IO"
       }
     },
-    "transactions": {
-      "all": "Tutte",
-      "paidByMe": "Pagate da me",
-      "ownedByMe": "Intestate a me",
+    "retry": {
+      "title": "Non riusciamo a recuperare i dati a causa di un problema.",
+      "action": "Riprova"
+    },
+    "receipts": {
       "searchByName": "Cerca per nome",
       "searchBy": "Cerca per",
       "orderBy": "Ordina per",
@@ -94,10 +112,6 @@
       "empty": {
         "title": "Qui vedrai le tue ricevute",
         "subtitle": "Le troverai qui dopo aver pagato una posizione debitoria presso un qualsiasi canale abilitato."
-      },
-      "error": {
-        "title": "Non riusciamo a recuperare i dati a causa di un problema.",
-        "retry": "Riprova"
       }
     },
     "paymentNotice": {

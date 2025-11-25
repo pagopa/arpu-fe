@@ -3,7 +3,7 @@ import { GridColDef } from '@mui/x-data-grid';
 import {
   DebtorReceiptDTO,
   PagedDebtorReceiptsDTO
-} from '../../../generated/arpu-be/data-contracts';
+} from '../../../../generated/arpu-be/data-contracts';
 import { useTranslation } from 'react-i18next';
 import { generatePath, Link } from 'react-router-dom';
 import { ArcRoutes } from 'routes/routes';
@@ -54,8 +54,13 @@ export const ReceiptDataGrid = ({ data }: DataGridProps) => {
       sortable: false,
       align: 'right',
       headerAlign: 'right',
-      renderCell: ({ id }) => (
-        <Link to={generatePath(ArcRoutes.RECEIPT, { id })} aria-label={t('commons.detail')}>
+      renderCell: ({ row: { receiptId, organizationId } }) => (
+        <Link
+          to={generatePath(ArcRoutes.RECEIPT, {
+            receiptId,
+            organizationId
+          })}
+          aria-label={t('commons.detail')}>
           <IconButton size="small">
             <ChevronRight />
           </IconButton>

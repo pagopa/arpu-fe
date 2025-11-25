@@ -2,32 +2,54 @@ import React, { useEffect } from 'react';
 import { Box, Button, Stack, Typography, useTheme } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import { Link, useSearchParams } from 'react-router-dom';
-import utils from 'utils';
 import { ArcRoutes } from '../routes';
 import { grey } from '@mui/material/colors';
 import QueryLoader from 'components/QueryLoader';
-import { PaymentNotice } from 'components/PaymentNotice';
 import { TransactionListSkeleton } from 'components/Skeleton';
 import PaymentButton from 'components/PaymentButton';
-import { Empty, Retry, TransactionsList } from 'components/Transactions';
 import { useUserInfo } from 'hooks/useUserInfo';
 import { Helmet } from 'react-helmet';
 import { resetCart } from 'store/CartStore';
 import config from 'utils/config';
+import { Retry } from 'components/Retry';
+import { NoData } from 'components/NoData/NoData';
+import { ReceiptsPreview } from 'routes/Receipts/components/ReceiptsPreview';
+import { useSearch } from 'hooks/useSearch';
+import loaders from 'utils/loaders';
 
 const Dashboard = () => {
   const { t } = useTranslation();
   // TODO: retrieve brokerId from context when available
   const brokerId = Number(config.brokerId);
-  const { data, isError, refetch } = utils.loaders.getLastReceipts(brokerId);
+  const query = loaders.getPagedDebtorReceipts(brokerId);
+
+  const filters = {
+    sort: ['paymentDateTime,desc'],
+    size: 3,
+    page: 0
+  };
+
+  const {
+    query: { data, isError },
+    applyFilters
+  } = useSearch({
+    query,
+    filters
+  });
+
   const theme = useTheme();
   const { userInfo } = useUserInfo();
   const [searchParams, setSearchParams] = useSearchParams();
 
   const Content = () => {
-    if (isError || !data?.content) return <Retry action={refetch} />;
-    if (data?.content?.length === 0) return <Empty />;
-    return <TransactionsList rows={data?.content} hideDateOrdering />;
+    if (isError || !data?.content) return <Retry action={() => applyFilters(filters)} />;
+
+    if (data?.content?.length === 0)
+      return (
+        <NoData title={t('app.receipts.empty.title')} text={t('app.receipts.empty.subtitle')} />
+      );
+
+    return <ReceiptsPreview rows={data?.content} hideDateOrdering />;
   };
 
   useEffect(() => {
@@ -50,16 +72,18 @@ const Dashboard = () => {
         alignItems={{ sm: 'center' }}
         gap={3}
         mb={5}>
-        <Typography variant="h3" aria-label={t('app.dashboard.greeting')}>
+        <Typography
+          variant="h3"
+          aria-label={t('app.dashboard.greeting')}
+          sx={{ textTransform: 'capitalize' }}>
           {userInfo?.name &&
             t('app.dashboard.title', {
-              username: utils.converters.capitalizeFirstLetter(userInfo.name)
+              username: userInfo.name
             })}
         </Typography>
         <PaymentButton />
       </Stack>
       <Stack gap={5}>
-        {utils.config.showNotices && <PaymentNotice.Preview />}
         <Stack
           direction="row"
           justifyContent="space-between"

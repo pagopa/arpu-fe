@@ -8,18 +8,16 @@ interface RetryProps {
   action: () => void;
 }
 
-const Retry = (props: RetryProps) => {
+export const Retry = (props: RetryProps) => {
   const { t } = useTranslation();
   const { action } = props;
   return (
     <Paper sx={{ padding: 4 }}>
       <Stack alignItems="center" spacing={2} data-testid="app.transactions.error" id="data-error">
         <Icon color="error" component={ErrorOutlineIcon} />
-        <Typography variant="body2">{t('app.transactions.error.title')}</Typography>
-        <Button onClick={action}>{t('app.transactions.error.retry')}</Button>
+        <Typography variant="body2">{t('app.retry.title')}</Typography>
+        <Button onClick={action}>{t('app.retry.action')}</Button>
       </Stack>
     </Paper>
   );
 };
-
-export default Retry;

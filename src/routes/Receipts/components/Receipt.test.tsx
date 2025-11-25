@@ -1,11 +1,11 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import * as React from 'react';
 import { render, screen, fireEvent } from '@testing-library/react';
-import { Transaction } from './';
 import { BrowserRouter } from 'react-router-dom';
 import { useMediaQuery } from '@mui/material';
 import { ArcRoutes } from 'routes/routes';
-import { DebtorReceiptDTO } from '../../../generated/arpu-be/data-contracts';
+import { DebtorReceiptDTO } from '../../../../generated/arpu-be/data-contracts';
+import { Receipt } from './Receipt';
 
 const mockedUsedNavigate = vi.fn();
 
@@ -19,7 +19,7 @@ vi.mock(import('@mui/material'), async (importActual) => ({
   useMediaQuery: vi.fn()
 }));
 
-const mockTransactionData: DebtorReceiptDTO = {
+const mockReceiptData: DebtorReceiptDTO = {
   receiptId: 123456,
   organizationId: 789,
   orgFiscalCode: '12345678901',
@@ -34,7 +34,7 @@ const mockTransactionData: DebtorReceiptDTO = {
   serviceType: 'Standard'
 };
 
-describe('Transaction row table component', () => {
+describe('Receipt row table component', () => {
   beforeEach(() => {
     mockedUsedNavigate.mockClear();
   });
@@ -44,16 +44,16 @@ describe('Transaction row table component', () => {
 
     render(
       <BrowserRouter>
-        <Transaction {...mockTransactionData} />
+        <Receipt receipt={mockReceiptData} />
       </BrowserRouter>
     );
 
-    const button = screen.getByTestId('transaction-details-button');
+    const button = screen.getByTestId('receipt-details-button');
     fireEvent.click(button);
 
     expect(mockedUsedNavigate).toHaveBeenCalledTimes(1);
     expect(mockedUsedNavigate).toHaveBeenLastCalledWith(
-      `${ArcRoutes.RECEIPTS}/${mockTransactionData.receiptId}`
+      `${ArcRoutes.RECEIPTS}/${mockReceiptData.receiptId}/${mockReceiptData.organizationId}`
     );
   });
 
@@ -62,11 +62,11 @@ describe('Transaction row table component', () => {
 
     render(
       <BrowserRouter>
-        <Transaction {...mockTransactionData} />
+        <Receipt receipt={mockReceiptData} />
       </BrowserRouter>
     );
 
-    expect(screen.getByText(mockTransactionData.orgName)).toBeInTheDocument();
+    expect(screen.getByText(mockReceiptData.orgName)).toBeInTheDocument();
   });
 
   it('should display organization name', () => {
@@ -74,7 +74,7 @@ describe('Transaction row table component', () => {
 
     render(
       <BrowserRouter>
-        <Transaction {...mockTransactionData} />
+        <Receipt receipt={mockReceiptData} />
       </BrowserRouter>
     );
 

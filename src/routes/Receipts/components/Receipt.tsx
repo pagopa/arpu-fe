@@ -1,34 +1,44 @@
-import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 import React from 'react';
 import TableCell from '@mui/material/TableCell';
 import TableRow from '@mui/material/TableRow';
-import { Box, Stack, Typography, useMediaQuery } from '@mui/material';
+import { Box, IconButton, Stack, Typography, useMediaQuery } from '@mui/material';
 import { styled, Theme } from '@mui/material/styles';
-import { useNavigate } from 'react-router-dom';
+import { generatePath, Link, useNavigate } from 'react-router-dom';
 import { theme } from '@pagopa/mui-italia';
 import { ArcRoutes } from 'routes/routes';
 import { PayeeIcon } from 'components/PayeeIcon';
-import { DebtorReceiptDTO } from '../../../generated/arpu-be/data-contracts';
 import { formatDateOrMissingValue, fromTaxCodeToSrcImage } from 'utils/converters';
+import { DebtorReceiptDTO } from '../../../../generated/arpu-be/data-contracts';
+import { ChevronRight } from '@mui/icons-material';
+import { useTranslation } from 'react-i18next';
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
   borderBottomColor: theme.palette.divider,
   cursor: 'pointer'
 }));
 
-const Transaction = ({ orgName, orgFiscalCode, paymentDateTime, receiptId }: DebtorReceiptDTO) => {
+type ReceiptProps = {
+  receipt: DebtorReceiptDTO;
+};
+
+export const Receipt = ({
+  receipt: { orgName, orgFiscalCode, paymentDateTime, receiptId, organizationId }
+}: ReceiptProps) => {
   const sm = useMediaQuery((theme: Theme) => theme.breakpoints.up('sm'));
   const navigate = useNavigate();
+  const { t } = useTranslation();
   const smUp = useMediaQuery(theme.breakpoints.up('sm'));
   const mdUp = useMediaQuery(theme.breakpoints.up('md'));
   const tableCellCssDisplayProperty = mdUp ? 'table-cell' : 'none';
+
+  const detailPath = generatePath(ArcRoutes.RECEIPT, { receiptId, organizationId });
 
   return (
     <TableRow
       hover
       role="button"
-      data-testid="transaction-details-button"
-      onClick={() => navigate(`${ArcRoutes.RECEIPTS}/${receiptId}`)}>
+      data-testid="receipt-details-button"
+      onClick={() => navigate(detailPath)}>
       <StyledTableCell>
         <Stack direction="row" spacing={{ xs: 0, sm: 2 }} alignItems="center">
           <PayeeIcon src={fromTaxCodeToSrcImage(orgFiscalCode)} alt={orgName} visible={smUp} />
@@ -58,12 +68,12 @@ const Transaction = ({ orgName, orgFiscalCode, paymentDateTime, receiptId }: Deb
       </StyledTableCell>
 
       {sm && (
-        <StyledTableCell width="56px">
-          <ArrowForwardIosIcon color="primary" fontSize="small" />
-        </StyledTableCell>
+        <Link to={detailPath} aria-label={t('commons.detail')} data-testid="receipt-details-button">
+          <IconButton size="small">
+            <ChevronRight />
+          </IconButton>
+        </Link>
       )}
     </TableRow>
   );
 };
-
-export default Transaction;

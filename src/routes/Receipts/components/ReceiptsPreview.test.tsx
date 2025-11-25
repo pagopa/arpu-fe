@@ -5,8 +5,8 @@ import { MemoryRouter } from 'react-router-dom';
 import '@testing-library/jest-dom';
 import { useMediaQuery } from '@mui/material';
 import { i18nTestSetup } from '__tests__/i18nTestSetup';
-import { DebtorReceiptDTO } from '../../../generated/arpu-be/data-contracts';
-import Transactions, { TransactionsProps } from './Transactions';
+import { ReceiptsProps, ReceiptsPreview } from './ReceiptsPreview';
+import { DebtorReceiptDTO } from '../../../../generated/arpu-be/data-contracts';
 
 i18nTestSetup({});
 
@@ -15,7 +15,7 @@ vi.mock(import('@mui/material'), async (importActual) => ({
   useMediaQuery: vi.fn()
 }));
 
-const mockTransactionsData: DebtorReceiptDTO[] = [
+const mockReceiptsData: DebtorReceiptDTO[] = [
   {
     receiptId: 1,
     organizationId: 100,
@@ -74,13 +74,13 @@ const mockTransactionsData: DebtorReceiptDTO[] = [
   }
 ];
 
-const TransactionsWithRouter = (props: TransactionsProps) => (
+const ReceiptsWithRouter = (props: ReceiptsProps) => (
   <MemoryRouter>
-    <Transactions {...props} />
+    <ReceiptsPreview {...props} />
   </MemoryRouter>
 );
 
-describe('Transactions table component', () => {
+describe('ReceiptsPreview table component', () => {
   beforeEach(() => {
     vi.clearAllMocks();
   });
@@ -88,14 +88,14 @@ describe('Transactions table component', () => {
   it('should render as expected', () => {
     (useMediaQuery as ReturnType<typeof vi.fn>).mockImplementation(() => true);
 
-    render(<TransactionsWithRouter rows={mockTransactionsData} />);
+    render(<ReceiptsWithRouter rows={mockReceiptsData} />);
     expect(screen.getByRole('table')).toBeInTheDocument();
   });
 
   it('should render the expected rows', () => {
     (useMediaQuery as ReturnType<typeof vi.fn>).mockImplementation(() => false);
 
-    render(<TransactionsWithRouter rows={mockTransactionsData} />);
+    render(<ReceiptsWithRouter rows={mockReceiptsData} />);
     const rows = screen.getAllByRole('button');
     expect(rows.length).toBe(4);
   });
@@ -103,16 +103,16 @@ describe('Transactions table component', () => {
   it('should render table headers on desktop', () => {
     (useMediaQuery as ReturnType<typeof vi.fn>).mockImplementation(() => true);
 
-    render(<TransactionsWithRouter rows={mockTransactionsData} />);
+    render(<ReceiptsWithRouter rows={mockReceiptsData} />);
 
-    expect(screen.getByText('app.transactions.payee')).toBeInTheDocument();
-    expect(screen.getByText('app.transactions.date')).toBeInTheDocument();
+    expect(screen.getByText('app.receipts.payee')).toBeInTheDocument();
+    expect(screen.getByText('app.receipts.date')).toBeInTheDocument();
   });
 
   it('should render organization names', () => {
     (useMediaQuery as ReturnType<typeof vi.fn>).mockImplementation(() => false);
 
-    render(<TransactionsWithRouter rows={mockTransactionsData} />);
+    render(<ReceiptsWithRouter rows={mockReceiptsData} />);
 
     expect(screen.getByText('Organization 1')).toBeInTheDocument();
     expect(screen.getByText('Organization 2')).toBeInTheDocument();
@@ -123,7 +123,7 @@ describe('Transactions table component', () => {
   it('should render empty table when no rows provided', () => {
     (useMediaQuery as ReturnType<typeof vi.fn>).mockImplementation(() => false);
 
-    render(<TransactionsWithRouter rows={[]} />);
+    render(<ReceiptsWithRouter rows={[]} />);
 
     const rows = screen.queryAllByRole('button');
     expect(rows.length).toBe(0);

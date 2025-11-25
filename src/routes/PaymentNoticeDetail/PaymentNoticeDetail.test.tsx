@@ -67,7 +67,7 @@ describe('PaymentNoticeDetail', () => {
 
     renderComponent();
 
-    expect(screen.getByText('app.transactions.error.title')).toBeInTheDocument();
+    expect(screen.getByText('app.retry.title')).toBeInTheDocument();
   });
 
   it('renders the page title', () => {

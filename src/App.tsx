@@ -3,7 +3,6 @@ import { Navigate, RouterProvider, createBrowserRouter, useRouteError } from 're
 import { Theme } from './utils/style';
 import { Layout } from './components/Layout';
 import { ArcErrors, ArcRoutes } from './routes/routes';
-import TransactionRoute from './routes/Transaction';
 import DashboardRoute from './routes/Dashboard';
 import { theme } from '@pagopa/mui-italia';
 import UserRoute from 'routes/User';
@@ -25,7 +24,8 @@ import { PreLoginLayout } from 'components/PreLoginLayout';
 import { ApiClient } from 'components/ApiClient';
 import Spontanei from 'routes/Spontanei';
 import Download from 'components/Spontanei/Download';
-import { Receipts } from 'routes/Receipts';
+import { ReceiptsList } from 'routes/Receipts/list';
+import { ReceiptDetail } from 'routes/Receipts/detail';
 
 const withGuard = (Component: () => React.JSX.Element) => (
   <RouteGuard itemKeys={['accessToken']} storage={window.localStorage}>
@@ -126,25 +126,12 @@ const router = createBrowserRouter([
           },
           {
             path: ArcRoutes.RECEIPT,
-            element: withGuard(TransactionRoute),
-            loader: ({ params }) => Promise.resolve(params.id),
-            errorElement: <ErrorFallback />,
-            handle: {
-              crumbs: {
-                elements: [
-                  { name: 'transactions', fontWeight: 600, href: ArcRoutes.RECEIPTS },
-                  {
-                    name: 'transactionDetail',
-                    fontWeight: 400,
-                    color: theme.palette.grey[700]
-                  }
-                ]
-              }
-            } as RouteHandleObject
+            element: withGuard(ReceiptDetail),
+            errorElement: <ErrorFallback />
           },
           {
             path: ArcRoutes.RECEIPTS,
-            element: withGuard(Receipts),
+            element: withGuard(ReceiptsList),
             errorElement: <ErrorFallback />
           },
           ...(utils.config.showNotices

@@ -27,7 +27,7 @@ const AssistanceBackModal = (props: { open: boolean }) => {
           height={{ xs: '75%', sm: '100%' }}
           alignSelf={'end'}>
           <Grid container pl={3}>
-            <Grid item xs={12} textAlign={'end'} pr={2} pt={2}>
+            <Grid size={{ xs: 12 }} textAlign={'end'} pr={2} pt={2}>
               <IconButton
                 data-testid="collapseModal"
                 aria-label={t('app.modal.close')}
@@ -36,7 +36,7 @@ const AssistanceBackModal = (props: { open: boolean }) => {
                 <Close />
               </IconButton>
             </Grid>
-            <Grid item>
+            <Grid>
               <Typography variant="h6" fontWeight={700}>
                 {t('app.paymentNoticeDetail.modal.title')}
               </Typography>
