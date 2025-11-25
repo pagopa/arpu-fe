@@ -19,7 +19,10 @@ export const ReceiptsList = () => {
   const mutation = utils.loaders.getPagedDebtorReceipts(brokerId);
 
   const { query, applyFilters } = useSearch({
-    query: mutation
+    query: mutation,
+    filters: {
+      sort: ['paymentDateTime,desc']
+    }
   });
 
   if (query.isError) return <Retry action={() => applyFilters()} />;

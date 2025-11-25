@@ -81,7 +81,7 @@
     "dashboard": {
       "title": "Ciao, {{username}}",
       "greetings": "Benvenuto",
-      "newPayment": "Paga un avviso",
+      "newPayment": "Fai un pagamento",
       "lastTransactions": "Le tue ricevute",
       "seeAllTransactions": "Vedi tutte",
       "IOAlert": {

@@ -38,17 +38,23 @@ export const ReceiptDetail = () => {
         </Typography>
         <table style={{ width: '50%' }}>
           <tbody>
-            <DataRow label={t('amount')} value={toEuroOrMissingValue(data?.paymentAmountCents)} />
             <DataRow
-              label={t('remittanceInformation')}
+              label={t('app.receiptDetail.amount')}
+              value={toEuroOrMissingValue(data?.paymentAmountCents)}
+            />
+            <DataRow
+              label={t('app.receiptDetail.remittanceInformation')}
               value={propertyOrMissingValue(data?.remittanceInformation)}
             />
-            <DataRow label={t('iuv')} value={propertyOrMissingValue(data?.iuv)} />
-            <DataRow label={t('beneficiary')} value={'-'} />
-            <DataRow label={t('beneficiaryFiscalCode')} value={'-'} />
-            <DataRow label={t('debtor')} value={propertyOrMissingValue(data?.debtor.fullName)} />
+            <DataRow label={t('app.receiptDetail.iuv')} value={propertyOrMissingValue(data?.iuv)} />
+            <DataRow label={t('app.receiptDetail.beneficiary')} value={'-'} />
+            <DataRow label={t('app.receiptDetail.beneficiaryFiscalCode')} value={'-'} />
             <DataRow
-              label={t('debtorFiscalCode')}
+              label={t('app.receiptDetail.debtor')}
+              value={propertyOrMissingValue(data?.debtor.fullName)}
+            />
+            <DataRow
+              label={t('app.receiptDetail.debtorFiscalCode')}
               value={propertyOrMissingValue(data?.debtor.fiscalCode)}
             />
           </tbody>
@@ -67,8 +73,6 @@ export const ReceiptDetail = () => {
           label={t('app.receiptDetail.paymentDate')}
           value={formatDateOrMissingValue(data?.paymentDateTime)}
         />
-        <Divider />
-        <CopiableRow label={t('app.receiptDetail.authorizationCode')} value="-" copiable />
         <Divider />
         <CopiableRow
           label={t('app.receiptDetail.iur')}
