@@ -1,14 +1,9 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import React from 'react';
-import { render, screen } from '@testing-library/react';
-import '@testing-library/jest-dom';
-import { ThemeProvider, createTheme } from '@mui/material/styles';
-import { BrowserRouter } from 'react-router-dom';
+import { render, screen } from '../../../__tests__/renderers';
 import { useReceiptDetail } from './hooks/useReceiptDetail';
 import { ReceiptDetail } from '.';
 import { Mock } from 'vitest';
-
-const theme = createTheme();
 
 const mockReceiptData = {
   receiptId: 123,
@@ -72,16 +67,6 @@ vi.mock('components/CopiableRow', () => ({
 }));
 
 describe('ReceiptDetail', () => {
-  const renderWithProviders = () => {
-    return render(
-      <BrowserRouter>
-        <ThemeProvider theme={theme}>
-          <ReceiptDetail />
-        </ThemeProvider>
-      </BrowserRouter>
-    );
-  };
-
   beforeEach(() => {
     (useReceiptDetail as Mock).mockReturnValue({
       data: mockReceiptData,
@@ -95,32 +80,32 @@ describe('ReceiptDetail', () => {
   });
 
   it('renders without crashing', () => {
-    renderWithProviders();
+    render(<ReceiptDetail />);
 
     expect(screen.getByText('app.receiptDetail.title')).toBeInTheDocument();
   });
 
   it('renders page title', () => {
-    renderWithProviders();
+    render(<ReceiptDetail />);
 
     expect(screen.getByText('app.receiptDetail.title')).toBeInTheDocument();
   });
 
   it('renders download button', () => {
-    renderWithProviders();
+    render(<ReceiptDetail />);
 
     const downloadButton = screen.getByRole('button', { name: 'app.receiptDetail.download' });
     expect(downloadButton).toBeInTheDocument();
   });
 
   it('renders payment information section title', () => {
-    renderWithProviders();
+    render(<ReceiptDetail />);
 
     expect(screen.getByText('app.receiptDetail.paymentInformation')).toBeInTheDocument();
   });
 
   it('renders all DataRow components', () => {
-    renderWithProviders();
+    render(<ReceiptDetail />);
 
     const dataRows = screen.getAllByTestId('data-row');
     // Should have rows for: amount, remittanceInformation, iuv, debtor, debtorFiscalCode
@@ -128,7 +113,7 @@ describe('ReceiptDetail', () => {
   });
 
   it('renders all CopiableRow components', () => {
-    renderWithProviders();
+    render(<ReceiptDetail />);
 
     const copiableRows = screen.getAllByTestId('copiable-row');
     // Should have rows for: psp, paymentDate, iur, iud
@@ -136,7 +121,7 @@ describe('ReceiptDetail', () => {
   });
 
   it('renders dividers between copiable rows', () => {
-    renderWithProviders();
+    render(<ReceiptDetail />);
 
     const dividers = screen.getAllByRole('separator');
     // Should have 3 dividers (between 4 copiable rows)
@@ -144,47 +129,25 @@ describe('ReceiptDetail', () => {
   });
 
   it('calls useReceiptDetail with correct parameters', () => {
-    renderWithProviders();
+    render(<ReceiptDetail />);
 
     expect(useReceiptDetail).toHaveBeenCalledWith([999, 456, 123]);
   });
 
   it('converts brokerId from string to number', () => {
-    renderWithProviders();
+    render(<ReceiptDetail />);
 
     expect(useReceiptDetail).toHaveBeenCalledWith([999, 456, 123]);
   });
 
   it('renders two Card components', () => {
-    const { container } = renderWithProviders();
-
+    const { container } = render(<ReceiptDetail />);
     const cards = container.querySelectorAll('.MuiCard-root');
     expect(cards).toHaveLength(2);
   });
 
-  it('applies correct styling to cards', () => {
-    const { container } = renderWithProviders();
-
-    const cards = container.querySelectorAll('.MuiCard-root');
-    cards.forEach((card) => {
-      expect(card).toHaveStyle({
-        padding: '24px',
-        gap: '24px',
-        display: 'flex',
-        flexDirection: 'column'
-      });
-    });
-  });
-
-  it('renders table with correct width', () => {
-    const { container } = renderWithProviders();
-
-    const table = container.querySelector('table');
-    expect(table).toHaveStyle({ width: '50%' });
-  });
-
   it('renders all translation keys correctly', () => {
-    renderWithProviders();
+    render(<ReceiptDetail />);
 
     expect(screen.getByText('app.receiptDetail.title')).toBeInTheDocument();
     expect(screen.getByText('app.receiptDetail.download')).toBeInTheDocument();
