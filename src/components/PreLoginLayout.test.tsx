@@ -3,7 +3,6 @@ import { fireEvent, render, screen } from '@testing-library/react';
 import { PreLoginLayout } from './PreLoginLayout';
 import '@testing-library/jest-dom';
 import { i18nTestSetup } from '__tests__/i18nTestSetup';
-import { useNavigate } from 'react-router-dom';
 
 i18nTestSetup({});
 
