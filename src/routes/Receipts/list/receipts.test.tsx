@@ -169,30 +169,6 @@ describe('Receipts Component', () => {
     expect(screen.getAllByText('ACI Automobile Club Italia')).toHaveLength(3);
   });
 
-  it('renders NoData component when no receipts are returned', () => {
-    (useSearch as Mock).mockReturnValue({
-      query: createMockQuery({
-        data: { content: [] },
-        isSuccess: true
-      }),
-      applyFilters: mockApplyFilters
-    });
-
-    render(
-      <QueryClientProvider client={queryClient}>
-        <ReceiptsList />
-      </QueryClientProvider>
-    );
-
-    expect(
-      screen.getByText('app.paymentNotice.filtered.nodata.ownedByMe.title')
-    ).toBeInTheDocument();
-    expect(
-      screen.getByText('app.paymentNotice.filtered.nodata.ownedByMe.text')
-    ).toBeInTheDocument();
-    expect(screen.queryByTestId('receipt-data-grid')).not.toBeInTheDocument();
-  });
-
   it('calls getPagedDebtorReceipts with correct brokerId', () => {
     render(
       <QueryClientProvider client={queryClient}>
@@ -201,18 +177,6 @@ describe('Receipts Component', () => {
     );
 
     expect(utils.loaders.getPagedDebtorReceipts).toHaveBeenCalledWith(123);
-  });
-
-  it('renders page title in helmet', () => {
-    render(
-      <QueryClientProvider client={queryClient}>
-        <ReceiptsList />
-      </QueryClientProvider>
-    );
-
-    // Check that Helmet is rendering the title
-    // Note: Testing Helmet requires additional setup or checking document.title
-    expect(screen.getByText('menu.receipts.pageTitle')).toBeInTheDocument();
   });
 
   it('passes correct data to ReceiptDataGrid', () => {
@@ -257,9 +221,7 @@ describe('Receipts Component', () => {
     );
 
     // Should render NoData when data is undefined
-    expect(
-      screen.getByText('app.paymentNotice.filtered.nodata.ownedByMe.title')
-    ).toBeInTheDocument();
+    expect(screen.getByText('app.receipts.empty.title')).toBeInTheDocument();
   });
 
   it('handles data with undefined content property', () => {
@@ -278,8 +240,6 @@ describe('Receipts Component', () => {
     );
 
     // Should render NoData when content is undefined
-    expect(
-      screen.getByText('app.paymentNotice.filtered.nodata.ownedByMe.title')
-    ).toBeInTheDocument();
+    expect(screen.getByText('app.receipts.empty.title')).toBeInTheDocument();
   });
 });

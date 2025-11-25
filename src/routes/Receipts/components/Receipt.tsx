@@ -37,7 +37,7 @@ export const Receipt = ({
     <TableRow
       hover
       role="button"
-      data-testid="transaction-details-button"
+      data-testid="receipt-details-button"
       onClick={() => navigate(detailPath)}>
       <StyledTableCell>
         <Stack direction="row" spacing={{ xs: 0, sm: 2 }} alignItems="center">
@@ -68,7 +68,7 @@ export const Receipt = ({
       </StyledTableCell>
 
       {sm && (
-        <Link to={detailPath} aria-label={t('commons.detail')}>
+        <Link to={detailPath} aria-label={t('commons.detail')} data-testid="receipt-details-button">
           <IconButton size="small">
             <ChevronRight />
           </IconButton>

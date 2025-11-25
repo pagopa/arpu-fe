@@ -53,7 +53,7 @@ describe('Receipt row table component', () => {
 
     expect(mockedUsedNavigate).toHaveBeenCalledTimes(1);
     expect(mockedUsedNavigate).toHaveBeenLastCalledWith(
-      `${ArcRoutes.RECEIPTS}/${mockReceiptData.receiptId}`
+      `${ArcRoutes.RECEIPTS}/${mockReceiptData.receiptId}/${mockReceiptData.organizationId}`
     );
   });
 
