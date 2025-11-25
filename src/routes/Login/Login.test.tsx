@@ -11,6 +11,10 @@ describe('LoginRoute', () => {
     value: { replace: replaceSpy }
   });
 
+  vi.mock('react-router-dom', () => ({
+    useNavigate: vi.fn()
+  }));
+
   it('renders nothing without crashing', async () => {
     render(<Login />);
   });
