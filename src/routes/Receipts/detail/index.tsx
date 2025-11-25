@@ -4,7 +4,7 @@ import config from 'utils/config';
 import { useReceiptDetail } from './hooks/useReceiptDetail';
 import Stack from '@mui/material/Stack';
 import Card from '@mui/material/Card';
-import { Button, Divider, Typography } from '@mui/material';
+import { Button, Divider, Theme, Typography, useMediaQuery } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import { DataRow } from 'components/DataRow';
 import { CopiableRow } from 'components/CopiableRow';
@@ -18,6 +18,7 @@ export const ReceiptDetail = () => {
   // TODO: retrieve brokerId from context when available
   const brokerId = Number(config.brokerId);
   const { t } = useTranslation();
+  const mdUp = useMediaQuery((theme: Theme) => theme.breakpoints.up('md'));
 
   const { receiptId, organizationId } = useParams<{ receiptId: string; organizationId: string }>();
   const { data } = useReceiptDetail([brokerId, Number(organizationId), Number(receiptId)]);
@@ -36,7 +37,7 @@ export const ReceiptDetail = () => {
         <Typography variant="h6" fontWeight={700}>
           {data?.debtPositionTypeOrgDescription}
         </Typography>
-        <table style={{ width: '50%' }}>
+        <table style={{ width: mdUp ? '50%' : '100%' }}>
           <tbody>
             <DataRow
               label={t('app.receiptDetail.amount')}
