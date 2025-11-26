@@ -2,7 +2,6 @@ import React, { useContext } from 'react';
 import { Autocomplete, Card, Stack, TextField, Typography } from '@mui/material';
 import utils from 'utils';
 import { useTranslation } from 'react-i18next';
-import { useParams } from 'react-router-dom';
 import { OrganizationsWithSpontaneousDTO } from '../../../../generated/arpu-be/data-contracts';
 import FormContext, { FormContextType } from '../FormContext';
 import Controls from '../Controls';
@@ -14,12 +13,12 @@ interface OrgOptions {
 
 const OrgSelect = () => {
   const { t } = useTranslation();
-  const { brokerId = '1' } = useParams();
+  const brokerId = utils.storage.app.getBrokerId();
   const isAnonymous = utils.storage.user.isAnonymous();
 
   const { data: orgs } = isAnonymous
-    ? utils.loaders.public.getPublicOrganizationsWithSpontaneous(parseInt(brokerId, 10))
-    : utils.loaders.getOrganizationsWithSpontaneous(parseInt(brokerId, 10));
+    ? utils.loaders.public.getPublicOrganizationsWithSpontaneous(brokerId)
+    : utils.loaders.getOrganizationsWithSpontaneous(brokerId  );
 
   const orgOptions: OrgOptions[] =
     orgs?.map((org) => ({ label: org.orgName, value: org.organizationId })) || [];

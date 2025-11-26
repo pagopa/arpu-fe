@@ -14,11 +14,14 @@ import {
 import React from 'react';
 import PermIdentityOutlinedIcon from '@mui/icons-material/PermIdentityOutlined';
 import { useTranslation } from 'react-i18next';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 
 const Login = () => {
   const theme = useTheme();
   const { t } = useTranslation();
+
+  const { brokerId = '1' } = useParams();
+  utils.storage.app.setBrokerId(brokerId);
 
   const logIn = () => window.location.replace(utils.config.loginUrl);
 

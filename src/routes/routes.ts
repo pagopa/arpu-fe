@@ -1,9 +1,6 @@
 import config from 'utils/config';
-const deployPath = config.deployPath;
 
-const brokerId = config.brokerId;
-
-const rootPrefix = `${deployPath}/${brokerId}`;
+const rootPrefix = config.deployPath;
 
 export const ArcRoutes = {
   DASHBOARD: rootPrefix,
@@ -13,9 +10,9 @@ export const ArcRoutes = {
   PAYMENT_NOTICE_DETAIL: `${rootPrefix}/avvisi/:id/:paTaxCode`,
   USER: `${rootPrefix}/profilo`,
   COURTESY_PAGE: `${rootPrefix}/errore/:error`,
-  LOGIN: `${rootPrefix}/accesso`,
+  LOGIN: `${rootPrefix}/:brokerId/accesso`,
   ASSISTANCE: `${rootPrefix}/assistenza`,
-  AUTH_CALLBACK: `${deployPath}/auth-callback`,
+  AUTH_CALLBACK: `${rootPrefix}/auth-callback`,
   TOS: `${rootPrefix}/termini-di-servizio`,
   PRIVACY_POLICY: `${rootPrefix}/informativa-privacy`,
   PAYMENTS_ON_THE_FLY: `${rootPrefix}/spontanei`,

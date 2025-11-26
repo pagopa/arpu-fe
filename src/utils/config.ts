@@ -65,7 +65,6 @@ type Config = {
   tokenHeaderExcludePaths: string[];
   version: string;
   showNotices: boolean;
-  brokerId: string;
   paramsSerializer: CustomParamsSerializer;
 };
 
@@ -109,10 +108,6 @@ const config: Config = {
   /** Running version, usually valued by pipelines */
   version: VERSION,
   showNotices: PARSED_SHOW_NOTICES,
-  brokerId:
-    window.location.pathname.split('/')[2] === 'auth-callback'
-      ? ''
-      : window.location.pathname.split('/')[2],
   /** A global custom parameters serializer:
    * - null value and empty string parameters are strippef off.
    * - arrays separated by comma.

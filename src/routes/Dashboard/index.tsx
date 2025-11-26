@@ -10,18 +10,17 @@ import PaymentButton from 'components/PaymentButton';
 import { useUserInfo } from 'hooks/useUserInfo';
 import { Helmet } from 'react-helmet';
 import { resetCart } from 'store/CartStore';
-import config from 'utils/config';
 import { Retry } from 'components/Retry';
 import { NoData } from 'components/NoData/NoData';
 import { ReceiptsPreview } from 'routes/Receipts/components/ReceiptsPreview';
 import { useSearch } from 'hooks/useSearch';
-import loaders from 'utils/loaders';
+import utils from 'utils';
+
 
 const Dashboard = () => {
   const { t } = useTranslation();
-  // TODO: retrieve brokerId from context when available
-  const brokerId = Number(config.brokerId);
-  const query = loaders.getPagedDebtorReceipts(brokerId);
+  const brokerId = utils.storage.app.getBrokerId();
+  const query = utils.loaders.getPagedDebtorReceipts(brokerId);
 
   const filters = {
     sort: ['paymentDateTime,desc'],

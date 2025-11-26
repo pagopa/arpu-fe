@@ -5,7 +5,6 @@ import utils from 'utils';
 import { DebtPositionTypeOrgsWithSpontaneousDTO } from '../../../../generated/arpu-be/data-contracts';
 import FormContext, { FormContextType } from '../FormContext';
 import Controls from '../Controls';
-import { useParams } from 'react-router-dom';
 
 interface debtTypeOptions {
   label: DebtPositionTypeOrgsWithSpontaneousDTO['description'];
@@ -14,17 +13,17 @@ interface debtTypeOptions {
 
 const DebtTypeSelect = () => {
   const context = useContext<FormContextType | null>(FormContext);
-  const { brokerId = '1' } = useParams();
+  const brokerId = utils.storage.app.getBrokerId();
   const isAnonymous = utils.storage.user.isAnonymous();
   const { t } = useTranslation();
 
   const { data: DebtPositionTypeOrgsWithSpontaneous } = isAnonymous
     ? utils.loaders.public.getPublicDebtPositionTypeOrgsWithSpontaneous(
-        parseInt(brokerId, 10),
+        brokerId,
         context?.org?.organizationId || 0
       )
     : utils.loaders.getDebtPositionTypeOrgsWithSpontaneous(
-        parseInt(brokerId, 10),
+        brokerId,
         context?.org?.organizationId || 0
       );
 

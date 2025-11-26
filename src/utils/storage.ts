@@ -1,7 +1,5 @@
-import { signal } from '@preact/signals-react';
 
 export enum SessionItems {
-  OPTIN = 'OPTIN',
   CART = 'CART'
 }
 
@@ -19,7 +17,8 @@ const setSessionItem = (key: SessionItems, value: string) => {
 const getSessionItem = (key: SessionItems) => sessionStorage.getItem(key);
 
 enum StorageItems {
-  TOKEN = 'accessToken'
+  TOKEN = 'accessToken',
+  BROKERID = 'brokerId'
 }
 
 /** set a session item and return his value. If not possible returs null */
@@ -41,8 +40,7 @@ const clear = () => {
   window.localStorage.clear();
 };
 
-const optin = signal<boolean>(Boolean(getSessionItem(SessionItems.OPTIN)));
-
+/** check if the user is anonymous */
 const isAnonymous = () => {
   const hasToken = Boolean(getStorageItem(StorageItems.TOKEN));
   const isOnPublicRoute = window.location.href.indexOf('/public') > 0;
@@ -51,25 +49,16 @@ const isAnonymous = () => {
 
 export default {
   SessionItems,
-  pullPaymentsOptIn: {
-    set: () => {
-      if (setSessionItem(SessionItems.OPTIN, 'true')) optin.value = true;
-      return optin.value;
-    },
-    /** return a signal */
-    get: () => {
-      getSessionItem(SessionItems.OPTIN);
-      return optin;
-    },
-    clear: () => {
-      if (setSessionItem(SessionItems.OPTIN, 'false')) optin.value = false;
-    }
-  },
+  StorageItems,
   user: {
     hasToken: () => Boolean(getStorageItem(StorageItems.TOKEN)),
     isAnonymous,
     /** clear both session and local storage */
     logOut: clear,
     setToken: (token: string) => setStorageItem(StorageItems.TOKEN, token)
+  },
+  app: {
+    setBrokerId: (brokerId: string) => setStorageItem(StorageItems.BROKERID, brokerId),
+    getBrokerId: () => Number(getStorageItem(StorageItems.BROKERID) ) || -1
   }
 };
