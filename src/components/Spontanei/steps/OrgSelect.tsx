@@ -18,7 +18,7 @@ const OrgSelect = () => {
 
   const { data: orgs } = isAnonymous
     ? utils.loaders.public.getPublicOrganizationsWithSpontaneous(brokerId)
-    : utils.loaders.getOrganizationsWithSpontaneous(brokerId  );
+    : utils.loaders.getOrganizationsWithSpontaneous(brokerId);
 
   const orgOptions: OrgOptions[] =
     orgs?.map((org) => ({ label: org.orgName, value: org.organizationId })) || [];

@@ -16,7 +16,6 @@ import { ReceiptsPreview } from 'routes/Receipts/components/ReceiptsPreview';
 import { useSearch } from 'hooks/useSearch';
 import utils from 'utils';
 
-
 const Dashboard = () => {
   const { t } = useTranslation();
   const brokerId = utils.storage.app.getBrokerId();

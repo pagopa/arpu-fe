@@ -1,20 +1,6 @@
-
 export enum SessionItems {
   CART = 'CART'
 }
-
-/** set a session item and return his value. If not possible returs null */
-const setSessionItem = (key: SessionItems, value: string) => {
-  try {
-    sessionStorage.setItem(key, value);
-    return value;
-  } catch {
-    return null;
-  }
-};
-
-/** get a session item and return his value. If not possible returns null */
-const getSessionItem = (key: SessionItems) => sessionStorage.getItem(key);
 
 enum StorageItems {
   TOKEN = 'accessToken',
@@ -59,6 +45,6 @@ export default {
   },
   app: {
     setBrokerId: (brokerId: string) => setStorageItem(StorageItems.BROKERID, brokerId),
-    getBrokerId: () => Number(getStorageItem(StorageItems.BROKERID) ) || -1
+    getBrokerId: () => Number(getStorageItem(StorageItems.BROKERID)) || -1
   }
 };
