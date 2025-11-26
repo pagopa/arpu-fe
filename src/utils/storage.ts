@@ -1,6 +1,22 @@
+import { signal } from '@preact/signals-react';
+
 export enum SessionItems {
-  CART = 'CART'
+  CART = 'CART',
+  OPTIN = 'OPTIN'
 }
+
+/** set a session item and return his value. If not possible returs null */
+const setSessionItem = (key: SessionItems, value: string) => {
+  try {
+    sessionStorage.setItem(key, value);
+    return value;
+  } catch {
+    return null;
+  }
+};
+
+/** get a session item and return his value. If not possible returns null */
+const getSessionItem = (key: SessionItems) => sessionStorage.getItem(key);
 
 enum StorageItems {
   TOKEN = 'accessToken',
@@ -26,6 +42,8 @@ const clear = () => {
   window.localStorage.clear();
 };
 
+const optin = signal<boolean>(Boolean(getSessionItem(SessionItems.OPTIN)));
+
 /** check if the user is anonymous */
 const isAnonymous = () => {
   const hasToken = Boolean(getStorageItem(StorageItems.TOKEN));
@@ -36,6 +54,20 @@ const isAnonymous = () => {
 export default {
   SessionItems,
   StorageItems,
+  pullPaymentsOptIn: {
+    set: () => {
+      if (setSessionItem(SessionItems.OPTIN, 'true')) optin.value = true;
+      return optin.value;
+    },
+    /** return a signal */
+    get: () => {
+      getSessionItem(SessionItems.OPTIN);
+      return optin;
+    },
+    clear: () => {
+      if (setSessionItem(SessionItems.OPTIN, 'false')) optin.value = false;
+    }
+  },
   user: {
     hasToken: () => Boolean(getStorageItem(StorageItems.TOKEN)),
     isAnonymous,

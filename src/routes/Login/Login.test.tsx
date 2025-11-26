@@ -12,7 +12,8 @@ describe('LoginRoute', () => {
   });
 
   vi.mock('react-router-dom', () => ({
-    useNavigate: vi.fn()
+    useNavigate: vi.fn(),
+    useParams: vi.fn(() => ({ brokerId: '1' }))
   }));
 
   it('renders nothing without crashing', async () => {

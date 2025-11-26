@@ -11,7 +11,6 @@ import { i18nTestSetup } from '__tests__/i18nTestSetup';
 import { ThemeProvider } from '@mui/material';
 import { theme } from '@pagopa/mui-italia';
 import * as CartStore from 'store/CartStore';
-import config from 'utils/config';
 import { useSearch } from 'hooks/useSearch';
 import loaders from 'utils/loaders';
 
@@ -98,6 +97,8 @@ describe('DashboardRoute', () => {
   const setSearchParams = vi.fn();
   const mockApplyFilters = vi.fn();
 
+  localStorage.setItem('brokerId', '123');
+
   const mockReceiptsData = {
     content: [
       {
@@ -147,8 +148,6 @@ describe('DashboardRoute', () => {
         familyName: 'Polo'
       }
     });
-
-    vi.mocked(config).brokerId = '123';
 
     vi.mocked(useSearchParams).mockReturnValue([new URLSearchParams(''), setSearchParams]);
 
