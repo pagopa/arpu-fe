@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { renderHook, waitFor } from '../../../../__tests__/renderers';
+import { renderHook, waitFor } from '__tests__/renderers';
 import { useReceiptDetail } from './useReceiptDetail';
 import utils from 'utils';
 

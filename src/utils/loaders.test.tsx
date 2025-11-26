@@ -127,22 +127,6 @@ describe('api loaders', () => {
     });
   });
 
-  describe('transactionReceipt', () => {
-    it('getReceiptApi is called', async () => {
-      const transactionId = '1';
-
-      const apiMock = vi
-        .spyOn(utils.apiClient.notices, 'getNoticeReceipt')
-        .mockResolvedValue({ data: null } as AxiosResponse);
-
-      renderHook(() => loaders.getReceiptPDF(transactionId), { wrapper });
-
-      await waitFor(() => {
-        expect(apiMock).toHaveBeenCalledWith(transactionId, { format: 'blob' });
-      });
-    });
-  });
-
   describe('userInfo', () => {
     const dataMock = createMock(schemas.userInfoSchema);
 

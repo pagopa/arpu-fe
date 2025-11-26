@@ -1,5 +1,3 @@
-import utils from 'utils';
-
 /**
  * Downloads a file
  */
@@ -24,19 +22,6 @@ const downloadFile = (file: File, filename: string) => {
   URL.revokeObjectURL(url);
 };
 
-/**
- * Downloads pdf for a transaction
- */
-const downloadReceiptPDF = async (transactionId: string) => {
-  const response = await utils.loaders.getReceiptPDF(transactionId);
-  if (!response) {
-    throw new Error('Error getting the PDF');
-  }
-
-  const { data, filename } = response;
-  downloadFile(data, filename);
-};
-
 export const downloadBlob = (blob: Blob, fileName: string): void => {
   const url = URL.createObjectURL(blob);
   const link = document.createElement('a');
@@ -49,7 +34,6 @@ export const downloadBlob = (blob: Blob, fileName: string): void => {
 };
 
 export default {
-  downloadReceiptPDF,
   downloadFile,
   downloadBlob
 };

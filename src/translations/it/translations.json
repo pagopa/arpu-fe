@@ -49,7 +49,8 @@
       "paymentDate": "Data e ora",
       "authorizationCode": "Codice autorizzativo",
       "iur": "IUR",
-      "iud": "IUD"
+      "iud": "IUD",
+      "downloadError":"Non è stato possibile recuperare la ricevuta."
     },
     "assistance": {
       "title": "Come possiamo aiutarti?",

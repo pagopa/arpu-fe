@@ -106,21 +106,6 @@ const getPaymentNoticeDetails = ({ params: { id, paTaxCode } }: { params: Params
     });
 };
 
-/** returns the object { data: File, filename: string } or null if an error occours */
-export const getReceiptPDF = async (transactionId: string) => {
-  try {
-    const { data, headers } = await utils.apiClient.notices.getNoticeReceipt(transactionId, {
-      format: 'blob'
-    });
-    const filename =
-      (headers['content-disposition'] as string).split('filename=')[1].replace(/"/g, '') ||
-      `${transactionId}.pdf`;
-    return { data, filename };
-  } catch {
-    return null;
-  }
-};
-
 const getUserInfo = () => {
   return useQuery({
     queryKey: ['userInfo'],
@@ -342,7 +327,6 @@ export const getPublicPaymentNotice = (
 export default {
   getPaymentNotices,
   getPaymentNoticeDetails,
-  getReceiptPDF,
   getTokenOneidentity,
   getNoticeDetails,
   getNoticesList,
