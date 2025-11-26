@@ -1,14 +1,12 @@
 import React from 'react';
 import { useParams } from 'react-router-dom';
 import config from 'utils/config';
-import { useReceiptDetail } from './hooks/useReceiptDetail';
 import Stack from '@mui/material/Stack';
 import Card from '@mui/material/Card';
 import { Button, Divider, Theme, Typography, useMediaQuery } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import { DataRow } from 'components/DataRow';
 import { CopiableRow } from 'components/CopiableRow';
-import { useDownloadReceipt } from './hooks/useDownloadReceipt';
 import {
   formatDateOrMissingValue,
   propertyOrMissingValue,
@@ -16,6 +14,7 @@ import {
 } from 'utils/converters';
 import files from 'utils/files';
 import notify from 'utils/notify';
+import loaders from 'utils/loaders';
 
 export const ReceiptDetail = () => {
   // TODO: retrieve brokerId from context when available
@@ -27,8 +26,8 @@ export const ReceiptDetail = () => {
   const receiptId = Number(params?.receiptId);
   const organizationId = Number(params?.organizationId);
 
-  const { data } = useReceiptDetail([brokerId, organizationId, receiptId]);
-  const receiptPdf = useDownloadReceipt([brokerId, organizationId, receiptId]);
+  const { data } = loaders.useReceiptDetail({ brokerId, organizationId, receiptId });
+  const receiptPdf = loaders.useDownloadReceipt({ brokerId, organizationId, receiptId });
 
   const onDownload = async () => {
     try {

@@ -1,13 +1,12 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import React from 'react';
 import { render, screen, fireEvent, waitFor } from '../../../__tests__/renderers';
-import { useReceiptDetail } from './hooks/useReceiptDetail';
-import { useDownloadReceipt } from './hooks/useDownloadReceipt';
 import { ReceiptDetail } from '.';
 import { Mock } from 'vitest';
 import files from 'utils/files';
 import notify from 'utils/notify';
 import * as ReactRouterDom from 'react-router-dom';
+import loaders from 'utils/loaders';
 
 const mockReceiptData = {
   receiptId: 123,
@@ -32,8 +31,12 @@ const mockReceiptData = {
   }
 };
 
-vi.mock('./hooks/useReceiptDetail');
-vi.mock('./hooks/useDownloadReceipt');
+vi.mock('utils/loaders', () => ({
+  default: {
+    useReceiptDetail: vi.fn(),
+    useDownloadReceipt: vi.fn()
+  }
+}));
 
 vi.mock('utils/config', () => ({
   default: {
@@ -87,13 +90,13 @@ describe('ReceiptDetail', () => {
   const mockMutateAsync = vi.fn();
 
   beforeEach(() => {
-    (useReceiptDetail as Mock).mockReturnValue({
+    (loaders.useReceiptDetail as Mock).mockReturnValue({
       data: mockReceiptData,
       isLoading: false,
       isError: false
     });
 
-    (useDownloadReceipt as Mock).mockReturnValue({
+    (loaders.useDownloadReceipt as Mock).mockReturnValue({
       mutateAsync: mockMutateAsync,
       isPending: false,
       isError: false
@@ -161,20 +164,47 @@ describe('ReceiptDetail', () => {
   it('calls useReceiptDetail with correct parameters', () => {
     render(<ReceiptDetail />);
 
-    expect(useReceiptDetail).toHaveBeenCalledWith([999, 456, 123]);
+    expect(loaders.useReceiptDetail).toHaveBeenCalledWith({
+      brokerId: 999,
+      organizationId: 456,
+      receiptId: 123
+    });
   });
 
   it('calls useDownloadReceipt with correct parameters', () => {
     render(<ReceiptDetail />);
 
-    expect(useDownloadReceipt).toHaveBeenCalledWith([999, 456, 123]);
+    expect(loaders.useDownloadReceipt).toHaveBeenCalledWith({
+      brokerId: 999,
+      organizationId: 456,
+      receiptId: 123
+    });
   });
 
   it('converts brokerId from string to number', () => {
     render(<ReceiptDetail />);
 
-    expect(useReceiptDetail).toHaveBeenCalledWith([999, 456, 123]);
-    expect(useDownloadReceipt).toHaveBeenCalledWith([999, 456, 123]);
+    expect(loaders.useReceiptDetail).toHaveBeenCalledWith({
+      brokerId: 999,
+      organizationId: 456,
+      receiptId: 123
+    });
+    expect(loaders.useDownloadReceipt).toHaveBeenCalledWith({
+      brokerId: 999,
+      organizationId: 456,
+      receiptId: 123
+    });
+  });
+
+  it('converts receiptId and organizationId from URL params to numbers', () => {
+    render(<ReceiptDetail />);
+
+    // URL params are strings '123' and '456', should be converted to numbers
+    expect(loaders.useReceiptDetail).toHaveBeenCalledWith({
+      brokerId: 999,
+      organizationId: 456,
+      receiptId: 123
+    });
   });
 
   it('downloads receipt when download button is clicked', async () => {
@@ -298,7 +328,7 @@ describe('ReceiptDetail', () => {
   });
 
   it('handles missing receipt data gracefully', () => {
-    (useReceiptDetail as Mock).mockReturnValue({
+    (loaders.useReceiptDetail as Mock).mockReturnValue({
       data: undefined,
       isLoading: false,
       isError: false
@@ -310,12 +340,6 @@ describe('ReceiptDetail', () => {
     expect(screen.getByText('app.receiptDetail.title')).toBeInTheDocument();
   });
 
-  it('extracts strings from URL params correctly', () => {
-    render(<ReceiptDetail />);
-
-    expect(useReceiptDetail).toHaveBeenCalledWith([999, 456, 123]);
-  });
-
   it('handles undefined params gracefully', () => {
     vi.spyOn(ReactRouterDom, 'useParams').mockReturnValueOnce({
       receiptId: undefined,
@@ -325,7 +349,11 @@ describe('ReceiptDetail', () => {
     render(<ReceiptDetail />);
 
     // Should call with NaN when params are undefined
-    expect(useReceiptDetail).toHaveBeenCalledWith([999, NaN, NaN]);
+    expect(loaders.useReceiptDetail).toHaveBeenCalledWith({
+      brokerId: 999,
+      organizationId: NaN,
+      receiptId: NaN
+    });
   });
 
   it('download button triggers async operation', async () => {
@@ -371,6 +399,34 @@ describe('ReceiptDetail', () => {
 
     await waitFor(() => {
       expect(files.downloadBlob).toHaveBeenCalledWith(testBlob, 'custom_receipt.pdf');
+    });
+  });
+
+  it('passes all three IDs to both hooks', () => {
+    render(<ReceiptDetail />);
+
+    const expectedParams = {
+      brokerId: 999,
+      organizationId: 456,
+      receiptId: 123
+    };
+
+    expect(loaders.useReceiptDetail).toHaveBeenCalledWith(expectedParams);
+    expect(loaders.useDownloadReceipt).toHaveBeenCalledWith(expectedParams);
+  });
+
+  it('handles zero values in params', () => {
+    vi.spyOn(ReactRouterDom, 'useParams').mockReturnValueOnce({
+      receiptId: '0',
+      organizationId: '0'
+    });
+
+    render(<ReceiptDetail />);
+
+    expect(loaders.useReceiptDetail).toHaveBeenCalledWith({
+      brokerId: 999,
+      organizationId: 0,
+      receiptId: 0
     });
   });
 });

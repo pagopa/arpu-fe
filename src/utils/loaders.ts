@@ -324,6 +324,42 @@ export const getPublicPaymentNotice = (
     }
   });
 
+type ReceiptDetailArgs = {
+  brokerId: number;
+  organizationId: number;
+  receiptId: number;
+};
+
+const useReceiptDetail = ({ brokerId, organizationId, receiptId }: ReceiptDetailArgs) =>
+  useQuery({
+    queryKey: ['receiptDetail', brokerId, organizationId, receiptId],
+    queryFn: async () => {
+      const { data } = await utils.arpuBeApiClient.brokers.getReceiptDetail(
+        brokerId,
+        organizationId,
+        receiptId
+      );
+      return data;
+    }
+  });
+
+const useDownloadReceipt = ({ brokerId, organizationId, receiptId }: ReceiptDetailArgs) =>
+  useMutation({
+    mutationKey: ['downloadReceipt', brokerId, organizationId, receiptId],
+    mutationFn: async () => {
+      const response = await utils.arpuBeApiClient.brokers.getReceiptPdf(
+        brokerId,
+        organizationId,
+        receiptId,
+        { format: 'blob' }
+      );
+
+      const contentDisposition = response.headers['content-disposition'] || '';
+      const filename = utils.converters.extractFilename(contentDisposition);
+      return { blob: response.data, filename };
+    }
+  });
+
 export default {
   getPaymentNotices,
   getPaymentNoticeDetails,
@@ -339,6 +375,8 @@ export default {
   getDebtPositionTypeOrgsWithSpontaneous,
   getDebtPositionTypeOrgsWithSpontaneousDetail,
   getPaymentNotice,
+  useDownloadReceipt,
+  useReceiptDetail,
   public: {
     getPublicOrganizationsWithSpontaneous,
     getPublicDebtPositionTypeOrgsWithSpontaneous,
