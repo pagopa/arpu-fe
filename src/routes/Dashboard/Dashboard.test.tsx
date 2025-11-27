@@ -13,6 +13,7 @@ import { theme } from '@pagopa/mui-italia';
 import * as CartStore from 'store/CartStore';
 import { useSearch } from 'hooks/useSearch';
 import loaders from 'utils/loaders';
+import utils from 'utils';
 
 i18nTestSetup({
   app: {
@@ -85,6 +86,10 @@ vi.mock('components/NoData/NoData', () => ({
   )
 }));
 
+beforeEach(() => {
+  vi.spyOn(utils.storage.app, 'getBrokerId').mockImplementation(() => 123);
+});
+
 describe('DashboardRoute', () => {
   const queryClient = new QueryClient({
     defaultOptions: {
@@ -96,8 +101,6 @@ describe('DashboardRoute', () => {
   const navigate = vi.fn();
   const setSearchParams = vi.fn();
   const mockApplyFilters = vi.fn();
-
-  localStorage.setItem('brokerId', '123');
 
   const mockReceiptsData = {
     content: [

@@ -7,14 +7,18 @@ import { ArcRoutes } from 'routes/routes';
 
 describe('LoginRoute', () => {
   const replaceSpy = vi.fn();
+
   Object.defineProperty(window, 'location', {
     value: { replace: replaceSpy }
   });
 
   vi.mock('react-router-dom', () => ({
-    useNavigate: vi.fn(),
-    useParams: vi.fn(() => ({ brokerId: '1' }))
+    useNavigate: vi.fn()
   }));
+
+  beforeEach(() => {
+    vi.spyOn(utils.storage.app, 'getBrokerId').mockImplementation(() => 1);
+  });
 
   it('renders nothing without crashing', async () => {
     render(<Login />);
