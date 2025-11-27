@@ -3,8 +3,8 @@ import config from 'utils/config';
 const rootPrefix = `${config.deployPath}/${config.brokerId}`;
 
 export const ArcRoutes = {
-  LOGIN: `${config.deployPath}/:brokerId/accesso`,
-  AUTH_CALLBACK: `${rootPrefix}/auth-callback`,
+  LOGIN: `${rootPrefix}/accesso`,
+  AUTH_CALLBACK: `${config.deployPath}/auth-callback`,
   DASHBOARD: rootPrefix,
   RECEIPT: `${rootPrefix}/ricevute/:receiptId/:organizationId`,
   RECEIPTS: `${rootPrefix}/ricevute`,
