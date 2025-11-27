@@ -76,7 +76,8 @@ export default {
     setToken: (token: string) => setStorageItem(StorageItems.TOKEN, token)
   },
   app: {
-    setBrokerId: (brokerId: string) => setStorageItem(StorageItems.BROKERID, brokerId),
+    setBrokerId: (brokerId: string | number) =>
+      setStorageItem(StorageItems.BROKERID, brokerId.toString()),
     getBrokerId: () => Number(window.location.pathname.split('/')[2]) || -1
   }
 };

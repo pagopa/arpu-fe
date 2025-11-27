@@ -3,6 +3,8 @@ import config from 'utils/config';
 const rootPrefix = `${config.deployPath}/${config.brokerId}`;
 
 export const ArcRoutes = {
+  LOGIN: `${config.deployPath}/:brokerId/accesso`,
+  AUTH_CALLBACK: `${rootPrefix}/auth-callback`,
   DASHBOARD: rootPrefix,
   RECEIPT: `${rootPrefix}/ricevute/:receiptId/:organizationId`,
   RECEIPTS: `${rootPrefix}/ricevute`,
@@ -10,9 +12,7 @@ export const ArcRoutes = {
   PAYMENT_NOTICE_DETAIL: `${rootPrefix}/avvisi/:id/:paTaxCode`,
   USER: `${rootPrefix}/profilo`,
   COURTESY_PAGE: `${rootPrefix}/errore/:error`,
-  LOGIN: `${rootPrefix}/:brokerId/accesso`,
   ASSISTANCE: `${rootPrefix}/assistenza`,
-  AUTH_CALLBACK: `${config.deployPath}/auth-callback`,
   TOS: `${rootPrefix}/termini-di-servizio`,
   PRIVACY_POLICY: `${rootPrefix}/informativa-privacy`,
   PAYMENTS_ON_THE_FLY: `${rootPrefix}/spontanei`,
