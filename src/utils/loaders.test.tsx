@@ -1,5 +1,6 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { renderHook, waitFor } from '@testing-library/react';
+import { renderHook, waitFor } from '__tests__/renderers';
 import React, { ReactNode } from 'react';
 import 'whatwg-fetch';
 import loaders from 'utils/loaders';
@@ -24,31 +25,7 @@ import { createMock } from 'zodock';
 import zod from 'zod';
 import { Params } from 'react-router-dom';
 import { mockNoticeDetails, mockPaymentNoticeDetails } from 'stories/utils/PaymentNoticeMocks';
-
-// Mock the utils module
-vi.mock('./utils', () => {
-  const originalModule = vi.importActual('utils');
-  return {
-    ...originalModule,
-    apiClient: {
-      notices: {
-        getNoticesList: vi.fn(),
-        getNoticeReceipt: vi.fn(),
-        getNoticeDetails: vi.fn()
-      },
-      transactions: {
-        getTransactionsList: vi.fn(),
-        getTransactionDetails: vi.fn()
-      },
-      auth: {
-        getUserInfo: vi.fn()
-      },
-      token: {
-        getAuthenticationToken: vi.fn()
-      }
-    }
-  };
-});
+import { Mock } from 'vitest';
 
 describe('api loaders', () => {
   const queryClient = new QueryClient();
@@ -123,22 +100,6 @@ describe('api loaders', () => {
         expect(apiMock).toHaveBeenCalled();
         expect(result.current.isSuccess).toBeTruthy();
         expect(result.current.data).toEqual(dataMock);
-      });
-    });
-  });
-
-  describe('transactionReceipt', () => {
-    it('getReceiptApi is called', async () => {
-      const transactionId = '1';
-
-      const apiMock = vi
-        .spyOn(utils.apiClient.notices, 'getNoticeReceipt')
-        .mockResolvedValue({ data: null } as AxiosResponse);
-
-      renderHook(() => loaders.getReceiptPDF(transactionId), { wrapper });
-
-      await waitFor(() => {
-        expect(apiMock).toHaveBeenCalledWith(transactionId, { format: 'blob' });
       });
     });
   });
@@ -459,5 +420,130 @@ describe('Payment Notices API', () => {
       expect(mutation.result.current.isSuccess).toBeTruthy();
       expect(mutation.result.current.data).toEqual({ data: 'Test', filename: 'test.pdf' });
     });
+  });
+});
+
+describe('useReceiptDetail', () => {
+  const mockArgs = [1, 'receiptIdExample'] as any;
+  const mockData = {
+    id: 'receiptIdExample',
+    amount: 100,
+    status: 'PAID'
+  };
+
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
+
+  it('returns data correctly on successful fetch', async () => {
+    vi.spyOn(utils.arpuBeApiClient.brokers, 'getReceiptDetail').mockResolvedValue({
+      data: mockData
+    } as any);
+
+    const { result } = renderHook(() => loaders.useReceiptDetail(mockArgs));
+
+    await waitFor(() => {
+      expect(result.current.isSuccess).toBe(true);
+    });
+
+    expect(result.current.data).toEqual(mockData);
+  });
+
+  it('handles error state correctly', async () => {
+    const error = new Error('Failed to fetch');
+    vi.spyOn(utils.arpuBeApiClient.brokers, 'getReceiptDetail').mockRejectedValue(error);
+
+    const { result } = renderHook(() => loaders.useReceiptDetail(mockArgs));
+
+    await waitFor(() => {
+      expect(result.current.isPending).toBe(false);
+      expect(result.current.isError).toBe(true);
+    });
+
+    expect(result.current.error).toEqual(error);
+  });
+});
+
+describe('useDownloadReceipt', () => {
+  beforeEach(() => {
+    const mockBlob = new Blob(['test pdf content'], { type: 'application/pdf' });
+
+    vi.spyOn(utils.arpuBeApiClient.brokers, 'getReceiptPdf').mockResolvedValue({
+      data: mockBlob,
+      headers: {
+        'content-disposition': 'attachment; filename="receipt_123.pdf"'
+      }
+    } as any);
+
+    vi.spyOn(utils.converters, 'extractFilename').mockReturnValue('receipt_123.pdf');
+  });
+
+  afterEach(() => {
+    vi.clearAllMocks();
+  });
+
+  it('downloads receipt successfully', async () => {
+    const args = { brokerId: 999, organizationId: 456, receiptId: 123 };
+
+    const { result } = renderHook(() => loaders.useDownloadReceipt(args));
+
+    expect(result.current.isPending).toBe(false);
+
+    const promise = result.current.mutateAsync();
+
+    await waitFor(() => {
+      expect(result.current.isSuccess).toBe(true);
+    });
+
+    const response = await promise;
+
+    expect(response.blob).toBeInstanceOf(Blob);
+    expect(response.filename).toBe('receipt_123.pdf');
+    expect(utils.arpuBeApiClient.brokers.getReceiptPdf).toHaveBeenCalledWith(999, 456, 123, {
+      format: 'blob'
+    });
+  });
+
+  it('handles missing content-disposition header', async () => {
+    const args = { brokerId: 999, organizationId: 456, receiptId: 123 };
+
+    vi.spyOn(utils.arpuBeApiClient.brokers, 'getReceiptPdf').mockResolvedValue({
+      data: new Blob(['test pdf content'], { type: 'application/pdf' }),
+      headers: {}
+    } as any);
+
+    (utils.converters.extractFilename as Mock).mockReturnValue(null);
+
+    const { result } = renderHook(() => loaders.useDownloadReceipt(args));
+
+    const response = await result.current.mutateAsync();
+
+    expect(utils.converters.extractFilename).toHaveBeenCalledWith('');
+    expect(response.filename).toBeNull();
+  });
+
+  it('handles API errors correctly', async () => {
+    const args = { brokerId: 999, organizationId: 456, receiptId: 123 };
+    const errorMessage = 'Failed to download receipt';
+
+    vi.spyOn(utils.arpuBeApiClient.brokers, 'getReceiptPdf').mockRejectedValue(
+      new Error(errorMessage)
+    );
+
+    const { result } = renderHook(() => loaders.useDownloadReceipt(args));
+
+    let error;
+    try {
+      await result.current.mutateAsync();
+    } catch (e) {
+      error = e;
+    }
+
+    await waitFor(() => {
+      expect(result.current.isError).toBe(true);
+    });
+
+    expect(error).toBeInstanceOf(Error);
+    expect((error as Error).message).toBe(errorMessage);
   });
 });

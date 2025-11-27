@@ -1,7 +1,6 @@
 import React from 'react';
 import { useParams } from 'react-router-dom';
 import config from 'utils/config';
-import { useReceiptDetail } from './hooks/useReceiptDetail';
 import Stack from '@mui/material/Stack';
 import Card from '@mui/material/Card';
 import { Button, Divider, Theme, Typography, useMediaQuery } from '@mui/material';
@@ -13,6 +12,9 @@ import {
   propertyOrMissingValue,
   toEuroOrMissingValue
 } from 'utils/converters';
+import files from 'utils/files';
+import notify from 'utils/notify';
+import loaders from 'utils/loaders';
 
 export const ReceiptDetail = () => {
   // TODO: retrieve brokerId from context when available
@@ -20,8 +22,21 @@ export const ReceiptDetail = () => {
   const { t } = useTranslation();
   const mdUp = useMediaQuery((theme: Theme) => theme.breakpoints.up('md'));
 
-  const { receiptId, organizationId } = useParams<{ receiptId: string; organizationId: string }>();
-  const { data } = useReceiptDetail([brokerId, Number(organizationId), Number(receiptId)]);
+  const params = useParams<{ receiptId: string; organizationId: string }>();
+  const receiptId = Number(params?.receiptId);
+  const organizationId = Number(params?.organizationId);
+
+  const { data } = loaders.useReceiptDetail({ brokerId, organizationId, receiptId });
+  const receiptPdf = loaders.useDownloadReceipt({ brokerId, organizationId, receiptId });
+
+  const onDownload = async () => {
+    try {
+      const { blob, filename } = await receiptPdf.mutateAsync();
+      files.downloadBlob(blob, filename || `${data?.iuv}.pdf`);
+    } catch {
+      notify.emit(t('app.receiptDetail.downloadError'));
+    }
+  };
 
   return (
     <Stack gap={3}>
@@ -29,7 +44,7 @@ export const ReceiptDetail = () => {
         <Typography variant="h4" fontWeight={700}>
           {t('app.receiptDetail.title')}
         </Typography>
-        <Button variant="contained" size="large">
+        <Button variant="contained" size="large" onClick={onDownload}>
           {t('app.receiptDetail.download')}
         </Button>
       </Stack>

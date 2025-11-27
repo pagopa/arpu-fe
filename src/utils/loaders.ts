@@ -106,21 +106,6 @@ const getPaymentNoticeDetails = ({ params: { id, paTaxCode } }: { params: Params
     });
 };
 
-/** returns the object { data: File, filename: string } or null if an error occours */
-export const getReceiptPDF = async (transactionId: string) => {
-  try {
-    const { data, headers } = await utils.apiClient.notices.getNoticeReceipt(transactionId, {
-      format: 'blob'
-    });
-    const filename =
-      (headers['content-disposition'] as string).split('filename=')[1].replace(/"/g, '') ||
-      `${transactionId}.pdf`;
-    return { data, filename };
-  } catch {
-    return null;
-  }
-};
-
 const getUserInfo = () => {
   return useQuery({
     queryKey: ['userInfo'],
@@ -339,10 +324,45 @@ export const getPublicPaymentNotice = (
     }
   });
 
+type ReceiptDetailArgs = {
+  brokerId: number;
+  organizationId: number;
+  receiptId: number;
+};
+
+const useReceiptDetail = ({ brokerId, organizationId, receiptId }: ReceiptDetailArgs) =>
+  useQuery({
+    queryKey: ['receiptDetail', brokerId, organizationId, receiptId],
+    queryFn: async () => {
+      const { data } = await utils.arpuBeApiClient.brokers.getReceiptDetail(
+        brokerId,
+        organizationId,
+        receiptId
+      );
+      return data;
+    }
+  });
+
+const useDownloadReceipt = ({ brokerId, organizationId, receiptId }: ReceiptDetailArgs) =>
+  useMutation({
+    mutationKey: ['downloadReceipt', brokerId, organizationId, receiptId],
+    mutationFn: async () => {
+      const response = await utils.arpuBeApiClient.brokers.getReceiptPdf(
+        brokerId,
+        organizationId,
+        receiptId,
+        { format: 'blob' }
+      );
+
+      const contentDisposition = response.headers['content-disposition'] || '';
+      const filename = utils.converters.extractFilename(contentDisposition);
+      return { blob: response.data, filename };
+    }
+  });
+
 export default {
   getPaymentNotices,
   getPaymentNoticeDetails,
-  getReceiptPDF,
   getTokenOneidentity,
   getNoticeDetails,
   getNoticesList,
@@ -355,6 +375,8 @@ export default {
   getDebtPositionTypeOrgsWithSpontaneous,
   getDebtPositionTypeOrgsWithSpontaneousDetail,
   getPaymentNotice,
+  useDownloadReceipt,
+  useReceiptDetail,
   public: {
     getPublicOrganizationsWithSpontaneous,
     getPublicDebtPositionTypeOrgsWithSpontaneous,
