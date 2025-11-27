@@ -2,6 +2,7 @@ import { RootLinkType } from '@pagopa/mui-italia';
 import { CustomParamsSerializer } from 'axios';
 import queryString from 'query-string';
 import { z, ZodError } from 'zod';
+import storage from './storage';
 
 /** Useful default values  */
 /** APIHOST default value works in conjunction with the proxy server. See the .proxyrc file */
@@ -64,7 +65,7 @@ type Config = {
   pagopaLink: RootLinkType;
   tokenHeaderExcludePaths: string[];
   version: string;
-  brokerId: string;
+  brokerId: number;
   showNotices: boolean;
   paramsSerializer: CustomParamsSerializer;
 };
@@ -108,10 +109,7 @@ const config: Config = {
   tokenHeaderExcludePaths: ['/token/oneidentity'],
   /** Running version, usually valued by pipelines */
   version: VERSION,
-  brokerId:
-    window.location.pathname.split('/')[2] === 'auth-callback'
-      ? ''
-      : window.location.pathname.split('/')[2],
+  brokerId: storage.app.getBrokerId(),
   showNotices: PARSED_SHOW_NOTICES,
   /** A global custom parameters serializer:
    * - null value and empty string parameters are strippef off.
