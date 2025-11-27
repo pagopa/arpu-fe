@@ -77,6 +77,6 @@ export default {
   },
   app: {
     setBrokerId: (brokerId: string) => setStorageItem(StorageItems.BROKERID, brokerId),
-    getBrokerId: () => Number(getStorageItem(StorageItems.BROKERID)) || -1
+    getBrokerId: () => Number(window.location.pathname.split('/')[2]) || -1
   }
 };

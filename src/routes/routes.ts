@@ -1,6 +1,6 @@
 import config from 'utils/config';
 
-const rootPrefix = config.deployPath;
+const rootPrefix = `${config.deployPath}/${config.brokerId}`;
 
 export const ArcRoutes = {
   DASHBOARD: rootPrefix,

@@ -64,6 +64,7 @@ type Config = {
   pagopaLink: RootLinkType;
   tokenHeaderExcludePaths: string[];
   version: string;
+  brokerId: string;
   showNotices: boolean;
   paramsSerializer: CustomParamsSerializer;
 };
@@ -107,6 +108,10 @@ const config: Config = {
   tokenHeaderExcludePaths: ['/token/oneidentity'],
   /** Running version, usually valued by pipelines */
   version: VERSION,
+  brokerId:
+    window.location.pathname.split('/')[2] === 'auth-callback'
+      ? ''
+      : window.location.pathname.split('/')[2],
   showNotices: PARSED_SHOW_NOTICES,
   /** A global custom parameters serializer:
    * - null value and empty string parameters are strippef off.
