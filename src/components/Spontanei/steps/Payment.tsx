@@ -6,7 +6,7 @@ import { addItem, isItemInCart, toggleCartDrawer } from 'store/CartStore';
 import notify from 'utils/notify';
 import { useStore } from 'store/GlobalStore';
 import utils from 'utils';
-import { generatePath, useNavigate, useParams } from 'react-router-dom';
+import { generatePath, useNavigate } from 'react-router-dom';
 import { DebtPositionRequestDTO } from '../../../../generated/arpu-be/data-contracts';
 import { useField } from 'formik';
 import { PaymentNoticeInfo } from '..';
@@ -32,7 +32,7 @@ const Payment = () => {
   const debtPositionTypeOrgId = context?.debtType?.debtPositionTypeOrgId;
 
   const navigate = useNavigate();
-  const { brokerId = '1' } = useParams();
+  const brokerId = utils.storage.app.getBrokerId();
 
   if (!organizationId || !debtPositionTypeOrgId || !brokerId) {
     throw new Error('Missing required parameters');

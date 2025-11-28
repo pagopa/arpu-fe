@@ -19,6 +19,8 @@ import { useNavigate } from 'react-router-dom';
 const Login = () => {
   const theme = useTheme();
   const { t } = useTranslation();
+  const brokerId = utils.storage.app.getBrokerId();
+  utils.storage.app.setBrokerId(brokerId);
 
   const logIn = () => window.location.replace(utils.config.loginUrl);
 

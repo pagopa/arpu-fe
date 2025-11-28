@@ -11,9 +11,9 @@ import { i18nTestSetup } from '__tests__/i18nTestSetup';
 import { ThemeProvider } from '@mui/material';
 import { theme } from '@pagopa/mui-italia';
 import * as CartStore from 'store/CartStore';
-import config from 'utils/config';
 import { useSearch } from 'hooks/useSearch';
 import loaders from 'utils/loaders';
+import utils from 'utils';
 
 i18nTestSetup({
   app: {
@@ -86,6 +86,10 @@ vi.mock('components/NoData/NoData', () => ({
   )
 }));
 
+beforeEach(() => {
+  vi.spyOn(utils.storage.app, 'getBrokerId').mockImplementation(() => 123);
+});
+
 describe('DashboardRoute', () => {
   const queryClient = new QueryClient({
     defaultOptions: {
@@ -147,8 +151,6 @@ describe('DashboardRoute', () => {
         familyName: 'Polo'
       }
     });
-
-    vi.mocked(config).brokerId = '123';
 
     vi.mocked(useSearchParams).mockReturnValue([new URLSearchParams(''), setSearchParams]);
 

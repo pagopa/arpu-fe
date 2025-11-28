@@ -1,7 +1,6 @@
 import React, { useContext } from 'react';
 import FormContext, { FormContextType } from '../FormContext';
 import utils from 'utils';
-import { useParams } from 'react-router-dom';
 import StandardForm from '../StandarForm/StandardForm';
 import CustomForm from '../DinamicForm/CustomForm';
 import ExternalUrlForm from '../ExternalUrlForm/ExternalUrlForm';
@@ -11,7 +10,7 @@ const DebtTypeConfig = () => {
   const organizationId = context?.org?.organizationId || 0;
   const debtPositionTypeOrgId = context?.debtType?.debtPositionTypeOrgId || 0;
   const isAnonymous = utils.storage.user.isAnonymous();
-  const { brokerId = '1' } = useParams();
+  const brokerId = utils.storage.app.getBrokerId();
 
   const { data } = isAnonymous
     ? utils.loaders.public.getPublicDebtPositionTypeOrgsWithSpontaneousDetail(
@@ -20,7 +19,7 @@ const DebtTypeConfig = () => {
         debtPositionTypeOrgId
       )
     : utils.loaders.getDebtPositionTypeOrgsWithSpontaneousDetail(
-        parseInt(brokerId, 10),
+        brokerId,
         organizationId,
         debtPositionTypeOrgId
       );

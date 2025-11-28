@@ -1,8 +1,8 @@
 import { signal } from '@preact/signals-react';
 
 export enum SessionItems {
-  OPTIN = 'OPTIN',
-  CART = 'CART'
+  CART = 'CART',
+  OPTIN = 'OPTIN'
 }
 
 /** set a session item and return his value. If not possible returs null */
@@ -19,7 +19,8 @@ const setSessionItem = (key: SessionItems, value: string) => {
 const getSessionItem = (key: SessionItems) => sessionStorage.getItem(key);
 
 enum StorageItems {
-  TOKEN = 'accessToken'
+  TOKEN = 'accessToken',
+  BROKERID = 'brokerId'
 }
 
 /** set a session item and return his value. If not possible returs null */
@@ -43,6 +44,7 @@ const clear = () => {
 
 const optin = signal<boolean>(Boolean(getSessionItem(SessionItems.OPTIN)));
 
+/** check if the user is anonymous */
 const isAnonymous = () => {
   const hasToken = Boolean(getStorageItem(StorageItems.TOKEN));
   const isOnPublicRoute = window.location.href.indexOf('/public') > 0;
@@ -51,6 +53,7 @@ const isAnonymous = () => {
 
 export default {
   SessionItems,
+  StorageItems,
   pullPaymentsOptIn: {
     set: () => {
       if (setSessionItem(SessionItems.OPTIN, 'true')) optin.value = true;
@@ -71,5 +74,14 @@ export default {
     /** clear both session and local storage */
     logOut: clear,
     setToken: (token: string) => setStorageItem(StorageItems.TOKEN, token)
+  },
+  app: {
+    setBrokerId: (brokerId: string | number) =>
+      setStorageItem(StorageItems.BROKERID, brokerId.toString()),
+    /** this check is necessaty because we land on the auth-callaback page without a brokerId in the URL */
+    getBrokerId: () =>
+      window.location.pathname.split('/')[2] === 'auth-callback'
+        ? Number(getStorageItem(StorageItems.BROKERID)) || -1
+        : Number(window.location.pathname.split('/')[2]) || -1
   }
 };
