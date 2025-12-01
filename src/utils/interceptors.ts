@@ -27,14 +27,14 @@ export const setupInterceptors = (client: Client) => {
         utils.storage.user.logOut();
         window.location.replace(toUrl);
       } else if (error.response.status === 403) {
-        utils.notify.emit(t("errors.toast.403"));
+        utils.notify.emit(t('errors.toast.403'));
       } else if (error.response.status === 404) {
-        utils.notify.emit(t("errors.toast.404"));
+        utils.notify.emit(t('errors.toast.404'));
       } else if (error.response.status >= 500) {
         const toUrl = ArcRoutes.COURTESY_PAGE.replace(':error', ArcErrors[500]);
         window.location.replace(toUrl);
       } else {
-        utils.notify.emit(t("errors.toast.default"));
+        utils.notify.emit(t('errors.toast.default'));
       }
       return Promise.reject(error);
     }

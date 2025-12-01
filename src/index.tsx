@@ -20,7 +20,7 @@ const queryClient = new QueryClient({
     onError: (error) => {
       console.error('Mutation error:', error);
     }
-  })  
+  })
 });
 
 root.render(
