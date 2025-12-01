@@ -360,6 +360,16 @@ const useDownloadReceipt = ({ brokerId, organizationId, receiptId }: ReceiptDeta
     }
   });
 
+const useBrokerInfo = (brokerId: number) =>
+  useQuery({
+    queryKey: ['brokerInfo', brokerId],
+    queryFn: async () => {
+      const { data } = await utils.arpuBeApiClient.public.getPublicBrokerInfo(brokerId);
+      return data;
+    },
+    gcTime: Infinity
+  });
+
 export default {
   getPaymentNotices,
   getPaymentNoticeDetails,
@@ -382,6 +392,7 @@ export default {
     getPublicDebtPositionTypeOrgsWithSpontaneous,
     getPublicDebtPositionTypeOrgsWithSpontaneousDetail,
     createPublicSpontaneousDebtPosition,
-    getPublicPaymentNotice
+    getPublicPaymentNotice,
+    useBrokerInfo
   }
 };
