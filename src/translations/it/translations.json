@@ -334,6 +334,11 @@
       "title": "Non siamo riusciti ad avviare il pagamento",
       "body": "Riprova tra qualche minuto.",
       "cta": "Chiudi"
+    },
+    "500": {
+      "title": "Errore del server",
+      "body": "Si è verificato un errore del server. Riprova più tardi.",
+      "cta": "Ritorna alla homepage"
     }
   },
   "pageTitles" : {
@@ -414,5 +419,13 @@
       "info": "Scopri i canali abilitati",
       "close": "Chiudi"
     }
-  }
+  },
+  "errors": {
+    "toast": {
+      "403": "Non hai i permessi per eseguire questa azione.",
+      "404": "Risorsa non trovata.",
+      "500": "Errore del server, riprova più tardi.",
+      "default": "Si è verificato un errore imprevisto. Riprova più tardi."
+    }
+  } 
 }
