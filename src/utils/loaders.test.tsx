@@ -547,3 +547,66 @@ describe('useDownloadReceipt', () => {
     expect((error as Error).message).toBe(errorMessage);
   });
 });
+
+const mockBrokerData = {
+  brokerFiscalCode: 999,
+  brokerName: 'Test Broker',
+  brokerLogo: 'TB001'
+};
+
+describe('useBrokerInfo', () => {
+  beforeEach(() => {
+    vi.spyOn(utils.arpuBeApiClient.public, 'getPublicBrokerInfo').mockResolvedValue({
+      data: mockBrokerData
+    } as any);
+  });
+
+  afterEach(() => {
+    vi.clearAllMocks();
+  });
+
+  it('fetches broker info successfully', async () => {
+    const { result } = renderHook(() => loaders.public.useBrokerInfo(999));
+
+    expect(result.current.isLoading).toBe(true);
+
+    await waitFor(() => {
+      expect(result.current.isSuccess).toBe(true);
+    });
+
+    expect(result.current.data).toEqual(mockBrokerData);
+    expect(utils.arpuBeApiClient.public.getPublicBrokerInfo).toHaveBeenCalledWith(999);
+  });
+
+  it('handles API errors correctly', async () => {
+    const errorMessage = 'Failed to fetch broker info';
+
+    vi.spyOn(utils.arpuBeApiClient.public, 'getPublicBrokerInfo').mockRejectedValue(
+      new Error(errorMessage)
+    );
+
+    const { result } = renderHook(() => loaders.public.useBrokerInfo(999));
+
+    await waitFor(() => {
+      expect(result.current.isError).toBe(true);
+    });
+
+    expect(result.current.error).toBeInstanceOf(Error);
+    expect((result.current.error as Error).message).toBe(errorMessage);
+    expect(result.current.data).toBeUndefined();
+  });
+
+  it('caches results with infinite gcTime', async () => {
+    const { result, rerender } = renderHook(() => loaders.public.useBrokerInfo(999));
+
+    await waitFor(() => {
+      expect(result.current.isSuccess).toBe(true);
+    });
+
+    // Rerender the same hook instance
+    rerender();
+
+    expect(result.current.data).toEqual(mockBrokerData);
+    expect(utils.arpuBeApiClient.public.getPublicBrokerInfo).toHaveBeenCalledTimes(1);
+  });
+});
