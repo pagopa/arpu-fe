@@ -299,7 +299,8 @@ export const getPaymentNotice = (
       const contentDisposition = response.headers['content-disposition'] || '';
       const filename = utils.converters.extractFilename(contentDisposition);
       return { data: response.data, filename };
-    }
+    },
+    throwOnError: true
   });
 
 export const getPublicPaymentNotice = (
@@ -317,11 +318,11 @@ export const getPublicPaymentNotice = (
         query,
         { format: 'blob', headers: { 'X-fiscal-code': debtorFiscalCode } }
       );
-
       const contentDisposition = response.headers['content-disposition'] || '';
       const filename = utils.converters.extractFilename(contentDisposition);
       return { data: response.data, filename };
-    }
+    },
+    throwOnError: true
   });
 
 type ReceiptDetailArgs = {
@@ -340,7 +341,8 @@ const useReceiptDetail = ({ brokerId, organizationId, receiptId }: ReceiptDetail
         receiptId
       );
       return data;
-    }
+    },
+    throwOnError: true
   });
 
 const useDownloadReceipt = ({ brokerId, organizationId, receiptId }: ReceiptDetailArgs) =>
@@ -353,7 +355,6 @@ const useDownloadReceipt = ({ brokerId, organizationId, receiptId }: ReceiptDeta
         receiptId,
         { format: 'blob' }
       );
-
       const contentDisposition = response.headers['content-disposition'] || '';
       const filename = utils.converters.extractFilename(contentDisposition);
       return { blob: response.data, filename };
@@ -367,6 +368,7 @@ const useBrokerInfo = (brokerId: number) =>
       const { data } = await utils.arpuBeApiClient.public.getPublicBrokerInfo(brokerId);
       return data;
     },
+    throwOnError: true,
     gcTime: Infinity
   });
 

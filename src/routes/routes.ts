@@ -34,5 +34,6 @@ export enum ArcErrors {
   /** something went wrong with the login */
   'accesso-non-riuscito' = 408,
   'avviso-non-pagabile' = 422,
-  'avvio-pagamento' = 423
+  'avvio-pagamento' = 423,
+  'errore-server' = 500
 }

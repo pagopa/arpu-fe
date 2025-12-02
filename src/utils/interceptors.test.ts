@@ -4,12 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import storage from './storage';
 import { ArcRoutes, ArcErrors } from 'routes/routes';
 import { Mock } from 'vitest';
-
-vi.mock('./utils', () => ({
-  config: {
-    tokenHeaderExcludePaths: ['/path1', '/path2']
-  }
-}));
+import utils from 'utils';
 
 vi.mock('./storage');
 
@@ -34,7 +29,6 @@ describe('setupInterceptors', () => {
   const navigate = vi.fn();
 
   beforeEach(() => {
-    window.localStorage.clear();
     (useNavigate as Mock).mockReturnValue(navigate);
   });
 
@@ -58,6 +52,7 @@ describe('setupInterceptors', () => {
   });
 
   it('should not add Authorization header to request if token is not present', () => {
+    window.localStorage.clear();
     const request = { url: '/path3', headers: {} };
     setupInterceptors(client);
     const requestInterceptor = (client.instance.interceptors.request.use as Mock).mock.calls[0][0];
@@ -86,5 +81,57 @@ describe('setupInterceptors', () => {
     responseInterceptor(error);
     expect(storage.user.logOut).toHaveBeenCalledTimes(1);
     expect(replaceMock).toBeCalledWith(ArcRoutes.COURTESY_PAGE.replace(':error', ArcErrors['401']));
+  });
+
+  it('should emit an error toast notification (403)', () => {
+    const error = { response: { status: 403 } };
+
+    const notifyEmitMock = vi.spyOn(utils.notify, 'emit');
+
+    setupInterceptors(client);
+    const responseInterceptor = (client.instance.interceptors.response.use as Mock).mock
+      .calls[0][1];
+    responseInterceptor(error);
+
+    expect(notifyEmitMock).toHaveBeenCalledWith('errors.toast.403');
+  });
+
+  it('should emit an error toast notification (404)', () => {
+    const error = { response: { status: 404 } };
+
+    const notifyEmitMock = vi.spyOn(utils.notify, 'emit');
+
+    setupInterceptors(client);
+    const responseInterceptor = (client.instance.interceptors.response.use as Mock).mock
+      .calls[0][1];
+    responseInterceptor(error);
+
+    expect(notifyEmitMock).toHaveBeenCalledWith('errors.toast.404');
+  });
+
+  it('should emit an error toast notification (500)', () => {
+    const error = { response: { status: 500 } };
+
+    const notifyEmitMock = vi.spyOn(utils.notify, 'emit');
+
+    setupInterceptors(client);
+    const responseInterceptor = (client.instance.interceptors.response.use as Mock).mock
+      .calls[0][1];
+    responseInterceptor(error);
+
+    expect(notifyEmitMock).toHaveBeenCalledWith('errors.toast.500');
+  });
+
+  it('should emit an error toast notification (default)', () => {
+    const error = { response: { status: 418 } };
+
+    const notifyEmitMock = vi.spyOn(utils.notify, 'emit');
+
+    setupInterceptors(client);
+    const responseInterceptor = (client.instance.interceptors.response.use as Mock).mock
+      .calls[0][1];
+    responseInterceptor(error);
+
+    expect(notifyEmitMock).toHaveBeenCalledWith('errors.toast.default');
   });
 });

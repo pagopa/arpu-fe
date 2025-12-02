@@ -1,5 +1,5 @@
 import React from 'react';
-import { Navigate, RouterProvider, createBrowserRouter, useRouteError } from 'react-router-dom';
+import { Navigate, RouterProvider, createBrowserRouter } from 'react-router-dom';
 import { Theme } from './utils/style';
 import { Layout } from './components/Layout';
 import { ArcErrors, ArcRoutes } from './routes/routes';
@@ -7,7 +7,6 @@ import DashboardRoute from './routes/Dashboard';
 import { theme } from '@pagopa/mui-italia';
 import UserRoute from 'routes/User';
 import { RouteHandleObject } from 'models/Breadcrumbs';
-import { ErrorBoundary } from 'components/ErrorBoundary';
 import { ErrorFallback } from 'components/ErrorFallback';
 import { HealthCheck } from 'components/HealthCheck';
 import { CourtesyPage } from 'routes/CourtesyPage';
@@ -36,22 +35,17 @@ const withGuard = (Component: () => React.JSX.Element) => (
 const router = createBrowserRouter([
   {
     element: <ApiClient client={[utils.apiClient, utils.arpuBeApiClient]} />,
+    errorElement: <ErrorFallback />,
     children: [
       {
         path: '*',
         element: (
           <Navigate replace to={ArcRoutes.COURTESY_PAGE.replace(':error', ArcErrors['404'])} />
-        ),
-        ErrorBoundary: () => {
-          throw useRouteError();
-        }
+        )
       },
       {
         path: '/',
-        element: <Navigate replace to={ArcRoutes.DASHBOARD} />,
-        ErrorBoundary: () => {
-          throw useRouteError();
-        }
+        element: <Navigate replace to={ArcRoutes.DASHBOARD} />
       },
       {
         path: ArcRoutes.LOGIN,
@@ -96,14 +90,10 @@ const router = createBrowserRouter([
       {
         path: ArcRoutes.DASHBOARD,
         element: <Layout />,
-        ErrorBoundary: () => {
-          throw useRouteError();
-        },
         children: [
           {
             path: ArcRoutes.ASSISTANCE,
             element: withGuard(Assistance),
-            errorElement: <ErrorFallback />,
             handle: {
               backButton: false,
               sidebar: {
@@ -114,7 +104,6 @@ const router = createBrowserRouter([
           {
             path: ArcRoutes.USER,
             element: withGuard(UserRoute),
-            errorElement: <ErrorFallback />,
             handle: {
               backButton: true,
               sidebar: {
@@ -124,30 +113,25 @@ const router = createBrowserRouter([
           },
           {
             path: ArcRoutes.DASHBOARD,
-            element: withGuard(DashboardRoute),
-            errorElement: <ErrorFallback />
+            element: withGuard(DashboardRoute)
           },
           {
             path: ArcRoutes.RECEIPT,
-            element: withGuard(ReceiptDetail),
-            errorElement: <ErrorFallback />
+            element: withGuard(ReceiptDetail)
           },
           {
             path: ArcRoutes.RECEIPTS,
-            element: withGuard(ReceiptsList),
-            errorElement: <ErrorFallback />
+            element: withGuard(ReceiptsList)
           },
           ...(utils.config.showNotices
             ? [
                 {
                   path: ArcRoutes.PAYMENT_NOTICES,
-                  element: withGuard(PaymentNotices),
-                  errorElement: <ErrorFallback />
+                  element: withGuard(PaymentNotices)
                 },
                 {
                   path: ArcRoutes.PAYMENT_NOTICE_DETAIL,
                   element: withGuard(PaymentNoticeDetail),
-                  errorElement: <ErrorFallback />,
                   loader: loaders.getPaymentNoticeDetails,
                   handle: {
                     crumbs: {
@@ -236,10 +220,10 @@ const router = createBrowserRouter([
 ]);
 
 export const App = () => (
-  <ErrorBoundary fallback={<ErrorFallback />}>
+  <>
     <HealthCheck />
     <Theme>
       <RouterProvider router={router} />
     </Theme>
-  </ErrorBoundary>
+  </>
 );

@@ -36,7 +36,7 @@ export const CourtesyPage = () => {
         <title>{`${t('pageTitles.courtesy')} - ${t('app.title')} `}</title>
       </Helmet>
       <Container maxWidth="sm">
-        <Box textAlign="center" mt={10}>
+        <Box textAlign="center" mt={10} mb={10}>
           <Box my={3}>
             <ErrorIconComponent erroCode={errorCode} />
           </Box>
