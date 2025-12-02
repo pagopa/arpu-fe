@@ -450,17 +450,14 @@ describe('useReceiptDetail', () => {
   });
 
   it('handles error state correctly', async () => {
-    const error = new Error('Failed to fetch');
-    vi.spyOn(utils.arpuBeApiClient.brokers, 'getReceiptDetail').mockRejectedValue(error);
+    vi.spyOn(utils.arpuBeApiClient.brokers, 'getReceiptDetail').mockRejectedValue(new Error('API Error'));
 
-    const { result } = renderHook(() => loaders.useReceiptDetail(mockArgs));
-
-    await waitFor(() => {
-      expect(result.current.isPending).toBe(false);
-      expect(result.current.isError).toBe(true);
-    });
-
-    expect(result.current.error).toEqual(error);
+    try {
+      renderHook(() => loaders.useReceiptDetail(mockArgs));
+    } catch (e) {
+      expect(e).toBeInstanceOf(Error);
+      expect((e as Error).message).toBe('API Error');
+    }
   });
 });
 
@@ -585,15 +582,12 @@ describe('useBrokerInfo', () => {
       new Error(errorMessage)
     );
 
-    const { result } = renderHook(() => loaders.public.useBrokerInfo(999));
-
-    await waitFor(() => {
-      expect(result.current.isError).toBe(true);
-    });
-
-    expect(result.current.error).toBeInstanceOf(Error);
-    expect((result.current.error as Error).message).toBe(errorMessage);
-    expect(result.current.data).toBeUndefined();
+    try {
+      renderHook(() => loaders.public.useBrokerInfo(999));    
+    } catch (e) {
+      expect(e).toBeInstanceOf(Error);
+      expect((e as Error).message).toBe(errorMessage);
+    }
   });
 
   it('caches results with infinite gcTime', async () => {

@@ -304,7 +304,8 @@
     },
     "400": {
       "title": "Qualcosa non ha funzionato",
-      "body": "Si è verificato un Errore imprevisto. Riprova tra qualche minuto."
+      "body": "Si è verificato un Errore imprevisto. Riprova tra qualche minuto.",
+      "cta": "Riprova"
     },
     "401": {
       "title": "La tua sessione è scaduta",

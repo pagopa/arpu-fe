@@ -31,12 +31,10 @@ export const setupInterceptors = (client: Client) => {
       } else if (error.response.status === 404) {
         utils.notify.emit(t('errors.toast.404'));
       } else if (error.response.status >= 500) {
-        const toUrl = ArcRoutes.COURTESY_PAGE.replace(':error', ArcErrors[500]);
-        window.location.replace(toUrl);
+        utils.notify.emit(t('errors.toast.500'));
       } else {
         utils.notify.emit(t('errors.toast.default'));
       }
-      return Promise.reject(error);
     }
   );
 };
