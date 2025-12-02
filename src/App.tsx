@@ -41,11 +41,11 @@ const router = createBrowserRouter([
         path: '*',
         element: (
           <Navigate replace to={ArcRoutes.COURTESY_PAGE.replace(':error', ArcErrors['404'])} />
-        ),
+        )
       },
       {
         path: '/',
-        element: <Navigate replace to={ArcRoutes.DASHBOARD} />,
+        element: <Navigate replace to={ArcRoutes.DASHBOARD} />
       },
       {
         path: ArcRoutes.LOGIN,
@@ -113,21 +113,21 @@ const router = createBrowserRouter([
           },
           {
             path: ArcRoutes.DASHBOARD,
-            element: withGuard(DashboardRoute),
+            element: withGuard(DashboardRoute)
           },
           {
             path: ArcRoutes.RECEIPT,
-            element: withGuard(ReceiptDetail),
+            element: withGuard(ReceiptDetail)
           },
           {
             path: ArcRoutes.RECEIPTS,
-            element: withGuard(ReceiptsList),
+            element: withGuard(ReceiptsList)
           },
           ...(utils.config.showNotices
             ? [
                 {
                   path: ArcRoutes.PAYMENT_NOTICES,
-                  element: withGuard(PaymentNotices),
+                  element: withGuard(PaymentNotices)
                 },
                 {
                   path: ArcRoutes.PAYMENT_NOTICE_DETAIL,
@@ -219,10 +219,11 @@ const router = createBrowserRouter([
   }
 ]);
 
-export const App = () => 
+export const App = () => (
   <>
     <HealthCheck />
     <Theme>
       <RouterProvider router={router} />
     </Theme>
   </>
+);

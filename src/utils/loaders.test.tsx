@@ -450,7 +450,9 @@ describe('useReceiptDetail', () => {
   });
 
   it('handles error state correctly', async () => {
-    vi.spyOn(utils.arpuBeApiClient.brokers, 'getReceiptDetail').mockRejectedValue(new Error('API Error'));
+    vi.spyOn(utils.arpuBeApiClient.brokers, 'getReceiptDetail').mockRejectedValue(
+      new Error('API Error')
+    );
 
     try {
       renderHook(() => loaders.useReceiptDetail(mockArgs));
@@ -583,7 +585,7 @@ describe('useBrokerInfo', () => {
     );
 
     try {
-      renderHook(() => loaders.public.useBrokerInfo(999));    
+      renderHook(() => loaders.public.useBrokerInfo(999));
     } catch (e) {
       expect(e).toBeInstanceOf(Error);
       expect((e as Error).message).toBe(errorMessage);
