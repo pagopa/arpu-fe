@@ -96,7 +96,7 @@ describe('setupInterceptors', () => {
     expect(notifyEmitMock).toHaveBeenCalledWith('errors.toast.403');
   });
 
-    it('should emit an error toast notification (404)', () => {
+  it('should emit an error toast notification (404)', () => {
     const error = { response: { status: 404 } };
 
     const notifyEmitMock = vi.spyOn(utils.notify, 'emit');
