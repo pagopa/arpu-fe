@@ -11,7 +11,11 @@ import { Helmet } from 'react-helmet';
 
 const Notices = () => {
   // Placeholder for actual data fetching logic
-  const { data, isError, refetch } = { data: { paymentNotices: [] }, isError: false, refetch: () => {} }; 
+  const { data, isError, refetch } = {
+    data: { paymentNotices: [] },
+    isError: false,
+    refetch: () => {}
+  };
 
   const { t } = useTranslation();
 

@@ -64,8 +64,8 @@ describe('DebtPositionItem', () => {
   it('renders payment info with formatted date and amount', () => {
     render(<DebtPositionItem debtPosition={mockDebtPosition} />);
 
-    expect(screen.getByText('Importo')).toBeInTheDocument();
-    expect(screen.getByText('Da pagare entro il')).toBeInTheDocument();
+    expect(screen.getByText('app.debtPositions.debtPositionItem.amount')).toBeInTheDocument();
+    expect(screen.getByText('app.debtPositions.debtPositionItem.dueDate')).toBeInTheDocument();
     expect(screen.getByText('Formatted: 2024-12-31')).toBeInTheDocument();
     expect(screen.getByText('€1500')).toBeInTheDocument();
   });
