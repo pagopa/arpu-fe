@@ -37,12 +37,6 @@ describe('api loaders', () => {
     vi.clearAllMocks();
   });
 
-  describe('Notices API', () => {
-    beforeEach(() => {
-      vi.clearAllMocks();
-    });
-  });
-
   describe('userInfo', () => {
     const dataMock = createMock(schemas.userInfoSchema);
 
