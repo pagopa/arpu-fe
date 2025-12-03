@@ -287,10 +287,7 @@ const usePagedUnpaidDebtPositions = (brokerId: number) =>
         ...args.pagination,
         ...args.filters
       };
-      const { data } = await utils.apiClient.brokers.getPagedUnpaidDebtPositions(
-        brokerId,
-        query
-      );
+      const { data } = await utils.apiClient.brokers.getPagedUnpaidDebtPositions(brokerId, query);
       return data;
     }
   });

@@ -1,6 +1,11 @@
-import { InstallmentDTO } from '../../generated/apiClient';
-
-export type CartItem = Omit<InstallmentDTO, 'status' | 'dueDate'>;
+export type CartItem = {
+  paFullName: string;
+  description: string;
+  amount: number;
+  iuv: string;
+  nav: string;
+  paTaxCode: string;
+};
 
 export type CartState = {
   isOpen: boolean;
