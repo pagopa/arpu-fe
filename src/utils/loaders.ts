@@ -58,7 +58,7 @@ const getNoticesList = (
 
 const getPagedDebtorReceipts = (brokerId: number) =>
   useMutation({
-    mutationKey: ['pagedDebtorReceipts'],
+    mutationKey: ['pagedDebtorReceipts', brokerId],
     mutationFn: async (args: FilteredRequest) => {
       const query = {
         sort: args.sort,
@@ -372,6 +372,23 @@ const useBrokerInfo = (brokerId: number) =>
     gcTime: Infinity
   });
 
+const usePagedUnpaidDebtPositions = (brokerId: number) =>
+  useMutation({
+    mutationKey: ['pagedUnpaidDebtPositions', brokerId],
+    mutationFn: async (args: FilteredRequest) => {
+      const query = {
+        sort: args.sort,
+        ...args.pagination,
+        ...args.filters
+      };
+      const { data } = await utils.arpuBeApiClient.brokers.getPagedUnpaidDebtPositions(
+        brokerId,
+        query
+      );
+      return data;
+    }
+  });
+
 export default {
   getPaymentNotices,
   getPaymentNoticeDetails,
@@ -389,6 +406,7 @@ export default {
   getPaymentNotice,
   useDownloadReceipt,
   useReceiptDetail,
+  usePagedUnpaidDebtPositions,
   public: {
     getPublicOrganizationsWithSpontaneous,
     getPublicDebtPositionTypeOrgsWithSpontaneous,

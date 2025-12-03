@@ -85,6 +85,7 @@
       "newPayment": "Fai un pagamento",
       "lastTransactions": "Le tue ricevute",
       "seeAllTransactions": "Vedi tutte",
+      "lastDebtPositions": "Le tue posizioni debitorie",
       "IOAlert": {
         "title": "Vuoi accedere alle tue ricevute e pagare gli avvisi più velocemente?",
         "description": "Visualizza e gestisci i tuoi metodi di pagamento e tutte le tue ricevute",
@@ -113,6 +114,12 @@
       "empty": {
         "title": "Qui vedrai le tue ricevute",
         "subtitle": "Le troverai qui dopo aver pagato una posizione debitoria presso un qualsiasi canale abilitato."
+      }
+    },
+    "debtPositions": {
+      "empty": {
+        "title": "Non abbiamo trovato posizioni debitorie",
+        "subtitle": "Per effettuare un pagamento inserisci i dati della tua posizione tramite il pulsante “Fai un pagamento”."
       }
     },
     "paymentNotice": {
@@ -428,5 +435,5 @@
       "500": "Errore del server, riprova più tardi.",
       "default": "Si è verificato un errore imprevisto. Riprova più tardi."
     }
-  } 
+  }
 }
