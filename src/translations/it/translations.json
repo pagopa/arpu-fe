@@ -120,6 +120,10 @@
       "empty": {
         "title": "Non abbiamo trovato posizioni debitorie",
         "subtitle": "Per effettuare un pagamento inserisci i dati della tua posizione tramite il pulsante “Fai un pagamento”."
+      },
+      "debtPositionItem": {
+        "amount": "Importo",
+        "dueDate": "Da pagare entro il"
       }
     },
     "paymentNotice": {
