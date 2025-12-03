@@ -40,7 +40,6 @@ const getUserInfoOnce = () => {
   });
 };
 
-
 const getPagedDebtorReceipts = (brokerId: number) =>
   useMutation({
     mutationKey: ['pagedDebtorReceipts', brokerId],
@@ -77,15 +76,11 @@ export const getTokenOneidentity = async (request: Request) => {
   }
 };
 
-
 export const createSpontaneousDebtPosition = (brokerId: number, body: DebtPositionRequestDTO) =>
   useQuery({
     queryKey: ['createSpontaneousDebtPosition'],
     queryFn: async () => {
-      const { data } = await utils.apiClient.brokers.createSpontaneousDebtPosition(
-        brokerId,
-        body
-      );
+      const { data } = await utils.apiClient.brokers.createSpontaneousDebtPosition(brokerId, body);
       return data;
     }
   });
@@ -109,8 +104,7 @@ export const getOrganizationsWithSpontaneous = (brokerId: number) =>
   useQuery({
     queryKey: ['getOrganizationsWithSpontaneous'],
     queryFn: async () => {
-      const { data } =
-        await utils.apiClient.brokers.getOrganizationsWithSpontaneous(brokerId);
+      const { data } = await utils.apiClient.brokers.getOrganizationsWithSpontaneous(brokerId);
       return data;
     }
   });
@@ -119,8 +113,7 @@ export const getPublicOrganizationsWithSpontaneous = (brokerId: number) =>
   useQuery({
     queryKey: ['getPublicOrganizationsWithSpontaneous'],
     queryFn: async () => {
-      const { data } =
-        await utils.apiClient.public.getPublicOrganizationsWithSpontaneous(brokerId);
+      const { data } = await utils.apiClient.public.getPublicOrganizationsWithSpontaneous(brokerId);
       return data;
     }
   });
@@ -144,11 +137,10 @@ export const getPublicDebtPositionTypeOrgsWithSpontaneous = (
   useQuery({
     queryKey: ['getPublicDebtPositionTypeOrgsWithSpontaneous'],
     queryFn: async () => {
-      const { data } =
-        await utils.apiClient.public.getPublicDebtPositionTypeOrgsWithSpontaneous(
-          brokerId,
-          organizationId
-        );
+      const { data } = await utils.apiClient.public.getPublicDebtPositionTypeOrgsWithSpontaneous(
+        brokerId,
+        organizationId
+      );
       return data;
     }
   });
@@ -161,12 +153,11 @@ export const getDebtPositionTypeOrgsWithSpontaneousDetail = (
   useQuery({
     queryKey: ['getDebtPositionTypeOrgsWithSpontaneousDetail'],
     queryFn: async () => {
-      const { data } =
-        await utils.apiClient.brokers.getDebtPositionTypeOrgsWithSpontaneousDetail(
-          brokerId,
-          organizationId,
-          debtPositionTypeOrgId
-        );
+      const { data } = await utils.apiClient.brokers.getDebtPositionTypeOrgsWithSpontaneousDetail(
+        brokerId,
+        organizationId,
+        debtPositionTypeOrgId
+      );
       return data;
     }
   });

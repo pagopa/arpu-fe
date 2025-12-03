@@ -41,8 +41,6 @@ describe('api loaders', () => {
     beforeEach(() => {
       vi.clearAllMocks();
     });
-
-
   });
 
   describe('userInfo', () => {
@@ -312,12 +310,10 @@ describe('Payment Notices API', () => {
   });
 
   it('getPublicPaymentNotice mutation calls API and extract filename correctly', async () => {
-    const apiMock = vi
-      .spyOn(utils.apiClient.public, 'getPublicPaymentNotice')
-      .mockResolvedValue({
-        data: 'Test',
-        headers: { 'content-disposition': "attachment; filename='test.pdf'" }
-      } as unknown as AxiosResponse);
+    const apiMock = vi.spyOn(utils.apiClient.public, 'getPublicPaymentNotice').mockResolvedValue({
+      data: 'Test',
+      headers: { 'content-disposition': "attachment; filename='test.pdf'" }
+    } as unknown as AxiosResponse);
 
     const mutation = renderHook(
       () => loaders.public.getPublicPaymentNotice(1, 3, { iuv: '1' }, 'FISCALCODE'),
@@ -368,9 +364,7 @@ describe('useReceiptDetail', () => {
   });
 
   it('handles error state correctly', async () => {
-    vi.spyOn(utils.apiClient.brokers, 'getReceiptDetail').mockRejectedValue(
-      new Error('API Error')
-    );
+    vi.spyOn(utils.apiClient.brokers, 'getReceiptDetail').mockRejectedValue(new Error('API Error'));
 
     try {
       renderHook(() => loaders.useReceiptDetail(mockArgs));
@@ -443,9 +437,7 @@ describe('useDownloadReceipt', () => {
     const args = { brokerId: 999, organizationId: 456, receiptId: 123 };
     const errorMessage = 'Failed to download receipt';
 
-    vi.spyOn(utils.apiClient.brokers, 'getReceiptPdf').mockRejectedValue(
-      new Error(errorMessage)
-    );
+    vi.spyOn(utils.apiClient.brokers, 'getReceiptPdf').mockRejectedValue(new Error(errorMessage));
 
     const { result } = renderHook(() => loaders.useDownloadReceipt(args));
 
