@@ -15,7 +15,8 @@ import {
   debtPositionRequestDTOSchema,
   debtPositionResponseDTOSchema,
   debtPositionTypeOrgsWithSpontaneousDTOSchema,
-  organizationsWithSpontaneousDTOSchema
+  organizationsWithSpontaneousDTOSchema,
+  pagedDebtorDebtPositionDTOSchema
 } from '../../generated/zod-schema';
 // zodock can create mock object
 // from a zod schema
@@ -24,6 +25,13 @@ import {
 import { createMock } from 'zodock';
 import zod from 'zod';
 import { Mock } from 'vitest';
+
+const queryClient = new QueryClient();
+const wrapper = ({ children }: { children: ReactNode }) => (
+  <StoreProvider>
+    <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
+  </StoreProvider>
+);
 
 describe('api loaders', () => {
   const queryClient = new QueryClient();
@@ -123,13 +131,6 @@ describe('Payment Notices API', () => {
   beforeEach(() => {
     vi.clearAllMocks();
   });
-
-  const queryClient = new QueryClient();
-  const wrapper = ({ children }: { children: ReactNode }) => (
-    <StoreProvider>
-      <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
-    </StoreProvider>
-  );
 
   it('getOrganizationsWithSpontaneous calls API and schema parser correctly', async () => {
     const dataMock = createMock(zod.array(organizationsWithSpontaneousDTOSchema));
@@ -562,5 +563,49 @@ describe('useBrokerInfo', () => {
 
     expect(result.current.data).toEqual(mockBrokerData);
     expect(utils.apiClient.public.getPublicBrokerInfo).toHaveBeenCalledTimes(1);
+  });
+});
+
+describe('getPagedDebtorReceipts', () => {
+  it('calls API enpoint correctly', async () => {
+    const dataMock = createMock(pagedDebtorDebtPositionDTOSchema);
+
+    const apiMock = vi
+      .spyOn(utils.apiClient.brokers, 'getPagedDebtorReceipts')
+      .mockResolvedValue({ data: dataMock } as AxiosResponse);
+
+    const mutation = renderHook(() => loaders.getPagedDebtorReceipts(1), {
+      wrapper
+    });
+
+    await mutation.result.current.mutateAsync({ pagination: { page: 1, size: 10 }, sort: [] });
+
+    await waitFor(() => {
+      expect(apiMock).toHaveBeenCalledWith(1, { page: 1, size: 10, sort: [] });
+      expect(mutation.result.current.isSuccess).toBeTruthy();
+      expect(mutation.result.current.data).toEqual(dataMock);
+    });
+  });
+});
+
+describe('usePagedUnpaidDebtPositions', () => {
+  it('calls API enpoint correctly', async () => {
+    const dataMock = createMock(pagedDebtorDebtPositionDTOSchema);
+
+    const apiMock = vi
+      .spyOn(utils.apiClient.brokers, 'getPagedUnpaidDebtPositions')
+      .mockResolvedValue({ data: dataMock } as AxiosResponse);
+
+    const mutation = renderHook(() => loaders.usePagedUnpaidDebtPositions(1), {
+      wrapper
+    });
+
+    await mutation.result.current.mutateAsync({ pagination: { page: 1, size: 10 }, sort: [] });
+
+    await waitFor(() => {
+      expect(apiMock).toHaveBeenCalledWith(1, { page: 1, size: 10, sort: [] });
+      expect(mutation.result.current.isSuccess).toBeTruthy();
+      expect(mutation.result.current.data).toEqual(dataMock);
+    });
   });
 });
