@@ -8,6 +8,8 @@ export const ArcRoutes = {
   DASHBOARD: rootPrefix,
   RECEIPT: `${rootPrefix}/ricevute/:receiptId/:organizationId`,
   RECEIPTS: `${rootPrefix}/ricevute`,
+  DEBT_POSITION: `${rootPrefix}/posizioni-debitorie/:debtPositionId/:organizationId`,
+  DEBT_POSITIONS: `${rootPrefix}/posizioni-debitorie`,
   PAYMENT_NOTICES: `${rootPrefix}/avvisi/`,
   PAYMENT_NOTICE_DETAIL: `${rootPrefix}/avvisi/:id/:paTaxCode`,
   USER: `${rootPrefix}/profilo`,

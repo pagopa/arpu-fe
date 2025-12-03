@@ -8,7 +8,7 @@ import { Helmet } from 'react-helmet';
 import config from 'utils/config';
 import { useSearch } from 'hooks/useSearch';
 import { ReceiptDataGrid } from './ReceiptDataGrid';
-import { NoData } from '../../../components/NoData/NoData';
+import { NoData } from '../../../components/NoData';
 import { Retry } from 'components/Retry';
 
 export const ReceiptsList = () => {

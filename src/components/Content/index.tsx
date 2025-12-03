@@ -1,0 +1,39 @@
+import React from 'react';
+import { NoData } from 'components/NoData';
+import { Retry } from 'components/Retry';
+import QueryLoader from 'components/QueryLoader';
+import { TransactionListSkeleton } from 'components/Skeleton';
+import { Stack } from '@mui/material';
+
+type ContentProps = {
+  showRetry: boolean;
+  noData: boolean;
+  onRetry: () => void;
+  noDataTitle: string;
+  noDataText: string;
+  queryKey: string;
+  children: React.ReactNode;
+  onNoDataClick?: () => void;
+};
+
+export const Content = ({
+  showRetry,
+  noData,
+  onRetry,
+  noDataTitle,
+  noDataText,
+  queryKey,
+  children
+}: ContentProps) => {
+  if (showRetry) return <Retry action={onRetry} />;
+
+  if (noData) return <NoData title={noDataTitle} text={noDataText} />;
+
+  return (
+    <Stack mb={{ xs: 2, sm: 3 }}>
+      <QueryLoader queryKey={queryKey} loaderComponent={<TransactionListSkeleton />}>
+        {children}
+      </QueryLoader>
+    </Stack>
+  );
+};
