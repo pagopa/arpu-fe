@@ -4,7 +4,7 @@ import TableBody from '@mui/material/TableBody';
 import TableContainer from '@mui/material/TableContainer';
 import { TableHead, TableRow, TableCell, useMediaQuery, Theme, Stack } from '@mui/material';
 import { useTranslation } from 'react-i18next';
-import { DebtorReceiptDTO } from '../../../../generated/arpu-be/data-contracts';
+import { DebtorReceiptDTO } from '../../../../generated/data-contracts';
 import { Receipt } from './Receipt';
 
 export interface ReceiptsProps {

@@ -2,7 +2,7 @@ import { createContext } from 'react';
 import {
   DebtPositionTypeOrgsWithSpontaneousDTO,
   OrganizationsWithSpontaneousDTO
-} from '../../../generated/arpu-be/data-contracts';
+} from '../../../generated/data-contracts';
 
 export type FormContextType = {
   step: number;

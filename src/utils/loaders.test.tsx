@@ -16,15 +16,13 @@ import {
   debtPositionResponseDTOSchema,
   debtPositionTypeOrgsWithSpontaneousDTOSchema,
   organizationsWithSpontaneousDTOSchema
-} from '../../generated/arpu-be/zod-schema';
+} from '../../generated/zod-schema';
 // zodock can create mock object
 // from a zod schema
 // if a field is set as optionaal
 // it will be generated as undefined
 import { createMock } from 'zodock';
 import zod from 'zod';
-import { Params } from 'react-router-dom';
-import { mockNoticeDetails, mockPaymentNoticeDetails } from 'stories/utils/PaymentNoticeMocks';
 import { Mock } from 'vitest';
 
 describe('api loaders', () => {
@@ -44,64 +42,7 @@ describe('api loaders', () => {
       vi.clearAllMocks();
     });
 
-    it('getNoticesList calls API and schema parser correctly', async () => {
-      // you can generate a specific field, even if optionale, using .require()
-      const dataMock = createMock(schemas.noticesListDTOSchema.required());
 
-      const apiMock = vi.spyOn(utils.apiClient.notices, 'getNoticesList').mockResolvedValue({
-        data: dataMock,
-        headers: {}
-      } as AxiosResponse);
-
-      const { result } = renderHook(
-        () => loaders.getNoticesList({ ordering: 'DESC', size: 10 }, ''),
-        { wrapper }
-      );
-
-      await waitFor(() => {
-        expect(apiMock).toHaveBeenCalled();
-        expect(result.current.isSuccess).toBeTruthy();
-        expect(result.current.data?.notices).toEqual(dataMock.notices);
-      });
-    });
-
-    it('getNoticeDetails calls API and schema parser correctly', async () => {
-      const dataMock = createMock(schemas.noticeDetailsDTOSchema);
-
-      const eventId = dataMock.infoNotice?.eventId;
-
-      const apiMock = vi
-        .spyOn(utils.apiClient.notices, 'getNoticeDetails')
-        .mockResolvedValue({ data: dataMock } as AxiosResponse);
-
-      const { result } = renderHook(() => loaders.getNoticeDetails(eventId as string), {
-        wrapper
-      });
-
-      await waitFor(() => {
-        expect(apiMock).toHaveBeenCalledWith(eventId);
-        expect(result.current.isSuccess).toBeTruthy();
-        expect(result.current.data).toEqual(dataMock);
-      });
-    });
-
-    it('getOrganizations calls API and schema parser correctly', async () => {
-      const dataMock = createMock(schemas.organizationsListDTOSchema);
-
-      const apiMock = vi
-        .spyOn(utils.apiClient.organizations, 'getOrganizations')
-        .mockResolvedValue({ data: dataMock } as AxiosResponse);
-
-      const { result } = renderHook(() => loaders.getOrganizations(), {
-        wrapper
-      });
-
-      await waitFor(() => {
-        expect(apiMock).toHaveBeenCalled();
-        expect(result.current.isSuccess).toBeTruthy();
-        expect(result.current.data).toEqual(dataMock);
-      });
-    });
   });
 
   describe('userInfo', () => {
@@ -198,34 +139,11 @@ describe('Payment Notices API', () => {
     </StoreProvider>
   );
 
-  it('getPaymentNoticeDetails calls API and schema parser correctly', async () => {
-    const apiMock = vi
-      .spyOn(utils.apiClient.paymentNotices, 'getPaymentNoticesDetails')
-      .mockResolvedValue({ data: mockPaymentNoticeDetails } as AxiosResponse);
-
-    const params: Params = {
-      id: mockPaymentNoticeDetails.iupd,
-      paTaxCode: mockPaymentNoticeDetails.paTaxCode
-    };
-
-    const { result } = renderHook(() => loaders.getPaymentNoticeDetails({ params }), {
-      wrapper
-    });
-
-    const query = renderHook(() => result.current(), { wrapper });
-
-    await waitFor(() => {
-      expect(apiMock).toHaveBeenCalledWith(params.id, { paTaxCode: params.paTaxCode });
-      expect(query.result.current.isSuccess).toBeTruthy();
-      expect(query.result.current.data).toEqual(mockNoticeDetails);
-    });
-  });
-
   it('getOrganizationsWithSpontaneous calls API and schema parser correctly', async () => {
     const dataMock = createMock(zod.array(organizationsWithSpontaneousDTOSchema));
 
     const apiMock = vi
-      .spyOn(utils.arpuBeApiClient.brokers, 'getOrganizationsWithSpontaneous')
+      .spyOn(utils.apiClient.brokers, 'getOrganizationsWithSpontaneous')
       .mockResolvedValue({ data: dataMock } as AxiosResponse);
 
     const query = renderHook(() => loaders.getOrganizationsWithSpontaneous(1), { wrapper });
@@ -241,7 +159,7 @@ describe('Payment Notices API', () => {
     const dataMock = createMock(zod.array(debtPositionTypeOrgsWithSpontaneousDTOSchema));
 
     const apiMock = vi
-      .spyOn(utils.arpuBeApiClient.brokers, 'getDebtPositionTypeOrgsWithSpontaneous')
+      .spyOn(utils.apiClient.brokers, 'getDebtPositionTypeOrgsWithSpontaneous')
       .mockResolvedValue({ data: dataMock } as AxiosResponse);
 
     const query = renderHook(() => loaders.getDebtPositionTypeOrgsWithSpontaneous(1, 3), {
@@ -259,7 +177,7 @@ describe('Payment Notices API', () => {
     const dataMock = createMock(debtPositionTypeOrgsWithSpontaneousDTOSchema);
 
     const apiMock = vi
-      .spyOn(utils.arpuBeApiClient.brokers, 'getDebtPositionTypeOrgsWithSpontaneousDetail')
+      .spyOn(utils.apiClient.brokers, 'getDebtPositionTypeOrgsWithSpontaneousDetail')
       .mockResolvedValue({ data: dataMock } as AxiosResponse);
 
     const query = renderHook(() => loaders.getDebtPositionTypeOrgsWithSpontaneousDetail(1, 2, 3), {
@@ -278,7 +196,7 @@ describe('Payment Notices API', () => {
     const responseMock = createMock(debtPositionResponseDTOSchema);
 
     const apiMock = vi
-      .spyOn(utils.arpuBeApiClient.brokers, 'createSpontaneousDebtPosition')
+      .spyOn(utils.apiClient.brokers, 'createSpontaneousDebtPosition')
       .mockResolvedValue({ data: responseMock } as AxiosResponse);
 
     const query = renderHook(() => loaders.createSpontaneousDebtPosition(1, bodyMock), {
@@ -293,7 +211,7 @@ describe('Payment Notices API', () => {
   });
 
   it('getPaymentNotice mutation calls API and extract filename correctly', async () => {
-    const apiMock = vi.spyOn(utils.arpuBeApiClient.brokers, 'getPaymentNotice').mockResolvedValue({
+    const apiMock = vi.spyOn(utils.apiClient.brokers, 'getPaymentNotice').mockResolvedValue({
       data: 'Test',
       headers: { 'content-disposition': "attachment; filename='test.pdf'" }
     } as unknown as AxiosResponse);
@@ -315,7 +233,7 @@ describe('Payment Notices API', () => {
     const dataMock = createMock(zod.array(debtPositionTypeOrgsWithSpontaneousDTOSchema));
 
     const apiMock = vi
-      .spyOn(utils.arpuBeApiClient.public, 'getPublicDebtPositionTypeOrgsWithSpontaneous')
+      .spyOn(utils.apiClient.public, 'getPublicDebtPositionTypeOrgsWithSpontaneous')
       .mockResolvedValue({ data: dataMock } as AxiosResponse);
 
     const query = renderHook(
@@ -337,7 +255,7 @@ describe('Payment Notices API', () => {
     const responseMock = createMock(debtPositionResponseDTOSchema);
 
     const apiMock = vi
-      .spyOn(utils.arpuBeApiClient.public, 'createPublicSpontaneousDebtPosition')
+      .spyOn(utils.apiClient.public, 'createPublicSpontaneousDebtPosition')
       .mockResolvedValue({ data: responseMock } as AxiosResponse);
 
     const query = renderHook(
@@ -358,7 +276,7 @@ describe('Payment Notices API', () => {
     const dataMock = createMock(zod.array(organizationsWithSpontaneousDTOSchema));
 
     const apiMock = vi
-      .spyOn(utils.arpuBeApiClient.public, 'getPublicOrganizationsWithSpontaneous')
+      .spyOn(utils.apiClient.public, 'getPublicOrganizationsWithSpontaneous')
       .mockResolvedValue({ data: dataMock } as AxiosResponse);
 
     const query = renderHook(() => loaders.public.getPublicOrganizationsWithSpontaneous(1), {
@@ -376,7 +294,7 @@ describe('Payment Notices API', () => {
     const dataMock = createMock(debtPositionTypeOrgsWithSpontaneousDTOSchema);
 
     const apiMock = vi
-      .spyOn(utils.arpuBeApiClient.public, 'getPublicDebtPositionTypeOrgsWithSpontaneousDetail')
+      .spyOn(utils.apiClient.public, 'getPublicDebtPositionTypeOrgsWithSpontaneousDetail')
       .mockResolvedValue({ data: dataMock } as AxiosResponse);
 
     const query = renderHook(
@@ -395,7 +313,7 @@ describe('Payment Notices API', () => {
 
   it('getPublicPaymentNotice mutation calls API and extract filename correctly', async () => {
     const apiMock = vi
-      .spyOn(utils.arpuBeApiClient.public, 'getPublicPaymentNotice')
+      .spyOn(utils.apiClient.public, 'getPublicPaymentNotice')
       .mockResolvedValue({
         data: 'Test',
         headers: { 'content-disposition': "attachment; filename='test.pdf'" }
@@ -436,7 +354,7 @@ describe('useReceiptDetail', () => {
   });
 
   it('returns data correctly on successful fetch', async () => {
-    vi.spyOn(utils.arpuBeApiClient.brokers, 'getReceiptDetail').mockResolvedValue({
+    vi.spyOn(utils.apiClient.brokers, 'getReceiptDetail').mockResolvedValue({
       data: mockData
     } as any);
 
@@ -450,7 +368,7 @@ describe('useReceiptDetail', () => {
   });
 
   it('handles error state correctly', async () => {
-    vi.spyOn(utils.arpuBeApiClient.brokers, 'getReceiptDetail').mockRejectedValue(
+    vi.spyOn(utils.apiClient.brokers, 'getReceiptDetail').mockRejectedValue(
       new Error('API Error')
     );
 
@@ -467,7 +385,7 @@ describe('useDownloadReceipt', () => {
   beforeEach(() => {
     const mockBlob = new Blob(['test pdf content'], { type: 'application/pdf' });
 
-    vi.spyOn(utils.arpuBeApiClient.brokers, 'getReceiptPdf').mockResolvedValue({
+    vi.spyOn(utils.apiClient.brokers, 'getReceiptPdf').mockResolvedValue({
       data: mockBlob,
       headers: {
         'content-disposition': 'attachment; filename="receipt_123.pdf"'
@@ -498,7 +416,7 @@ describe('useDownloadReceipt', () => {
 
     expect(response.blob).toBeInstanceOf(Blob);
     expect(response.filename).toBe('receipt_123.pdf');
-    expect(utils.arpuBeApiClient.brokers.getReceiptPdf).toHaveBeenCalledWith(999, 456, 123, {
+    expect(utils.apiClient.brokers.getReceiptPdf).toHaveBeenCalledWith(999, 456, 123, {
       format: 'blob'
     });
   });
@@ -506,7 +424,7 @@ describe('useDownloadReceipt', () => {
   it('handles missing content-disposition header', async () => {
     const args = { brokerId: 999, organizationId: 456, receiptId: 123 };
 
-    vi.spyOn(utils.arpuBeApiClient.brokers, 'getReceiptPdf').mockResolvedValue({
+    vi.spyOn(utils.apiClient.brokers, 'getReceiptPdf').mockResolvedValue({
       data: new Blob(['test pdf content'], { type: 'application/pdf' }),
       headers: {}
     } as any);
@@ -525,7 +443,7 @@ describe('useDownloadReceipt', () => {
     const args = { brokerId: 999, organizationId: 456, receiptId: 123 };
     const errorMessage = 'Failed to download receipt';
 
-    vi.spyOn(utils.arpuBeApiClient.brokers, 'getReceiptPdf').mockRejectedValue(
+    vi.spyOn(utils.apiClient.brokers, 'getReceiptPdf').mockRejectedValue(
       new Error(errorMessage)
     );
 
@@ -555,7 +473,7 @@ const mockBrokerData = {
 
 describe('useBrokerInfo', () => {
   beforeEach(() => {
-    vi.spyOn(utils.arpuBeApiClient.public, 'getPublicBrokerInfo').mockResolvedValue({
+    vi.spyOn(utils.apiClient.public, 'getPublicBrokerInfo').mockResolvedValue({
       data: mockBrokerData
     } as any);
   });
@@ -574,13 +492,13 @@ describe('useBrokerInfo', () => {
     });
 
     expect(result.current.data).toEqual(mockBrokerData);
-    expect(utils.arpuBeApiClient.public.getPublicBrokerInfo).toHaveBeenCalledWith(999);
+    expect(utils.apiClient.public.getPublicBrokerInfo).toHaveBeenCalledWith(999);
   });
 
   it('handles API errors correctly', async () => {
     const errorMessage = 'Failed to fetch broker info';
 
-    vi.spyOn(utils.arpuBeApiClient.public, 'getPublicBrokerInfo').mockRejectedValue(
+    vi.spyOn(utils.apiClient.public, 'getPublicBrokerInfo').mockRejectedValue(
       new Error(errorMessage)
     );
 
@@ -603,6 +521,6 @@ describe('useBrokerInfo', () => {
     rerender();
 
     expect(result.current.data).toEqual(mockBrokerData);
-    expect(utils.arpuBeApiClient.public.getPublicBrokerInfo).toHaveBeenCalledTimes(1);
+    expect(utils.apiClient.public.getPublicBrokerInfo).toHaveBeenCalledTimes(1);
   });
 });

@@ -2,7 +2,7 @@ import React, { useContext } from 'react';
 import { Autocomplete, Card, Stack, TextField, Typography } from '@mui/material';
 import utils from 'utils';
 import { useTranslation } from 'react-i18next';
-import { OrganizationsWithSpontaneousDTO } from '../../../../generated/arpu-be/data-contracts';
+import { OrganizationsWithSpontaneousDTO } from '../../../../generated/data-contracts';
 import FormContext, { FormContextType } from '../FormContext';
 import Controls from '../Controls';
 

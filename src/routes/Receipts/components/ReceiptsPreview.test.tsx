@@ -6,7 +6,7 @@ import '@testing-library/jest-dom';
 import { useMediaQuery } from '@mui/material';
 import { i18nTestSetup } from '__tests__/i18nTestSetup';
 import { ReceiptsProps, ReceiptsPreview } from './ReceiptsPreview';
-import { DebtorReceiptDTO } from '../../../../generated/arpu-be/data-contracts';
+import { DebtorReceiptDTO } from '../../../../generated/data-contracts';
 
 i18nTestSetup({});
 

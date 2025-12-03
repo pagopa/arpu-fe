@@ -1,6 +1,6 @@
 import React from 'react';
 import * as z from 'zod';
-import { SpontaneousFormField } from '../../../../generated/arpu-be/data-contracts';
+import { SpontaneousFormField } from '../../../../generated/data-contracts';
 
 // SANDBOX
 import sand from '@nyariv/sandboxjs';
@@ -16,7 +16,7 @@ import CURRENCYLABEL from './FieldBeans/CURRENCYLABEL';
 import MULTIFIELD from './FieldBeans/MULTIFIELD';
 import NONE from './FieldBeans/NONE';
 import TAB from './FieldBeans/TAB';
-import { RenderType } from '../../../../generated/arpu-be/apiClient';
+import { RenderType } from '../../../../generated/apiClient';
 
 export type FieldName = SpontaneousFormField['name'];
 

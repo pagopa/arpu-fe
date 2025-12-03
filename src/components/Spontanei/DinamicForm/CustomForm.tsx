@@ -2,7 +2,7 @@ import { Card, Stack, Typography } from '@mui/material';
 import React, { useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import DinamicForm from '../DinamicForm';
-import { SpontaneousFormField } from '../../../../generated/arpu-be/data-contracts';
+import { SpontaneousFormField } from '../../../../generated/data-contracts';
 import StaticFormSection from '../DebtorSection';
 import Controls from '../Controls';
 import { useFormikContext } from 'formik';

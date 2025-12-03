@@ -3,7 +3,7 @@ import { GridColDef } from '@mui/x-data-grid';
 import {
   DebtorReceiptDTO,
   PagedDebtorReceiptsDTO
-} from '../../../../generated/arpu-be/data-contracts';
+} from '../../../../generated/data-contracts';
 import { useTranslation } from 'react-i18next';
 import { generatePath, Link } from 'react-router-dom';
 import { ArcRoutes } from 'routes/routes';

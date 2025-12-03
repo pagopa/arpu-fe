@@ -4,7 +4,7 @@ import { render, screen, fireEvent } from '@testing-library/react';
 import { BrowserRouter } from 'react-router-dom';
 import { useMediaQuery } from '@mui/material';
 import { ArcRoutes } from 'routes/routes';
-import { DebtorReceiptDTO } from '../../../../generated/arpu-be/data-contracts';
+import { DebtorReceiptDTO } from '../../../../generated/data-contracts';
 import { Receipt } from './Receipt';
 
 const mockedUsedNavigate = vi.fn();

@@ -8,7 +8,7 @@ import { theme } from '@pagopa/mui-italia';
 import { ArcRoutes } from 'routes/routes';
 import { PayeeIcon } from 'components/PayeeIcon';
 import { formatDateOrMissingValue, fromTaxCodeToSrcImage } from 'utils/converters';
-import { DebtorReceiptDTO } from '../../../../generated/arpu-be/data-contracts';
+import { DebtorReceiptDTO } from '../../../../generated/data-contracts';
 import { ChevronRight } from '@mui/icons-material';
 import { useTranslation } from 'react-i18next';
 

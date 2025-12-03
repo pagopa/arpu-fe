@@ -1,12 +1,10 @@
-import { useQuery, QueryKey, useMutation } from '@tanstack/react-query';
-import { STATE } from 'store/types';
+import { useQuery, useMutation } from '@tanstack/react-query';
 import utils from 'utils';
 import { ZodSchema } from 'zod';
 import * as zodSchema from '../../generated/zod-schema';
-import { Params } from 'react-router-dom';
-import converters from './converters';
-import { DebtPositionRequestDTO } from '../../generated/arpu-be/data-contracts';
+import { DebtPositionRequestDTO } from '../../generated/data-contracts';
 import { FilteredRequest } from 'models/Filters';
+import { STATE } from 'store/types';
 
 const parseAndLog = <T>(schema: ZodSchema, data: T, throwError: boolean = true): void | never => {
   const result = schema.safeParse(data);
@@ -14,96 +12,6 @@ const parseAndLog = <T>(schema: ZodSchema, data: T, throwError: boolean = true):
     console.error(result.error.issues);
     if (throwError) throw result.error;
   }
-};
-
-interface GetNoticesListQuery {
-  /** max number of elements returned, default 10*/
-  size: number;
-  paidByMe?: boolean;
-  registeredToMe?: boolean;
-  ordering: 'ASC' | 'DESC';
-}
-/**
- * Retrieve the paged notices list from arc
- */
-const getNoticesList = (
-  query: GetNoticesListQuery,
-  continuationToken: string,
-  queryKey?: QueryKey
-) =>
-  useQuery({
-    queryKey: queryKey || ['noticesList'],
-    queryFn: async () => {
-      const { data: noticesList, headers } = await utils.apiClient.notices.getNoticesList(
-        {
-          size: query.size,
-          paidByMe: query.paidByMe,
-          registeredToMe: query.registeredToMe,
-          orderBy: 'TRANSACTION_DATE',
-          ordering: query.ordering
-        },
-        {
-          headers: {
-            'x-continuation-token': continuationToken
-          }
-        }
-      );
-      parseAndLog(zodSchema.noticesListDTOSchema, noticesList);
-      return {
-        notices: noticesList.notices,
-        continuationToken: headers['x-continuation-token']
-      };
-    }
-  });
-
-const getPagedDebtorReceipts = (brokerId: number) =>
-  useMutation({
-    mutationKey: ['pagedDebtorReceipts', brokerId],
-    mutationFn: async (args: FilteredRequest) => {
-      const query = {
-        sort: args.sort,
-        ...args.pagination,
-        ...args.filters
-      };
-      const { data } = await utils.arpuBeApiClient.brokers.getPagedDebtorReceipts(brokerId, query);
-      return data;
-    }
-  });
-
-const getNoticeDetails = (id: string) =>
-  useQuery({
-    queryKey: ['noticeDetails'],
-    queryFn: async () => {
-      const { data: notice } = await utils.apiClient.notices.getNoticeDetails(id);
-      parseAndLog(zodSchema.noticeDetailsDTOSchema, notice);
-      return notice;
-    }
-  });
-
-const getPaymentNotices = () =>
-  useQuery({
-    queryKey: ['paymentNotices'],
-    queryFn: async () => {
-      const { data } = await utils.apiClient.paymentNotices.getPaymentNotices({});
-      parseAndLog(zodSchema.paymentNoticesListDTOSchema, data);
-      return data;
-    }
-  });
-
-const getPaymentNoticeDetails = ({ params: { id, paTaxCode } }: { params: Params }) => {
-  if (!id || !paTaxCode) throw new Error('id and paTaxCode are required');
-
-  return () =>
-    useQuery({
-      queryKey: ['paymentNoticeDetails'],
-      queryFn: async () => {
-        const { data } = await utils.apiClient.paymentNotices.getPaymentNoticesDetails(id, {
-          paTaxCode
-        });
-        parseAndLog(zodSchema.paymentNoticesListDTOSchema, data);
-        return converters.normalizePaymentNoticeDetails(data);
-      }
-    });
 };
 
 const getUserInfo = () => {
@@ -132,6 +40,21 @@ const getUserInfoOnce = () => {
   });
 };
 
+
+const getPagedDebtorReceipts = (brokerId: number) =>
+  useMutation({
+    mutationKey: ['pagedDebtorReceipts', brokerId],
+    mutationFn: async (args: FilteredRequest) => {
+      const query = {
+        sort: args.sort,
+        ...args.pagination,
+        ...args.filters
+      };
+      const { data } = await utils.apiClient.brokers.getPagedDebtorReceipts(brokerId, query);
+      return data;
+    }
+  });
+
 /** returns the TokenResponse or null if an error occours */
 export const getTokenOneidentity = async (request: Request) => {
   const currentUrl = new URL(request.url);
@@ -154,20 +77,12 @@ export const getTokenOneidentity = async (request: Request) => {
   }
 };
 
-export const getOrganizations = () =>
-  useQuery({
-    queryKey: ['getOrganizations'],
-    queryFn: async () => {
-      const { data: organizations } = await utils.apiClient.organizations.getOrganizations();
-      return organizations;
-    }
-  });
 
 export const createSpontaneousDebtPosition = (brokerId: number, body: DebtPositionRequestDTO) =>
   useQuery({
     queryKey: ['createSpontaneousDebtPosition'],
     queryFn: async () => {
-      const { data } = await utils.arpuBeApiClient.brokers.createSpontaneousDebtPosition(
+      const { data } = await utils.apiClient.brokers.createSpontaneousDebtPosition(
         brokerId,
         body
       );
@@ -182,7 +97,7 @@ export const createPublicSpontaneousDebtPosition = (
   useQuery({
     queryKey: ['createSpontaneousDebtPosition'],
     queryFn: async () => {
-      const { data } = await utils.arpuBeApiClient.public.createPublicSpontaneousDebtPosition(
+      const { data } = await utils.apiClient.public.createPublicSpontaneousDebtPosition(
         brokerId,
         body
       );
@@ -195,7 +110,7 @@ export const getOrganizationsWithSpontaneous = (brokerId: number) =>
     queryKey: ['getOrganizationsWithSpontaneous'],
     queryFn: async () => {
       const { data } =
-        await utils.arpuBeApiClient.brokers.getOrganizationsWithSpontaneous(brokerId);
+        await utils.apiClient.brokers.getOrganizationsWithSpontaneous(brokerId);
       return data;
     }
   });
@@ -205,7 +120,7 @@ export const getPublicOrganizationsWithSpontaneous = (brokerId: number) =>
     queryKey: ['getPublicOrganizationsWithSpontaneous'],
     queryFn: async () => {
       const { data } =
-        await utils.arpuBeApiClient.public.getPublicOrganizationsWithSpontaneous(brokerId);
+        await utils.apiClient.public.getPublicOrganizationsWithSpontaneous(brokerId);
       return data;
     }
   });
@@ -214,7 +129,7 @@ export const getDebtPositionTypeOrgsWithSpontaneous = (brokerId: number, organiz
   useQuery({
     queryKey: ['getDebtPositionTypeOrgsWithSpontaneous'],
     queryFn: async () => {
-      const { data } = await utils.arpuBeApiClient.brokers.getDebtPositionTypeOrgsWithSpontaneous(
+      const { data } = await utils.apiClient.brokers.getDebtPositionTypeOrgsWithSpontaneous(
         brokerId,
         organizationId
       );
@@ -230,7 +145,7 @@ export const getPublicDebtPositionTypeOrgsWithSpontaneous = (
     queryKey: ['getPublicDebtPositionTypeOrgsWithSpontaneous'],
     queryFn: async () => {
       const { data } =
-        await utils.arpuBeApiClient.public.getPublicDebtPositionTypeOrgsWithSpontaneous(
+        await utils.apiClient.public.getPublicDebtPositionTypeOrgsWithSpontaneous(
           brokerId,
           organizationId
         );
@@ -247,7 +162,7 @@ export const getDebtPositionTypeOrgsWithSpontaneousDetail = (
     queryKey: ['getDebtPositionTypeOrgsWithSpontaneousDetail'],
     queryFn: async () => {
       const { data } =
-        await utils.arpuBeApiClient.brokers.getDebtPositionTypeOrgsWithSpontaneousDetail(
+        await utils.apiClient.brokers.getDebtPositionTypeOrgsWithSpontaneousDetail(
           brokerId,
           organizationId,
           debtPositionTypeOrgId
@@ -265,7 +180,7 @@ export const getPublicDebtPositionTypeOrgsWithSpontaneousDetail = (
     queryKey: ['getPublicDebtPositionTypeOrgsWithSpontaneousDetail'],
     queryFn: async () => {
       const { data } =
-        await utils.arpuBeApiClient.public.getPublicDebtPositionTypeOrgsWithSpontaneousDetail(
+        await utils.apiClient.public.getPublicDebtPositionTypeOrgsWithSpontaneousDetail(
           brokerId,
           organizationId,
           debtPositionTypeOrgId
@@ -289,7 +204,7 @@ export const getPaymentNotice = (
   useMutation({
     mutationKey: ['getPaymentNotice'],
     mutationFn: async () => {
-      const response = await utils.arpuBeApiClient.brokers.getPaymentNotice(
+      const response = await utils.apiClient.brokers.getPaymentNotice(
         brokerId,
         organizationId,
         query,
@@ -312,7 +227,7 @@ export const getPublicPaymentNotice = (
   useMutation({
     mutationKey: ['getPaymentNotice'],
     mutationFn: async () => {
-      const response = await utils.arpuBeApiClient.public.getPublicPaymentNotice(
+      const response = await utils.apiClient.public.getPublicPaymentNotice(
         brokerId,
         organizationId,
         query,
@@ -335,7 +250,7 @@ const useReceiptDetail = ({ brokerId, organizationId, receiptId }: ReceiptDetail
   useQuery({
     queryKey: ['receiptDetail', brokerId, organizationId, receiptId],
     queryFn: async () => {
-      const { data } = await utils.arpuBeApiClient.brokers.getReceiptDetail(
+      const { data } = await utils.apiClient.brokers.getReceiptDetail(
         brokerId,
         organizationId,
         receiptId
@@ -349,7 +264,7 @@ const useDownloadReceipt = ({ brokerId, organizationId, receiptId }: ReceiptDeta
   useMutation({
     mutationKey: ['downloadReceipt', brokerId, organizationId, receiptId],
     mutationFn: async () => {
-      const response = await utils.arpuBeApiClient.brokers.getReceiptPdf(
+      const response = await utils.apiClient.brokers.getReceiptPdf(
         brokerId,
         organizationId,
         receiptId,
@@ -365,7 +280,7 @@ const useBrokerInfo = (brokerId: number) =>
   useQuery({
     queryKey: ['brokerInfo', brokerId],
     queryFn: async () => {
-      const { data } = await utils.arpuBeApiClient.public.getPublicBrokerInfo(brokerId);
+      const { data } = await utils.apiClient.public.getPublicBrokerInfo(brokerId);
       return data;
     },
     throwOnError: true,
@@ -381,7 +296,7 @@ const usePagedUnpaidDebtPositions = (brokerId: number) =>
         ...args.pagination,
         ...args.filters
       };
-      const { data } = await utils.arpuBeApiClient.brokers.getPagedUnpaidDebtPositions(
+      const { data } = await utils.apiClient.brokers.getPagedUnpaidDebtPositions(
         brokerId,
         query
       );
@@ -390,15 +305,10 @@ const usePagedUnpaidDebtPositions = (brokerId: number) =>
   });
 
 export default {
-  getPaymentNotices,
-  getPaymentNoticeDetails,
-  getTokenOneidentity,
-  getNoticeDetails,
-  getNoticesList,
-  getPagedDebtorReceipts,
-  getUserInfo,
   getUserInfoOnce,
-  getOrganizations,
+  getUserInfo,
+  getTokenOneidentity,
+  getPagedDebtorReceipts,
   createSpontaneousDebtPosition,
   getOrganizationsWithSpontaneous,
   getDebtPositionTypeOrgsWithSpontaneous,
