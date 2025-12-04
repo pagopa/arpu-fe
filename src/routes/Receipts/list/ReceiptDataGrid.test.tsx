@@ -7,8 +7,8 @@ import { ThemeProvider, createTheme } from '@mui/material/styles';
 import { BrowserRouter } from 'react-router-dom';
 import { useMediaQuery } from '@mui/material';
 import { createMock } from 'zodock';
-import { PagedDebtorReceiptsDTO } from '../../../../generated/arpu-be/data-contracts';
-import { pagedDebtorReceiptsDTOSchema } from '../../../../generated/arpu-be/zod-schema';
+import { PagedDebtorReceiptsDTO } from '../../../../generated/data-contracts';
+import { pagedDebtorReceiptsDTOSchema } from '../../../../generated/zod-schema';
 
 const theme = createTheme();
 

@@ -1,5 +1,5 @@
 import React from 'react';
-import { DebtorUnpaidDebtPositionDTO } from '../../../../generated/arpu-be/data-contracts';
+import { DebtorUnpaidDebtPositionDTO } from '../../../../generated/data-contracts';
 import { ChevronRight } from '@mui/icons-material';
 import { Stack, Typography, IconButton, Card, Theme, useMediaQuery, Divider } from '@mui/material';
 import { PayeeIcon } from 'components/PayeeIcon';
@@ -68,23 +68,7 @@ export const DebtPositionItem = ({ debtPosition }: DebtPositionItemProps) => {
           <Stack gap={2}>
             <Stack>
               <Typography variant="caption" color="text.secondary">
-                Importo
-              </Typography>
-              <Typography
-                variant="body2"
-                fontWeight={600}
-                sx={{
-                  whiteSpace: 'nowrap',
-                  overflow: 'hidden',
-                  textOverflow: 'ellipsis',
-                  width: '100%'
-                }}>
-                {formatDateOrMissingValue(paymentOptions[0]?.dueDate)}
-              </Typography>
-            </Stack>
-            <Stack>
-              <Typography variant="caption" color="text.secondary">
-                Da pagare entro il
+                {t('app.debtPositions.debtPositionItem.amount')}
               </Typography>
               <Typography
                 variant="body2"
@@ -96,6 +80,22 @@ export const DebtPositionItem = ({ debtPosition }: DebtPositionItemProps) => {
                   width: '100%'
                 }}>
                 {toEuroOrMissingValue(paymentOptions[0]?.totalAmountCents)}
+              </Typography>
+            </Stack>
+            <Stack>
+              <Typography variant="caption" color="text.secondary">
+                {t('app.debtPositions.debtPositionItem.dueDate')}
+              </Typography>
+              <Typography
+                variant="body2"
+                fontWeight={600}
+                sx={{
+                  whiteSpace: 'nowrap',
+                  overflow: 'hidden',
+                  textOverflow: 'ellipsis',
+                  width: '100%'
+                }}>
+                {formatDateOrMissingValue(paymentOptions[0]?.dueDate)}
               </Typography>
             </Stack>
           </Stack>

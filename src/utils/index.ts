@@ -1,6 +1,5 @@
-import { Api } from '../../generated/apiClient';
 import { Carts } from '../../generated/checkout/Carts';
-import { Api as ArpuBeApi } from '../../generated/arpu-be/apiClient';
+import { Api } from '../../generated/apiClient';
 import * as checkoutSchema from '../../generated/checkout/zod-schema';
 import * as zodSchema from '../../generated/zod-schema';
 import config from './config';
@@ -16,8 +15,7 @@ import files from './files';
 import URI from './URI';
 
 export default {
-  apiClient: new Api({ baseURL: config.baseURL, timeout: config.apiTimeout }),
-  arpuBeApiClient: new ArpuBeApi({
+  apiClient: new Api({
     baseURL: config.baseURL,
     timeout: config.apiTimeout,
     paramsSerializer: config.paramsSerializer

@@ -2,7 +2,7 @@ import React from 'react';
 import { Stack, TextField, ToggleButton, ToggleButtonGroup, Typography } from '@mui/material';
 import { useField } from 'formik';
 import { PaymentNoticeInfo } from '.';
-import { PersonEntityType } from '../../../generated/arpu-be/apiClient';
+import { PersonEntityType } from '../../../generated/apiClient';
 
 const DebtorSection = () => {
   const [fullName, fullNameMeta] = useField<PaymentNoticeInfo['fullName']>('fullName');

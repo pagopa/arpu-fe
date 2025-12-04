@@ -7,7 +7,7 @@ import notify from 'utils/notify';
 import { useStore } from 'store/GlobalStore';
 import utils from 'utils';
 import { generatePath, useNavigate } from 'react-router-dom';
-import { DebtPositionRequestDTO } from '../../../../generated/arpu-be/data-contracts';
+import { DebtPositionRequestDTO } from '../../../../generated/data-contracts';
 import { useField } from 'formik';
 import { PaymentNoticeInfo } from '..';
 import FormContext, { FormContextType } from '../FormContext';

@@ -18,7 +18,7 @@ import { RouteGuard } from 'components/RouteGuard';
 import utils from 'utils';
 import AuthCallback from 'routes/AuthCallback';
 import Resources from 'routes/Resources';
-import loaders, { getTokenOneidentity } from 'utils/loaders';
+import { getTokenOneidentity } from 'utils/loaders';
 import { PreLoginLayout } from 'components/PreLoginLayout';
 import { ApiClient } from 'components/ApiClient';
 import Spontanei from 'routes/Spontanei';
@@ -34,7 +34,7 @@ const withGuard = (Component: () => React.JSX.Element) => (
 
 const router = createBrowserRouter([
   {
-    element: <ApiClient client={[utils.apiClient, utils.arpuBeApiClient]} />,
+    element: <ApiClient client={[utils.apiClient]} />,
     errorElement: <ErrorFallback />,
     children: [
       {
@@ -132,7 +132,6 @@ const router = createBrowserRouter([
                 {
                   path: ArcRoutes.PAYMENT_NOTICE_DETAIL,
                   element: withGuard(PaymentNoticeDetail),
-                  loader: loaders.getPaymentNoticeDetails,
                   handle: {
                     crumbs: {
                       elements: [

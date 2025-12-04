@@ -17,7 +17,7 @@ import {
   DebtPositionTypeOrgsWithSpontaneousDTO,
   OrganizationsWithSpontaneousDTO,
   PersonEntityType
-} from '../../../generated/arpu-be/data-contracts';
+} from '../../../generated/data-contracts';
 import Payment from './steps/Payment';
 import utils from 'utils';
 
