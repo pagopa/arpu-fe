@@ -25,6 +25,7 @@ import Spontanei from 'routes/Spontanei';
 import Download from 'components/Spontanei/Download';
 import { ReceiptsList } from 'routes/Receipts/list';
 import { ReceiptDetail } from 'routes/Receipts/detail';
+import { DebtPositionsList } from 'routes/DebtPositions/list';
 
 const withGuard = (Component: () => React.JSX.Element) => (
   <RouteGuard itemKeys={['accessToken']} storage={window.localStorage}>
@@ -123,34 +124,10 @@ const router = createBrowserRouter([
             path: ArcRoutes.RECEIPTS,
             element: withGuard(ReceiptsList)
           },
-          ...(utils.config.showNotices
-            ? [
-                {
-                  path: ArcRoutes.PAYMENT_NOTICES,
-                  element: withGuard(PaymentNotices)
-                },
-                {
-                  path: ArcRoutes.PAYMENT_NOTICE_DETAIL,
-                  element: withGuard(PaymentNoticeDetail),
-                  handle: {
-                    crumbs: {
-                      elements: [
-                        {
-                          name: 'paymentNotices',
-                          fontWeight: 600,
-                          href: ArcRoutes.PAYMENT_NOTICES
-                        },
-                        {
-                          name: 'paymentNoticeDetail',
-                          fontWeight: 400,
-                          color: theme.palette.grey[700]
-                        }
-                      ]
-                    }
-                  }
-                }
-              ]
-            : []),
+          {
+            path: ArcRoutes.DEBT_POSITIONS,
+            element: withGuard(DebtPositionsList)
+          },
           {
             path: ArcRoutes.COURTESY_PAGE,
             loader: ({ params }) => Promise.resolve(params.error),

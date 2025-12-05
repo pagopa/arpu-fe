@@ -1,35 +1,67 @@
 import { Box, Select, MenuItem, Pagination, SelectChangeEvent } from '@mui/material';
 import { theme } from '@pagopa/mui-italia';
-import React from 'react';
+import { useHashParamsListener } from 'hooks/useHashParamsListener';
+import React, { useCallback } from 'react';
+import utils from 'utils';
 
-type CustomPaginationProps = {
+export type CustomPaginationProps = {
   sizePageOptions?: Array<number>;
-  defaultPageOption?: number;
-  totalPages?: number;
-  currentPage?: number;
-  onPageChange?: (page: number) => void;
-  onPageSizeChange?: (pageSize: number) => void;
+  initialPage?: number; // 1-based indexing as fallback
+  initialPageSize?: number;
+  totalPages: number;
 };
 
 const CustomPagination = ({
-  sizePageOptions,
-  defaultPageOption,
-  totalPages = 1,
-  currentPage = 1,
-  onPageChange,
-  onPageSizeChange
+  sizePageOptions = [5, 10, 20],
+  initialPage = 1,
+  initialPageSize = 5,
+  totalPages = 1
 }: CustomPaginationProps) => {
-  const hidePreviousButton = currentPage === 1;
-  const hideNextButton = currentPage === totalPages;
+  const {
+    page: hashPage,
+    size: hashSize,
+    ...hashParams
+  } = useHashParamsListener<Record<string, unknown>>();
 
-  const handlePage = (_event: React.ChangeEvent<unknown>, value: number) => {
-    onPageChange?.(value);
+  const getPageFromHash = () => {
+    const page = hashPage ? Number(hashPage) : initialPage;
+    return isNaN(page) || page < 1 ? initialPage : page;
+  };
+
+  const getSizeFromHash = () => {
+    const size = Number(hashSize);
+    return isNaN(size) || size < 1 ? initialPageSize : size;
+  };
+
+  const page = getPageFromHash();
+  const pageSize = getSizeFromHash();
+
+  const hidePreviousButton = page === 1;
+  const hideNextButton = page === totalPages;
+
+  // Write updated params into URL hash
+  const updateHashParams = useCallback(
+    (newPage: number, newSize: number) => {
+      const paramsObj = {
+        ...hashParams,
+        page: newPage,
+        size: newSize
+      };
+
+      const encoded = utils.URI.encode(paramsObj);
+      utils.URI.set(encoded);
+    },
+    [hashParams]
+  );
+
+  const handlePageChange = (_event: React.ChangeEvent<unknown>, newPage: number) => {
+    updateHashParams(newPage, pageSize);
   };
 
   const handlePageSizeChange = (event: SelectChangeEvent<number>) => {
     const newSize = Number(event.target.value);
     if (!isNaN(newSize)) {
-      onPageSizeChange?.(newSize);
+      updateHashParams(page, newSize);
     }
   };
 
@@ -43,7 +75,7 @@ const CustomPagination = ({
       py={2}
       px={2}>
       <Select
-        value={defaultPageOption}
+        value={pageSize}
         onChange={handlePageSizeChange}
         size="small"
         data-testid="result-set-select"
@@ -59,13 +91,13 @@ const CustomPagination = ({
 
       <Pagination
         variant="text"
-        page={currentPage}
+        page={page}
         siblingCount={1}
         boundaryCount={0}
         count={totalPages}
         hidePrevButton={hidePreviousButton}
         hideNextButton={hideNextButton}
-        onChange={handlePage}
+        onChange={handlePageChange}
       />
     </Box>
   );
