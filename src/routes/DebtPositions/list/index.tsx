@@ -14,11 +14,12 @@ export const DebtPositionsList = () => {
   const debtPositionsQuery = utils.loaders.usePagedUnpaidDebtPositions(brokerId);
 
   const debtPositionsFilters = {
-    sort: []
+    sort: [],
+    page: 0
   };
 
   const {
-    query: { isError, data },
+    query: { isError, isSuccess, data },
     applyFilters
   } = useSearch({
     query: debtPositionsQuery,
@@ -32,7 +33,7 @@ export const DebtPositionsList = () => {
       </Typography>
       <Content
         showRetry={isError}
-        noData={!data?.content?.length}
+        noData={isSuccess && !data?.content?.length}
         onRetry={() => applyFilters(debtPositionsFilters)}
         noDataCta={<PaymentButton />}
         queryKey="pagedUnpaidDebtPositions"

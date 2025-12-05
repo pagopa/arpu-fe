@@ -26,7 +26,7 @@ export function useSearch<T, TData = unknown, TError = unknown>({
 }: UseSearchProps<T, TData, TError>) {
   const {
     page: hashPage = 1,
-    size = 10,
+    size = 5,
     sortDirection,
     sortField
   } = useHashParamsListener() as {
@@ -59,7 +59,7 @@ export function useSearch<T, TData = unknown, TError = unknown>({
     utils.URI.set(params, { replace: true });
     query.mutateAsync({
       filters: appliedFilters,
-      pagination: { size: 10, page: 0 },
+      pagination: { size: 5, page: 0 },
       sort: []
     });
   };
