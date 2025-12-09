@@ -205,7 +205,7 @@
     "description": "Browse the website",
     "homepage": "Homepage",
     "receipts":{
-      "menuTitle":"Recepits",
+      "menuTitle":"Receipts",
        "pageTitle": "Your receipts"
     },
     "navigationMenu": "Navigation menu",

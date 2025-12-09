@@ -209,7 +209,8 @@ describe('DebtPositionsList', () => {
       query: {
         data: { content: [] },
         isError: false,
-        isPending: false
+        isPending: false,
+        isSuccess: true
       },
       applyFilters: mockApplyFilters
     });
