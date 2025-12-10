@@ -23,16 +23,10 @@ export const DebtPositionItem = ({ debtPosition }: DebtPositionItemProps) => {
   const { t } = useTranslation();
   const smUp = useMediaQuery(theme.breakpoints.up('sm'));
 
-  const {
-    organizationId,
-    orgName,
-    orgFiscalCode,
-    debtPositionId,
-    paymentOptions,
-    debtPositionTypeOrgDescription
-  } = debtPosition;
+  const { orgName, orgFiscalCode, debtPositionId, paymentOptions, debtPositionTypeOrgDescription } =
+    debtPosition;
 
-  const detailPath = generatePath(ArcRoutes.DEBT_POSITION, { debtPositionId, organizationId });
+  const detailPath = generatePath(ArcRoutes.DEBT_POSITION, { debtPositionId });
 
   return (
     <Card onClick={() => navigate(detailPath)}>

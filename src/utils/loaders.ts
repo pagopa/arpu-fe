@@ -310,6 +310,18 @@ const usePublicInstallmentsByIuvOrNav = (brokerId: number) =>
     }
   });
 
+const getDebtPositionDetail = (brokerId: number, debtPositionId: number) =>
+  useQuery({
+    queryKey: ['getDebtPositionDetail', brokerId, debtPositionId],
+    queryFn: async () => {
+      const { data } = await utils.apiClient.brokers.getDebtPositionDetail(
+        brokerId,
+        debtPositionId
+      );
+      return data;
+    }
+  });
+
 export default {
   createSpontaneousDebtPosition,
   getDebtPositionTypeOrgsWithSpontaneous,
@@ -323,6 +335,7 @@ export default {
   useDownloadReceipt,
   usePagedUnpaidDebtPositions,
   useReceiptDetail,
+  getDebtPositionDetail,
   public: {
     createPublicSpontaneousDebtPosition,
     getPublicDebtPositionTypeOrgsWithSpontaneous,
