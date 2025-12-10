@@ -53,8 +53,8 @@ vi.mock('utils', () => ({
 
 vi.mock('hooks/useSearch');
 
-vi.mock(import('utils/config'), async (importOriginal) => {
-  const actual = await importOriginal();
+vi.mock('utils/config', async (importOriginal) => {
+  const actual: any = await importOriginal();
   return {
     ...actual,
     default: {

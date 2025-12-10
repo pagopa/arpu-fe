@@ -8,7 +8,7 @@ import {
 } from '@mui/x-data-grid';
 import { theme } from '@pagopa/mui-italia';
 import { useCallback } from 'react';
-import CustomPagination from './CustomPagination';
+import CustomPagination, { CustomPaginationProps } from './CustomPagination';
 import utils from '../../utils';
 import { useHashParamsListener } from '../../hooks/useHashParamsListener';
 import React from 'react';
@@ -46,44 +46,22 @@ const StyledDataGrid = styled(DataGrid)({
 export type CustomDataGridProps<T extends GridValidRowModel> = {
   rows: Array<T>;
   columns: Array<GridColDef>;
-  initialPage?: number; // 1-based indexing as fallback
-  initialPageSize?: number;
-  pageSizeOptions?: Array<number>;
   initialSortModel?: GridSortModel;
-  totalPages: number;
-} & Omit<
-  DataGridProps,
-  'pagination' | 'paginationModel' | 'onPaginationModelChange' | 'sortModel' | 'onSortModelChange'
->;
+} & DataGridProps &
+  CustomPaginationProps;
 
 export const CustomDataGrid = <T extends GridValidRowModel>({
   rows,
   columns,
-  initialPage = 1,
-  initialPageSize = 10,
-  pageSizeOptions = [5, 10, 20],
   initialSortModel = [],
-  totalPages = 1,
-  ...restProps
+  ...rest
 }: CustomDataGridProps<T>) => {
   // Read from URL hash params directly
   const {
-    page: hashPage,
-    size: hashSize,
     sortField: hashSort,
     sortDirection: hashSortDirection,
     ...hashParams
   } = useHashParamsListener<Record<string, unknown>>();
-
-  const getPageFromHash = () => {
-    const page = hashPage ? Number(hashPage) : initialPage;
-    return isNaN(page) || page < 1 ? initialPage : page;
-  };
-
-  const getSizeFromHash = () => {
-    const size = hashSize ? Number(hashSize) : initialPageSize;
-    return isNaN(size) || size < 1 ? initialPageSize : size;
-  };
 
   const getSortModelFromHash = (): GridSortModel => {
     const sortField = typeof hashSort === 'string' ? hashSort : undefined;
@@ -96,13 +74,10 @@ export const CustomDataGrid = <T extends GridValidRowModel>({
       ? [{ field: sortField, sort: sortDirection }]
       : initialSortModel;
   };
-  const page = getPageFromHash();
-  const pageSize = getSizeFromHash();
   const sortModel = getSortModelFromHash();
 
-  // Write updated params into URL hash
-  const updateHashParams = useCallback(
-    (newPage: number, newSize: number, newSortModel: GridSortModel) => {
+  const updateHashSortModel = useCallback(
+    (newSortModel: GridSortModel) => {
       const sort =
         newSortModel.length > 0
           ? {
@@ -113,8 +88,6 @@ export const CustomDataGrid = <T extends GridValidRowModel>({
 
       const paramsObj = {
         ...hashParams,
-        page: newPage,
-        size: newSize,
         ...sort
       };
 
@@ -123,18 +96,6 @@ export const CustomDataGrid = <T extends GridValidRowModel>({
     },
     [hashParams]
   );
-
-  const handlePageChange = (newPage: number) => {
-    updateHashParams(newPage, pageSize, sortModel);
-  };
-
-  const handlePageSizeChange = (newSize: number) => {
-    updateHashParams(page, newSize, sortModel);
-  };
-
-  const handleSortModelChange = (newSortModel: GridSortModel) => {
-    updateHashParams(page, pageSize, newSortModel);
-  };
 
   return (
     <Grid
@@ -149,21 +110,12 @@ export const CustomDataGrid = <T extends GridValidRowModel>({
         paginationMode="client"
         sortingMode="client"
         sortModel={sortModel}
-        onSortModelChange={handleSortModelChange}
+        onSortModelChange={updateHashSortModel}
         hideFooterSelectedRowCount
         slots={{
-          pagination: () => (
-            <CustomPagination
-              sizePageOptions={pageSizeOptions}
-              defaultPageOption={pageSize}
-              totalPages={totalPages}
-              currentPage={page}
-              onPageChange={handlePageChange}
-              onPageSizeChange={handlePageSizeChange}
-            />
-          )
+          pagination: () => <CustomPagination {...rest} />
         }}
-        {...restProps}
+        {...rest}
       />
     </Grid>
   );

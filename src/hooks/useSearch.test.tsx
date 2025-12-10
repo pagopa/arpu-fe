@@ -28,7 +28,7 @@ describe('useSearch', () => {
     mutateAsyncMock.mockResolvedValue(undefined);
   });
 
-  const setup = (hashParams = { page: 1, size: 10, sortDirection: '', sortField: '' }) => {
+  const setup = (hashParams = { page: 1, size: 5, sortDirection: '', sortField: '' }) => {
     mockUseHashParamsListener.mockReturnValue({
       page: hashParams.page,
       size: hashParams.size,
@@ -49,7 +49,7 @@ describe('useSearch', () => {
 
     expect(mutateAsyncMock).toHaveBeenCalledWith({
       filters: { foo: 'bar' },
-      pagination: { size: 10, page: 0 }, // page=hashPage -1 = 1-1=0
+      pagination: { size: 5, page: 0 }, // page=hashPage -1 = 1-1=0
       sort: []
     });
   });
@@ -76,7 +76,7 @@ describe('useSearch', () => {
 
     mockUseHashParamsListener.mockReturnValue({
       page: 3,
-      size: 10,
+      size: 5,
       sortDirection: '',
       sortField: ''
     });
@@ -86,7 +86,7 @@ describe('useSearch', () => {
     expect(mutateAsyncMock).toHaveBeenCalledTimes(2);
     expect(mutateAsyncMock).toHaveBeenLastCalledWith({
       filters: { foo: 'bar' },
-      pagination: { size: 10, page: 2 },
+      pagination: { size: 5, page: 2 },
       sort: []
     });
   });
@@ -107,7 +107,7 @@ describe('useSearch', () => {
     expect(utils.URI.set).toHaveBeenCalledWith('encodedParams', { replace: true });
     expect(mutateAsyncMock).toHaveBeenCalledWith({
       filters: { foo: 'baz' },
-      pagination: { size: 10, page: 0 },
+      pagination: { size: 5, page: 0 },
       sort: []
     });
   });

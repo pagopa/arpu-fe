@@ -124,6 +124,9 @@
       "debtPositionItem": {
         "amount": "Importo",
         "dueDate": "Da pagare entro il"
+      },
+      "list": {
+        "title": "Importi da pagare"
       }
     },
     "paymentNotice": {
@@ -268,7 +271,7 @@
     },
     "navigationMenu": "Menù di navigazione",
     "menu": "Menu",
-    "paymentNotices": "Avvisi di pagamento"
+    "debtPositions": "Importi da pagare"
   },
   "sidebar": {
     "collapse": "Comprimi il menu",

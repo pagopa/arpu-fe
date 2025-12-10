@@ -14,6 +14,7 @@ type ContentProps = {
   queryKey: string;
   children: React.ReactNode;
   onNoDataClick?: () => void;
+  noDataCta?: React.ReactNode;
 };
 
 export const Content = ({
@@ -23,11 +24,12 @@ export const Content = ({
   noDataTitle,
   noDataText,
   queryKey,
-  children
+  children,
+  noDataCta
 }: ContentProps) => {
   if (showRetry) return <Retry action={onRetry} />;
 
-  if (noData) return <NoData title={noDataTitle} text={noDataText} />;
+  if (noData) return <NoData title={noDataTitle} text={noDataText} cta={noDataCta} />;
 
   return (
     <Stack mb={{ xs: 2, sm: 3 }}>

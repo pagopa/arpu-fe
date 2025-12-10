@@ -4,7 +4,6 @@ import { Theme } from './utils/style';
 import { Layout } from './components/Layout';
 import { ArcErrors, ArcRoutes } from './routes/routes';
 import DashboardRoute from './routes/Dashboard';
-import { theme } from '@pagopa/mui-italia';
 import UserRoute from 'routes/User';
 import { RouteHandleObject } from 'models/Breadcrumbs';
 import { ErrorFallback } from 'components/ErrorFallback';
@@ -12,8 +11,6 @@ import { HealthCheck } from 'components/HealthCheck';
 import { CourtesyPage } from 'routes/CourtesyPage';
 import Login from 'routes/Login';
 import Assistance from 'routes/Assistance';
-import { PaymentNotices } from 'routes/PaymentNotices';
-import PaymentNoticeDetail from 'routes/PaymentNoticeDetail';
 import { RouteGuard } from 'components/RouteGuard';
 import utils from 'utils';
 import AuthCallback from 'routes/AuthCallback';
@@ -25,6 +22,7 @@ import Spontanei from 'routes/Spontanei';
 import Download from 'components/Spontanei/Download';
 import { ReceiptsList } from 'routes/Receipts/list';
 import { ReceiptDetail } from 'routes/Receipts/detail';
+import { DebtPositionsList } from 'routes/DebtPositions/list';
 
 const withGuard = (Component: () => React.JSX.Element) => (
   <RouteGuard itemKeys={['accessToken']} storage={window.localStorage}>
@@ -123,34 +121,10 @@ const router = createBrowserRouter([
             path: ArcRoutes.RECEIPTS,
             element: withGuard(ReceiptsList)
           },
-          ...(utils.config.showNotices
-            ? [
-                {
-                  path: ArcRoutes.PAYMENT_NOTICES,
-                  element: withGuard(PaymentNotices)
-                },
-                {
-                  path: ArcRoutes.PAYMENT_NOTICE_DETAIL,
-                  element: withGuard(PaymentNoticeDetail),
-                  handle: {
-                    crumbs: {
-                      elements: [
-                        {
-                          name: 'paymentNotices',
-                          fontWeight: 600,
-                          href: ArcRoutes.PAYMENT_NOTICES
-                        },
-                        {
-                          name: 'paymentNoticeDetail',
-                          fontWeight: 400,
-                          color: theme.palette.grey[700]
-                        }
-                      ]
-                    }
-                  }
-                }
-              ]
-            : []),
+          {
+            path: ArcRoutes.DEBT_POSITIONS,
+            element: withGuard(DebtPositionsList)
+          },
           {
             path: ArcRoutes.COURTESY_PAGE,
             loader: ({ params }) => Promise.resolve(params.error),

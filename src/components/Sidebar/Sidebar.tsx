@@ -22,7 +22,6 @@ import ReceiptLongIcon from '@mui/icons-material/ReceiptLong';
 import ViewSidebarIcon from '@mui/icons-material/ViewSidebar';
 import useCollapseMenu from 'hooks/useCollapseMenu';
 import { sidebarStyles } from './sidebar.styles';
-import utils from 'utils';
 
 export const Sidebar: React.FC = () => {
   const { t } = useTranslation();
@@ -45,15 +44,11 @@ export const Sidebar: React.FC = () => {
       route: ArcRoutes.DASHBOARD,
       end: true
     },
-    ...(utils.config.showNotices
-      ? [
-          {
-            label: t('menu.paymentNotices'),
-            icon: Payments,
-            route: ArcRoutes.PAYMENT_NOTICES
-          }
-        ]
-      : []),
+    {
+      label: t('menu.debtPositions'),
+      icon: Payments,
+      route: ArcRoutes.DEBT_POSITIONS
+    },
     {
       label: t('menu.receipts.menuTitle'),
       icon: () => <ReceiptLongIcon sx={{ marginLeft: '-1px' }} />,
