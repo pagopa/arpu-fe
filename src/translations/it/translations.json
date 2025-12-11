@@ -5,6 +5,26 @@
     "modal": {
       "close": "Chiudi modale"
     },
+    "receiptsSearch": {
+      "title": "Recupera una ricevuta",
+      "description": "Se hai già effettuato un pagamento, compila i campi richiesti e cerca la tua ricevuta.",
+      "sub": "Cerca la ricevuta",
+      "tab1": {
+        "label": "Persona Fisica",
+        "description": "Inserisci il Codice Avviso (o IUV) e il Codice Fiscale per avviare la ricerca della ricevuta. Se non possiedi il Codice Fiscale, puoi comunque recuperare la ricevuta."
+      },
+      "tab2": {
+        "label": "Persona Giuridica",
+        "description": "Inserisci il Codice Avviso (o IUV) e la P.IVA per avviare la ricerca della ricevuta."
+      },
+      "fields": {
+        "iuv": "Codice Avviso/IUV",
+        "fiscalcode": "Codice Fiscale",
+        "piva": "Codice Fiscale/P.IVA",
+        "anonymous": "Non ho il Codice Fiscale"
+      },
+      "action": "Cerca"
+    },
     "user": {
       "title": "I tuoi dati",
       "subtitle": "Questi dati derivano dal tuo SPID o CIE. Per modificarli, rivolgiti al tuo fornitore di identità digitale.",

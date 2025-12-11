@@ -31,6 +31,7 @@ const Login = () => {
   const navigate = useNavigate();
 
   const handleCTA1 = () => navigate(ArcRoutes.public.PAYMENTS_ON_THE_FLY);
+  const handleCTA2 = () => navigate(ArcRoutes.public.RECEIPTS_SEARCH);
 
   return (
     <Grid container minHeight={580}>
@@ -77,7 +78,7 @@ const Login = () => {
                     <Button variant="contained" size="large" color="primary" onClick={handleCTA1}>
                       {t('app.login.noAuth.CTA1')}
                     </Button>
-                    <Button variant="contained" size="large">
+                    <Button variant="contained" size="large" onClick={handleCTA2}>
                       {t('app.login.noAuth.CTA2')}
                     </Button>
                   </Stack>

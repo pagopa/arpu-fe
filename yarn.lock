@@ -15144,6 +15144,7 @@ __metadata:
     vite-tsconfig-paths: "npm:^4.3.2"
     vitest: "npm:^2.1.1"
     whatwg-fetch: "npm:^3.6.20"
+    zod-formik-adapter: "npm:^2.0.0"
     zodock: "npm:^0.1.0"
   languageName: unknown
   linkType: soft
@@ -19527,6 +19528,16 @@ __metadata:
   version: 2.1.1
   resolution: "yoctocolors@npm:2.1.1"
   checksum: 10c0/85903f7fa96f1c70badee94789fade709f9d83dab2ec92753d612d84fcea6d34c772337a9f8914c6bed2f5fc03a428ac5d893e76fab636da5f1236ab725486d0
+  languageName: node
+  linkType: hard
+
+"zod-formik-adapter@npm:^2.0.0":
+  version: 2.0.0
+  resolution: "zod-formik-adapter@npm:2.0.0"
+  peerDependencies:
+    formik: ^2.2.9
+    zod: 4.x
+  checksum: 10c0/d855ac20495c1ee0c28f1cdea37aa2357801a1909ae7f5c12313445e61cfd62154f9977680cfba5c69dd8248e314ae6a1b87898035056de0ef960c5e9f1ca989
   languageName: node
   linkType: hard
 
