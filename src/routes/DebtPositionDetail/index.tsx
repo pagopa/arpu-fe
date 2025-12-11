@@ -1,64 +1,74 @@
-import { Button, Card, Divider, Stack, Typography } from '@mui/material';
-import { CopiableRow } from 'components/CopiableRow';
-import React from 'react';
-import { useTranslation } from 'react-i18next';
-import { useParams } from 'react-router-dom';
-import utils from 'utils';
-import { propertyOrMissingValue } from 'utils/converters';
+import { Button, Card, Divider, Stack, Typography } from "@mui/material";
+import { CopiableRow } from "components/CopiableRow";
+import { PayeeIcon } from "components/PayeeIcon";
+import React from "react";
+import { useTranslation } from "react-i18next";
+import { useParams } from "react-router-dom";
+import utils from "utils";
+import { fromTaxCodeToSrcImage, propertyOrMissingValue } from "utils/converters";
 
 const DebtPositionDetail = () => {
   const brokerId = utils.storage.app.getBrokerId();
   const { t } = useTranslation();
-  const { debtPositionId } = useParams();
+  const { debtPositionId, organizationId } = useParams();
+
+  const { data,  } = utils.loaders.getDebtPositionDetail(brokerId, Number(debtPositionId), Number(organizationId));
 
   if (!debtPositionId || isNaN(Number(debtPositionId))) {
     throw new Error('debtPositionId is required and must be a number');
   }
 
-  const data = utils.loaders.getDebtPositionDetail(brokerId, Number(debtPositionId));
+  if( !organizationId || isNaN(Number(organizationId)) ) {
+    throw new Error("organizationId is required and must be a number");
+  }
 
-  return (
-    <>
-      <Typography variant="h4" component="h1" marginInlineStart={1} mb={2}>
-        {data.data?.description || t('debtPositionDetail.title')}
-      </Typography>
-      <Card sx={{ padding: 3, gap: 3, display: 'flex', flexDirection: 'column' }}>
+  if( !data ) {
+    return <div>Loading...</div>; // This should not happen as the loader handles loading state
+  }
+
+  return <>
+    <Typography variant="h4" component="h1" marginInlineStart={1} mb={2}>
+      {data.debtPositionTypeOrgDescription || t("debtPositionDetail.title")}
+    </Typography>
+    <Card sx={{ padding: 3, gap: 3, display: 'flex', flexDirection: 'column' }}>
         <Typography variant="subtitle2" fontWeight={700}>
           {t('app.debtPositionDetail.paymentData')}
         </Typography>
-        <CopiableRow
-          label={t('app.debtPositionDetail.org')}
-          value={propertyOrMissingValue('missing org name')}
-        />
+        <Stack direction="row" gap={2}>
+          <PayeeIcon src={fromTaxCodeToSrcImage(data.orgFiscalCode)} alt={data.orgName} visible/>
+          <CopiableRow
+            label={t('app.debtPositionDetail.org')}
+            value={propertyOrMissingValue(data.orgName)}
+          />
+        </Stack>
         <Divider />
         <CopiableRow
           label={t('app.debtPositionDetail.cf')}
-          value={propertyOrMissingValue('missing cf')}
+          value={propertyOrMissingValue(data.orgFiscalCode)}
           copiable
         />
         <Divider />
         <CopiableRow
           label={t('app.debtPositionDetail.iupd')}
-          value={propertyOrMissingValue(data?.data?.iupdOrg)}
+          value={propertyOrMissingValue(data.iupd)}
           copiable
         />
-      </Card>
-      <Card sx={{ padding: 3, gap: 3, display: 'flex', flexDirection: 'column', marginTop: 2 }}>
-        <Typography variant="subtitle2" fontWeight={700}>
-          {t('app.debtPositionDetail.paymentOptions')}
-        </Typography>
-        <pre>{JSON.stringify(data.data?.paymentOptions, null, 2)}</pre>
-        <Stack direction="row" spacing={2} marginTop={2} justifyContent="flex-end">
-          <Button variant="outlined" size="large">
-            {t('app.debtPositionDetail.addToCart')}
-          </Button>
-          <Button variant="contained" size="large">
-            {t('app.debtPositionDetail.pay')}
-          </Button>
-        </Stack>
-      </Card>
-    </>
-  );
+    </Card>
+    <Card sx={{ padding: 3, gap: 3, display: 'flex', flexDirection: 'column', marginTop: 2 }}>
+      <Typography variant="subtitle2" fontWeight={700}>
+        {t('app.debtPositionDetail.paymentOptions')}
+      </Typography>
+      <pre>
+        {
+          JSON.stringify(data.paymentOptions, null, 2)
+        }
+      </pre>
+      <Stack direction="row" spacing={2} marginTop={2} justifyContent="flex-end">
+        <Button variant="outlined" size="large">{t('app.debtPositionDetail.addItemToCart')}</Button>
+        <Button variant="contained" size="large">{t('app.debtPositionDetail.payNow')}</Button>
+      </Stack>
+    </Card>
+  </>
 };
 
 export default DebtPositionDetail;

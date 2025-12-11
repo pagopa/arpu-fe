@@ -154,6 +154,17 @@
         "title": "Importi da pagare"
       }
     },
+    "debtPositionDetail": {
+      "title": "Dettaglio posizione debitoria",
+      "paymentData": "Dati del pagamento",
+      "org": "Ente creditore",
+      "cf": "Codice fiscale ente",
+      "iupd": "Identificativo univoco posizione debitoria (IUPD)",
+      "paymentOptions": "Opzioni di pagamento",
+      "payNow": "Paga ora",
+      "payLater": "Paga a rate",
+      "addItemToCart": "Aggiungi al carrello"
+    },
     "paymentNotice": {
       "preview": {
         "title": "Cerca i tuoi avvisi di pagamento pagoPA",
