@@ -23,6 +23,7 @@ import Download from 'components/Spontanei/Download';
 import { ReceiptsList } from 'routes/Receipts/list';
 import { ReceiptDetail } from 'routes/Receipts/detail';
 import { DebtPositionsList } from 'routes/DebtPositions/list';
+import { ReceiptsSearch } from 'routes/Receipts/search';
 
 const withGuard = (Component: () => React.JSX.Element) => (
   <RouteGuard itemKeys={['accessToken']} storage={window.localStorage}>
@@ -55,6 +56,14 @@ const router = createBrowserRouter([
         handle: {
           backButton: false
         } as RouteHandleObject
+      },
+      {
+        path: ArcRoutes.public.RECEIPTS_SEARCH,
+        element: (
+          <PreLoginLayout>
+            <ReceiptsSearch />
+          </PreLoginLayout>
+        )
       },
       {
         path: ArcRoutes.AUTH_CALLBACK,
