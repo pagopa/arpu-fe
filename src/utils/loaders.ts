@@ -314,7 +314,11 @@ const getDebtPositionDetail = (brokerId: number, debtPositionId: number, organiz
   useQuery({
     queryKey: ['getDebtPositionDetail', brokerId, debtPositionId],
     queryFn: async () => {
-      const { data } = await utils.apiClient.brokers.getDebtorUnpaidDebtPositionOverview(brokerId, debtPositionId, { organizationId });
+      const { data } = await utils.apiClient.brokers.getDebtorUnpaidDebtPositionOverview(
+        brokerId,
+        debtPositionId,
+        { organizationId }
+      );
       return data;
     }
   });
