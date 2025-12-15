@@ -163,7 +163,17 @@
       "paymentOptions": "Opzioni di pagamento",
       "payNow": "Paga ora",
       "payLater": "Paga a rate",
-      "addItemToCart": "Aggiungi al carrello"
+      "addItemToCart": "Aggiungi al carrello",
+      "paymentOptionSingleInstallment": "Soluzione unica",
+      "paymentOptionRateInstallments": "Soluzione a rate",
+      "installment": "rata",
+      "installments": "rate",
+      "before": "entro il",
+      "status": {
+        "PAID": "Pagato",
+        "UNPAID": "Da pagare",
+        "EXPIRED": "Scaduto"
+      }
     },
     "paymentNotice": {
       "preview": {
