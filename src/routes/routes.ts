@@ -11,7 +11,7 @@ export const ArcRoutes = {
   DEBT_POSITION: `${rootPrefix}/posizioni-debitorie/:debtPositionId/:organizationId`,
   DEBT_POSITIONS: `${rootPrefix}/posizioni-debitorie`,
   PAYMENT_NOTICES: `${rootPrefix}/avvisi/`,
-  PAYMENT_NOTICE_DETAIL: `${rootPrefix}/avvisi/:noticeId`,
+  PAYMENT_NOTICE_DETAIL: `${rootPrefix}/avvisi/:id/:paTaxCode`,
   USER: `${rootPrefix}/profilo`,
   COURTESY_PAGE: `${rootPrefix}/errore/:error`,
   ASSISTANCE: `${rootPrefix}/assistenza`,
