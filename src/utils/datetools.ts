@@ -29,7 +29,7 @@ const getFormatOptions = (format: DateFormat, withTime: boolean): Intl.DateTimeF
 const defaultOptions = {
   format: DateFormat.MEDIUM,
   invalidDateOutput: '',
-  locale: defaultLocale,
+  locale: 'it-IT',
   timeZone: 'Europe/Rome',
   withTime: false
 };

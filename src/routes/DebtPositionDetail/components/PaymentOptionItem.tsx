@@ -135,6 +135,10 @@ const PaymentOption = (props: PaymentOptionProps) => {
       ) + 1
   };
 
+  const nextInstallmentToBePaidLabel = isSingleInstallment
+    ? `${t('app.debtPositionDetail.before')} ${utils.datetools.formatDate(nextInstallmentToBePaid.installment?.dueDate)}`
+    : `${t('app.debtPositionDetail.installment')} ${nextInstallmentToBePaid.index}  ${t('app.debtPositionDetail.before')} ${utils.datetools.formatDate(nextInstallmentToBePaid.installment?.dueDate)}`;
+
   return (
     <Card
       sx={{
@@ -144,13 +148,20 @@ const PaymentOption = (props: PaymentOptionProps) => {
       }}>
       <Grid container>
         <Grid size={6}>
-          <FormControlLabel value={props.paymentOptionId} control={<Radio />} label={label} />
+          <FormControlLabel
+            data-testid="payment-option-item-type"
+            value={props.paymentOptionId}
+            control={<Radio />}
+            label={label}
+          />
         </Grid>
         <Grid size={6} pl={2}>
-          <Typography>{utils.converters.toEuro(props.totalAmountCents || 0)}</Typography>
+          <Typography data-testid="payment-option-item-total-amount">
+            {utils.converters.toEuro(props.totalAmountCents || 0)}
+          </Typography>
           {nextInstallmentToBePaid.installment && (
-            <Typography>
-              {`${t('app.debtPositionDetail.installment')} ${nextInstallmentToBePaid.index} ${t('app.debtPositionDetail.before')} ${utils.datetools.formatDate(nextInstallmentToBePaid.installment.dueDate)}`}
+            <Typography data-testid="payment-option-item-next-pay-date">
+              {nextInstallmentToBePaidLabel}
             </Typography>
           )}
         </Grid>
