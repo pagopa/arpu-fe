@@ -609,3 +609,63 @@ describe('usePagedUnpaidDebtPositions', () => {
     });
   });
 });
+
+const mockInstallmentsData = [
+  {
+    iuv: '123456789012345678',
+    orgName: 'Test Organization',
+    amountCents: 10000
+  }
+];
+
+describe('usePublicInstallmentsByIuvOrNav', () => {
+  beforeEach(() => {
+    vi.spyOn(utils.apiClient.public, 'getPublicInstallmentsByIuvOrNav').mockResolvedValue({
+      data: mockInstallmentsData
+    } as any);
+  });
+
+  afterEach(() => {
+    vi.clearAllMocks();
+  });
+
+  it('fetches installments successfully', async () => {
+    const { result } = renderHook(() => loaders.public.usePublicInstallmentsByIuvOrNav(999));
+
+    await result.current.mutateAsync({
+      iuvOrNav: '123456789012345678',
+      fiscalCode: 'RSSMRA80A01H501U'
+    });
+
+    await waitFor(() => {
+      expect(result.current.isSuccess).toBe(true);
+    });
+
+    expect(utils.apiClient.public.getPublicInstallmentsByIuvOrNav).toHaveBeenCalledWith(
+      999,
+      { iuvOrNav: '123456789012345678' },
+      { headers: { 'X-fiscal-code': 'RSSMRA80A01H501U' } }
+    );
+  });
+
+  it('handles API errors', async () => {
+    vi.spyOn(utils.apiClient.public, 'getPublicInstallmentsByIuvOrNav').mockRejectedValue(
+      new Error('Failed')
+    );
+
+    const { result } = renderHook(() => loaders.public.usePublicInstallmentsByIuvOrNav(999));
+
+    try {
+      await result.current.mutateAsync({
+        iuvOrNav: '123456789012345678',
+        fiscalCode: 'RSSMRA80A01H501U'
+      });
+    } catch (e) {
+      // Expected error
+    }
+
+    await waitFor(() => {
+      expect(result.current.isError).toBe(true);
+    });
+  });
+});
