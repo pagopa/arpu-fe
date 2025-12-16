@@ -6,60 +6,7 @@ import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
 import utils from 'utils';
 import { fromTaxCodeToSrcImage, propertyOrMissingValue } from 'utils/converters';
-import {
-  DebtorUnpaidDebtPositionOverviewDTO,
-  InstallmentStatus,
-  PaymentOptionStatus,
-  PaymentOptionType
-} from '../../../generated/data-contracts';
 import PaymentOptionWrapper from './components/PaymentOptions';
-
-const mockPaymentOptions: DebtorUnpaidDebtPositionOverviewDTO['paymentOptions'] = [
-  {
-    paymentOptionId: 1,
-    paymentOptionType: PaymentOptionType.SINGLE_INSTALLMENT,
-    status: PaymentOptionStatus.UNPAID,
-    totalAmountCents: 10000,
-    installments: [
-      {
-        installmentId: 3,
-        status: InstallmentStatus.UNPAID,
-        dueDate: '2024-12-31',
-        remittanceInformation: 'Payment for invoice #12345',
-        amountCents: 10000
-      }
-    ]
-  },
-  {
-    paymentOptionId: 2,
-    paymentOptionType: PaymentOptionType.INSTALLMENTS,
-    status: PaymentOptionStatus.UNPAID,
-    totalAmountCents: 10000,
-    installments: [
-      {
-        installmentId: 4,
-        status: InstallmentStatus.UNPAID,
-        dueDate: '2024-12-31',
-        remittanceInformation: 'Payment for invoice #12345',
-        amountCents: 10000
-      },
-      {
-        installmentId: 5,
-        status: InstallmentStatus.UNPAID,
-        dueDate: '2025-01-31',
-        remittanceInformation: 'Payment for invoice #12345',
-        amountCents: 5000
-      },
-      {
-        installmentId: 6,
-        status: InstallmentStatus.UNPAID,
-        dueDate: '2025-02-28',
-        remittanceInformation: 'Payment for invoice #12345',
-        amountCents: 5000
-      }
-    ]
-  }
-];
 
 const DebtPositionDetail = () => {
   const brokerId = utils.storage.app.getBrokerId();
@@ -113,7 +60,7 @@ const DebtPositionDetail = () => {
           copiable
         />
       </Card>
-      <PaymentOptionWrapper paymentOptions={mockPaymentOptions} />
+      <PaymentOptionWrapper paymentOptions={data.paymentOptions} />
     </>
   );
 };

@@ -1,10 +1,21 @@
 import Card from '@mui/material/Card';
 import {
+  DebtorInstallmentsOverviewDTO,
   DebtorPaymentOptionOverviewDTO,
+  InstallmentStatus,
   PaymentOptionType
 } from '../../../../generated/data-contracts';
 import React from 'react';
-import { Box, Chip, Divider, FormControlLabel, Grid, Radio, Stack, Typography } from '@mui/material';
+import {
+  Box,
+  Chip,
+  Divider,
+  FormControlLabel,
+  Grid,
+  Radio,
+  Stack,
+  Typography
+} from '@mui/material';
 import Timeline from '@mui/lab/Timeline';
 import TimelineItem, { timelineItemClasses } from '@mui/lab/TimelineItem';
 import TimelineSeparator from '@mui/lab/TimelineSeparator';
@@ -23,6 +34,20 @@ const Accent = (props: { children: string }) => (
 
 const ExtraInfo = (props: { installments: DebtorPaymentOptionOverviewDTO['installments'] }) => {
   const { t } = useTranslation();
+
+  const getInstallmentStatusColor = (status: InstallmentStatus) => {
+    switch (status) {
+      case 'PAID':
+        return 'success';
+      case 'UNPAID':
+        return 'default';
+      case 'EXPIRED':
+        return 'warning';
+      default:
+        return 'default';
+    }
+  }
+
   return (
     <>
       <Divider sx={{ mt: 2 }} />
@@ -32,9 +57,9 @@ const ExtraInfo = (props: { installments: DebtorPaymentOptionOverviewDTO['instal
             flex: 0,
             padding: 0
           },
-          mb:0,
+          mb: 0,
           padding: 0,
-          paddingLeft: 4,
+          paddingLeft: 4
         }}>
         {props.installments.map((installment, index) => (
           <TimelineItem key={installment.installmentId}>
@@ -43,9 +68,7 @@ const ExtraInfo = (props: { installments: DebtorPaymentOptionOverviewDTO['instal
               {index < props.installments.length - 1 && <TimelineConnector />}
             </TimelineSeparator>
             <TimelineContent>
-
               <Grid container>
-
                 <Grid size={6}>
                   <Stack direction="row" spacing={2}>
                     <Accent>{`Rata ${index + 1}`}</Accent>
@@ -54,14 +77,17 @@ const ExtraInfo = (props: { installments: DebtorPaymentOptionOverviewDTO['instal
                     </Typography>
                   </Stack>
                 </Grid>
-            
+
                 <Grid size={6} gap={2}>
                   <Stack direction="row" spacing={2}>
-                    <Chip label={t(`app.debtPositionDetail.status.${installment.status}`)} />
-                    <Typography component="span">{`${t('app.debtPositionDetail.before')} ${utils.datetools.formatDate(installment.dueDate)}`}</Typography>
+                    <Chip
+                      label={t(`app.debtPositionDetail.status.${installment.status}`)}
+                      color={getInstallmentStatusColor(installment.status)} />
+                    {installment.dueDate && (
+                      <Typography component="span">{`${t('app.debtPositionDetail.before')} ${utils.datetools.formatDate(installment.dueDate)}`}</Typography>
+                    )}
                   </Stack>
                 </Grid>
-
               </Grid>
             </TimelineContent>
           </TimelineItem>
@@ -80,19 +106,28 @@ const PaymentOption = (props: PaymentOptionProps) => {
   const isSelected = props.selectionStatus === 'selected';
   const paymentOptionType = props.paymentOptionType;
 
-  const label =
-    paymentOptionType === PaymentOptionType.SINGLE_INSTALLMENT ? (
+  const isSingleInstallment =
+    paymentOptionType === PaymentOptionType.SINGLE_INSTALLMENT ||
+    paymentOptionType === PaymentOptionType.REDUCED_SINGLE_INSTALLMENT ||
+    (paymentOptionType === PaymentOptionType.DOWN_PAYMENT && props.installments.length === 1);
+
+  const label = isSingleInstallment ? (
+    <Typography variant="body2" textTransform="uppercase">
+      {t('app.debtPositionDetail.paymentOptionSingleInstallment')}
+    </Typography>
+  ) : (
+    <div>
       <Typography variant="body2" textTransform="uppercase">
-        {t('app.debtPositionDetail.paymentOptionSingleInstallment')}
+        {t('app.debtPositionDetail.paymentOptionRateInstallments')}
       </Typography>
-    ) : (
-      <div>
-        <Typography variant="body2" textTransform="uppercase">
-          {t('app.debtPositionDetail.paymentOptionRateInstallments')}
-        </Typography>
-        <Accent>{`${props.installments.length} ${t('app.debtPositionDetail.installments')}`}</Accent>
-      </div>
-    );
+      <Accent>{`${props.installments.length} ${t('app.debtPositionDetail.installments')}`}</Accent>
+    </div>
+  );
+
+  const nextInstallmentToBePaid: { installment?: DebtorInstallmentsOverviewDTO, index: number } = {
+    installment: props.installments.find((installment) => installment.dueDate && installment.status === 'UNPAID'),
+    index: props.installments.findIndex((installment) => installment.dueDate && installment.status === 'UNPAID') + 1,
+  };
 
   return (
     <Card
@@ -106,10 +141,14 @@ const PaymentOption = (props: PaymentOptionProps) => {
           <FormControlLabel value={props.paymentOptionId} control={<Radio />} label={label} />
         </Grid>
         <Grid size={6} pl={2}>
-          <Typography>{utils.converters.toEuro(props.installments[0].amountCents || 0)}</Typography>
-          <Typography>
-            {utils.datetools.formatDate(props.installments[0].dueDate)}
-          </Typography>
+          <Typography>{utils.converters.toEuro(props.totalAmountCents || 0)}</Typography>
+          {
+            nextInstallmentToBePaid.installment && (
+              <Typography>
+                {`${t('app.debtPositionDetail.installment')} ${nextInstallmentToBePaid.index} ${t('app.debtPositionDetail.before')} ${utils.datetools.formatDate(nextInstallmentToBePaid.installment.dueDate)}`}
+              </Typography>
+            )
+          }
         </Grid>
       </Grid>
       {paymentOptionType === PaymentOptionType.INSTALLMENTS && isSelected ? (
