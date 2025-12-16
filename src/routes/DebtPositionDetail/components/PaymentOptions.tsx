@@ -20,11 +20,9 @@ const PaymentOptionWrapper = (props: { paymentOptions: DebtorPaymentOptionOvervi
     setValue(paymentOptionId);
   };
 
-  const selectPaymentOptionType: PaymentOptionType = props.paymentOptions.find(
+  const selectPaymentOptionType: PaymentOptionType | undefined = props.paymentOptions.find(
     (option) => option.paymentOptionId === value
-  )?.paymentOptionType!;
-
-  console.log(value, selectPaymentOptionType);
+  )?.paymentOptionType;
 
   return (
     <Card sx={{ padding: 3, gap: 3, display: 'flex', flexDirection: 'column', marginTop: 2 }}>
@@ -42,7 +40,9 @@ const PaymentOptionWrapper = (props: { paymentOptions: DebtorPaymentOptionOvervi
           ))}
         </Stack>
       </RadioGroup>
-      {value && <PaymentOptionsActions selectPaymentOptionType={selectPaymentOptionType} />}
+      {value && selectPaymentOptionType && (
+        <PaymentOptionsActions selectPaymentOptionType={selectPaymentOptionType} />
+      )}
     </Card>
   );
 };
