@@ -46,7 +46,7 @@ const ExtraInfo = (props: { installments: DebtorPaymentOptionOverviewDTO['instal
       default:
         return 'default';
     }
-  }
+  };
 
   return (
     <>
@@ -82,7 +82,8 @@ const ExtraInfo = (props: { installments: DebtorPaymentOptionOverviewDTO['instal
                   <Stack direction="row" spacing={2}>
                     <Chip
                       label={t(`app.debtPositionDetail.status.${installment.status}`)}
-                      color={getInstallmentStatusColor(installment.status)} />
+                      color={getInstallmentStatusColor(installment.status)}
+                    />
                     {installment.dueDate && (
                       <Typography component="span">{`${t('app.debtPositionDetail.before')} ${utils.datetools.formatDate(installment.dueDate)}`}</Typography>
                     )}
@@ -124,9 +125,14 @@ const PaymentOption = (props: PaymentOptionProps) => {
     </div>
   );
 
-  const nextInstallmentToBePaid: { installment?: DebtorInstallmentsOverviewDTO, index: number } = {
-    installment: props.installments.find((installment) => installment.dueDate && installment.status === 'UNPAID'),
-    index: props.installments.findIndex((installment) => installment.dueDate && installment.status === 'UNPAID') + 1,
+  const nextInstallmentToBePaid: { installment?: DebtorInstallmentsOverviewDTO; index: number } = {
+    installment: props.installments.find(
+      (installment) => installment.dueDate && installment.status === 'UNPAID'
+    ),
+    index:
+      props.installments.findIndex(
+        (installment) => installment.dueDate && installment.status === 'UNPAID'
+      ) + 1
   };
 
   return (
@@ -142,13 +148,11 @@ const PaymentOption = (props: PaymentOptionProps) => {
         </Grid>
         <Grid size={6} pl={2}>
           <Typography>{utils.converters.toEuro(props.totalAmountCents || 0)}</Typography>
-          {
-            nextInstallmentToBePaid.installment && (
-              <Typography>
-                {`${t('app.debtPositionDetail.installment')} ${nextInstallmentToBePaid.index} ${t('app.debtPositionDetail.before')} ${utils.datetools.formatDate(nextInstallmentToBePaid.installment.dueDate)}`}
-              </Typography>
-            )
-          }
+          {nextInstallmentToBePaid.installment && (
+            <Typography>
+              {`${t('app.debtPositionDetail.installment')} ${nextInstallmentToBePaid.index} ${t('app.debtPositionDetail.before')} ${utils.datetools.formatDate(nextInstallmentToBePaid.installment.dueDate)}`}
+            </Typography>
+          )}
         </Grid>
       </Grid>
       {paymentOptionType === PaymentOptionType.INSTALLMENTS && isSelected ? (
