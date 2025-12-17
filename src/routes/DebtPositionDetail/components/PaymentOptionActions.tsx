@@ -13,11 +13,11 @@ const PaymentOptionsActions = (props: paymentOptionsActionProps) => {
   return (
     <Stack direction="row" spacing={2} marginTop={2} justifyContent="flex-end">
       {selectPaymentOptionType === PaymentOptionType.SINGLE_INSTALLMENT && (
-        <Button variant="outlined" size="large">
+        <Button variant="outlined" size="large" data-testid="payment-option-action-add">
           {t('app.debtPositionDetail.addItemToCart')}
         </Button>
       )}
-      <Button variant="contained" size="large">
+      <Button variant="contained" size="large" data-testid="payment-option-action-pay">
         {selectPaymentOptionType === PaymentOptionType.SINGLE_INSTALLMENT
           ? t('app.debtPositionDetail.payNow')
           : t('app.debtPositionDetail.payLater')}
