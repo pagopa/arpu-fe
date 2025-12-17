@@ -1,4 +1,4 @@
-import { Card, Divider, Stack, Typography } from '@mui/material';
+import { Box, Card, Divider, Stack, Typography } from '@mui/material';
 import { CopiableRow } from 'components/CopiableRow';
 import { PayeeIcon } from 'components/PayeeIcon';
 import React from 'react';
@@ -33,14 +33,19 @@ const DebtPositionDetail = () => {
 
   return (
     <>
-      <Typography variant="h4" component="h1" marginInlineStart={1} mb={2}>
+      <Typography
+        variant="h4"
+        component="h1"
+        marginInlineStart={1}
+        mb={2}
+        data-testid="debt-position-detail-title">
         {data.debtPositionTypeOrgDescription || t('debtPositionDetail.title')}
       </Typography>
       <Card sx={{ padding: 3, gap: 3, display: 'flex', flexDirection: 'column' }}>
         <Typography variant="subtitle2" fontWeight={700}>
           {t('app.debtPositionDetail.paymentData')}
         </Typography>
-        <Stack direction="row" gap={2}>
+        <Stack direction="row" gap={2} data-testid="debt-position-detail-org-name">
           <PayeeIcon src={fromTaxCodeToSrcImage(data.orgFiscalCode)} alt={data.orgName} visible />
           <CopiableRow
             label={t('app.debtPositionDetail.org')}
@@ -48,17 +53,21 @@ const DebtPositionDetail = () => {
           />
         </Stack>
         <Divider />
-        <CopiableRow
-          label={t('app.debtPositionDetail.cf')}
-          value={propertyOrMissingValue(data.orgFiscalCode)}
-          copiable
-        />
+        <Box data-testid="debt-position-detail-org-code">
+          <CopiableRow
+            label={t('app.debtPositionDetail.cf')}
+            value={propertyOrMissingValue(data.orgFiscalCode)}
+            copiable
+          />
+        </Box>
         <Divider />
-        <CopiableRow
-          label={t('app.debtPositionDetail.iupd')}
-          value={propertyOrMissingValue(data.iupd)}
-          copiable
-        />
+        <Box data-testid="debt-position-detail-iupd">
+          <CopiableRow
+            label={t('app.debtPositionDetail.iupd')}
+            value={propertyOrMissingValue(data.iupd)}
+            copiable
+          />
+        </Box>
       </Card>
       <PaymentOptionWrapper paymentOptions={data.paymentOptions} />
     </>

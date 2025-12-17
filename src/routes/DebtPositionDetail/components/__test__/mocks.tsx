@@ -1,5 +1,6 @@
 import {
   DebtorPaymentOptionOverviewDTO,
+  DebtorUnpaidDebtPositionOverviewDTO,
   InstallmentStatus,
   PaymentOptionStatus,
   PaymentOptionType
@@ -62,3 +63,14 @@ export const paymentOptions: DebtorPaymentOptionOverviewDTO[] = [
   mockSingleUnpaidInstallmentPaymentOption,
   mockInstallmentsPaymentOption
 ];
+
+export const debtPosition: DebtorUnpaidDebtPositionOverviewDTO = {
+  debtPositionId: 123,
+  debtPositionDescription: 'debtPositionDescription test description',
+  debtPositionTypeOrgDescription: 'debtPositionTypeOrgDescription test description',
+  iupd: '123456',
+  organizationId: 3,
+  orgFiscalCode: 'ABC123',
+  orgName: 'OrgName test',
+  paymentOptions
+};
