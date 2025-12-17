@@ -9,6 +9,8 @@
       "title": "Recupera una ricevuta",
       "description": "Se hai già effettuato un pagamento, compila i campi richiesti e cerca la tua ricevuta.",
       "sub": "Cerca la ricevuta",
+      "result_one": "Abbiamo trovato {{count}} ricevuta",
+      "result_other": "Abbiamo trovato {{count}} ricevute",
       "tab1": {
         "label": "Persona Fisica",
         "description": "Inserisci il Codice Avviso (o IUV) e il Codice Fiscale per avviare la ricerca della ricevuta. Se non possiedi il Codice Fiscale, puoi comunque recuperare la ricevuta."
@@ -21,7 +23,10 @@
         "iuv": "Codice Avviso/IUV",
         "fiscalcode": "Codice Fiscale",
         "piva": "Codice Fiscale/P.IVA",
-        "anonymous": "Non ho il Codice Fiscale"
+        "anonymous": "Non ho il Codice Fiscale",
+        "orgName": "Ente Creditore",
+        "amount": "Importo",
+        "noticeCode": "Codice Avviso"
       },
       "action": "Cerca"
     },
@@ -456,6 +461,9 @@
     }
   },
   "errors": {
+    "form": {
+      "required": "Questo campo non puoi essere vuoto."
+    },
     "toast": {
       "403": "Non hai i permessi per eseguire questa azione.",
       "404": "Risorsa non trovata.",

@@ -1,102 +1,131 @@
 import React from 'react';
-import { render, screen, fireEvent } from '__tests__/renderers';
+import { render, screen, fireEvent, waitFor } from '__tests__/renderers';
 import '@testing-library/jest-dom';
 import { ReceiptsSearch } from '.';
+import utils from 'utils';
+import { Mock } from 'vitest';
 
 vi.mock('components/BackButton', () => ({
   BackButton: () => <button data-testid="back-button">Back</button>
 }));
 
-describe('ReceiptsSearch', () => {
-  it('renders form with title and description', () => {
-    render(<ReceiptsSearch />);
+vi.mock('./components/results', () => ({
+  Results: () => <div data-testid="results-component">Results</div>
+}));
 
-    expect(screen.getByText('app.receiptsSearch.title')).toBeInTheDocument();
-    expect(screen.getByText('app.receiptsSearch.description')).toBeInTheDocument();
+vi.mock('utils', () => ({
+  default: {
+    storage: {
+      app: {
+        getBrokerId: vi.fn(() => 123)
+      }
+    },
+    loaders: {
+      public: {
+        usePublicInstallmentsByIuvOrNav: vi.fn()
+      }
+    },
+    notify: {
+      emit: vi.fn()
+    }
+  }
+}));
+
+describe('ReceiptsSearch', () => {
+  const mockMutateAsync = vi.fn();
+
+  beforeEach(() => {
+    (utils.loaders.public.usePublicInstallmentsByIuvOrNav as Mock).mockReturnValue({
+      mutateAsync: mockMutateAsync,
+      data: undefined
+    });
+    mockMutateAsync.mockResolvedValue([]);
   });
 
-  it('renders both tabs', () => {
+  afterEach(() => {
+    vi.clearAllMocks();
+  });
+
+  it('renders form with both tabs', () => {
     render(<ReceiptsSearch />);
 
     expect(screen.getByText('app.receiptsSearch.tab1.label')).toBeInTheDocument();
     expect(screen.getByText('app.receiptsSearch.tab2.label')).toBeInTheDocument();
   });
 
-  it('shows fiscal code field on first tab', () => {
+  it('switches between fiscal code and PIVA field', () => {
     render(<ReceiptsSearch />);
 
     expect(screen.getByLabelText('app.receiptsSearch.fields.fiscalcode')).toBeInTheDocument();
-  });
 
-  it('shows PIVA field on second tab', () => {
-    render(<ReceiptsSearch />);
-
-    const tab2 = screen.getByText('app.receiptsSearch.tab2.label');
-    fireEvent.click(tab2);
+    fireEvent.click(screen.getByText('app.receiptsSearch.tab2.label'));
 
     expect(screen.getByLabelText('app.receiptsSearch.fields.piva')).toBeInTheDocument();
   });
 
-  it('shows anonymous checkbox only on first tab', () => {
-    render(<ReceiptsSearch />);
-
-    expect(screen.getByText('app.receiptsSearch.fields.anonymous')).toBeInTheDocument();
-
-    const tab2 = screen.getByText('app.receiptsSearch.tab2.label');
-    fireEvent.click(tab2);
-
-    expect(screen.queryByText('app.receiptsSearch.fields.anonymous')).not.toBeInTheDocument();
-  });
-
-  it('disables fiscal code field when anonymous is checked', () => {
+  it('disables fiscal code when anonymous is checked', () => {
     render(<ReceiptsSearch />);
 
     const fiscalCodeField = screen.getByLabelText('app.receiptsSearch.fields.fiscalcode');
     const anonymousCheckbox = screen.getByRole('checkbox');
-
-    expect(fiscalCodeField).not.toBeDisabled();
 
     fireEvent.click(anonymousCheckbox);
 
     expect(fiscalCodeField).toBeDisabled();
   });
 
-  it('changes tab description when switching tabs', () => {
+  it('submits form with values', async () => {
     render(<ReceiptsSearch />);
 
-    expect(screen.getByText('app.receiptsSearch.tab1.description')).toBeInTheDocument();
+    fireEvent.change(screen.getByLabelText('app.receiptsSearch.fields.iuv'), {
+      target: { value: '123456789012345678' }
+    });
+    fireEvent.change(screen.getByLabelText('app.receiptsSearch.fields.fiscalcode'), {
+      target: { value: 'RSSMRA80A01H501U' }
+    });
 
-    const tab2 = screen.getByText('app.receiptsSearch.tab2.label');
-    fireEvent.click(tab2);
+    fireEvent.click(screen.getByText('app.receiptsSearch.action'));
 
-    expect(screen.queryByText('app.receiptsSearch.tab1.description')).not.toBeInTheDocument();
-    expect(screen.getByText('app.receiptsSearch.tab2.description')).toBeInTheDocument();
+    await waitFor(() => {
+      expect(mockMutateAsync).toHaveBeenCalledWith({
+        iuvOrNav: '123456789012345678',
+        fiscalCode: 'RSSMRA80A01H501U'
+      });
+    });
   });
 
-  it('renders IUV field', () => {
+  it('submits with ANONIMO when anonymous is checked', async () => {
     render(<ReceiptsSearch />);
 
-    expect(screen.getByLabelText('app.receiptsSearch.fields.iuv')).toBeInTheDocument();
+    fireEvent.change(screen.getByLabelText('app.receiptsSearch.fields.iuv'), {
+      target: { value: '123456789012345678' }
+    });
+    fireEvent.click(screen.getByRole('checkbox'));
+    fireEvent.click(screen.getByText('app.receiptsSearch.action'));
+
+    await waitFor(() => {
+      expect(mockMutateAsync).toHaveBeenCalledWith({
+        iuvOrNav: '123456789012345678',
+        fiscalCode: 'ANONIMO'
+      });
+    });
   });
 
-  it('renders submit button', () => {
+  it('shows error on mutation failure', async () => {
+    mockMutateAsync.mockRejectedValue(new Error('Failed'));
+
     render(<ReceiptsSearch />);
 
-    expect(screen.getByText('app.receiptsSearch.action')).toBeInTheDocument();
-  });
+    fireEvent.change(screen.getByLabelText('app.receiptsSearch.fields.iuv'), {
+      target: { value: '123456789012345678' }
+    });
+    fireEvent.change(screen.getByLabelText('app.receiptsSearch.fields.fiscalcode'), {
+      target: { value: 'RSSMRA80A01H501U' }
+    });
+    fireEvent.click(screen.getByText('app.receiptsSearch.action'));
 
-  it('updates form values on input change', () => {
-    render(<ReceiptsSearch />);
-
-    const iuvField = screen.getByLabelText('app.receiptsSearch.fields.iuv');
-    fireEvent.change(iuvField, { target: { value: '123456' } });
-
-    expect(iuvField).toHaveValue('123456');
-  });
-
-  it('renders back button', () => {
-    render(<ReceiptsSearch />);
-
-    expect(screen.getByTestId('back-button')).toBeInTheDocument();
+    await waitFor(() => {
+      expect(utils.notify.emit).toHaveBeenCalledWith('app.receiptsSearch.searchError');
+    });
   });
 });

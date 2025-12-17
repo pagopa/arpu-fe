@@ -12,10 +12,10 @@ import {
   Container,
   Box
 } from '@mui/material';
-import { z } from 'zod';
-import { toFormikValidationSchema } from 'zod-formik-adapter';
 import { useTranslation } from 'react-i18next';
 import { BackButton } from 'components/BackButton';
+import utils from 'utils';
+import { Results } from './components/results';
 
 enum TabIndex {
   PERSONA_FISICA = 0,
@@ -25,43 +25,61 @@ enum TabIndex {
 const initialValues = {
   iuv: '',
   fiscalCode: '',
-  piva: '',
   anonymous: false
 };
 
 interface FormValues {
   iuv: string;
-  fiscalCode?: string;
+  fiscalCode: string;
   anonymous?: boolean;
-  piva?: string;
 }
 
 export const ReceiptsSearch = () => {
   const { t } = useTranslation();
   const [currentTab, setCurrentTab] = useState<TabIndex>(TabIndex.PERSONA_FISICA);
+  const brokerId = utils.storage.app.getBrokerId();
+
+  const installmentsMutation = utils.loaders.public.usePublicInstallmentsByIuvOrNav(brokerId);
 
   const handleTabChange = (_: React.SyntheticEvent, newValue: TabIndex) => {
+    formik.setValues((values) => ({ ...values, fiscalCode: '', anonymous: false }));
     setCurrentTab(newValue);
   };
 
-  const onSubmit = (values: FormValues) => {
-    console.debug(currentTab, JSON.stringify(values));
+  const onSubmit = async (values: FormValues) => {
+    await formik.validateForm();
+    if (formik.isValid) {
+      const fiscalCode = isTab1 && values.anonymous ? 'ANONIMO' : values.fiscalCode;
+      try {
+        await installmentsMutation.mutateAsync({
+          iuvOrNav: values.iuv,
+          fiscalCode: fiscalCode
+        });
+      } catch {
+        utils.notify.emit(t('app.receiptsSearch.searchError'));
+      }
+    }
   };
 
   const isTab1 = currentTab === TabIndex.PERSONA_FISICA;
 
-  const validationSchema = toFormikValidationSchema(
-    z.object({
-      iuv: z.number(),
-      fiscalCode: z.string(),
-      piva: z.string(),
-      anonymous: z.boolean()
-    })
-  );
+  const validate = (values: FormValues) => {
+    const errors: Partial<Record<keyof FormValues, string>> = {};
+
+    if (!values.iuv || values.iuv.trim() === '') {
+      errors.iuv = t('errors.form.required');
+    }
+
+    if (!values.anonymous && (!values.fiscalCode || values.fiscalCode.trim() === '')) {
+      errors.fiscalCode = t('errors.form.required');
+    }
+
+    return errors;
+  };
 
   const formik = useFormik({
     initialValues,
-    validationSchema,
+    validate,
     onSubmit
   });
 
@@ -78,7 +96,6 @@ export const ReceiptsSearch = () => {
             </Typography>
             <Typography variant="body1">{t('app.receiptsSearch.description')}</Typography>
           </Stack>
-
           <form onSubmit={formik.handleSubmit}>
             <Tabs value={currentTab} onChange={handleTabChange}>
               <Tab label={t('app.receiptsSearch.tab1.label')} />
@@ -89,63 +106,48 @@ export const ReceiptsSearch = () => {
                 {t('app.receiptsSearch.sub')}
               </Typography>
               <Typography variant="body1" maxWidth={800}>
-                {t(
-                  currentTab === TabIndex.PERSONA_FISICA
-                    ? 'app.receiptsSearch.tab1.description'
-                    : 'app.receiptsSearch.tab2.description'
-                )}
+                {isTab1
+                  ? t('app.receiptsSearch.tab1.description')
+                  : t('app.receiptsSearch.tab2.description')}
               </Typography>
               <Stack direction="row" gap={3}>
                 <TextField
                   fullWidth
                   label={t('app.receiptsSearch.fields.iuv')}
+                  name="iuv"
                   id="iuv"
-                  error={formik.touched.iuv && !!formik.errors.iuv}
+                  error={formik.touched.iuv && Boolean(formik.errors.iuv)}
                   helperText={formik.touched.iuv && formik.errors.iuv}
                   value={formik.values.iuv}
                   onChange={formik.handleChange}
+                  onBlur={formik.handleBlur}
                 />
 
-                {isTab1 ? (
-                  <TextField
-                    fullWidth
-                    label={t('app.receiptsSearch.fields.fiscalcode')}
-                    id="fiscalCode"
-                    key="fiscalCode"
-                    disabled={formik.values.anonymous}
-                    error={
-                      !!formik.values.fiscalCode &&
-                      !!formik.errors.fiscalCode &&
-                      !formik.values.anonymous
-                    }
-                    helperText={
-                      formik.touched.fiscalCode &&
-                      formik.errors.fiscalCode &&
-                      !formik.values.anonymous
-                    }
-                    value={formik.values.anonymous ? '' : formik.values.fiscalCode}
-                    onChange={formik.handleChange}
-                  />
-                ) : (
-                  <TextField
-                    fullWidth
-                    label={t('app.receiptsSearch.fields.piva')}
-                    id="piva"
-                    key="piva"
-                    error={formik.touched.piva && !!formik.errors.piva}
-                    helperText={formik.touched.piva && formik.errors.piva}
-                    onChange={formik.handleChange}
-                  />
-                )}
+                <TextField
+                  fullWidth
+                  label={
+                    isTab1
+                      ? t('app.receiptsSearch.fields.fiscalcode')
+                      : t('app.receiptsSearch.fields.piva')
+                  }
+                  name="fiscalCode"
+                  id="fiscalCode"
+                  disabled={formik.values.anonymous}
+                  error={formik.touched.fiscalCode && Boolean(formik.errors.fiscalCode)}
+                  helperText={formik.touched.fiscalCode && formik.errors.fiscalCode}
+                  value={formik.values.fiscalCode}
+                  onChange={formik.handleChange}
+                  onBlur={formik.handleBlur}
+                />
               </Stack>
-              {currentTab === TabIndex.PERSONA_FISICA && (
+              {isTab1 && (
                 <Box>
                   <FormControlLabel
                     control={
                       <Checkbox
                         checked={formik.values.anonymous}
                         onChange={formik.handleChange}
-                        id="anonymous"
+                        name="anonymous"
                       />
                     }
                     label={t('app.receiptsSearch.fields.anonymous')}
@@ -153,17 +155,20 @@ export const ReceiptsSearch = () => {
                 </Box>
               )}
               <Stack alignItems="flex-end">
-                <Button
-                  size="large"
-                  variant="contained"
-                  type="submit"
-                  className="submit-btn"
-                  disabled>
+                <Button size="large" variant="contained" type="submit">
                   {t('app.receiptsSearch.action')}
                 </Button>
               </Stack>
             </Stack>
           </form>
+        </Stack>
+      </Container>
+      <Container sx={{ mb: 4 }}>
+        <Stack gap={3}>
+          <Typography component="h3" fontWeight={600}>
+            {t('app.receiptsSearch.result', { count: installmentsMutation?.data?.length || 0 })}
+          </Typography>
+          <Results installments={installmentsMutation.data || []} />
         </Stack>
       </Container>
     </Stack>

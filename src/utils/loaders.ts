@@ -292,25 +292,44 @@ const usePagedUnpaidDebtPositions = (brokerId: number) =>
     }
   });
 
+type InstallmentsByIuvOrNavArgs = {
+  iuvOrNav: string;
+  fiscalCode: string;
+};
+
+const usePublicInstallmentsByIuvOrNav = (brokerId: number) =>
+  useMutation({
+    mutationKey: ['publicInstallmentsByIuvOrNav', brokerId],
+    mutationFn: async (args: InstallmentsByIuvOrNavArgs) => {
+      const { data } = await utils.apiClient.public.getPublicInstallmentsByIuvOrNav(
+        brokerId,
+        { iuvOrNav: args.iuvOrNav },
+        { headers: { 'X-fiscal-code': args.fiscalCode } }
+      );
+      return data;
+    }
+  });
+
 export default {
-  getUserInfoOnce,
-  getUserInfo,
-  getTokenOneidentity,
-  getPagedDebtorReceipts,
   createSpontaneousDebtPosition,
-  getOrganizationsWithSpontaneous,
   getDebtPositionTypeOrgsWithSpontaneous,
   getDebtPositionTypeOrgsWithSpontaneousDetail,
+  getOrganizationsWithSpontaneous,
+  getPagedDebtorReceipts,
   getPaymentNotice,
+  getTokenOneidentity,
+  getUserInfo,
+  getUserInfoOnce,
   useDownloadReceipt,
-  useReceiptDetail,
   usePagedUnpaidDebtPositions,
+  useReceiptDetail,
   public: {
-    getPublicOrganizationsWithSpontaneous,
+    createPublicSpontaneousDebtPosition,
     getPublicDebtPositionTypeOrgsWithSpontaneous,
     getPublicDebtPositionTypeOrgsWithSpontaneousDetail,
-    createPublicSpontaneousDebtPosition,
+    getPublicOrganizationsWithSpontaneous,
     getPublicPaymentNotice,
-    useBrokerInfo
+    useBrokerInfo,
+    usePublicInstallmentsByIuvOrNav
   }
 };
