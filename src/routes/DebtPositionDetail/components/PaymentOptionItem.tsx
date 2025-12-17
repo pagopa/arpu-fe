@@ -50,7 +50,7 @@ const ExtraInfo = (props: { installments: DebtorPaymentOptionOverviewDTO['instal
 
   return (
     <>
-      <Divider sx={{ mt: 2 }} />
+      <Divider sx={{ mt: 2 }} data-testid="payment-option-item-type-installments-extra-info" />
       <Timeline
         sx={{
           [`& .${timelineItemClasses.root}:before`]: {
@@ -70,9 +70,14 @@ const ExtraInfo = (props: { installments: DebtorPaymentOptionOverviewDTO['instal
             <TimelineContent>
               <Grid container>
                 <Grid size={6}>
-                  <Stack direction="row" spacing={2}>
-                    <Accent>{`Rata ${index + 1}`}</Accent>
-                    <Typography component="span">
+                  <Stack
+                    direction="row"
+                    spacing={2}
+                    data-testid={`payment-option-type-installments-installment-${index + 1}`}>
+                    <Accent>{`${t('app.debtPositionDetail.installment')} ${index + 1}`}</Accent>
+                    <Typography
+                      component="span"
+                      data-testid={`payment-option-type-installments-installment-${index + 1}-amount`}>
                       {utils.converters.toEuro(installment.amountCents || 0)}
                     </Typography>
                   </Stack>
@@ -81,11 +86,14 @@ const ExtraInfo = (props: { installments: DebtorPaymentOptionOverviewDTO['instal
                 <Grid size={6} gap={2}>
                   <Stack direction="row" spacing={2}>
                     <Chip
+                      data-testid={`payment-option-type-installments-installment-${index + 1}-status`}
                       label={t(`app.debtPositionDetail.status.${installment.status}`)}
                       color={getInstallmentStatusColor(installment.status)}
                     />
                     {installment.dueDate && (
-                      <Typography component="span">{`${t('app.debtPositionDetail.before')} ${utils.datetools.formatDate(installment.dueDate)}`}</Typography>
+                      <Typography
+                        data-testid={`payment-option-type-installments-installment-${index + 1}-due-date`}
+                        component="span">{`${t('app.debtPositionDetail.before')} ${utils.datetools.formatDate(installment.dueDate)}`}</Typography>
                     )}
                   </Stack>
                 </Grid>
@@ -119,7 +127,7 @@ const PaymentOption = (props: PaymentOptionProps) => {
   ) : (
     <div>
       <Typography variant="body2" textTransform="uppercase">
-        {t('app.debtPositionDetail.paymentOptionRateInstallments')}
+        {t('app.debtPositionDetail.paymentOptionInstallments')}
       </Typography>
       <Accent>{`${props.installments.length} ${t('app.debtPositionDetail.installments')}`}</Accent>
     </div>
