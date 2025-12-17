@@ -667,7 +667,7 @@ describe('usePublicInstallmentsByIuvOrNav', () => {
 
     await waitFor(() => {
       expect(result.current.isError).toBe(true);
-    })
+    });
   });
 });
 
