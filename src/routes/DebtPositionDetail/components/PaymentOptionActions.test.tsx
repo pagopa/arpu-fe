@@ -3,7 +3,7 @@ import React from 'react';
 import PaymentOptionsActions from './PaymentOptionActions';
 import { PaymentOptionType } from '../../../../generated/data-contracts';
 
-describe('PaymentOptionAtion: single installment', () => {
+describe('PaymentOptionActions: single installment', () => {
   it('renders elements as expected', () => {
     render(
       <PaymentOptionsActions selectPaymentOptionType={PaymentOptionType.SINGLE_INSTALLMENT} />
@@ -19,7 +19,7 @@ describe('PaymentOptionAtion: single installment', () => {
   });
 });
 
-describe('PaymentOptionAtion: multiple installment', () => {
+describe('PaymentOptionsAction: multiple installment', () => {
   it('renders elements as expected', () => {
     render(<PaymentOptionsActions selectPaymentOptionType={PaymentOptionType.INSTALLMENTS} />);
 
