@@ -16,7 +16,8 @@ import {
   debtPositionResponseDTOSchema,
   debtPositionTypeOrgsWithSpontaneousDTOSchema,
   organizationsWithSpontaneousDTOSchema,
-  pagedDebtorDebtPositionDTOSchema
+  pagedDebtorDebtPositionDTOSchema,
+  debtorUnpaidDebtPositionOverviewDTOSchema
 } from '../../generated/zod-schema';
 // zodock can create mock object
 // from a zod schema
@@ -666,6 +667,26 @@ describe('usePublicInstallmentsByIuvOrNav', () => {
 
     await waitFor(() => {
       expect(result.current.isError).toBe(true);
+    });
+  });
+});
+
+describe('getDebtPositionDetail', () => {
+  it('calls API enpoint correctly', async () => {
+    const dataMock = createMock(debtorUnpaidDebtPositionOverviewDTOSchema);
+
+    const apiMock = vi
+      .spyOn(utils.apiClient.brokers, 'getDebtorUnpaidDebtPositionOverview')
+      .mockResolvedValue({ data: dataMock } as AxiosResponse);
+
+    const query = renderHook(() => loaders.getDebtPositionDetail(1, 1, 1), {
+      wrapper
+    });
+
+    await waitFor(() => {
+      expect(apiMock).toHaveBeenCalledWith(1, 1, { organizationId: 1 });
+      expect(query.result.current.isSuccess).toBeTruthy();
+      expect(query.result.current.data).toEqual(dataMock);
     });
   });
 });

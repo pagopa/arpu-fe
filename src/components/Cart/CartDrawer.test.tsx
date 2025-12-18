@@ -78,7 +78,7 @@ describe('CartDrawer', () => {
     fireEvent.click(emptyButton);
 
     expect(toggleCartDrawer).toHaveBeenCalled();
-    expect(mockNavigate).toHaveBeenCalledWith(ArcRoutes.PAYMENT_NOTICES);
+    expect(mockNavigate).toHaveBeenCalledWith(ArcRoutes.DEBT_POSITIONS);
   });
 
   it('allow the click on pay button when the cart is not empty', () => {

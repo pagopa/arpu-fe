@@ -24,12 +24,12 @@ export const DebtPositionItem = ({ debtPosition }: DebtPositionItemProps) => {
   const smUp = useMediaQuery(theme.breakpoints.up('sm'));
 
   const {
-    organizationId,
     orgName,
     orgFiscalCode,
     debtPositionId,
     paymentOptions,
-    debtPositionTypeOrgDescription
+    debtPositionTypeOrgDescription,
+    organizationId
   } = debtPosition;
 
   const detailPath = generatePath(ArcRoutes.DEBT_POSITION, { debtPositionId, organizationId });

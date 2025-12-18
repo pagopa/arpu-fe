@@ -13,7 +13,7 @@ export const CopiableRow = ({
   copiable?: boolean;
 }) => (
   <Stack direction="row" justifyContent="space-between" alignItems="center">
-    <Stack spacing={1}>
+    <Stack>
       <Typography variant="body2" color="text.secondary" sx={{ minWidth: 180 }}>
         {label}
       </Typography>

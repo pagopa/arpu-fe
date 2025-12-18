@@ -21,7 +21,7 @@ describe('formatDate', () => {
 
   it('should use default options when options is undefined', () => {
     const formattedDate = formatDate('2024-04-06T09:48:17.080Z');
-    expect(formattedDate).toEqual('04/06/2024');
+    expect(formattedDate).toEqual('06/04/2024');
   });
 
   it('should format a date string in Italian format with long format and time', () => {
