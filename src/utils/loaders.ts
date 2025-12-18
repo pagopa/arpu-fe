@@ -235,16 +235,18 @@ type ReceiptDetailArgs = {
   brokerId: number;
   organizationId: number;
   receiptId: number;
+  fiscalCode?: string;
 };
 
-const useReceiptDetail = ({ brokerId, organizationId, receiptId }: ReceiptDetailArgs) =>
+const useReceiptDetail = ({ brokerId, organizationId, receiptId, fiscalCode }: ReceiptDetailArgs) =>
   useQuery({
     queryKey: ['receiptDetail', brokerId, organizationId, receiptId],
     queryFn: async () => {
       const { data } = await utils.apiClient.brokers.getReceiptDetail(
         brokerId,
         organizationId,
-        receiptId
+        receiptId,
+        { headers: { 'X-fiscal-code': fiscalCode } }
       );
       return data;
     },
@@ -256,13 +258,14 @@ const useDownloadReceipt = ({ brokerId }: Pick<ReceiptDetailArgs, 'brokerId'>) =
     mutationKey: ['downloadReceipt', brokerId],
     mutationFn: async ({
       organizationId,
-      receiptId
-    }: Pick<ReceiptDetailArgs, 'organizationId' | 'receiptId'>) => {
+      receiptId,
+      fiscalCode
+    }: Pick<ReceiptDetailArgs, 'organizationId' | 'receiptId' | 'fiscalCode'>) => {
       const response = await utils.apiClient.brokers.getReceiptPdf(
         brokerId,
         organizationId,
         receiptId,
-        { format: 'blob' }
+        { format: 'blob', headers: { 'X-fiscal-code': fiscalCode } }
       );
       const contentDisposition = response.headers['content-disposition'] || '';
       const filename = utils.converters.extractFilename(contentDisposition);
