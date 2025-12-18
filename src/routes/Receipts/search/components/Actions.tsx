@@ -19,20 +19,14 @@ export const Actions = ({ installment }: ActionMenuProps) => {
   const receiptPdf = utils.loaders.useDownloadReceipt({ brokerId });
 
   const onDownload = async () => {
-    if (
-      !installment?.receiptId ||
-      !installment?.organizationId ||
-      !installment?.iuv ||
-      !installment?.debtor.fiscalCode
-    ) {
+    if (!installment?.receiptId || !installment?.organizationId || !installment?.iuv) {
       utils.notify.emit(t('app.receiptDetail.downloadError'));
       return;
     }
     try {
       const { blob, filename } = await receiptPdf.mutateAsync({
         receiptId: installment?.receiptId,
-        organizationId: installment?.organizationId,
-        fiscalCode: installment?.debtor.fiscalCode
+        organizationId: installment?.organizationId
       });
       utils.files.downloadBlob(blob, filename || `${installment.iuv}.pdf`);
     } catch {
@@ -52,7 +46,7 @@ export const Actions = ({ installment }: ActionMenuProps) => {
         receiptId: installment?.receiptId,
         organizationId: installment?.organizationId
       });
-      navigate(path, { state: { fiscalCode: installment?.debtor.fiscalCode } });
+      navigate(path);
     }
   };
 

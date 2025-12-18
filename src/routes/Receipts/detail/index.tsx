@@ -28,16 +28,12 @@ export const ReceiptDetail = () => {
   const receiptId = Number(params?.receiptId);
   const organizationId = Number(params?.organizationId);
 
-  const { data } = loaders.useReceiptDetail({ brokerId, organizationId, receiptId, fiscalCode });
+  const { data } = loaders.useReceiptDetail({ brokerId, organizationId, receiptId });
   const receiptPdf = loaders.useDownloadReceipt({ brokerId });
 
   const onDownload = async () => {
     try {
-      const { blob, filename } = await receiptPdf.mutateAsync({
-        organizationId,
-        receiptId,
-        fiscalCode
-      });
+      const { blob, filename } = await receiptPdf.mutateAsync({ organizationId, receiptId });
       files.downloadBlob(blob, filename || `${data?.iuv}.pdf`);
     } catch {
       notify.emit(t('app.receiptDetail.downloadError'));
