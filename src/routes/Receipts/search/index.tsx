@@ -15,7 +15,8 @@ import {
 import { useTranslation } from 'react-i18next';
 import { BackButton } from 'components/BackButton';
 import utils from 'utils';
-import { Results } from './components/results';
+import { Results } from './components/Results';
+import { Content } from 'components/Content';
 
 enum TabIndex {
   PERSONA_FISICA = 0,
@@ -135,7 +136,7 @@ export const ReceiptsSearch = () => {
                   disabled={formik.values.anonymous}
                   error={formik.touched.fiscalCode && Boolean(formik.errors.fiscalCode)}
                   helperText={formik.touched.fiscalCode && formik.errors.fiscalCode}
-                  value={formik.values.fiscalCode}
+                  value={formik.values.anonymous ? '' : formik.values.fiscalCode}
                   onChange={formik.handleChange}
                   onBlur={formik.handleBlur}
                 />
@@ -156,7 +157,7 @@ export const ReceiptsSearch = () => {
               )}
               <Stack alignItems="flex-end">
                 <Button size="large" variant="contained" type="submit">
-                  {t('app.receiptsSearch.action')}
+                  {t('app.receiptsSearch.actions.search')}
                 </Button>
               </Stack>
             </Stack>
@@ -165,10 +166,20 @@ export const ReceiptsSearch = () => {
       </Container>
       <Container sx={{ mb: 4 }}>
         <Stack gap={3}>
-          <Typography component="h3" fontWeight={600}>
-            {t('app.receiptsSearch.result', { count: installmentsMutation?.data?.length || 0 })}
-          </Typography>
-          <Results installments={installmentsMutation.data || []} />
+          {installmentsMutation.isSuccess && (
+            <Typography component="h3" fontWeight={600}>
+              {t('app.receiptsSearch.result', { count: installmentsMutation?.data?.length || 0 })}
+            </Typography>
+          )}
+          <Content
+            showRetry={installmentsMutation.isError}
+            onRetry={() => onSubmit(formik.values)}
+            queryKey={['publicInstallmentsByIuvOrNav', brokerId]}
+            noDataText={t('app.receiptsSearch.noData.text')}
+            noDataTitle={t('app.receiptsSearch.noData.title')}
+            noData={installmentsMutation.isSuccess && !installmentsMutation.data?.length}>
+            <Results installments={installmentsMutation.data || []} />
+          </Content>
         </Stack>
       </Container>
     </Stack>
