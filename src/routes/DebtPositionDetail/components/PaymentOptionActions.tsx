@@ -92,25 +92,27 @@ const PaymentOptionsActions = (props: paymentOptionsActionProps) => {
   return (
     <Stack direction="row" spacing={2} marginTop={2} justifyContent="flex-end">
       {selectPaymentOptionType === PaymentOptionType.SINGLE_INSTALLMENT &&
-      !isItemInCart(singleInstallmentItemId) ? (
-        <Button
-          startIcon={<ShoppingCartIcon />}
-          variant="outlined"
-          size="large"
-          data-testid="payment-option-action-add"
-          onClick={addItemToCart}>
-          {t('app.debtPositionDetail.addItemToCart')}
-        </Button>
-      ) : (
-        <Button
-          color="error"
-          variant="outlined"
-          size="large"
-          data-testid="payment-option-action-add"
-          onClick={removeItemFromCart}>
-          {t('app.debtPositionDetail.removeItemFromCart')}
-        </Button>
-      )}
+        !isItemInCart(singleInstallmentItemId) && (
+          <Button
+            startIcon={<ShoppingCartIcon />}
+            variant="outlined"
+            size="large"
+            data-testid="payment-option-action-add"
+            onClick={addItemToCart}>
+            {t('app.debtPositionDetail.addItemToCart')}
+          </Button>
+        )}
+      {selectPaymentOptionType === PaymentOptionType.SINGLE_INSTALLMENT &&
+        isItemInCart(singleInstallmentItemId) && (
+          <Button
+            color="error"
+            variant="outlined"
+            size="large"
+            data-testid="payment-option-action-add"
+            onClick={removeItemFromCart}>
+            {t('app.debtPositionDetail.removeItemFromCart')}
+          </Button>
+        )}
       <Button
         variant="contained"
         size="large"
