@@ -31,6 +31,11 @@ const DebtPositionDetail = () => {
     return <div>Loading...</div>; // Maybe we should subsitite this with a spinner or a skeleton
   }
 
+  const orgInfo = {
+    orgName: data.orgName,
+    orgId: data.orgFiscalCode
+  };
+
   return (
     <>
       <Typography
@@ -69,7 +74,7 @@ const DebtPositionDetail = () => {
           />
         </Box>
       </Card>
-      <PaymentOptionWrapper paymentOptions={data.paymentOptions} />
+      <PaymentOptionWrapper paymentOptions={data.paymentOptions} orgInfo={orgInfo} />
     </>
   );
 };

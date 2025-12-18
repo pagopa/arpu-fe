@@ -164,6 +164,7 @@
       "payNow": "Paga ora",
       "payLater": "Paga a rate",
       "addItemToCart": "Aggiungi al carrello",
+      "removeItemFromCart":"Rimuovi dal carrello",
       "paymentOptionSingleInstallment": "Soluzione unica",
       "paymentOptionInstallments": "Soluzione a rate",
       "installment": "rata",
