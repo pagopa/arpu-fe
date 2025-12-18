@@ -409,7 +409,8 @@ describe('useDownloadReceipt', () => {
     expect(response.blob).toBeInstanceOf(Blob);
     expect(response.filename).toBe('receipt_123.pdf');
     expect(utils.apiClient.brokers.getReceiptPdf).toHaveBeenCalledWith(999, 456, 123, {
-      format: 'blob'
+      format: 'blob',
+      headers: { 'X-fiscal-code': undefined }
     });
   });
 
