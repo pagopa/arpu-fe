@@ -13,6 +13,7 @@ export const mockSingleUnpaidInstallmentPaymentOption: DebtorPaymentOptionOvervi
   totalAmountCents: 150,
   installments: [
     {
+      iuv: '1',
       installmentId: 1,
       dueDate: '2025-11-19',
       amountCents: 150,
@@ -29,6 +30,7 @@ export const mockInstallmentsPaymentOption: DebtorPaymentOptionOverviewDTO = {
   totalAmountCents: 500,
   installments: [
     {
+      iuv: '1',
       installmentId: 1,
       dueDate: '2025-07-15',
       amountCents: 100,
@@ -36,6 +38,7 @@ export const mockInstallmentsPaymentOption: DebtorPaymentOptionOverviewDTO = {
       remittanceInformation: 'test'
     },
     {
+      iuv: '2',
       installmentId: 2,
       dueDate: '2025-08-15',
       amountCents: 100,
@@ -43,6 +46,7 @@ export const mockInstallmentsPaymentOption: DebtorPaymentOptionOverviewDTO = {
       remittanceInformation: 'test'
     },
     {
+      iuv: '3',
       installmentId: 3,
       dueDate: '2025-09-15',
       amountCents: 150,
@@ -50,7 +54,8 @@ export const mockInstallmentsPaymentOption: DebtorPaymentOptionOverviewDTO = {
       remittanceInformation: 'test'
     },
     {
-      installmentId: 3,
+      iuv: '4',
+      installmentId: 4,
       dueDate: '2025-10-15',
       amountCents: 150,
       status: InstallmentStatus.UNPAID,

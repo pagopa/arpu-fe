@@ -8,6 +8,10 @@ import {
 import { addItem, deleteItem, isItemInCart, toggleCartDrawer } from 'store/CartStore';
 import utils from 'utils';
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
+import { usePostCarts } from 'hooks/usePostCarts';
+import { useNavigate } from 'react-router-dom';
+import { ArcRoutes } from 'routes/routes';
+import { useUserEmail } from 'hooks/useUserEmail';
 
 interface paymentOptionsActionProps {
   selectPaymentOptionType: PaymentOptionType;
@@ -17,8 +21,17 @@ interface paymentOptionsActionProps {
 }
 
 const PaymentOptionsActions = (props: paymentOptionsActionProps) => {
-  const { selectPaymentOptionType, installments, orgName: paFullName, orgId: paTaxCode } = props;
+  const email = useUserEmail();
+  const navigate = useNavigate();
   const { t } = useTranslation();
+  const { selectPaymentOptionType, installments, orgName: paFullName, orgId: paTaxCode } = props;
+
+  const carts = usePostCarts({
+    onSuccess: (url) => {
+      window.location.replace(url);
+    },
+    onError: (error: string) => navigate(ArcRoutes.COURTESY_PAGE.replace(':error', error))
+  });
 
   const singleInstallmentItemId = installments[0].iuv;
 
@@ -47,6 +60,33 @@ const PaymentOptionsActions = (props: paymentOptionsActionProps) => {
     }
   };
 
+  const payItem = () => {
+    try {
+      // ASSUMING SIGLE INSTALLMENT
+      const {
+        iuv,
+        nav,
+        amountCents: amount,
+        remittanceInformation: description
+      } = props.installments[0];
+      if (!iuv || !nav || !amount) {
+        throw new Error('Something went wrong trying to add the item: missing required data');
+      }
+
+      const cartItem = {
+        iuv: singleInstallmentItemId,
+        nav,
+        description,
+        amount,
+        paFullName,
+        paTaxCode
+      };
+      carts.mutate({ notices: [cartItem], email });
+    } catch (e) {
+      utils.notify.emit((e as Error).message);
+    }
+  };
+
   const removeItemFromCart = () => deleteItem(singleInstallmentItemId);
 
   return (
@@ -68,11 +108,14 @@ const PaymentOptionsActions = (props: paymentOptionsActionProps) => {
           size="large"
           data-testid="payment-option-action-add"
           onClick={removeItemFromCart}>
-          {' '}
           {t('app.debtPositionDetail.removeItemFromCart')}
         </Button>
       )}
-      <Button variant="contained" size="large" data-testid="payment-option-action-pay">
+      <Button
+        variant="contained"
+        size="large"
+        data-testid="payment-option-action-pay"
+        onClick={payItem}>
         {selectPaymentOptionType === PaymentOptionType.SINGLE_INSTALLMENT
           ? t('app.debtPositionDetail.payNow')
           : t('app.debtPositionDetail.payLater')}
