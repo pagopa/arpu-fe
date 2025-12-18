@@ -26,7 +26,7 @@ const PaymentOptionWrapper = (props: { paymentOptions: DebtorPaymentOptionOvervi
 
   return (
     <Card sx={{ padding: 3, gap: 3, display: 'flex', flexDirection: 'column', marginTop: 2 }}>
-      <Typography variant="subtitle2" fontWeight={700}>
+      <Typography variant="body1" component="h2" fontWeight="600" fontStyle="semibold">
         {t('app.debtPositionDetail.paymentOptions')}
       </Typography>
       <RadioGroup name="payment-options-radio-buttons-group" value={value} onChange={handleChange}>

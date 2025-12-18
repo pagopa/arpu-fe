@@ -28,7 +28,7 @@ const DebtPositionDetail = () => {
   }
 
   if (!data) {
-    return <div>Loading...</div>; // This should not happen as the loader handles loading state
+    return <div>Loading...</div>; // Maybe we should subsitite this with a spinner or a skeleton
   }
 
   return (
@@ -42,7 +42,7 @@ const DebtPositionDetail = () => {
         {data.debtPositionTypeOrgDescription || t('debtPositionDetail.title')}
       </Typography>
       <Card sx={{ padding: 3, gap: 3, display: 'flex', flexDirection: 'column' }}>
-        <Typography variant="subtitle2" fontWeight={700}>
+        <Typography variant="body1" component="h2" fontWeight="600" fontStyle="semibold">
           {t('app.debtPositionDetail.paymentData')}
         </Typography>
         <Stack direction="row" gap={2} data-testid="debt-position-detail-org-name">

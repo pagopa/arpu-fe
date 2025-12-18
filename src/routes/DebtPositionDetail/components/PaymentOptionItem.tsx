@@ -28,7 +28,9 @@ import { useTranslation } from 'react-i18next';
 const Accent = (props: { children: string }) => (
   <Box
     sx={{ display: 'inline-block', backgroundColor: '#e1f5fe', borderRadius: '4px', paddingX: 1 }}>
-    <Typography color="#215C76">{props.children}</Typography>
+    <Typography color="#215C76" textTransform="capitalize">
+      {props.children}
+    </Typography>
   </Box>
 );
 
@@ -76,6 +78,8 @@ const ExtraInfo = (props: { installments: DebtorPaymentOptionOverviewDTO['instal
                     data-testid={`payment-option-type-installments-installment-${index + 1}`}>
                     <Accent>{`${t('app.debtPositionDetail.installment')} ${index + 1}`}</Accent>
                     <Typography
+                      fontWeight={600}
+                      fontStyle="semibold"
                       component="span"
                       data-testid={`payment-option-type-installments-installment-${index + 1}-amount`}>
                       {utils.converters.toEuro(installment.amountCents || 0)}
@@ -84,7 +88,7 @@ const ExtraInfo = (props: { installments: DebtorPaymentOptionOverviewDTO['instal
                 </Grid>
 
                 <Grid size={6} gap={2}>
-                  <Stack direction="row" spacing={2}>
+                  <Stack direction="row" spacing={2} alignItems="center">
                     <Chip
                       data-testid={`payment-option-type-installments-installment-${index + 1}-status`}
                       label={t(`app.debtPositionDetail.status.${installment.status}`)}
@@ -92,8 +96,10 @@ const ExtraInfo = (props: { installments: DebtorPaymentOptionOverviewDTO['instal
                     />
                     {installment.dueDate && (
                       <Typography
-                        data-testid={`payment-option-type-installments-installment-${index + 1}-due-date`}
-                        component="span">{`${t('app.debtPositionDetail.before')} ${utils.datetools.formatDate(installment.dueDate)}`}</Typography>
+                        fontSize={16}
+                        fontStyle="semibold"
+                        color="text.secondary"
+                        data-testid={`payment-option-type-installments-installment-${index + 1}-due-date`}>{`${t('app.debtPositionDetail.before')} ${utils.datetools.formatDate(installment.dueDate)}`}</Typography>
                     )}
                   </Stack>
                 </Grid>
@@ -121,16 +127,16 @@ const PaymentOption = (props: PaymentOptionProps) => {
     (paymentOptionType === PaymentOptionType.DOWN_PAYMENT && props.installments.length === 1);
 
   const label = isSingleInstallment ? (
-    <Typography variant="body2" textTransform="uppercase">
+    <Typography variant="overline" textTransform="uppercase">
       {t('app.debtPositionDetail.paymentOptionSingleInstallment')}
     </Typography>
   ) : (
-    <div>
-      <Typography variant="body2" textTransform="uppercase">
+    <>
+      <Typography variant="overline" textTransform="uppercase" display="block" mb={1}>
         {t('app.debtPositionDetail.paymentOptionInstallments')}
       </Typography>
       <Accent>{`${props.installments.length} ${t('app.debtPositionDetail.installments')}`}</Accent>
-    </div>
+    </>
   );
 
   const nextInstallmentToBePaid: { installment?: DebtorInstallmentsOverviewDTO; index: number } = {
@@ -164,11 +170,18 @@ const PaymentOption = (props: PaymentOptionProps) => {
           />
         </Grid>
         <Grid size={6} pl={2}>
-          <Typography data-testid="payment-option-item-total-amount">
+          <Typography
+            data-testid="payment-option-item-total-amount"
+            fontWeight={600}
+            fontStyle="semibold">
             {utils.converters.toEuro(props.totalAmountCents || 0)}
           </Typography>
           {nextInstallmentToBePaid.installment && (
-            <Typography data-testid="payment-option-item-next-pay-date">
+            <Typography
+              data-testid="payment-option-item-next-pay-date"
+              fontSize={16}
+              fontStyle="semibold"
+              color="text.secondary">
               {nextInstallmentToBePaidLabel}
             </Typography>
           )}
