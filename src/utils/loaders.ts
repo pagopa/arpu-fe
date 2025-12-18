@@ -258,8 +258,9 @@ const useDownloadReceipt = ({ brokerId }: Pick<ReceiptDetailArgs, 'brokerId'>) =
     mutationKey: ['downloadReceipt', brokerId],
     mutationFn: async ({
       organizationId,
-      receiptId
-    }: Pick<ReceiptDetailArgs, 'organizationId' | 'receiptId'>) => {
+      receiptId,
+      fiscalCode
+    }: Pick<ReceiptDetailArgs, 'organizationId' | 'receiptId' | 'fiscalCode'>) => {
       const response = await utils.apiClient.brokers.getReceiptPdf(
         brokerId,
         organizationId,
