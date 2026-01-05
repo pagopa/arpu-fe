@@ -253,6 +253,26 @@ const useReceiptDetail = ({ brokerId, organizationId, receiptId, fiscalCode }: R
     throwOnError: true
   });
 
+const usePublicReceiptDetail = ({
+  brokerId,
+  organizationId,
+  receiptId,
+  fiscalCode
+}: ReceiptDetailArgs) =>
+  useQuery({
+    queryKey: ['publicReceiptDetail', brokerId, organizationId, receiptId],
+    queryFn: async () => {
+      const { data } = await utils.apiClient.public.getPublicReceiptDetail(
+        brokerId,
+        organizationId,
+        receiptId,
+        { headers: { 'X-fiscal-code': fiscalCode } }
+      );
+      return data;
+    },
+    throwOnError: true
+  });
+
 const useDownloadReceipt = ({ brokerId }: Pick<ReceiptDetailArgs, 'brokerId'>) =>
   useMutation({
     mutationKey: ['downloadReceipt', brokerId],
@@ -262,6 +282,26 @@ const useDownloadReceipt = ({ brokerId }: Pick<ReceiptDetailArgs, 'brokerId'>) =
       fiscalCode
     }: Pick<ReceiptDetailArgs, 'organizationId' | 'receiptId' | 'fiscalCode'>) => {
       const response = await utils.apiClient.brokers.getReceiptPdf(
+        brokerId,
+        organizationId,
+        receiptId,
+        { format: 'blob', headers: { 'X-fiscal-code': fiscalCode } }
+      );
+      const contentDisposition = response.headers['content-disposition'] || '';
+      const filename = utils.converters.extractFilename(contentDisposition);
+      return { blob: response.data, filename };
+    }
+  });
+
+const usePublicDownloadReceipt = ({ brokerId }: Pick<ReceiptDetailArgs, 'brokerId'>) =>
+  useMutation({
+    mutationKey: ['publicDownloadReceipt', brokerId],
+    mutationFn: async ({
+      organizationId,
+      receiptId,
+      fiscalCode
+    }: Pick<ReceiptDetailArgs, 'organizationId' | 'receiptId' | 'fiscalCode'>) => {
+      const response = await utils.apiClient.public.getPublicReceiptPdf(
         brokerId,
         organizationId,
         receiptId,
@@ -350,6 +390,8 @@ export default {
     getPublicOrganizationsWithSpontaneous,
     getPublicPaymentNotice,
     useBrokerInfo,
-    usePublicInstallmentsByIuvOrNav
+    usePublicInstallmentsByIuvOrNav,
+    usePublicDownloadReceipt,
+    usePublicReceiptDetail
   }
 };

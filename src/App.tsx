@@ -67,6 +67,14 @@ const router = createBrowserRouter([
         )
       },
       {
+        path: ArcRoutes.public.RECEIPT,
+        element: (
+          <PreLoginLayout>
+            <ReceiptDetail />
+          </PreLoginLayout>
+        )
+      },
+      {
         path: ArcRoutes.AUTH_CALLBACK,
         element: <AuthCallback />,
         loader: ({ request }) => getTokenOneidentity(request)

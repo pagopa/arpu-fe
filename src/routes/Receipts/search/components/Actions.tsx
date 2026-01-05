@@ -15,28 +15,31 @@ type ActionMenuProps = {
 export const Actions = ({ installment }: ActionMenuProps) => {
   const navigate = useNavigate();
   const brokerId = utils.storage.app.getBrokerId();
+  const isAnonymous = utils.storage.user.isAnonymous();
 
-  const receiptPdf = utils.loaders.useDownloadReceipt({ brokerId });
+  const receiptPdf = isAnonymous
+    ? utils.loaders.public.usePublicDownloadReceipt({ brokerId })
+    : utils.loaders.useDownloadReceipt({ brokerId });
 
   const onDownload = async () => {
     if (
-      !installment?.receiptId ||
-      !installment?.organizationId ||
-      !installment?.iuv ||
-      !installment?.debtor.fiscalCode
+      installment?.receiptId &&
+      installment?.organizationId &&
+      installment?.iuv &&
+      installment?.debtor?.fiscalCode
     ) {
-      utils.notify.emit(t('app.receiptDetail.downloadError'));
-      return;
-    }
-    try {
-      const { blob, filename } = await receiptPdf.mutateAsync({
-        receiptId: installment?.receiptId,
-        organizationId: installment?.organizationId,
-        fiscalCode: installment?.debtor.fiscalCode
-      });
-      utils.files.downloadBlob(blob, filename || `${installment.iuv}.pdf`);
-    } catch {
-      utils.notify.emit(t('app.receiptDetail.downloadError'));
+      try {
+        const { blob, filename } = await receiptPdf.mutateAsync({
+          receiptId: installment?.receiptId,
+          organizationId: installment?.organizationId,
+          fiscalCode: installment?.debtor.fiscalCode
+        });
+        utils.files.downloadBlob(blob, filename || `${installment.iuv}.pdf`);
+      } catch {
+        utils.notify.emit(t('errors.toast.default'));
+      }
+    } else {
+      utils.notify.emit(t('errors.toast.default'));
     }
   };
 
@@ -48,11 +51,21 @@ export const Actions = ({ installment }: ActionMenuProps) => {
     ),
     label: t('app.receiptsSearch.actions.toDetail'),
     action: () => {
-      const path = generatePath(ArcRoutes.RECEIPT, {
-        receiptId: installment?.receiptId,
-        organizationId: installment?.organizationId
-      });
-      navigate(path, { state: { fiscalCode: installment?.debtor.fiscalCode } });
+      if (
+        installment?.receiptId &&
+        installment?.organizationId &&
+        installment?.iuv &&
+        installment?.debtor?.fiscalCode
+      ) {
+        const detailRoute = isAnonymous ? ArcRoutes.public.RECEIPT : ArcRoutes.RECEIPT;
+        const path = generatePath(detailRoute, {
+          receiptId: installment?.receiptId,
+          organizationId: installment.organizationId
+        });
+        navigate(path, { state: { fiscalCode: installment.debtor.fiscalCode } });
+      } else {
+        utils.notify.emit(t('errors.toast.default'));
+      }
     }
   };
 
