@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import React from 'react';
-import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import { render, screen, fireEvent, waitFor } from '__tests__/renderers';
 import { DebtPositions } from './DebtPositions';
 import '@testing-library/jest-dom';
 import { Mock } from 'vitest';
@@ -80,6 +80,8 @@ describe('DebtPositions', () => {
   const mockApplyFilters = vi.fn();
 
   beforeEach(() => {
+    vi.clearAllMocks();
+
     vi.spyOn(utils.storage.app, 'getBrokerId').mockReturnValue(123);
 
     (utils.loaders.usePagedUnpaidDebtPositions as Mock).mockReturnValue({
@@ -94,10 +96,6 @@ describe('DebtPositions', () => {
       },
       applyFilters: mockApplyFilters
     });
-  });
-
-  afterEach(() => {
-    vi.clearAllMocks();
   });
 
   it('renders debt positions list', () => {
