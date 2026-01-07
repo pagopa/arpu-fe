@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { CircularProgress } from '@mui/material';
-import { QueryKey, useIsFetching } from '@tanstack/react-query';
+import { QueryKey, useIsFetching, useIsMutating } from '@tanstack/react-query';
 
 export interface QueryLoaderProps {
   queryKey?: string | QueryKey;
@@ -19,16 +19,22 @@ export interface QueryLoaderProps {
 const QueryLoader = (props: QueryLoaderProps) => {
   const { queryKey, loaderComponent, children, loading } = props;
   const [atLeast, setAtLeast] = useState(props.atLeast || 0);
+  const key = typeof queryKey === 'string' ? [queryKey] : queryKey;
   const isFetching = useIsFetching({
-    queryKey: typeof queryKey === 'string' ? [queryKey] : queryKey
+    queryKey: key
   });
+  const isMutating = useIsMutating({
+    mutationKey: key
+  });
+
+  const fetching = isFetching + isMutating;
 
   let timeoutId: NodeJS.Timeout | null = null;
   useEffect(() => {
-    if (props.atLeast && isFetching) {
+    if (props.atLeast && fetching) {
       timeoutId = setTimeout(() => setAtLeast(0), props.atLeast);
     }
-  }, [isFetching, props.atLeast]);
+  }, [fetching, props.atLeast]);
 
   useEffect(() => {
     return () => {
@@ -43,7 +49,7 @@ const QueryLoader = (props: QueryLoaderProps) => {
         ? loading
           ? loader
           : children
-        : isFetching + atLeast
+        : fetching + atLeast
           ? loader
           : children}
     </>

@@ -9,6 +9,7 @@
       "title": "Recupera una ricevuta",
       "description": "Se hai già effettuato un pagamento, compila i campi richiesti e cerca la tua ricevuta.",
       "sub": "Cerca la ricevuta",
+      "result_zero": "Nessuna ricevuta trovata",
       "result_one": "Abbiamo trovato {{count}} ricevuta",
       "result_other": "Abbiamo trovato {{count}} ricevute",
       "tab1": {
@@ -28,7 +29,15 @@
         "amount": "Importo",
         "noticeCode": "Codice Avviso"
       },
-      "action": "Cerca"
+      "noData": {
+        "title": "Non abbiamo trovato ricevute corrispondenti",
+        "text": "Controlla i dati inseriti e riprova."
+      },
+      "actions": {
+        "search": "Cerca",
+        "toDetail": "Vai al dettaglio",
+        "download": "Scarica"
+      }
     },
     "user": {
       "title": "I tuoi dati",
@@ -123,6 +132,8 @@
     },
     "receipts": {
       "searchByName": "Cerca per nome",
+      "subtitle": "Qui trovi le ricevute a te intestate. Se cerchi ricevute intestate a qualcun altro, clicca su",
+      "subtitleLink": "Recupera una ricevuta",
       "searchBy": "Cerca per",
       "orderBy": "Ordina per",
       "mostRecent": "più recente",
@@ -314,7 +325,7 @@
     "homepage": "Homepage",
     "receipts":{
       "menuTitle":"Ricevute",
-       "pageTitle": "Le tue ricevute"
+       "pageTitle": "Ricevute"
     },
     "navigationMenu": "Menù di navigazione",
     "menu": "Menu",

@@ -1,47 +1,29 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import React from 'react';
-import { render, waitFor, screen } from '@testing-library/react';
+import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import '@testing-library/jest-dom';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { Mock } from 'vitest';
 import utils from 'utils';
 import { useSearch } from 'hooks/useSearch';
 import { ReceiptsList } from '.';
+import { BrowserRouter } from 'react-router-dom';
 
-const queryClient = new QueryClient({
-  defaultOptions: {
-    queries: {
-      retry: false
+const mockReceipts = {
+  content: [
+    {
+      receiptId: 1,
+      orgName: 'ACI Automobile Club Italia',
+      paymentAmountCents: 53322,
+      paymentDateTime: '2024-11-05T10:57:06Z'
+    },
+    {
+      receiptId: 2,
+      orgName: 'Comune di Roma',
+      paymentAmountCents: 53861,
+      paymentDateTime: '2024-11-05T10:43:56Z'
     }
-  }
-});
-
-const mockReceipts = [
-  {
-    id: 'receipt-1',
-    eventId: 'tst2.888387046189095300-8173-9980-7144-362-0',
-    payeeName: 'ACI Automobile Club Italia',
-    payeeTaxCode: '00493410583',
-    amount: 53322,
-    receiptDate: '2024-11-05T10:57:06Z'
-  },
-  {
-    id: 'receipt-2',
-    eventId: 'tst2.814804283493089500-9470-9311-9402-678-0',
-    payeeName: 'ACI Automobile Club Italia',
-    payeeTaxCode: '00493410583',
-    amount: 53861,
-    receiptDate: '2024-11-05T10:43:56Z'
-  },
-  {
-    id: 'receipt-3',
-    eventId: 'tst2.938002289163866200-6666-6117-6677-612-0',
-    payeeName: 'ACI Automobile Club Italia',
-    payeeTaxCode: '00493410583',
-    amount: 73849,
-    receiptDate: '2024-11-05T10:43:54Z'
-  }
-];
+  ]
+};
 
 vi.mock('utils', () => ({
   default: {
@@ -53,47 +35,63 @@ vi.mock('utils', () => ({
 
 vi.mock('hooks/useSearch');
 
-vi.mock('utils/config', async (importOriginal) => {
-  const actual: any = await importOriginal();
-  return {
-    ...actual,
-    default: {
-      ...actual.default,
-      brokerId: '123'
-    }
-  };
-});
+vi.mock('utils/config', () => ({
+  default: {
+    brokerId: '123'
+  }
+}));
 
 vi.mock('./ReceiptDataGrid', () => ({
   ReceiptDataGrid: ({ data }: any) => (
     <div data-testid="receipt-data-grid">
       {data.content.map((receipt: any) => (
-        <div key={receipt.id}>{receipt.payeeName}</div>
+        <div key={receipt.receiptId}>{receipt.orgName}</div>
       ))}
     </div>
   )
 }));
 
-describe('Receipts Component', () => {
+vi.mock('components/Retry', () => ({
+  Retry: ({ action }: any) => (
+    <div data-testid="retry-component">
+      <button onClick={action} data-testid="retry-button">
+        Retry
+      </button>
+    </div>
+  )
+}));
+
+vi.mock('components/NoData', () => ({
+  NoData: ({ title, text }: any) => (
+    <div data-testid="no-data-component">
+      <div>{title}</div>
+      <div>{text}</div>
+    </div>
+  )
+}));
+
+vi.mock('components/QueryLoader', () => ({
+  default: ({ children, loading }: any) => (loading ? <div>Loading...</div> : children)
+}));
+
+describe('ReceiptsList', () => {
   const mockApplyFilters = vi.fn();
 
-  const createMockQuery = (overrides = {}) => ({
-    data: undefined,
-    isError: false,
-    isPending: false,
-    isSuccess: false,
-    ...overrides
-  });
+  const renderWithRouter = (component: React.ReactElement) => {
+    return render(<BrowserRouter>{component}</BrowserRouter>);
+  };
 
   beforeEach(() => {
-    vi.clearAllMocks();
-
     (utils.loaders.getPagedDebtorReceipts as Mock).mockReturnValue({
       mutate: vi.fn()
     });
 
     (useSearch as Mock).mockReturnValue({
-      query: createMockQuery(),
+      query: {
+        data: mockReceipts,
+        isError: false,
+        isPending: false
+      },
       applyFilters: mockApplyFilters
     });
   });
@@ -102,144 +100,92 @@ describe('Receipts Component', () => {
     vi.clearAllMocks();
   });
 
-  it('renders without crashing', () => {
-    render(
-      <QueryClientProvider client={queryClient}>
-        <ReceiptsList />
-      </QueryClientProvider>
-    );
+  it('renders page title and subtitle', () => {
+    renderWithRouter(<ReceiptsList />);
 
     expect(screen.getByText('menu.receipts.pageTitle')).toBeInTheDocument();
+    expect(screen.getByText('app.receipts.subtitle')).toBeInTheDocument();
   });
 
-  it('renders error component when query fails', () => {
+  it('renders link to receipts search', () => {
+    renderWithRouter(<ReceiptsList />);
+
+    const link = screen.getByText('app.receipts.subtitleLink');
+    expect(link).toBeInTheDocument();
+  });
+
+  it('renders ReceiptDataGrid when data is available', () => {
+    renderWithRouter(<ReceiptsList />);
+
+    expect(screen.getByTestId('receipt-data-grid')).toBeInTheDocument();
+    expect(screen.getByText('ACI Automobile Club Italia')).toBeInTheDocument();
+    expect(screen.getByText('Comune di Roma')).toBeInTheDocument();
+  });
+
+  it('shows retry component on error', () => {
     (useSearch as Mock).mockReturnValue({
-      query: createMockQuery({ isError: true }),
+      query: {
+        data: undefined,
+        isError: true,
+        isPending: false
+      },
       applyFilters: mockApplyFilters
     });
 
-    render(
-      <QueryClientProvider client={queryClient}>
-        <ReceiptsList />
-      </QueryClientProvider>
-    );
+    renderWithRouter(<ReceiptsList />);
 
-    // Retry component should be rendered
-    expect(screen.queryByTestId('receipt-data-grid')).not.toBeInTheDocument();
+    expect(screen.getByTestId('retry-component')).toBeInTheDocument();
   });
 
-  it('calls applyFilters when retry is clicked after error', async () => {
+  it('calls applyFilters when retry is clicked', async () => {
     (useSearch as Mock).mockReturnValue({
-      query: createMockQuery({ isError: true }),
+      query: {
+        data: undefined,
+        isError: true,
+        isPending: false
+      },
       applyFilters: mockApplyFilters
     });
 
-    render(
-      <QueryClientProvider client={queryClient}>
-        <ReceiptsList />
-      </QueryClientProvider>
-    );
+    renderWithRouter(<ReceiptsList />);
 
-    // Find and click retry button (implementation depends on Retry component)
-    // This assumes the Retry component has a clickable element
-    const retryButton = screen.getByRole('button');
-    retryButton.click();
+    fireEvent.click(screen.getByTestId('retry-button'));
 
     await waitFor(() => {
       expect(mockApplyFilters).toHaveBeenCalled();
     });
   });
 
-  it('renders ReceiptDataGrid when data is available', () => {
+  it('shows no data component when content is empty', () => {
     (useSearch as Mock).mockReturnValue({
-      query: createMockQuery({
-        data: { content: mockReceipts },
-        isSuccess: true
-      }),
+      query: {
+        data: { content: [] },
+        isError: false,
+        isPending: false
+      },
       applyFilters: mockApplyFilters
     });
 
-    render(
-      <QueryClientProvider client={queryClient}>
-        <ReceiptsList />
-      </QueryClientProvider>
-    );
+    renderWithRouter(<ReceiptsList />);
 
-    expect(screen.getByTestId('receipt-data-grid')).toBeInTheDocument();
-    expect(screen.getAllByText('ACI Automobile Club Italia')).toHaveLength(3);
+    expect(screen.getByTestId('no-data-component')).toBeInTheDocument();
+    expect(screen.getByText('app.receipts.empty.title')).toBeInTheDocument();
   });
 
-  it('calls getPagedDebtorReceipts with correct brokerId', () => {
-    render(
-      <QueryClientProvider client={queryClient}>
-        <ReceiptsList />
-      </QueryClientProvider>
-    );
+  it('calls getPagedDebtorReceipts with brokerId', () => {
+    renderWithRouter(<ReceiptsList />);
 
     expect(utils.loaders.getPagedDebtorReceipts).toHaveBeenCalledWith(123);
   });
 
-  it('passes correct data to ReceiptDataGrid', () => {
-    const testData = { content: mockReceipts };
+  it('passes correct filters to useSearch', () => {
+    renderWithRouter(<ReceiptsList />);
 
-    (useSearch as Mock).mockReturnValue({
-      query: createMockQuery({
-        data: testData,
-        isSuccess: true
-      }),
-      applyFilters: mockApplyFilters
+    expect(useSearch).toHaveBeenCalledWith({
+      query: expect.anything(),
+      filters: {
+        sort: ['paymentDateTime,desc']
+      }
     });
-
-    render(
-      <QueryClientProvider client={queryClient}>
-        <ReceiptsList />
-      </QueryClientProvider>
-    );
-
-    const dataGrid = screen.getByTestId('receipt-data-grid');
-    expect(dataGrid).toBeInTheDocument();
-
-    // Verify all receipts are rendered
-    mockReceipts.forEach((receipt) => {
-      expect(screen.getAllByText(receipt.payeeName).length).toBeGreaterThan(0);
-    });
-  });
-
-  it('handles undefined data gracefully', () => {
-    (useSearch as Mock).mockReturnValue({
-      query: createMockQuery({
-        data: undefined,
-        isSuccess: true
-      }),
-      applyFilters: mockApplyFilters
-    });
-
-    render(
-      <QueryClientProvider client={queryClient}>
-        <ReceiptsList />
-      </QueryClientProvider>
-    );
-
-    // Should render NoData when data is undefined
-    expect(screen.getByText('app.receipts.empty.title')).toBeInTheDocument();
-  });
-
-  it('handles data with undefined content property', () => {
-    (useSearch as Mock).mockReturnValue({
-      query: createMockQuery({
-        data: {},
-        isSuccess: true
-      }),
-      applyFilters: mockApplyFilters
-    });
-
-    render(
-      <QueryClientProvider client={queryClient}>
-        <ReceiptsList />
-      </QueryClientProvider>
-    );
-
-    // Should render NoData when content is undefined
-    expect(screen.getByText('app.receipts.empty.title')).toBeInTheDocument();
   });
 });

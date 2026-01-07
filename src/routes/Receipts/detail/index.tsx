@@ -1,5 +1,5 @@
 import React from 'react';
-import { useParams } from 'react-router-dom';
+import { Location, useLocation, useParams } from 'react-router-dom';
 import config from 'utils/config';
 import Stack from '@mui/material/Stack';
 import Card from '@mui/material/Card';
@@ -23,15 +23,21 @@ export const ReceiptDetail = () => {
   const mdUp = useMediaQuery((theme: Theme) => theme.breakpoints.up('md'));
 
   const params = useParams<{ receiptId: string; organizationId: string }>();
+  const location = useLocation() as Location<{ fiscalCode: string }>;
+  const fiscalCode = location?.state?.fiscalCode;
   const receiptId = Number(params?.receiptId);
   const organizationId = Number(params?.organizationId);
 
-  const { data } = loaders.useReceiptDetail({ brokerId, organizationId, receiptId });
-  const receiptPdf = loaders.useDownloadReceipt({ brokerId, organizationId, receiptId });
+  const { data } = loaders.useReceiptDetail({ brokerId, organizationId, receiptId, fiscalCode });
+  const receiptPdf = loaders.useDownloadReceipt({ brokerId });
 
   const onDownload = async () => {
     try {
-      const { blob, filename } = await receiptPdf.mutateAsync();
+      const { blob, filename } = await receiptPdf.mutateAsync({
+        organizationId,
+        receiptId,
+        fiscalCode
+      });
       files.downloadBlob(blob, filename || `${data?.iuv}.pdf`);
     } catch {
       notify.emit(t('app.receiptDetail.downloadError'));

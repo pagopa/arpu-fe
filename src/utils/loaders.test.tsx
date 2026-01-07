@@ -390,13 +390,16 @@ describe('useDownloadReceipt', () => {
   });
 
   it('downloads receipt successfully', async () => {
-    const args = { brokerId: 999, organizationId: 456, receiptId: 123 };
+    const args = { brokerId: 999 };
 
     const { result } = renderHook(() => loaders.useDownloadReceipt(args));
 
     expect(result.current.isPending).toBe(false);
 
-    const promise = result.current.mutateAsync();
+    const promise = result.current.mutateAsync({
+      organizationId: 456,
+      receiptId: 123
+    });
 
     await waitFor(() => {
       expect(result.current.isSuccess).toBe(true);
@@ -407,12 +410,13 @@ describe('useDownloadReceipt', () => {
     expect(response.blob).toBeInstanceOf(Blob);
     expect(response.filename).toBe('receipt_123.pdf');
     expect(utils.apiClient.brokers.getReceiptPdf).toHaveBeenCalledWith(999, 456, 123, {
-      format: 'blob'
+      format: 'blob',
+      headers: { 'X-fiscal-code': undefined }
     });
   });
 
   it('handles missing content-disposition header', async () => {
-    const args = { brokerId: 999, organizationId: 456, receiptId: 123 };
+    const args = { brokerId: 999 };
 
     vi.spyOn(utils.apiClient.brokers, 'getReceiptPdf').mockResolvedValue({
       data: new Blob(['test pdf content'], { type: 'application/pdf' }),
@@ -423,14 +427,14 @@ describe('useDownloadReceipt', () => {
 
     const { result } = renderHook(() => loaders.useDownloadReceipt(args));
 
-    const response = await result.current.mutateAsync();
+    const response = await result.current.mutateAsync({ organizationId: 456, receiptId: 123 });
 
     expect(utils.converters.extractFilename).toHaveBeenCalledWith('');
     expect(response.filename).toBeNull();
   });
 
   it('handles API errors correctly', async () => {
-    const args = { brokerId: 999, organizationId: 456, receiptId: 123 };
+    const args = { brokerId: 999 };
     const errorMessage = 'Failed to download receipt';
 
     vi.spyOn(utils.apiClient.brokers, 'getReceiptPdf').mockRejectedValue(new Error(errorMessage));
@@ -439,7 +443,7 @@ describe('useDownloadReceipt', () => {
 
     let error;
     try {
-      await result.current.mutateAsync();
+      await result.current.mutateAsync({ organizationId: 456, receiptId: 123 });
     } catch (e) {
       error = e;
     }

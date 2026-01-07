@@ -4,6 +4,7 @@ import { Retry } from 'components/Retry';
 import QueryLoader from 'components/QueryLoader';
 import { TransactionListSkeleton } from 'components/Skeleton';
 import { Stack } from '@mui/material';
+import { MutationKey, QueryKey } from '@tanstack/react-query';
 
 type ContentProps = {
   showRetry: boolean;
@@ -11,7 +12,8 @@ type ContentProps = {
   onRetry: () => void;
   noDataTitle: string;
   noDataText: string;
-  queryKey: string;
+  queryKey: MutationKey | QueryKey;
+  loaderComponent?: React.ReactNode;
   children: React.ReactNode;
   onNoDataClick?: () => void;
   noDataCta?: React.ReactNode;

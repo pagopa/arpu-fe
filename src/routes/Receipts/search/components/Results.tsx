@@ -1,9 +1,9 @@
 import { useTranslation } from 'react-i18next';
 import { InstallmentDebtorExtendedDTO } from '../../../../../generated/data-contracts';
 import React from 'react';
-import { Card, IconButton, Stack, Typography } from '@mui/material';
+import { Card, Stack, Typography } from '@mui/material';
 import { propertyOrMissingValue, toEuroOrMissingValue } from 'utils/converters';
-import { MoreVert } from '@mui/icons-material';
+import { Actions } from './Actions';
 
 type ResultsProps = {
   installments: InstallmentDebtorExtendedDTO[];
@@ -27,7 +27,7 @@ export const Results = ({ installments }: ResultsProps) => {
     <Stack gap={2}>
       {installments.map((installment) => (
         <Card
-          key={installment.iuv}
+          key={installment.installmentId}
           sx={{
             display: 'flex',
             flexDirection: 'row',
@@ -50,9 +50,7 @@ export const Results = ({ installments }: ResultsProps) => {
               value={toEuroOrMissingValue(installment.amountCents)}
             />
           </Stack>
-          <IconButton>
-            <MoreVert />
-          </IconButton>
+          <Actions installment={installment} />
         </Card>
       ))}
     </Stack>

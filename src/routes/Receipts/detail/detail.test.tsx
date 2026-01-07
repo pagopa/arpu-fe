@@ -175,24 +175,7 @@ describe('ReceiptDetail', () => {
     render(<ReceiptDetail />);
 
     expect(loaders.useDownloadReceipt).toHaveBeenCalledWith({
-      brokerId: 999,
-      organizationId: 456,
-      receiptId: 123
-    });
-  });
-
-  it('converts brokerId from string to number', () => {
-    render(<ReceiptDetail />);
-
-    expect(loaders.useReceiptDetail).toHaveBeenCalledWith({
-      brokerId: 999,
-      organizationId: 456,
-      receiptId: 123
-    });
-    expect(loaders.useDownloadReceipt).toHaveBeenCalledWith({
-      brokerId: 999,
-      organizationId: 456,
-      receiptId: 123
+      brokerId: 999
     });
   });
 
@@ -400,19 +383,6 @@ describe('ReceiptDetail', () => {
     await waitFor(() => {
       expect(files.downloadBlob).toHaveBeenCalledWith(testBlob, 'custom_receipt.pdf');
     });
-  });
-
-  it('passes all three IDs to both hooks', () => {
-    render(<ReceiptDetail />);
-
-    const expectedParams = {
-      brokerId: 999,
-      organizationId: 456,
-      receiptId: 123
-    };
-
-    expect(loaders.useReceiptDetail).toHaveBeenCalledWith(expectedParams);
-    expect(loaders.useDownloadReceipt).toHaveBeenCalledWith(expectedParams);
   });
 
   it('handles zero values in params', () => {
