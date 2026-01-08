@@ -124,8 +124,7 @@ describe('DebtPositionsList', () => {
     expect(useSearch).toHaveBeenCalledWith({
       query: expect.anything(),
       filters: {
-        sort: [],
-        page: 0
+        sort: []
       }
     });
   });
@@ -198,8 +197,7 @@ describe('DebtPositionsList', () => {
 
     await waitFor(() => {
       expect(mockApplyFilters).toHaveBeenCalledWith({
-        sort: [],
-        page: 0
+        sort: []
       });
     });
   });

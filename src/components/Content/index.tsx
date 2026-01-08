@@ -12,7 +12,7 @@ type ContentProps = {
   onRetry: () => void;
   noDataTitle: string;
   noDataText: string;
-  queryKey: MutationKey | QueryKey;
+  queryKey: MutationKey | QueryKey | string;
   loaderComponent?: React.ReactNode;
   children: React.ReactNode;
   onNoDataClick?: () => void;

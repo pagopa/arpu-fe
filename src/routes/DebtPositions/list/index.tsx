@@ -14,8 +14,7 @@ export const DebtPositionsList = () => {
   const debtPositionsQuery = utils.loaders.usePagedUnpaidDebtPositions(brokerId);
 
   const debtPositionsFilters = {
-    sort: [],
-    page: 0
+    sort: []
   };
 
   const {
