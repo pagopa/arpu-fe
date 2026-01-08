@@ -136,7 +136,12 @@ const PaymentOption = (props: PaymentOptionProps) => {
     </Typography>
   ) : (
     <>
-      <Typography variant="overline" textTransform="uppercase" display="block" mb={1} color={isDisabled ? 'text.disabled' : 'text.primary'}>
+      <Typography
+        variant="overline"
+        textTransform="uppercase"
+        display="block"
+        mb={1}
+        color={isDisabled ? 'text.disabled' : 'text.primary'}>
         {t('app.debtPositionDetail.paymentOptionInstallments')}
       </Typography>
       <Accent>{`${props.installments.length} ${t('app.debtPositionDetail.installments')}`}</Accent>

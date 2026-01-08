@@ -126,7 +126,7 @@ const PaymentOptionsActions = (props: paymentOptionsActionProps) => {
             color="error"
             variant="outlined"
             size="large"
-            data-testid="payment-option-action-add"
+            data-testid="payment-option-action-remove"
             onClick={removeItemFromCart}>
             {t('app.debtPositionDetail.removeItemFromCart')}
           </Button>

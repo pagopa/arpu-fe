@@ -14,6 +14,7 @@ export const mockSingleUnpaidInstallmentPaymentOption: DebtorPaymentOptionOvervi
   installments: [
     {
       iuv: '1',
+      nav: '1',
       installmentId: 1,
       dueDate: '2025-11-19',
       amountCents: 150,
@@ -31,6 +32,7 @@ export const mockInstallmentsPaymentOption: DebtorPaymentOptionOverviewDTO = {
   installments: [
     {
       iuv: '1',
+      nav: '1',
       installmentId: 1,
       dueDate: '2025-07-15',
       amountCents: 100,
@@ -39,6 +41,7 @@ export const mockInstallmentsPaymentOption: DebtorPaymentOptionOverviewDTO = {
     },
     {
       iuv: '2',
+      nav: '2',
       installmentId: 2,
       dueDate: '2025-08-15',
       amountCents: 100,
@@ -47,6 +50,7 @@ export const mockInstallmentsPaymentOption: DebtorPaymentOptionOverviewDTO = {
     },
     {
       iuv: '3',
+      nav: '3',
       installmentId: 3,
       dueDate: '2025-09-15',
       amountCents: 150,
