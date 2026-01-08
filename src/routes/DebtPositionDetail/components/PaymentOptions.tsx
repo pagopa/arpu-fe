@@ -8,6 +8,7 @@ import { Card, RadioGroup, Stack, Typography } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import PaymentOptionItem from './PaymentOptionItem';
 import PaymentOptionsActions from './PaymentOptionActions';
+import { getCartItems } from 'store/CartStore';
 
 interface PaymentOptionWrapperProps {
   paymentOptions: DebtorPaymentOptionOverviewDTO[];
@@ -43,6 +44,10 @@ const PaymentOptionWrapper = (props: PaymentOptionWrapperProps) => {
     if (selectePaymentMethod) setInstallments(selectePaymentMethod.installments);
   }, [paymentOptionId]);
 
+  const cartItemsPaymentOptionsIDsByDebtPositionId = getCartItems()
+    .filter((item) => item.debtPositionId === props.debtPositionId)
+    .map(({ paymentOptionId }) => paymentOptionId);
+
   return (
     <Card sx={{ padding: 3, gap: 3, display: 'flex', flexDirection: 'column', marginTop: 2 }}>
       <Typography variant="body1" component="h2" fontWeight="600" fontStyle="semibold">
@@ -58,7 +63,12 @@ const PaymentOptionWrapper = (props: PaymentOptionWrapperProps) => {
               key={option.paymentOptionId}
               {...option}
               selectionStatus={
-                option.paymentOptionId === paymentOptionId ? 'selected' : 'unselected'
+                cartItemsPaymentOptionsIDsByDebtPositionId.length > 0 &&
+                !cartItemsPaymentOptionsIDsByDebtPositionId.includes(option.paymentOptionId)
+                  ? 'disabled'
+                  : option.paymentOptionId === paymentOptionId
+                    ? 'selected'
+                    : 'unselected'
               }
             />
           ))}
