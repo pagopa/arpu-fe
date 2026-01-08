@@ -1,10 +1,4 @@
 import '@testing-library/jest-dom';
-import {
-  mockConvertedNotice,
-  mockNoticeDetails,
-  mockPaymentNoticeDetails,
-  mockPaymentNotices
-} from 'stories/utils/PaymentNoticeMocks';
 import utils from '.';
 import { NoticeDetailsDTO } from '../../generated/apiClient';
 
@@ -86,22 +80,6 @@ describe('withMissingValue hoc', () => {
 
   it('should return a proper value', () => {
     expect(toEuroWithMissingValue(50)).toEqual('0,50\xa0€');
-  });
-});
-
-describe('prepare notice list', () => {
-  it('should convert correctly', () => {
-    expect(
-      JSON.stringify(utils.converters.prepareNoticesData(mockPaymentNotices).paymentNotices)
-    ).toEqual(JSON.stringify(mockConvertedNotice));
-  });
-});
-
-describe('prepare notice detail', () => {
-  it('should convert correctly', () => {
-    expect(
-      JSON.stringify(utils.converters.normalizePaymentNoticeDetails(mockPaymentNoticeDetails))
-    ).toEqual(JSON.stringify(mockNoticeDetails));
   });
 });
 

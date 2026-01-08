@@ -24,6 +24,7 @@ import { ReceiptsList } from 'routes/Receipts/list';
 import { ReceiptDetail } from 'routes/Receipts/detail';
 import { DebtPositionsList } from 'routes/DebtPositions/list';
 import { ReceiptsSearch } from 'routes/Receipts/search';
+import DebtPositionDetail from 'routes/DebtPositionDetail';
 
 const withGuard = (Component: () => React.JSX.Element) => (
   <RouteGuard itemKeys={['accessToken']} storage={window.localStorage}>
@@ -62,6 +63,14 @@ const router = createBrowserRouter([
         element: (
           <PreLoginLayout>
             <ReceiptsSearch />
+          </PreLoginLayout>
+        )
+      },
+      {
+        path: ArcRoutes.public.RECEIPT,
+        element: (
+          <PreLoginLayout>
+            <ReceiptDetail />
           </PreLoginLayout>
         )
       },
@@ -129,6 +138,10 @@ const router = createBrowserRouter([
           {
             path: ArcRoutes.RECEIPTS,
             element: withGuard(ReceiptsList)
+          },
+          {
+            path: ArcRoutes.DEBT_POSITION,
+            element: withGuard(DebtPositionDetail)
           },
           {
             path: ArcRoutes.DEBT_POSITIONS,

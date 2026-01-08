@@ -235,31 +235,77 @@ type ReceiptDetailArgs = {
   brokerId: number;
   organizationId: number;
   receiptId: number;
+  fiscalCode?: string;
 };
 
-const useReceiptDetail = ({ brokerId, organizationId, receiptId }: ReceiptDetailArgs) =>
+const useReceiptDetail = ({ brokerId, organizationId, receiptId, fiscalCode }: ReceiptDetailArgs) =>
   useQuery({
     queryKey: ['receiptDetail', brokerId, organizationId, receiptId],
     queryFn: async () => {
       const { data } = await utils.apiClient.brokers.getReceiptDetail(
         brokerId,
         organizationId,
-        receiptId
+        receiptId,
+        { headers: { 'X-fiscal-code': fiscalCode } }
       );
       return data;
     },
     throwOnError: true
   });
 
-const useDownloadReceipt = ({ brokerId, organizationId, receiptId }: ReceiptDetailArgs) =>
+const usePublicReceiptDetail = ({
+  brokerId,
+  organizationId,
+  receiptId,
+  fiscalCode
+}: ReceiptDetailArgs) =>
+  useQuery({
+    queryKey: ['publicReceiptDetail', brokerId, organizationId, receiptId],
+    queryFn: async () => {
+      const { data } = await utils.apiClient.public.getPublicReceiptDetail(
+        brokerId,
+        organizationId,
+        receiptId,
+        { headers: { 'X-fiscal-code': fiscalCode } }
+      );
+      return data;
+    },
+    throwOnError: true
+  });
+
+const useDownloadReceipt = ({ brokerId }: Pick<ReceiptDetailArgs, 'brokerId'>) =>
   useMutation({
-    mutationKey: ['downloadReceipt', brokerId, organizationId, receiptId],
-    mutationFn: async () => {
+    mutationKey: ['downloadReceipt', brokerId],
+    mutationFn: async ({
+      organizationId,
+      receiptId,
+      fiscalCode
+    }: Pick<ReceiptDetailArgs, 'organizationId' | 'receiptId' | 'fiscalCode'>) => {
       const response = await utils.apiClient.brokers.getReceiptPdf(
         brokerId,
         organizationId,
         receiptId,
-        { format: 'blob' }
+        { format: 'blob', headers: { 'X-fiscal-code': fiscalCode } }
+      );
+      const contentDisposition = response.headers['content-disposition'] || '';
+      const filename = utils.converters.extractFilename(contentDisposition);
+      return { blob: response.data, filename };
+    }
+  });
+
+const usePublicDownloadReceipt = ({ brokerId }: Pick<ReceiptDetailArgs, 'brokerId'>) =>
+  useMutation({
+    mutationKey: ['publicDownloadReceipt', brokerId],
+    mutationFn: async ({
+      organizationId,
+      receiptId,
+      fiscalCode
+    }: Pick<ReceiptDetailArgs, 'organizationId' | 'receiptId' | 'fiscalCode'>) => {
+      const response = await utils.apiClient.public.getPublicReceiptPdf(
+        brokerId,
+        organizationId,
+        receiptId,
+        { format: 'blob', headers: { 'X-fiscal-code': fiscalCode } }
       );
       const contentDisposition = response.headers['content-disposition'] || '';
       const filename = utils.converters.extractFilename(contentDisposition);
@@ -310,6 +356,19 @@ const usePublicInstallmentsByIuvOrNav = (brokerId: number) =>
     }
   });
 
+const getDebtPositionDetail = (brokerId: number, debtPositionId: number, organizationId: number) =>
+  useQuery({
+    queryKey: ['getDebtPositionDetail', brokerId, debtPositionId],
+    queryFn: async () => {
+      const { data } = await utils.apiClient.brokers.getDebtorUnpaidDebtPositionOverview(
+        brokerId,
+        debtPositionId,
+        { organizationId }
+      );
+      return data;
+    }
+  });
+
 export default {
   createSpontaneousDebtPosition,
   getDebtPositionTypeOrgsWithSpontaneous,
@@ -323,6 +382,7 @@ export default {
   useDownloadReceipt,
   usePagedUnpaidDebtPositions,
   useReceiptDetail,
+  getDebtPositionDetail,
   public: {
     createPublicSpontaneousDebtPosition,
     getPublicDebtPositionTypeOrgsWithSpontaneous,
@@ -330,6 +390,8 @@ export default {
     getPublicOrganizationsWithSpontaneous,
     getPublicPaymentNotice,
     useBrokerInfo,
-    usePublicInstallmentsByIuvOrNav
+    usePublicInstallmentsByIuvOrNav,
+    usePublicDownloadReceipt,
+    usePublicReceiptDetail
   }
 };

@@ -38,7 +38,7 @@ export const CartDrawer = () => {
 
   const onEmptyButtonClick = () => {
     toggleCartDrawer();
-    navigate(ArcRoutes.PAYMENT_NOTICES);
+    navigate(ArcRoutes.DEBT_POSITIONS);
   };
 
   const onPayButton = () => {

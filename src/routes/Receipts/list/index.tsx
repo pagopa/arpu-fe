@@ -10,6 +10,8 @@ import { useSearch } from 'hooks/useSearch';
 import { ReceiptDataGrid } from './ReceiptDataGrid';
 import { NoData } from '../../../components/NoData';
 import { Retry } from 'components/Retry';
+import { ArcRoutes } from 'routes/routes';
+import { Link } from 'react-router-dom';
 
 export const ReceiptsList = () => {
   const { t } = useTranslation();
@@ -32,17 +34,24 @@ export const ReceiptsList = () => {
       <Helmet>
         <title>{`${t('pageTitles.notices')} - ${t('app.title')} `}</title>
       </Helmet>
-      <Stack direction="row" justifyContent="space-between" alignItems="center" mb={7}>
-        <Typography variant="h3">{t('menu.receipts.pageTitle')}</Typography>
-      </Stack>
+      <Stack gap={3}>
+        <Stack gap={1}>
+          <Typography variant="h3">{t('menu.receipts.pageTitle')}</Typography>
 
-      <QueryLoader loaderComponent={<TransactionListSkeleton />} loading={query.isPending}>
-        {query?.data?.content?.length ? (
-          <ReceiptDataGrid data={query.data} />
-        ) : (
-          <NoData title={t('app.receipts.empty.title')} text={t('app.receipts.empty.subtitle')} />
-        )}
-      </QueryLoader>
+          <Typography fontSize={16}>
+            {t('app.receipts.subtitle')}{' '}
+            <Link to={ArcRoutes.public.RECEIPTS_SEARCH}>{t('app.receipts.subtitleLink')}</Link>
+          </Typography>
+        </Stack>
+
+        <QueryLoader loaderComponent={<TransactionListSkeleton />} loading={query.isPending}>
+          {query?.data?.content?.length ? (
+            <ReceiptDataGrid data={query.data} />
+          ) : (
+            <NoData title={t('app.receipts.empty.title')} text={t('app.receipts.empty.subtitle')} />
+          )}
+        </QueryLoader>
+      </Stack>
     </>
   );
 };

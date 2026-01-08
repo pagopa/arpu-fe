@@ -9,6 +9,7 @@
       "title": "Recupera una ricevuta",
       "description": "Se hai già effettuato un pagamento, compila i campi richiesti e cerca la tua ricevuta.",
       "sub": "Cerca la ricevuta",
+      "result_zero": "Nessuna ricevuta trovata",
       "result_one": "Abbiamo trovato {{count}} ricevuta",
       "result_other": "Abbiamo trovato {{count}} ricevute",
       "tab1": {
@@ -28,7 +29,15 @@
         "amount": "Importo",
         "noticeCode": "Codice Avviso"
       },
-      "action": "Cerca"
+      "noData": {
+        "title": "Non abbiamo trovato ricevute corrispondenti",
+        "text": "Controlla i dati inseriti e riprova."
+      },
+      "actions": {
+        "search": "Cerca",
+        "toDetail": "Vai al dettaglio",
+        "download": "Scarica"
+      }
     },
     "user": {
       "title": "I tuoi dati",
@@ -60,7 +69,8 @@
       }
     },
     "receiptDetail": {
-      "title": "Dettaglio Operazione",
+      "title": "Dettaglio",
+      "subtitle": "Puoi consultare i dati della ricevuta corrispondente alla tua ricerca e scaricarla.",
       "download": "Scarica ricevuta",
       "amount": "Importo",
       "remittanceInformation": "Oggetto del pagamento",
@@ -123,6 +133,8 @@
     },
     "receipts": {
       "searchByName": "Cerca per nome",
+      "subtitle": "Qui trovi le ricevute a te intestate. Se cerchi ricevute intestate a qualcun altro, clicca su",
+      "subtitleLink": "Recupera una ricevuta",
       "searchBy": "Cerca per",
       "orderBy": "Ordina per",
       "mostRecent": "più recente",
@@ -152,6 +164,28 @@
       },
       "list": {
         "title": "Importi da pagare"
+      }
+    },
+    "debtPositionDetail": {
+      "title": "Dettaglio posizione debitoria",
+      "paymentData": "Dati del pagamento",
+      "org": "Ente creditore",
+      "cf": "Codice fiscale ente",
+      "iupd": "Identificativo univoco posizione debitoria (IUPD)",
+      "paymentOptions": "Opzioni di pagamento",
+      "payNow": "Paga ora",
+      "payLater": "Paga a rate",
+      "addItemToCart": "Aggiungi al carrello",
+      "removeItemFromCart":"Rimuovi dal carrello",
+      "paymentOptionSingleInstallment": "Soluzione unica",
+      "paymentOptionInstallments": "Soluzione a rate",
+      "installment": "rata",
+      "installments": "rate",
+      "before": "entro il",
+      "status": {
+        "PAID": "Pagato",
+        "UNPAID": "Da pagare",
+        "EXPIRED": "Scaduto"
       }
     },
     "paymentNotice": {
@@ -292,7 +326,7 @@
     "homepage": "Homepage",
     "receipts":{
       "menuTitle":"Ricevute",
-       "pageTitle": "Le tue ricevute"
+       "pageTitle": "Ricevute"
     },
     "navigationMenu": "Menù di navigazione",
     "menu": "Menu",

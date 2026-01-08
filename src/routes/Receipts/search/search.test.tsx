@@ -84,7 +84,7 @@ describe('ReceiptsSearch', () => {
       target: { value: 'RSSMRA80A01H501U' }
     });
 
-    fireEvent.click(screen.getByText('app.receiptsSearch.action'));
+    fireEvent.click(screen.getByText('app.receiptsSearch.actions.search'));
 
     await waitFor(() => {
       expect(mockMutateAsync).toHaveBeenCalledWith({
@@ -101,7 +101,7 @@ describe('ReceiptsSearch', () => {
       target: { value: '123456789012345678' }
     });
     fireEvent.click(screen.getByRole('checkbox'));
-    fireEvent.click(screen.getByText('app.receiptsSearch.action'));
+    fireEvent.click(screen.getByText('app.receiptsSearch.actions.search'));
 
     await waitFor(() => {
       expect(mockMutateAsync).toHaveBeenCalledWith({
@@ -122,7 +122,7 @@ describe('ReceiptsSearch', () => {
     fireEvent.change(screen.getByLabelText('app.receiptsSearch.fields.fiscalcode'), {
       target: { value: 'RSSMRA80A01H501U' }
     });
-    fireEvent.click(screen.getByText('app.receiptsSearch.action'));
+    fireEvent.click(screen.getByText('app.receiptsSearch.actions.search'));
 
     await waitFor(() => {
       expect(utils.notify.emit).toHaveBeenCalledWith('app.receiptsSearch.searchError');
