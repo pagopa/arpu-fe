@@ -69,7 +69,8 @@
       }
     },
     "receiptDetail": {
-      "title": "Dettaglio Operazione",
+      "title": "Dettaglio",
+      "subtitle": "Puoi consultare i dati della ricevuta corrispondente alla tua ricerca e scaricarla.",
       "download": "Scarica ricevuta",
       "amount": "Importo",
       "remittanceInformation": "Oggetto del pagamento",
