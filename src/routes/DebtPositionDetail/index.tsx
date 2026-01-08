@@ -74,7 +74,11 @@ const DebtPositionDetail = () => {
           />
         </Box>
       </Card>
-      <PaymentOptionWrapper paymentOptions={data.paymentOptions} orgInfo={orgInfo} />
+      <PaymentOptionWrapper
+        paymentOptions={data.paymentOptions}
+        orgInfo={orgInfo}
+        debtPositionId={Number(debtPositionId)}
+      />
     </>
   );
 };

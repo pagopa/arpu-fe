@@ -1,4 +1,4 @@
-import { CartItem, CartState } from 'models/Cart';
+import { ExtendedCartItem, CartState } from 'models/Cart';
 import { usePersistentSignal } from 'hooks/usePersistentSignal';
 import { SessionItems } from 'utils/storage';
 
@@ -32,7 +32,7 @@ function setCartAmount(amount: number) {
   cartState.value = { ...cartState.value, amount: amount };
 }
 
-function updateAmount(items: CartItem[]) {
+function updateAmount(items: ExtendedCartItem[]) {
   const amount = items.reduce(
     (accumulatedAmount, cartItem) => accumulatedAmount + cartItem.amount,
     0
@@ -40,7 +40,7 @@ function updateAmount(items: CartItem[]) {
   setCartAmount(amount);
 }
 
-export function addItem(cartItem: CartItem) {
+export function addItem(cartItem: ExtendedCartItem) {
   // Max cart items check
   if (cartState.value.items.length === MAXCARTITEMS) return;
   // Check for duplicates

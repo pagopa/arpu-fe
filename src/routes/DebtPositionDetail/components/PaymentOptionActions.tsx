@@ -15,6 +15,8 @@ import { useUserEmail } from 'hooks/useUserEmail';
 
 interface paymentOptionsActionProps {
   selectPaymentOptionType: PaymentOptionType;
+  selectedPaymentOptionId: number;
+  debtPositionId: number;
   installments: DebtorInstallmentsOverviewDTO[];
   orgName: string;
   orgId: string;
@@ -24,7 +26,14 @@ const PaymentOptionsActions = (props: paymentOptionsActionProps) => {
   const email = useUserEmail();
   const navigate = useNavigate();
   const { t } = useTranslation();
-  const { selectPaymentOptionType, installments, orgName: paFullName, orgId: paTaxCode } = props;
+  const {
+    selectPaymentOptionType,
+    selectedPaymentOptionId,
+    installments,
+    orgName: paFullName,
+    orgId: paTaxCode,
+    debtPositionId
+  } = props;
 
   const carts = usePostCarts({
     onSuccess: (url) => {
@@ -42,7 +51,13 @@ const PaymentOptionsActions = (props: paymentOptionsActionProps) => {
   const addItemToCart = () => {
     try {
       // Assuming that add action is only for SINGLE_INSTALLMENT
-      const { iuv, nav, remittanceInformation: description, amountCents: amount } = installments[0];
+      const {
+        iuv,
+        nav,
+        remittanceInformation: description,
+        amountCents: amount,
+        installmentId
+      } = installments[0];
       if (!iuv || !nav || !amount) {
         throw new Error('Something went wrong trying to add the item: missing required data');
       }
@@ -52,7 +67,10 @@ const PaymentOptionsActions = (props: paymentOptionsActionProps) => {
         amount,
         iuv,
         nav,
-        paTaxCode
+        paTaxCode,
+        installmentId,
+        debtPositionId,
+        paymentOptionId: selectedPaymentOptionId
       });
       toggleCartDrawer();
     } catch (e) {

@@ -1,1 +1,0 @@
-export { PaymentNotice } from './PaymentNotice';

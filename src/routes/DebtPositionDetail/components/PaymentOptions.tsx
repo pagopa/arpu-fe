@@ -6,11 +6,12 @@ import {
 } from '../../../../generated/data-contracts';
 import { Card, RadioGroup, Stack, Typography } from '@mui/material';
 import { useTranslation } from 'react-i18next';
-import PaymentOption from './PaymentOptionItem';
+import PaymentOptionItem from './PaymentOptionItem';
 import PaymentOptionsActions from './PaymentOptionActions';
 
 interface PaymentOptionWrapperProps {
   paymentOptions: DebtorPaymentOptionOverviewDTO[];
+  debtPositionId: number;
   orgInfo: {
     orgName: string;
     orgId: string;
@@ -53,7 +54,7 @@ const PaymentOptionWrapper = (props: PaymentOptionWrapperProps) => {
         onChange={handleChange}>
         <Stack gap={2}>
           {props.paymentOptions.map((option) => (
-            <PaymentOption
+            <PaymentOptionItem
               key={option.paymentOptionId}
               {...option}
               selectionStatus={
@@ -69,6 +70,8 @@ const PaymentOptionWrapper = (props: PaymentOptionWrapperProps) => {
           orgName={props.orgInfo.orgName}
           installments={installments}
           selectPaymentOptionType={selectPaymentOptionType}
+          selectedPaymentOptionId={paymentOptionId}
+          debtPositionId={props.debtPositionId}
         />
       )}
     </Card>
