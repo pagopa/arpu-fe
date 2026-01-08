@@ -5,6 +5,7 @@ import { Actions } from './Actions';
 import React from 'react';
 import { InstallmentDebtorExtendedDTO, PersonDTO } from '../../../../../generated/data-contracts';
 
+const mockNavigate = vi.fn();
 const mockMutateAsync = vi.fn();
 const mockNotifyEmit = vi.fn();
 const mockGetBrokerId = vi.fn();
@@ -15,9 +16,40 @@ vi.mock('react-router', async (importOriginal) => {
   const actual = await importOriginal<typeof import('react-router')>();
   return {
     ...actual,
-    generatePath: vi.fn((_route, params) => `/receipt/${params.organizationId}/${params.receiptId}`)
+    useNavigate: () => mockNavigate,
+    generatePath: vi.fn((route, params) => {
+      if (route.includes('public')) {
+        return `/public/receipt/${params.organizationId}/${params.receiptId}`;
+      }
+      return `/receipt/${params.organizationId}/${params.receiptId}`;
+    })
   };
 });
+
+vi.mock('routes/routes', () => ({
+  ArcRoutes: {
+    RECEIPT: '/receipt/:organizationId/:receiptId',
+    public: {
+      RECEIPT: '/public/receipt/:organizationId/:receiptId'
+    }
+  }
+}));
+
+// Mock ActionMenu component
+vi.mock('components/ActionMenu/ActionMenu', () => ({
+  default: ({ rowId, menuItems }: any) => (
+    <div>
+      <button data-testid={`action-menu-${rowId}`}>Menu</button>
+      <div data-testid={`menu-items-${rowId}`}>
+        {menuItems.map((item: any, index: number) => (
+          <button key={index} onClick={item.action} data-testid={`menu-item-${index}`}>
+            {item.label}
+          </button>
+        ))}
+      </div>
+    </div>
+  )
+}));
 
 vi.mock('utils', () => ({
   default: {
@@ -66,6 +98,7 @@ const mockIncompleteInstallment = {
 describe('Receipts Action', () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    mockNavigate.mockClear();
     mockMutateAsync.mockClear();
     mockNotifyEmit.mockClear();
     mockGetBrokerId.mockReturnValue('broker123');
@@ -76,6 +109,18 @@ describe('Receipts Action', () => {
   it('should render', () => {
     render(<Actions installment={mockInstallment} />);
     expect(screen.getByTestId('action-menu-1')).toBeInTheDocument();
+  });
+
+  it('should show error notification when installment data is incomplete for navigation', async () => {
+    render(<Actions installment={mockIncompleteInstallment} />);
+
+    const viewDetailButton = screen.getByText('app.receiptsSearch.actions.toDetail');
+    fireEvent.click(viewDetailButton);
+
+    await waitFor(() => {
+      expect(mockNotifyEmit).toHaveBeenCalledWith('errors.toast.default');
+      expect(mockNavigate).not.toHaveBeenCalled();
+    });
   });
 
   describe('Download receipt', () => {
@@ -89,12 +134,8 @@ describe('Receipts Action', () => {
 
       render(<Actions installment={mockInstallment} />);
 
-      fireEvent.click(screen.getByTestId('action-menu-1'));
-
-      await waitFor(() => {
-        const downloadButton = screen.getByText('app.receiptsSearch.actions.download');
-        fireEvent.click(downloadButton);
-      });
+      const downloadButton = screen.getByText('app.receiptsSearch.actions.download');
+      fireEvent.click(downloadButton);
 
       await waitFor(() => {
         expect(mockMutateAsync).toHaveBeenCalledWith({
@@ -115,12 +156,8 @@ describe('Receipts Action', () => {
 
       render(<Actions installment={mockInstallment} />);
 
-      fireEvent.click(screen.getByTestId('action-menu-1'));
-
-      await waitFor(() => {
-        const downloadButton = screen.getByText('app.receiptsSearch.actions.download');
-        fireEvent.click(downloadButton);
-      });
+      const downloadButton = screen.getByText('app.receiptsSearch.actions.download');
+      fireEvent.click(downloadButton);
 
       await waitFor(() => {
         expect(mockDownloadBlob).toHaveBeenCalledWith(mockBlob, '987654321098765432.pdf');
@@ -137,12 +174,8 @@ describe('Receipts Action', () => {
 
       render(<Actions installment={mockInstallment} />);
 
-      fireEvent.click(screen.getByTestId('action-menu-1'));
-
-      await waitFor(() => {
-        const downloadButton = screen.getByText('app.receiptsSearch.actions.download');
-        fireEvent.click(downloadButton);
-      });
+      const downloadButton = screen.getByText('app.receiptsSearch.actions.download');
+      fireEvent.click(downloadButton);
 
       await waitFor(() => {
         expect(mockMutateAsync).toHaveBeenCalled();
@@ -155,12 +188,8 @@ describe('Receipts Action', () => {
 
       render(<Actions installment={mockInstallment} />);
 
-      fireEvent.click(screen.getByTestId('action-menu-1'));
-
-      await waitFor(() => {
-        const downloadButton = screen.getByText('app.receiptsSearch.actions.download');
-        fireEvent.click(downloadButton);
-      });
+      const downloadButton = screen.getByText('app.receiptsSearch.actions.download');
+      fireEvent.click(downloadButton);
 
       await waitFor(() => {
         expect(mockNotifyEmit).toHaveBeenCalledWith('errors.toast.default');
@@ -171,12 +200,8 @@ describe('Receipts Action', () => {
     it('should show error notification when installment data is incomplete for download', async () => {
       render(<Actions installment={mockIncompleteInstallment} />);
 
-      fireEvent.click(screen.getByTestId('action-menu-2'));
-
-      await waitFor(() => {
-        const downloadButton = screen.getByText('app.receiptsSearch.actions.download');
-        fireEvent.click(downloadButton);
-      });
+      const downloadButton = screen.getByText('app.receiptsSearch.actions.download');
+      fireEvent.click(downloadButton);
 
       await waitFor(() => {
         expect(mockNotifyEmit).toHaveBeenCalledWith('errors.toast.default');
@@ -192,12 +217,8 @@ describe('Receipts Action', () => {
 
       render(<Actions installment={installmentWithoutReceiptId} />);
 
-      fireEvent.click(screen.getByTestId('action-menu-1'));
-
-      await waitFor(() => {
-        const downloadButton = screen.getByText('app.receiptsSearch.actions.download');
-        fireEvent.click(downloadButton);
-      });
+      const downloadButton = screen.getByText('app.receiptsSearch.actions.download');
+      fireEvent.click(downloadButton);
 
       await waitFor(() => {
         expect(mockNotifyEmit).toHaveBeenCalledWith('errors.toast.default');
@@ -209,12 +230,8 @@ describe('Receipts Action', () => {
     it('should render both menu items when action menu is opened', async () => {
       render(<Actions installment={mockInstallment} />);
 
-      fireEvent.click(screen.getByTestId('action-menu-1'));
-
-      await waitFor(() => {
-        expect(screen.getByText('app.receiptsSearch.actions.toDetail')).toBeInTheDocument();
-        expect(screen.getByText('app.receiptsSearch.actions.download')).toBeInTheDocument();
-      });
+      expect(screen.getByText('app.receiptsSearch.actions.toDetail')).toBeInTheDocument();
+      expect(screen.getByText('app.receiptsSearch.actions.download')).toBeInTheDocument();
     });
   });
 });
