@@ -119,6 +119,7 @@ interface PaymentOptionProps extends DebtorPaymentOptionOverviewDTO {
 const PaymentOption = (props: PaymentOptionProps) => {
   const { t } = useTranslation();
   const isSelected = props.selectionStatus === 'selected';
+  const isDisabled = props.selectionStatus === 'disabled';
   const paymentOptionType = props.paymentOptionType;
 
   const isSingleInstallment =
@@ -127,12 +128,20 @@ const PaymentOption = (props: PaymentOptionProps) => {
     (paymentOptionType === PaymentOptionType.DOWN_PAYMENT && props.installments.length === 1);
 
   const label = isSingleInstallment ? (
-    <Typography variant="overline" textTransform="uppercase">
+    <Typography
+      variant="overline"
+      textTransform="uppercase"
+      color={isDisabled ? 'text.disabled' : 'text.primary'}>
       {t('app.debtPositionDetail.paymentOptionSingleInstallment')}
     </Typography>
   ) : (
     <>
-      <Typography variant="overline" textTransform="uppercase" display="block" mb={1}>
+      <Typography
+        variant="overline"
+        textTransform="uppercase"
+        display="block"
+        mb={1}
+        color={isDisabled ? 'text.disabled' : 'text.primary'}>
         {t('app.debtPositionDetail.paymentOptionInstallments')}
       </Typography>
       <Accent>{`${props.installments.length} ${t('app.debtPositionDetail.installments')}`}</Accent>
@@ -163,6 +172,7 @@ const PaymentOption = (props: PaymentOptionProps) => {
       <Grid container>
         <Grid size={6}>
           <FormControlLabel
+            disabled={props.selectionStatus === 'disabled'}
             data-testid="payment-option-item-type"
             value={props.paymentOptionId}
             control={<Radio />}
@@ -173,6 +183,7 @@ const PaymentOption = (props: PaymentOptionProps) => {
           <Typography
             data-testid="payment-option-item-total-amount"
             fontWeight={600}
+            color={isDisabled ? 'text.disabled' : 'text.primary'}
             fontStyle="semibold">
             {utils.converters.toEuro(props.totalAmountCents || 0)}
           </Typography>
@@ -181,7 +192,7 @@ const PaymentOption = (props: PaymentOptionProps) => {
               data-testid="payment-option-item-next-pay-date"
               fontSize={16}
               fontStyle="semibold"
-              color="text.secondary">
+              color={isDisabled ? 'text.disabled' : 'text.secondary'}>
               {nextInstallmentToBePaidLabel}
             </Typography>
           )}

@@ -7,8 +7,14 @@ export type CartItem = {
   paTaxCode: string;
 };
 
+export type ExtendedCartItem = CartItem & {
+  installmentId: number;
+  paymentOptionId: number;
+  debtPositionId: number;
+};
+
 export type CartState = {
   isOpen: boolean;
   amount: number;
-  items: CartItem[];
+  items: ExtendedCartItem[];
 };
