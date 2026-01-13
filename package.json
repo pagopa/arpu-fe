@@ -15,7 +15,7 @@
     "format": "prettier --write './**/*.{js,jsx,ts,tsx,css,md,json}' --config ./.prettierrc",
     "start": "yarn generate && parcel --no-cache",
     "tscb": "tsc -p tsconfig.build.json",
-    "build": "yarn generate && yarn tscb & parcel build",
+    "build": "yarn generate && yarn tscb & parcel build --public-url $DEPLOY_PATH",
     "type-check": "tsc",
     "storybook": "storybook dev -p 6006",
     "build-storybook": "yarn generate && storybook build",
