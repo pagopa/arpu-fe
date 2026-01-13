@@ -34,7 +34,7 @@ const Login = () => {
   const handleCTA2 = () => navigate(ArcRoutes.public.RECEIPTS_SEARCH);
 
   return (
-    <Grid container minHeight={580}>
+    <Grid container minHeight={'78vh'}>
       <Grid size={{ xs: 12, md: 8 }} bgcolor={theme.palette.background.default} pt={16} pb={16}>
         <Container>
           <Stack alignItems="center">

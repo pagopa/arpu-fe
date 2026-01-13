@@ -320,6 +320,7 @@ const useBrokerInfo = (brokerId: number) =>
       const { data } = await utils.apiClient.public.getPublicBrokerInfo(brokerId);
       return data;
     },
+    enabled: brokerId >= 0,
     throwOnError: true,
     gcTime: Infinity
   });
