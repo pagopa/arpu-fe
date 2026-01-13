@@ -15,9 +15,9 @@ declare global {
 // running the build command. */
 const matomoMap: Record<ENVIRONMENT, string> = {
   "LOCAL": '', // No tracking script for LOCAL
-  "DEV": '/matomo/container_KHGZHzVu.js',
-  "UAT": '/matomo/container_DHShZNWx.js',
-  "PROD": '/matomo/container_a7fdRBO1.js',
+  "DEV": '/cittadini/matomo/container_KHGZHzVu.js',
+  "UAT": '/cittadini/matomo/container_DHShZNWx.js',
+  "PROD": '/cittadini/matomo/container_a7fdRBO1.js',
 };
 
 const Matomo = () => {
