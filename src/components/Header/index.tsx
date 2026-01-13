@@ -8,7 +8,7 @@ import { ArcRoutes } from 'routes/routes';
 import { useUserInfo } from 'hooks/useUserInfo';
 import { SubHeader } from './SubHeader';
 import { useTranslation } from 'react-i18next';
-import { Box } from '@mui/material';
+import { ProductLogo } from 'components/ProductLogo';
 
 export interface HeaderProps {
   onAssistanceClick?: () => void;
@@ -68,14 +68,6 @@ export const Header = (props: HeaderProps) => {
     }
   ];
 
-  const Product = () => (
-    <Box>
-      {brokerInfo?.brokerLogo ? (
-        <img src={brokerInfo?.brokerLogo ?? ''} alt={`${brokerInfo?.brokerName} logo`} width="56" />
-      ) : null}
-    </Box>
-  );
-
   return (
     <>
       <HeaderAccount
@@ -86,7 +78,7 @@ export const Header = (props: HeaderProps) => {
         userActions={userActions}
         translationsMap={{ assistance: t('ui.header.help') }}
       />
-      <SubHeader product={<Product />} />
+      <SubHeader product={<ProductLogo />} />
     </>
   );
 };

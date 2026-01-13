@@ -1,84 +1,66 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import { FooterPostLogin, FooterLegal } from '@pagopa/mui-italia';
-import { ArcRoutes } from 'routes/routes';
 import { useLanguage } from 'hooks/useLanguage';
+import { Divider, Link, Stack, Typography } from '@mui/material';
+import { ArcRoutes } from 'routes/routes';
+import { ProductLogo } from './ProductLogo';
 
 const LINK_PERSONAL_DATA_PROTECTION =
   'https://privacyportal-de.onetrust.com/webform/77f17844-04c3-4969-a11d-462ee77acbe1/9ab6533d-be4a-482e-929a-0d8d2ab29df8';
 
-const openExternalLink = (url: string) => window.open(url, '_blank')?.focus();
+const LINK_A11Y = 'https://www.w3.org/WAI/standards-guidelines/wai-aria/';
+
+const FooterLink = ({ href, children }: { href: string; children: string }) => {
+  return (
+    <Link
+      href={href}
+      variant="body2"
+      target="_blank"
+      rel="noopener noreferrer"
+      sx={{ textDecoration: 'none', color: 'text.primary', fontWeight: 600, fontSize: 14 }}>
+      {children}
+    </Link>
+  );
+};
 
 export const Footer = () => {
   const { t } = useTranslation();
-  const { language, changeLanguage } = useLanguage();
+  useLanguage();
 
   return (
-    <div>
-      <FooterPostLogin
-        companyLink={{ ariaLabel: 'PagoPA SPA' }}
-        links={[
-          {
-            label: t('ui.footer.privacy'),
-            ariaLabel: t('ui.footer.privacy'),
-            href: ArcRoutes.PRIVACY_POLICY,
-            linkType: 'external',
-            onClick: () => openExternalLink(ArcRoutes.PRIVACY_POLICY)
-          },
-          {
-            label: t('ui.footer.personalData'),
-            ariaLabel: t('ui.footer.personalData'),
-            linkType: 'external',
-            href: LINK_PERSONAL_DATA_PROTECTION,
-            onClick: () => openExternalLink(LINK_PERSONAL_DATA_PROTECTION)
-          },
-          {
-            label: t('ui.footer.termsAndConditions'),
-            ariaLabel: t('ui.footer.termsAndConditions'),
-            href: ArcRoutes.TOS,
-            linkType: 'external',
-            onClick: () => window.open(ArcRoutes.TOS, '_blank')?.focus()
-          },
-          {
-            label: t('aria.a11y'),
-            ariaLabel: t('aria.a11y'),
-            linkType: 'external',
-            onClick: () =>
-              window
-                .open(
-                  'https://form.agid.gov.it/view/c74d0770-9799-11f0-b583-8b5f76942354',
-                  '_blank'
-                )
-                ?.focus()
-          }
-        ]}
-        currentLangCode={language}
-        languages={{
-          it: {
-            it: 'Italiano',
-            en: 'Inglese',
-            fr: 'Francese'
-          },
-          en: {
-            it: 'Italian',
-            en: 'English',
-            fr: 'French'
-          },
-          fr: {
-            it: 'Italien',
-            en: 'Anglais',
-            fr: 'Français'
-          }
-        }}
-        onLanguageChanged={changeLanguage}
-      />
-      <FooterLegal
-        content={
-          <>
-            <b>{t('general.PagoPA')}</b> - {t('ui.footer.legalInfo')}
-          </>
-        }
-      />
-    </div>
+    <Stack
+      component="footer"
+      sx={{
+        backgroundColor: 'background.paper'
+      }}>
+      <Divider />
+      <Stack
+        direction="row"
+        justifyContent="space-between"
+        alignItems="center"
+        padding={3}
+        minHeight={50}>
+        <ProductLogo />
+        <Stack direction="row" gap={2} alignItems="center" component="nav">
+          <FooterLink href={ArcRoutes.PRIVACY_POLICY}>{t('ui.footer.privacy')}</FooterLink>
+          <FooterLink href={ArcRoutes.TOS}>{t('ui.footer.termsAndConditions')}</FooterLink>
+          <FooterLink href={LINK_A11Y}>{t('ui.footer.a11y')}</FooterLink>
+          <FooterLink href={LINK_PERSONAL_DATA_PROTECTION}>
+            {t('ui.footer.personalData')}
+          </FooterLink>
+        </Stack>
+      </Stack>
+      <Stack>
+        <Divider />
+        <Stack alignItems="center" justifyContent="center" height={60}>
+          <Typography fontSize={14}>
+            <Typography component="span" fontWeight={600} fontSize={14}>
+              {t('ui.footer.legalHolder')}
+            </Typography>
+            {t('ui.footer.legal')}
+          </Typography>
+        </Stack>
+      </Stack>
+    </Stack>
   );
 };
