@@ -9,7 +9,7 @@ export const setupInterceptors = (client: Client) => {
     (request: InternalAxiosRequestConfig) => {
       const tokenHeaderExcludePaths: string[] = utils.config.tokenHeaderExcludePaths;
       const routeUrl = request.url || '';
-      const accessToken = window.localStorage.getItem('accessToken');
+      const accessToken = window.localStorage.getItem('ARPU-accessToken');
       if (accessToken && !tokenHeaderExcludePaths.includes(routeUrl)) {
         request.headers['Authorization'] = `Bearer ${accessToken}`;
       }

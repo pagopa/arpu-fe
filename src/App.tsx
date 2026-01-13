@@ -27,7 +27,7 @@ import { ReceiptsSearch } from 'routes/Receipts/search';
 import DebtPositionDetail from 'routes/DebtPositionDetail';
 
 const withGuard = (Component: () => React.JSX.Element) => (
-  <RouteGuard itemKeys={['accessToken']} storage={window.localStorage}>
+  <RouteGuard itemKeys={['ARPU-accessToken']} storage={window.localStorage}>
     <Component />
   </RouteGuard>
 );
