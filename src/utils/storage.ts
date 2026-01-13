@@ -19,8 +19,8 @@ const setSessionItem = (key: SessionItems, value: string) => {
 const getSessionItem = (key: SessionItems) => sessionStorage.getItem(key);
 
 enum StorageItems {
-  TOKEN = 'accessToken',
-  BROKERID = 'brokerId'
+  TOKEN = 'ARPU-accessToken',
+  BROKERID = 'ARPU-brokerId'
 }
 
 /** set a session item and return his value. If not possible returs null */
