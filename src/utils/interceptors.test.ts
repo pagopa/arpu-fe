@@ -44,7 +44,7 @@ describe('setupInterceptors', () => {
   it('should add Authorization header to request if token is present', () => {
     const request = { url: '/path3', headers: {} };
     const accessToken = 'token';
-    window.localStorage.setItem('accessToken', accessToken);
+    window.localStorage.setItem('ARPU-accessToken', accessToken);
     setupInterceptors(client);
     const requestInterceptor = (client.instance.interceptors.request.use as Mock).mock.calls[0][0];
     const result = requestInterceptor(request);
