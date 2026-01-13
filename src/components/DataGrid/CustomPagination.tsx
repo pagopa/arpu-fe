@@ -1,5 +1,4 @@
 import { Box, Select, MenuItem, Pagination, SelectChangeEvent } from '@mui/material';
-import { theme } from '@pagopa/mui-italia';
 import { useHashParamsListener } from 'hooks/useHashParamsListener';
 import React, { useCallback } from 'react';
 import utils from 'utils';
@@ -66,14 +65,7 @@ const CustomPagination = ({
   };
 
   return (
-    <Box
-      display="flex"
-      justifyContent="space-between"
-      alignItems="center"
-      width="100%"
-      bgcolor={theme.palette.grey[200]}
-      py={2}
-      px={2}>
+    <Box display="flex" justifyContent="space-between" alignItems="center" width="100%">
       <Select
         value={pageSize}
         onChange={handlePageSizeChange}

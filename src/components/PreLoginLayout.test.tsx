@@ -1,5 +1,5 @@
 import React from 'react';
-import { fireEvent, render, screen } from '@testing-library/react';
+import { fireEvent, render, screen } from '__tests__/renderers';
 import { PreLoginLayout } from './PreLoginLayout';
 import '@testing-library/jest-dom';
 import { i18nTestSetup } from '__tests__/i18nTestSetup';
