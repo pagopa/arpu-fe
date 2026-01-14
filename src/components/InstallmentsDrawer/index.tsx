@@ -13,11 +13,14 @@ import { cartDrawerStyles } from './CartDrawer.styles';
 import { useStore } from 'store/GlobalStore';
 import { usePostCarts } from 'hooks/usePostCarts';
 import { useUserEmail } from 'hooks/useUserEmail';
-import PreCartItem from './InstallmentItem';
+import InstallmentItem from './InstallmentItem';
 import { UnpayableItems } from './UnpayableItems';
 import { closeInstallmentsDrawer } from 'store/installmentsDrawer';
 import { InstallmentDrawerItem } from 'models/InstallmentDrawer';
 import { InstallmentStatus } from '../../../generated/data-contracts';
+import { addItem, toggleCartDrawer } from 'store/CartStore';
+import utils from 'utils';
+import { CartItem } from 'models/Cart';
 
 const InstallmentsDrawer = () => {
   const [addedInstallments, setAddedInstallments] = React.useState<InstallmentDrawerItem[]>([]);
@@ -40,11 +43,8 @@ const InstallmentsDrawer = () => {
     state: { installmentsDrawer }
   } = useStore();
 
-  const onEmptyButtonClick = () => {
-    closeInstallmentsDrawer();
-  };
-
   const onPayButton = () => {
+    payItems();
     closeInstallmentsDrawer();
   };
 
@@ -79,6 +79,94 @@ const InstallmentsDrawer = () => {
     setAddedInstallments((prev) => prev.filter((i) => i.iuv !== item.iuv));
   };
 
+  const addToCart = () => {
+    try {
+      addedInstallments.forEach((installment) => {
+        const {
+          paFullName,
+          paTaxCode,
+          debtPositionId,
+          paymentOptionId,
+          iuv,
+          nav,
+          remittanceInformation: description,
+          amountCents: amount,
+          installmentId
+        } = installment;
+        if (!iuv || !nav || !amount) {
+          throw new Error('Something went wrong trying to add the item: missing required data');
+        }
+        addItem({
+          paFullName,
+          description,
+          amount,
+          iuv,
+          nav,
+          paTaxCode,
+          installmentId,
+          debtPositionId,
+          paymentOptionId
+        });
+      });
+      toggleCartDrawer();
+      closeInstallmentsDrawer();
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  type MaybeCorruptedCartItem = {
+    iuv?: string;
+    nav?: string;
+    description: string;
+    amount?: number;
+    paFullName: string;
+    paTaxCode: string;
+  };
+
+  function checkItemsIntegrity(items: MaybeCorruptedCartItem[]): items is CartItem[] {
+    for (const item of items) {
+      if (!item.iuv || !item.nav || !item.amount) {
+        return false;
+      }
+    }
+    return true;
+  }
+
+  const payItems = () => {
+    try {
+      const payItems: MaybeCorruptedCartItem[] = addedInstallments.map((installment) => {
+        const {
+          iuv,
+          nav,
+          remittanceInformation: description,
+          amountCents: amount,
+          paFullName,
+          paTaxCode
+        } = installment;
+        return {
+          iuv,
+          nav,
+          description,
+          amount,
+          paFullName,
+          paTaxCode
+        };
+      });
+
+      if (payItems.length === 0) {
+        throw new Error('No items to pay');
+      }
+      if (checkItemsIntegrity(payItems)) {
+        carts.mutate({ notices: payItems, email });
+      } else {
+        throw new Error('Missing required data in items to pay');
+      }
+    } catch (e) {
+      utils.notify.emit((e as Error).message);
+    }
+  };
+
   return (
     <>
       <Box sx={styles.container} component="aside" aria-label={t('app.cart.header.title')}>
@@ -103,7 +191,7 @@ const InstallmentsDrawer = () => {
             <Typography>Stai per pagare</Typography>
             <Stack spacing={3}>
               {addedInstallments.map((item) => (
-                <PreCartItem
+                <InstallmentItem
                   key={item.iuv}
                   item={item}
                   totalItems={totalItems}
@@ -120,7 +208,7 @@ const InstallmentsDrawer = () => {
               <Typography>Rate Disponibili:</Typography>
               <Stack spacing={3}>
                 {canBeAddedInstallments.map((item) => (
-                  <PreCartItem
+                  <InstallmentItem
                     key={item.iuv}
                     item={item}
                     totalItems={totalItems}
@@ -137,12 +225,12 @@ const InstallmentsDrawer = () => {
 
           {/* Action Button */}
           <Stack justifyContent="center" sx={styles.actionButton} spacing={2}>
-            <Button variant="outlined" size="large" onClick={onEmptyButtonClick}>
-              {t('app.preCart.actions.add')}
+            <Button variant="outlined" size="large" onClick={addToCart}>
+              {t('app.preCart.actions.add')} {`(${addedInstallments.length})`}
             </Button>
 
             <Button variant="contained" size="large" onClick={onPayButton} id="pay-button">
-              {t('app.preCart.actions.pay')}
+              {t('app.preCart.actions.pay')} {`(${addedInstallments.length})`}
             </Button>
           </Stack>
         </Stack>

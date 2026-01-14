@@ -111,7 +111,14 @@ const PaymentOptionsActions = (props: paymentOptionsActionProps) => {
       payItem();
     } else {
       openInstallmentsDrawer(
-        installments.map((inst, index) => ({ ...inst, rateIndex: index + 1 }))
+        installments.map((inst, index) => ({
+          ...inst,
+          rateIndex: index + 1,
+          paFullName,
+          paTaxCode,
+          debtPositionId,
+          paymentOptionId: selectedPaymentOptionId
+        }))
       );
     }
   };
