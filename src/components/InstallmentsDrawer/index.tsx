@@ -14,7 +14,7 @@ import { useStore } from 'store/GlobalStore';
 import { usePostCarts } from 'hooks/usePostCarts';
 import { useUserEmail } from 'hooks/useUserEmail';
 import InstallmentItem from './InstallmentItem';
-import { UnpayableItems } from './UnpayableItems';
+import ExpiredInstallmentItems from './ExpiredItems';
 import { closeInstallmentsDrawer } from 'store/installmentsDrawer';
 import { InstallmentDrawerItem } from 'models/InstallmentDrawer';
 import { InstallmentStatus } from '../../../generated/data-contracts';
@@ -170,7 +170,7 @@ const InstallmentsDrawer = () => {
 
   return (
     <>
-      <Box sx={styles.container} component="aside" aria-label={t('app.cart.header.title')}>
+      <Box sx={styles.container} component="aside" aria-label={t('app.installmentsDrawer')}>
         <Stack justifyContent="space-between" height="100%">
           <Stack>
             {/* Header Section */}
@@ -178,7 +178,7 @@ const InstallmentsDrawer = () => {
               <Stack direction="row" sx={styles.header}>
                 <ButtonNaked
                   onClick={closeInstallmentsDrawer}
-                  aria-label={t('app.cart.header.close')}>
+                  aria-label={t('app.installmentsDrawer.close')}>
                   <CloseIcon />
                 </ButtonNaked>
               </Stack>
@@ -230,12 +230,12 @@ const InstallmentsDrawer = () => {
 
             {/* unpayble installments section */}
             {expiredInstallments.length > 0 && (
-              <UnpayableItems items={expiredInstallments} totalItems={totalItems} />
+              <ExpiredInstallmentItems items={expiredInstallments} totalItems={totalItems} />
             )}
           </Stack>
 
           {/* Action Button */}
-          <Stack justifyContent="center" sx={styles.actionButton} spacing={2}>
+          <Stack justifyContent="center" spacing={2}>
             <Button
               startIcon={<ShoppingCartIcon />}
               variant="outlined"
@@ -244,7 +244,11 @@ const InstallmentsDrawer = () => {
               {t('app.installmentsDrawer.actions.add', { count: addedInstallments.length })}
             </Button>
 
-            <Button variant="contained" size="large" onClick={onPayButton} id="pay-button">
+            <Button
+              variant="contained"
+              size="large"
+              onClick={onPayButton}
+              id="installment-drawer-pay-button">
               {t('app.installmentsDrawer.actions.pay', { count: addedInstallments.length })}
             </Button>
           </Stack>

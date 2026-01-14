@@ -25,30 +25,5 @@ export const installmentsDrawerStyles = (theme: Theme): Record<string, SxProps> 
     justifyContent: 'flex-end',
     alignItems: 'center',
     marginBottom: theme.spacing(2)
-  },
-  cartSummary: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center'
-  },
-  item: {
-    alignItems: 'center',
-    justifyContent: 'flex-end',
-    flexDirection: 'row',
-    marginTop: theme.spacing(2),
-    marginBottom: theme.spacing(2)
-  },
-  items: {
-    marginTop: theme.spacing(3),
-    marginBottom: theme.spacing(3),
-    flexGrow: 1,
-    overflowY: 'auto'
-  },
-  emptyCartMessage: {
-    gap: theme.spacing(3),
-    alignSelf: 'center',
-    textAlign: 'center',
-    maxWidth: theme.spacing(40)
-  },
-  actionButton: {}
+  }
 });

@@ -34,21 +34,38 @@ export const Accent = (props: { children: string }) => (
   </Box>
 );
 
+const getInstallmentStatusColor = (status: InstallmentStatus) => {
+  switch (status) {
+    case 'PAID':
+      return 'success';
+    case 'UNPAID':
+      return 'default';
+    case 'EXPIRED':
+      return 'error';
+    default:
+      return 'default';
+  }
+};
+
+export const InstallmentStatusChip = ({
+  dataTestId,
+  status
+}: {
+  dataTestId?: string;
+  status: InstallmentStatus;
+}) => {
+  const { t } = useTranslation();
+  return (
+    <Chip
+      data-testid={dataTestId}
+      label={t(`app.debtPositionDetail.status.${status}`)}
+      color={getInstallmentStatusColor(status)}
+    />
+  );
+};
+
 const ExtraInfo = (props: { installments: DebtorPaymentOptionOverviewDTO['installments'] }) => {
   const { t } = useTranslation();
-
-  const getInstallmentStatusColor = (status: InstallmentStatus) => {
-    switch (status) {
-      case 'PAID':
-        return 'success';
-      case 'UNPAID':
-        return 'default';
-      case 'EXPIRED':
-        return 'warning';
-      default:
-        return 'default';
-    }
-  };
 
   return (
     <>
@@ -89,10 +106,9 @@ const ExtraInfo = (props: { installments: DebtorPaymentOptionOverviewDTO['instal
 
                 <Grid size={6} gap={2}>
                   <Stack direction="row" spacing={2} alignItems="center">
-                    <Chip
-                      data-testid={`payment-option-type-installments-installment-${index + 1}-status`}
-                      label={t(`app.debtPositionDetail.status.${installment.status}`)}
-                      color={getInstallmentStatusColor(installment.status)}
+                    <InstallmentStatusChip
+                      dataTestId={`payment-option-type-installments-installment-${index + 1}-status`}
+                      status={installment.status}
                     />
                     {installment.dueDate && (
                       <Typography

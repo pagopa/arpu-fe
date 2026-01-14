@@ -76,7 +76,8 @@
       "expiredInstallments": "Rate scadute",
       "installment": {
         "installmentNumber": "Rata {{installmentNumber}} di {{totalInstallments}}",
-        "dueDate": "Entro il <strong>{{date}}</strong>"
+        "dueDate": "Entro il <strong>{{date}}</strong>",
+        "expireDate": "il <strong>{{date}}</strong>" 
       },
       "actions": {
         "add": "Aggiungi al carrello ({{count}})",
@@ -200,7 +201,7 @@
       "status": {
         "PAID": "Pagato",
         "UNPAID": "Da pagare",
-        "EXPIRED": "Scaduto"
+        "EXPIRED": "Scaduta"
       }
     },
     "paymentNotice": {
