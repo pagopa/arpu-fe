@@ -9,7 +9,7 @@ import { ButtonNaked } from '@pagopa/mui-italia/dist/components/ButtonNaked';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { ArcRoutes } from 'routes/routes';
-import { cartDrawerStyles } from './CartDrawer.styles';
+import { installmentsDrawerStyles } from './InstallmentsDrawer.styles';
 import { useStore } from 'store/GlobalStore';
 import { usePostCarts } from 'hooks/usePostCarts';
 import { useUserEmail } from 'hooks/useUserEmail';
@@ -21,13 +21,14 @@ import { InstallmentStatus } from '../../../generated/data-contracts';
 import { addItem, toggleCartDrawer } from 'store/CartStore';
 import utils from 'utils';
 import { CartItem } from 'models/Cart';
+import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 
 const InstallmentsDrawer = () => {
   const [addedInstallments, setAddedInstallments] = React.useState<InstallmentDrawerItem[]>([]);
 
   const { t } = useTranslation();
   const theme = useTheme();
-  const styles = cartDrawerStyles(theme);
+  const styles = installmentsDrawerStyles(theme);
   const navigate = useNavigate();
 
   const carts = usePostCarts({
@@ -171,79 +172,91 @@ const InstallmentsDrawer = () => {
     <>
       <Box sx={styles.container} component="aside" aria-label={t('app.cart.header.title')}>
         <Stack justifyContent="space-between" height="100%">
-          {/* Header Section */}
-          <Box>
-            <Stack direction="row" sx={styles.header}>
-              <ButtonNaked
-                onClick={closeInstallmentsDrawer}
-                aria-label={t('app.cart.header.close')}>
-                <CloseIcon />
-              </ButtonNaked>
-            </Stack>
-            <Stack>
-              <Typography variant="h6">{t('app.preCart.header.title')}</Typography>
-              <Typography>{t('app.preCart.header.description')}</Typography>
-            </Stack>
-          </Box>
-
-          {/* Already selected installments section*/}
-          <Box>
-            <Typography>Stai per pagare</Typography>
-            <Stack spacing={3}>
-              {addedInstallments.map((item) => (
-                <InstallmentItem
-                  key={item.iuv}
-                  item={item}
-                  totalItems={totalItems}
-                  type="added"
-                  action={removeInstallment}
-                />
-              ))}
-            </Stack>
-          </Box>
-
-          {/* Available installments section */}
-          {canBeAddedInstallments.length > 0 && (
+          <Stack>
+            {/* Header Section */}
             <Box>
-              <Typography>Rate Disponibili:</Typography>
-              <Stack spacing={3}>
-                {canBeAddedInstallments.map((item) => (
+              <Stack direction="row" sx={styles.header}>
+                <ButtonNaked
+                  onClick={closeInstallmentsDrawer}
+                  aria-label={t('app.cart.header.close')}>
+                  <CloseIcon />
+                </ButtonNaked>
+              </Stack>
+              <Stack mb={4} spacing={1}>
+                <Typography variant="h6" fontSize={24} fontWeight={700}>
+                  {t('app.installmentsDrawer.title')}
+                </Typography>
+                <Typography fontSize={16}>{t('app.installmentsDrawer.description')}</Typography>
+              </Stack>
+            </Box>
+
+            {/* Already selected installments section*/}
+            <Box>
+              <Typography variant="overline">
+                {t('app.installmentsDrawer.selectedInstallments')}
+              </Typography>
+              <Stack spacing={3} my={3}>
+                {addedInstallments.map((item) => (
                   <InstallmentItem
                     key={item.iuv}
                     item={item}
                     totalItems={totalItems}
-                    type="available"
-                    action={addInstallment}
+                    type="added"
+                    action={removeInstallment}
                   />
                 ))}
               </Stack>
             </Box>
-          )}
 
-          {/* unpayble installments section */}
-          {expiredInstallments.length > 0 && <UnpayableItems />}
+            {/* Available installments section */}
+            {canBeAddedInstallments.length > 0 && (
+              <Box>
+                <Typography variant="overline">
+                  {t('app.installmentsDrawer.availableInstallments')}
+                </Typography>
+                <Stack spacing={3} my={3}>
+                  {canBeAddedInstallments.map((item) => (
+                    <InstallmentItem
+                      key={item.iuv}
+                      item={item}
+                      totalItems={totalItems}
+                      type="available"
+                      action={addInstallment}
+                    />
+                  ))}
+                </Stack>
+              </Box>
+            )}
+
+            {/* unpayble installments section */}
+            {expiredInstallments.length > 0 && (
+              <UnpayableItems items={expiredInstallments} totalItems={totalItems} />
+            )}
+          </Stack>
 
           {/* Action Button */}
           <Stack justifyContent="center" sx={styles.actionButton} spacing={2}>
-            <Button variant="outlined" size="large" onClick={addToCart}>
-              {t('app.preCart.actions.add')} {`(${addedInstallments.length})`}
+            <Button
+              startIcon={<ShoppingCartIcon />}
+              variant="outlined"
+              size="large"
+              onClick={addToCart}>
+              {t('app.installmentsDrawer.actions.add', { count: addedInstallments.length })}
             </Button>
 
             <Button variant="contained" size="large" onClick={onPayButton} id="pay-button">
-              {t('app.preCart.actions.pay')} {`(${addedInstallments.length})`}
+              {t('app.installmentsDrawer.actions.pay', { count: addedInstallments.length })}
             </Button>
           </Stack>
         </Stack>
       </Box>
       {/* Overlay */}
-      (
       <Box
         sx={styles.overlay}
         aria-hidden="true"
         role="presentation"
         onClick={closeInstallmentsDrawer}
       />
-      )
     </>
   );
 };

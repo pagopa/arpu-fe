@@ -1,6 +1,6 @@
 import { SxProps, Theme } from '@mui/material';
 
-export const cartDrawerStyles = (theme: Theme): Record<string, SxProps> => ({
+export const installmentsDrawerStyles = (theme: Theme): Record<string, SxProps> => ({
   container: {
     zIndex: 10,
     position: 'fixed',

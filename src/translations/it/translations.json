@@ -68,6 +68,21 @@
         "info": "Puoi pagare fino a 5 avvisi insieme"
       }
     },
+    "installmentsDrawer": {
+      "title": "Il tuo piano rateale",
+      "description": "Controlla le tue rate, verifica importi e scadenze e seleziona quelle che vuoi pagare adesso.",
+      "selectedInstallments": "Stai per pagare:",
+      "availableInstallments": "Rate disponibili:",
+      "expiredInstallments": "Rate scadute",
+      "installment": {
+        "installmentNumber": "Rata {{installmentNumber}} di {{totalInstallments}}",
+        "dueDate": "Entro il <strong>{{date}}</strong>"
+      },
+      "actions": {
+        "add": "Aggiungi al carrello ({{count}})",
+        "pay": "Vai al pagamento ({{count}})"
+      }
+    },
     "receiptDetail": {
       "title": "Dettaglio",
       "subtitle": "Puoi consultare i dati della ricevuta corrispondente alla tua ricerca e scaricarla.",

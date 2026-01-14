@@ -25,10 +25,10 @@ import TimelineContent from '@mui/lab/TimelineContent/TimelineContent';
 import utils from 'utils';
 import { useTranslation } from 'react-i18next';
 
-const Accent = (props: { children: string }) => (
+export const Accent = (props: { children: string }) => (
   <Box
     sx={{ display: 'inline-block', backgroundColor: '#e1f5fe', borderRadius: '4px', paddingX: 1 }}>
-    <Typography color="#215C76" textTransform="capitalize">
+    <Typography color="#215C76" textTransform="capitalize" fontWeight={600} fontSize={14}>
       {props.children}
     </Typography>
   </Box>
