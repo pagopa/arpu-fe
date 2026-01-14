@@ -111,9 +111,7 @@ const PaymentOptionsActions = (props: paymentOptionsActionProps) => {
     if (selectPaymentOptionType === PaymentOptionType.SINGLE_INSTALLMENT) {
       payItem();
     } else {
-      openInstallmentsDrawer(
-        installments.filter((installment) => installment.status !== InstallmentStatus.PAID)
-      );
+      openInstallmentsDrawer(installments.map((inst, index) => ({ ...inst, rateIndex: index + 1 })));
     }
   };
 

@@ -2,8 +2,15 @@ import React from 'react';
 import { Box, Stack, Typography } from '@mui/material';
 import IconButton from '@mui/material/IconButton';
 import AddCircleIcon from '@mui/icons-material/AddCircle';
+import utils from 'utils';
+import { InstallmentDrawerItem } from 'models/InstallmentDrawer';
 
-const PreCartItem = () => {
+interface InstallmentItemProps {
+  item: InstallmentDrawerItem;
+  totalItems: number;
+}
+
+const InstallmentItem = ({ item, totalItems }: InstallmentItemProps) => {
   return (
     <Stack direction="row">
       <IconButton aria-label="add">
@@ -21,14 +28,21 @@ const PreCartItem = () => {
         }}>
         <Stack direction="row" justifyContent="space-between" alignItems="center">
           <Stack>
-            <Typography>Rata 1 di 3</Typography>
-            <Typography>Entro il 30/11/2025</Typography>
+            <Typography>Rata {item.rateIndex} di {totalItems}</Typography>
+            {
+              /* Due date */
+              item.dueDate && <Typography>Entro il {utils.datetools.formatDate(item.dueDate)}</Typography>
+            }
           </Stack>
-          <Typography>296,56 $</Typography>
+          {
+            /* Amount */
+            item.amountCents &&
+            <Typography>{utils.converters.toEuro(item.amountCents)}</Typography>
+          }
         </Stack>
       </Box>
     </Stack>
   );
 };
 
-export default PreCartItem;
+export default InstallmentItem;

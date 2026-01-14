@@ -16,13 +16,11 @@ import { useUserEmail } from 'hooks/useUserEmail';
 import PreCartItem from './InstallmentItem';
 import { UnpayableItems } from './UnpayableItems';
 import { closeInstallmentsDrawer } from 'store/installmentsDrawer';
-import {
-  DebtorInstallmentsOverviewDTO,
-  InstallmentStatus
-} from '../../../generated/data-contracts';
+import { InstallmentDrawerItem } from 'models/InstallmentDrawer';
+import { InstallmentStatus } from '../../../generated/data-contracts';
 
 const InstallmentsDrawer = () => {
-  const [addedInstallments, setAddedInstallments] = React.useState<DebtorInstallmentsOverviewDTO[]>(
+  const [addedInstallments, setAddedInstallments] = React.useState<InstallmentDrawerItem[]>(
     []
   );
 
@@ -54,10 +52,13 @@ const InstallmentsDrawer = () => {
 
   console.log(installmentsDrawer.items);
 
+  const totalItems = installmentsDrawer.items.length;
+
   const unpaidInstallments = useMemo(
     () => installmentsDrawer.items.filter((item) => item.status === InstallmentStatus.UNPAID),
     [installmentsDrawer.items]
   );
+
   const expiredInstallments = useMemo(
     () => installmentsDrawer.items.filter((item) => item.status === InstallmentStatus.EXPIRED),
     [installmentsDrawer.items]
@@ -72,8 +73,6 @@ const InstallmentsDrawer = () => {
     () => unpaidInstallments.filter((item) => !addedInstallments.includes(item)),
     [unpaidInstallments, addedInstallments]
   );
-
-  console.log(unpaidInstallments, expiredInstallments);
 
   return (
     <>
@@ -99,7 +98,7 @@ const InstallmentsDrawer = () => {
             <Typography>Stai per pagare</Typography>
             <Stack spacing={3}>
               {addedInstallments.map((item) => (
-                <PreCartItem key={item.iuv} />
+                <PreCartItem key={item.iuv} item={item} totalItems={totalItems}/>
               ))}
             </Stack>
           </Box>
@@ -109,7 +108,7 @@ const InstallmentsDrawer = () => {
             <Typography>Rate Disponibili:</Typography>
             <Stack spacing={3}>
               {canBeAddedInstallments.map((item) => (
-                <PreCartItem key={item.iuv} />
+                <PreCartItem key={item.iuv} item={item} totalItems={totalItems}/>
               ))}
             </Stack>
           </Box>
