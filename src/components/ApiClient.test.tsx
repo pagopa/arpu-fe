@@ -30,12 +30,12 @@ describe('ApiClient Component', () => {
   });
 
   it('renders without crashing', () => {
-    render(<ApiClient client={mockClient} />);
+    render(<ApiClient client={[mockClient]} />);
     expect(screen.getByText('Outlet Component')).toBeInTheDocument();
   });
 
   it('sets up interceptors on mount', () => {
-    render(<ApiClient client={mockClient} />);
+    render(<ApiClient client={[mockClient]} />);
     expect(setupInterceptors).toHaveBeenCalledWith(mockClient);
     expect(setupInterceptors).toHaveBeenCalledTimes(1);
   });

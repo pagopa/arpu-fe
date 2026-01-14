@@ -16,6 +16,7 @@ variables:
   NODE_VERSION: '22.11.0'
   npm_config_cache: $(Pipeline.Workspace)/.npm
   vmImageNameDefault: 'ubuntu-latest'
+  blob_container_path: 'cittadini'
   cdn_logos: 'https://assets.cdn.io.italia.it/logos/organizations'
   assistance_link: 'https://pagopa.gov.it'
 
@@ -124,7 +125,7 @@ stages:
               scriptType: 'bash'
               scriptLocation: inlineScript
               inlineScript: |
-                az storage blob sync --container '$web' --account-name $(storage_account) --source "$(Pipeline.Workspace)/Bundle"
+                az storage blob sync --container '$web' --account-name $(storage_account) --source "$(Pipeline.Workspace)/Bundle" --destination '$(blob_container_path)/'
 
           - task: AzureCLI@1
             displayName: 'Purge CDN endpoint'
@@ -132,4 +133,4 @@ stages:
               azureSubscription: '$(AZURE_SUBSCRIPTION)'
               scriptLocation: inlineScript
               inlineScript: |
-                az cdn endpoint purge -g $(resource_group) -n $(cdn_endpoint) --profile-name $(cdn_profile) --content-paths "/*"
+                az cdn endpoint purge -g $(resource_group) -n $(cdn_endpoint) --profile-name $(cdn_profile) --content-paths "/" "/$(blob_container_path)" "/$(blob_container_path)/*"

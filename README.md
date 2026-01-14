@@ -33,7 +33,7 @@ The table below describes all the Environment variables needed by the applicatio
 | ENTITIES_LOGO_CDN | cdn link for logos                                    | url                           |
 | LOGIN_URL         | Link for login button                                 | url                           |
 | SHOW_NOTICES      | shows/hides payment notices section (and the cart)    | '0'|'1'                       |
-| DEPLOY_PATH       | deploy subpath (default "/pagamenti")                 | string                        |
+| DEPLOY_PATH       | deploy subpath (default "/cittadini")                 | string                        |
 | ENV               | env target (used in conditional evaluations)          | 'LOCAL'|'DEV'|'UAT'|'PROD'    |
 | VERSION           | active version (valued by pipeline, debug purpose)    | string (branch:commit-hash)   |
 

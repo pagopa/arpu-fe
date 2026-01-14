@@ -71,7 +71,7 @@ export const mockNoticeDetails: PaymentNoticeDetailsSINGLE = {
     nav: '302052339706758944',
     iuv: '02052339706758944',
     description: 'Test Pull - unica opzione',
-    dueDate: '10/31/2025',
+    dueDate: '31/10/2025',
     amount: '6,53 €',
     amountValue: 653
   },
@@ -147,7 +147,7 @@ export const mockConvertedNotice: PaymentNoticeType[] = [
       description: 'Test Pull - unica opzione',
       numberOfInstallments: 1,
       amount: '5,88\xa0€',
-      dueDate: '10/31/2024',
+      dueDate: '31/10/2024',
       isPartialPayment: false,
       installments: {
         nav: '37442658002593149',
@@ -156,7 +156,7 @@ export const mockConvertedNotice: PaymentNoticeType[] = [
         paFullName: 'EC Demo Pagamenti Pull Test',
         amount: '5,88\xa0€',
         description: 'Test Pull - unica opzione',
-        dueDate: '10/31/2024',
+        dueDate: '31/10/2024',
         status: PaymentOptionStatus.PO_UNPAID
       },
       amountValue: 588

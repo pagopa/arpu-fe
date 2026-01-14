@@ -7,18 +7,21 @@ export default defineConfig({
     globals: true,
     setupFiles: './vitest.setup.mts',
     environment: 'jsdom',
-		clearMocks: true,
-		watch: false,
-		silent: true,
+    clearMocks: true,
+    watch: false,
+    silent: true,
+    deps: {
+      inline: ['@mui/x-data-grid']
+    },
     coverage: {
       provider: 'v8',
       reporter: ['text', 'json-summary', 'json', 'html', 'lcov'],
       reportOnFailure: true,
       exclude: [
         ...configDefaults.exclude,
-				'**/*.test.ts?(x)',
-				'**/*.styles.ts?(x)',
-				'src/__tests__/',
+        '**/*.test.ts?(x)',
+        '**/*.styles.ts?(x)',
+        'src/__tests__/',
         'src/stories/',
         'src/index.tsx',
         'src/App.tsx',
@@ -26,6 +29,7 @@ export default defineConfig({
         'src/components/Layout.tsx',
         'src/utils/style.tsx',
         'src/models/',
+        'src/components/Spontanei' // Spontanei is WIP section, please remove this line when the functionality is read
       ],
       include: ['src/**/*.ts?(x)'],
       thresholds: {

@@ -1,16 +1,9 @@
-import utils from 'utils';
-
 /**
- * Downloads pdf for a transaction
+ * Downloads a file
  */
-const downloadReceiptPDF = async (transactionId: string) => {
-  const response = await utils.loaders.getReceiptPDF(transactionId);
-  if (!response) {
-    throw new Error('Error getting the PDF');
-  }
-
-  const { data, filename } = response;
-  const url = URL.createObjectURL(data);
+const downloadFile = (file: File, filename: string) => {
+  console.log(file.name);
+  const url = URL.createObjectURL(file);
 
   // Create a temporary <a> tag for downloading
   const a = document.createElement('a');
@@ -29,6 +22,18 @@ const downloadReceiptPDF = async (transactionId: string) => {
   URL.revokeObjectURL(url);
 };
 
+export const downloadBlob = (blob: Blob, fileName: string): void => {
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement('a');
+  link.href = url;
+  link.download = fileName;
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+  URL.revokeObjectURL(url);
+};
+
 export default {
-  downloadReceiptPDF
+  downloadFile,
+  downloadBlob
 };

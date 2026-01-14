@@ -6,8 +6,10 @@ import { QueryFilters } from '@tanstack/react-query';
 import { CircularProgress } from '@mui/material';
 
 const mockedUseIsFetching = vi.fn();
+const mockedUseIsMutating = vi.fn();
 vi.mock('@tanstack/react-query', () => ({
-  useIsFetching: (filters?: QueryFilters) => mockedUseIsFetching(filters)
+  useIsFetching: (filters?: QueryFilters) => mockedUseIsFetching(filters),
+  useIsMutating: (filters?: QueryFilters) => mockedUseIsMutating(filters)
 }));
 
 vi.mock('@mui/material', () => ({
@@ -21,6 +23,7 @@ describe('Query Loader component', () => {
 
   it('should not render the children when fetching', () => {
     mockedUseIsFetching.mockReturnValue(1);
+    mockedUseIsMutating.mockReturnValue(0);
     render(
       <QueryLoader queryKey="testQueryKey" loaderComponent={<p>test loader</p>}>
         <p>test children</p>

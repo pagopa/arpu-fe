@@ -24,7 +24,7 @@ const Resources = (props: Props) => {
   }, []);
 
   return (
-    <Grid item display={'flex'} flexWrap={'wrap'} justifyContent={'center'}>
+    <Grid display={'flex'} flexWrap={'wrap'} justifyContent={'center'}>
       <Box width={'100%'}>
         <Stack textAlign={'center'} justifyContent={'center'} alignItems={'center'} spacing={4}>
           <Stack spacing={2} paddingX={1}></Stack>

@@ -1,23 +1,19 @@
 import React from 'react';
 import '@testing-library/jest-dom';
-import { render, screen } from '@testing-library/react';
-import { STATE } from './types';
+import { render } from '@testing-library/react';
 import { StoreProvider, useStore } from './GlobalStore';
-import { setUserInfo } from './UserInfoStore';
-
-vi.mock('./UserInfoStore.ts', () => ({
-  userInfoState: { state: { value: { name: 'John' } } },
-  setUserInfo: vi.fn()
-}));
+import * as userActions from './UserInfoStore';
 
 describe('StoreProvider and useStore', () => {
   const TestUserInfoComponent: React.FC = () => {
-    const { state, setState } = useStore();
+    const { state } = useStore();
 
     return (
       <div>
         <p>{state.userInfo?.name}</p>
-        <button onClick={() => setState(STATE.USER_INFO, { name: 'John' })}>Update User</button>
+        <button onClick={() => userActions.setUserInfo({ name: 'John', userId: '1' })}>
+          Update User
+        </button>
       </div>
     );
   };
@@ -29,10 +25,11 @@ describe('StoreProvider and useStore', () => {
       </StoreProvider>
     );
 
-    const button = screen.getByText('Update User');
-    button.click();
+    const spyedSetUserInfo = vi.spyOn(userActions, 'setUserInfo');
 
-    expect(setUserInfo).toHaveBeenCalledWith({ name: 'John' });
+    userActions.setUserInfo({ name: 'John', userId: '1' });
+
+    expect(spyedSetUserInfo).toHaveBeenCalledWith({ name: 'John', userId: '1' });
   });
 
   it('throws an error when useStore is used outside of StoreProvider', () => {

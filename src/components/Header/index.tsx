@@ -1,5 +1,5 @@
 import React from 'react';
-import { HeaderAccount, JwtUser, UserAction } from '@pagopa/mui-italia';
+import { HeaderAccount, JwtUser, RootLinkType, UserAction } from '@pagopa/mui-italia';
 import utils from 'utils';
 import SettingsIcon from '@mui/icons-material/Settings';
 import LogoutRoundedIcon from '@mui/icons-material/LogoutRounded';
@@ -8,6 +8,7 @@ import { ArcRoutes } from 'routes/routes';
 import { useUserInfo } from 'hooks/useUserInfo';
 import { SubHeader } from './SubHeader';
 import { useTranslation } from 'react-i18next';
+import { ProductLogo } from 'components/ProductLogo';
 
 export interface HeaderProps {
   onAssistanceClick?: () => void;
@@ -18,6 +19,7 @@ export const Header = (props: HeaderProps) => {
   const { onAssistanceClick = () => null } = props;
   const navigate = useNavigate();
   const { t } = useTranslation();
+  const brokerId = utils.storage.app.getBrokerId();
 
   async function logoutUser() {
     try {
@@ -31,6 +33,14 @@ export const Header = (props: HeaderProps) => {
   }
 
   const { userInfo } = useUserInfo();
+  const { data: brokerInfo } = utils.loaders.public.useBrokerInfo(brokerId);
+
+  const rootLink: RootLinkType = {
+    label: brokerInfo?.brokerName ?? '',
+    href: ArcRoutes.DASHBOARD,
+    ariaLabel: brokerInfo?.brokerName ?? '',
+    title: brokerInfo?.brokerName ?? ''
+  };
 
   const jwtUser: JwtUser | undefined = userInfo
     ? {
@@ -61,14 +71,14 @@ export const Header = (props: HeaderProps) => {
   return (
     <>
       <HeaderAccount
-        rootLink={utils.config.pagopaLink}
+        rootLink={rootLink}
         enableDropdown
         onAssistanceClick={onAssistanceClick}
         loggedUser={jwtUser}
         userActions={userActions}
         translationsMap={{ assistance: t('ui.header.help') }}
       />
-      <SubHeader />
+      <SubHeader product={<ProductLogo />} />
     </>
   );
 };

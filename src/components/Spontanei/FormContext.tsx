@@ -1,0 +1,19 @@
+import { createContext } from 'react';
+import {
+  DebtPositionTypeOrgsWithSpontaneousDTO,
+  OrganizationsWithSpontaneousDTO
+} from '../../../generated/data-contracts';
+
+export type FormContextType = {
+  step: number;
+  setStep: React.Dispatch<React.SetStateAction<number>>;
+  org: OrganizationsWithSpontaneousDTO | null;
+  setOrg: React.Dispatch<React.SetStateAction<OrganizationsWithSpontaneousDTO | null>>;
+  debtType: DebtPositionTypeOrgsWithSpontaneousDTO | null;
+  setDebtType: React.Dispatch<React.SetStateAction<DebtPositionTypeOrgsWithSpontaneousDTO | null>>;
+};
+
+const FormContext = createContext<FormContextType | null>(null);
+FormContext.displayName = 'SpontaneousDebtTypesFormContext';
+
+export default FormContext;

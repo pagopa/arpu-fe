@@ -5,6 +5,40 @@
     "modal": {
       "close": "Chiudi modale"
     },
+    "receiptsSearch": {
+      "title": "Recupera una ricevuta",
+      "description": "Se hai già effettuato un pagamento, compila i campi richiesti e cerca la tua ricevuta.",
+      "sub": "Cerca la ricevuta",
+      "result_zero": "Nessuna ricevuta trovata",
+      "result_one": "Abbiamo trovato {{count}} ricevuta",
+      "result_other": "Abbiamo trovato {{count}} ricevute",
+      "tab1": {
+        "label": "Persona Fisica",
+        "description": "Inserisci il Codice Avviso (o IUV) e il Codice Fiscale per avviare la ricerca della ricevuta. Se non possiedi il Codice Fiscale, puoi comunque recuperare la ricevuta."
+      },
+      "tab2": {
+        "label": "Persona Giuridica",
+        "description": "Inserisci il Codice Avviso (o IUV) e la P.IVA per avviare la ricerca della ricevuta."
+      },
+      "fields": {
+        "iuv": "Codice Avviso/IUV",
+        "fiscalcode": "Codice Fiscale",
+        "piva": "Codice Fiscale/P.IVA",
+        "anonymous": "Non ho il Codice Fiscale",
+        "orgName": "Ente Creditore",
+        "amount": "Importo",
+        "noticeCode": "Codice Avviso"
+      },
+      "noData": {
+        "title": "Non abbiamo trovato ricevute corrispondenti",
+        "text": "Controlla i dati inseriti e riprova."
+      },
+      "actions": {
+        "search": "Cerca",
+        "toDetail": "Vai al dettaglio",
+        "download": "Scarica"
+      }
+    },
     "user": {
       "title": "I tuoi dati",
       "subtitle": "Questi dati derivano dal tuo SPID o CIE. Per modificarli, rivolgiti al tuo fornitore di identità digitale.",
@@ -34,6 +68,25 @@
         "info": "Puoi pagare fino a 5 avvisi insieme"
       }
     },
+    "receiptDetail": {
+      "title": "Dettaglio",
+      "subtitle": "Puoi consultare i dati della ricevuta corrispondente alla tua ricerca e scaricarla.",
+      "download": "Scarica ricevuta",
+      "amount": "Importo",
+      "remittanceInformation": "Oggetto del pagamento",
+      "iuv": "Codice Avviso",
+      "beneficiary": "Ente beneficiario",
+      "beneficiaryFiscalCode": "Codice Fiscale Ente",
+      "debtor": "Intestatario",
+      "debtorFiscalCode": "Codice Fiscale Debitore",
+      "paymentInformation": "INFORMAZIONI SULLA TRANSAZIONE",
+      "psp": "Gestore della transazione (PSP)",
+      "paymentDate": "Data e ora",
+      "authorizationCode": "Codice autorizzativo",
+      "iur": "IUR",
+      "iud": "IUD",
+      "downloadError":"Non è stato possibile recuperare la ricevuta."
+    },
     "assistance": {
       "title": "Come possiamo aiutarti?",
       "description": "Se hai bisogno di supporto sull’utilizzo del portale, inserisci i dati richiesti per ricevere assistenza.",
@@ -49,30 +102,39 @@
       "modalDescription": "Se esci, la richiesta di assistenza andrà persa."
     },
     "login": {
-      "title": "Area Riservata pagoPA",
-      "description": "La tua area personale in cui gestire i pagamenti pagoPA e scaricare le ricevute.",
-      "terms": "Accedendo accetti i <link1>Termini e condizioni d’uso</link1> del servizio e confermi di avere letto l'<link2>Informativa Privacy </link2> ",
-      "areYouAnEnterprise": "Sei un'impresa?",
-      "accessYourArea": "Accedi alla tua area",
-      "login": "Accedi"
+      "auth": {
+        "title": "Accedi al tuo profilo personale",
+        "description": "Gestisci i tuoi avvisi di pagamento pagoPA e consulta le ricevute in modo semplice e veloce.",
+        "CTA": "Accedi al profilo"
+      },
+      "noAuth": {
+        "title": "Vai di fretta?",
+        "description": "Fai un pagamento spontaneo o recupera la ricevuta di un pagamento già fatto, tutto senza fare login.",
+        "CTA1": "Fai un pagamento",
+        "CTA2": "Recupera una ricevuta"
+      }
     },
     "dashboard": {
       "title": "Ciao, {{username}}",
       "greetings": "Benvenuto",
-      "newPayment": "Paga un avviso",
+      "newPayment": "Fai un pagamento",
       "lastTransactions": "Le tue ricevute",
       "seeAllTransactions": "Vedi tutte",
+      "lastDebtPositions": "Le tue posizioni debitorie",
       "IOAlert": {
         "title": "Vuoi accedere alle tue ricevute e pagare gli avvisi più velocemente?",
         "description": "Visualizza e gestisci i tuoi metodi di pagamento e tutte le tue ricevute",
         "cta": "Scarica app IO"
       }
     },
-    "transactions": {
-      "all": "Tutte",
-      "paidByMe": "Pagate da me",
-      "ownedByMe": "Intestate a me",
+    "retry": {
+      "title": "Non riusciamo a recuperare i dati a causa di un problema.",
+      "action": "Riprova"
+    },
+    "receipts": {
       "searchByName": "Cerca per nome",
+      "subtitle": "Qui trovi le ricevute a te intestate. Se cerchi ricevute intestate a qualcun altro, clicca su",
+      "subtitleLink": "Recupera una ricevuta",
       "searchBy": "Cerca per",
       "orderBy": "Ordina per",
       "mostRecent": "più recente",
@@ -87,12 +149,43 @@
       "paid": "Pagato",
       "viewDetail": "Visualizza il dettaglio per la transazione",
       "empty": {
-        "title": "Qui vedrai le tue ricevute pagoPA",
-        "subtitle": "Paga un avviso presso un qualsiasi canale abilitato a pagoPA."
+        "title": "Qui vedrai le tue ricevute",
+        "subtitle": "Le troverai qui dopo aver pagato una posizione debitoria presso un qualsiasi canale abilitato."
+      }
+    },
+    "debtPositions": {
+      "empty": {
+        "title": "Non abbiamo trovato posizioni debitorie",
+        "subtitle": "Per effettuare un pagamento inserisci i dati della tua posizione tramite il pulsante “Fai un pagamento”."
       },
-      "error": {
-        "title": "Non riusciamo a recuperare i dati a causa di un problema.",
-        "retry": "Riprova"
+      "debtPositionItem": {
+        "amount": "Importo",
+        "dueDate": "Da pagare entro il"
+      },
+      "list": {
+        "title": "Importi da pagare"
+      }
+    },
+    "debtPositionDetail": {
+      "title": "Dettaglio posizione debitoria",
+      "paymentData": "Dati del pagamento",
+      "org": "Ente creditore",
+      "cf": "Codice fiscale ente",
+      "iupd": "Identificativo univoco posizione debitoria (IUPD)",
+      "paymentOptions": "Opzioni di pagamento",
+      "payNow": "Paga ora",
+      "payLater": "Paga a rate",
+      "addItemToCart": "Aggiungi al carrello",
+      "removeItemFromCart":"Rimuovi dal carrello",
+      "paymentOptionSingleInstallment": "Soluzione unica",
+      "paymentOptionInstallments": "Soluzione a rate",
+      "installment": "rata",
+      "installments": "rate",
+      "before": "entro il",
+      "status": {
+        "PAID": "Pagato",
+        "UNPAID": "Da pagare",
+        "EXPIRED": "Scaduto"
       }
     },
     "paymentNotice": {
@@ -233,11 +326,11 @@
     "homepage": "Homepage",
     "receipts":{
       "menuTitle":"Ricevute",
-       "pageTitle": "Le tue ricevute"
+       "pageTitle": "Ricevute"
     },
     "navigationMenu": "Menù di navigazione",
     "menu": "Menu",
-    "paymentNotices": "Avvisi di pagamento"
+    "debtPositions": "Importi da pagare"
   },
   "sidebar": {
     "collapse": "Comprimi il menu",
@@ -257,24 +350,10 @@
       "a11y": "Accessibilità",
       "help": "Aiuto",
       "privacy": "Informativa Privacy",
-      "who": "Chi siamo",
-      "pnrr": "PNRR",
-      "media": "Media",
-      "workWithUs": "Lavora con noi",
-      "products": "Prodotti e servizi",
       "personalData": "Diritto alla protezione dei dati personali",
-      "termsAndConditions": "Termini e condizioni d'uso",
-      "legalInfo": "Società per azioni con socio unico - capitale sociale di euro 1,000,000 interamente versato - sede legale in Roma, Piazza Colonna 370, CAP 00187 - N. di iscrizione a Registro Imprese di Roma, CF e P.IVA 15376371009",
-      "resources": "Risorse",
-      "terms": "Termini e condizioni",
-      "certifications": "Certificazioni",
-      "security": "Sicurezza delle informazioni",
-      "dataProtectionRights": "Diritto alla protezione dei dati personali",
-      "cookie": "Preferenze cookie",
-      "transparentCompany": "Società trasparente",
-      "dislosurePolicy": "Responsabile Disclosure Policy",
-      "231": "Modello 231",
-      "followUs": "Seguici su"
+      "termsAndConditions": "Termini e Condizioni",
+      "legalHolder": "Regione del Veneto",
+      "legal": " - Giunta Regionale - Palazzo Balbi, Dorsoduto, 3901, 30123, Venezia - P.IVA 02392630279"
     }
   },
   "courtesyPage": {
@@ -284,7 +363,8 @@
     },
     "400": {
       "title": "Qualcosa non ha funzionato",
-      "body": "Si è verificato un Errore imprevisto. Riprova tra qualche minuto."
+      "body": "Si è verificato un Errore imprevisto. Riprova tra qualche minuto.",
+      "cta": "Riprova"
     },
     "401": {
       "title": "La tua sessione è scaduta",
@@ -314,6 +394,11 @@
       "title": "Non siamo riusciti ad avviare il pagamento",
       "body": "Riprova tra qualche minuto.",
       "cta": "Chiudi"
+    },
+    "500": {
+      "title": "Errore del server",
+      "body": "Si è verificato un errore del server. Riprova più tardi.",
+      "cta": "Ritorna alla homepage"
     }
   },
   "pageTitles" : {
@@ -324,5 +409,86 @@
     "notice": "Dettaglio operazione",
     "courtesy": "Pagina di cortesia",
     "userpage": "I tuoi dati"
+  },
+  "spontanei": {
+      "drawer": {
+        "title": "PAGA UN AVVISO",
+        "card1": {
+          "title": "Hai ricevuto un avviso di pagamento?",
+          "description": "Sei già in possesso dei codici o di un QR Code per procedere al pagamento",
+          "cta": "Vai al pagamento"
+        },
+        "card2": {
+          "title": "Vuoi effettuare un pagamento spontaneo?",
+          "description": "Vuoi pagare la Pubblica Amministrazione perchè ti va e perchè sei un buono",
+          "cta": "Configura il pagamento"
+        }
+      },
+    "form": {
+      "title": "Effettua un pagamento spontaneo",
+      "description": "Compila i campi richiesti e procedi col pagamento.",
+      "summaryTitle": "Riepilogo",
+      "summaryDescription": "Rivedi qui i dati inseriti per effettuare il tuo pagamento spontaneo.",
+      "steps": {
+        "step1": {
+          "step": "Seleziona l’ente",
+          "title": "Seleziona l’ente beneficiario",
+          "description": "Inizia a digitare il nome dell’ente beneficiario del pagamento e selezionalo dalla lista.",
+          "search": "Cerca per nome dell'ente"
+        },
+        "step2": {
+          "step": "Seleziona il servizio",
+          "title": "Seleziona il servizio",
+          "description": "Inizia a digitare il nome del servizio per il quale vuoi effettuare il pagamento e selezionalo dalla lista.",
+          "search": "Cerca per nome del servizio"
+        },
+        "step3": {
+          "step": "Configura il pagamento",
+          "title": "Configura il pagamento",
+          "description": "Inserisci l’importo da pagare, se necessario, e aggiungi una causale."
+        },
+        "step4": {
+          "step": "Riepilogo",
+          "title": "Riepilogo",
+          "description": "Aggiungi l'avviso nel carrello e procedi con il pagamento."
+        },
+        "step5": {
+          "step": "Completa il pagamento",
+          "title": "Completa il pagamento",
+          "description": "Seleziona una delle opzioni per completare il pagamento.",
+          "pay": {
+            "title": "Paga online con pagoPA",
+            "description": "Effettua il pagamento subito in modo digitale.",
+            "addItemToCartButton": "Aggiungi al carrello",
+            "payButton": "Paga ora"
+          },
+          "download": {
+            "title": "Scarica l’avviso di pagamento",
+            "description": "Potrai usarlo per pagare successivamente presso sportelli, banche, o altri punti convenzionati.",
+            "downloadButton": "Scarica l’avviso"
+          }
+        }
+      },
+      "continue": "Continua",
+      "abort": "Esci",
+      "back": "Indietro"
+    },
+    "download": {
+      "title": "Il download dell’avviso è in corso",
+      "help": "Se non parte automaticamente, clicca <link1>qui.</link1>",
+      "info": "Scopri i canali abilitati",
+      "close": "Chiudi"
+    }
+  },
+  "errors": {
+    "form": {
+      "required": "Questo campo non puoi essere vuoto."
+    },
+    "toast": {
+      "403": "Non hai i permessi per eseguire questa azione.",
+      "404": "Risorsa non trovata.",
+      "500": "Errore del server, riprova più tardi.",
+      "default": "Si è verificato un errore imprevisto. Riprova più tardi."
+    }
   }
 }

@@ -1,5 +1,5 @@
 import React from 'react';
-import { fireEvent, render, screen } from '@testing-library/react';
+import { fireEvent, render, screen } from '__tests__/renderers';
 import { PreLoginLayout } from './PreLoginLayout';
 import '@testing-library/jest-dom';
 import { i18nTestSetup } from '__tests__/i18nTestSetup';
@@ -7,20 +7,28 @@ import { i18nTestSetup } from '__tests__/i18nTestSetup';
 i18nTestSetup({});
 
 const mockedChangeLanguage = vi.fn();
+
 global.fetch = vi.fn().mockImplementation(() =>
   Promise.resolve({
     ok: true,
     json: () => 'data'
   })
 );
+
 vi.mock('./utils/config', () => ({
   assistanceLink: 'string'
 }));
+
 vi.mock('./utils/hooks', () => ({
   useLanguage: () => ({
     language: 'en',
     changeLanguage: mockedChangeLanguage
   })
+}));
+
+vi.mock('react-router-dom', () => ({
+  useMatches: () => [],
+  useNavigate: vi.fn()
 }));
 
 describe('PreLoginLayout Component', () => {

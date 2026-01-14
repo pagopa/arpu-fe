@@ -1,6 +1,6 @@
 import { Meta } from '@storybook/react';
 import { PaymentNotice } from 'components/PaymentNotice';
-import { PaymentNoticeType } from 'models/PaymentNotice';
+import { PaymentNoticeDetailsType } from 'models/PaymentNotice';
 import React from 'react';
 import { mockConvertedNotice } from 'stories/utils/PaymentNoticeMocks';
 
@@ -14,5 +14,5 @@ const meta: Meta = {
 export default meta;
 
 export const Detail = {
-  render: (args: { paymentNotice: PaymentNoticeType }) => <PaymentNotice.Detail {...args} />
+  render: (args: { paymentNotice: PaymentNoticeDetailsType }) => <PaymentNotice.Detail {...args} />
 };

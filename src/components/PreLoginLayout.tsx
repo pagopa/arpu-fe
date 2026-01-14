@@ -1,64 +1,54 @@
-import React from 'react';
-import { Container, Grid, useTheme } from '@mui/material';
+import React, { ReactNode } from 'react';
+import { Box, Stack } from '@mui/material';
 import utils from 'utils';
-import { HeaderAccount } from '@pagopa/mui-italia';
-import { ReactJSXElement } from '@emotion/react/types/jsx-namespace';
+import { HeaderAccount, RootLinkType } from '@pagopa/mui-italia';
 import { Footer } from './Footer';
-import { Outlet } from 'react-router-dom';
+import { Outlet, useMatches } from 'react-router-dom';
+import { BackButton } from './BackButton';
+import { RouteHandleObject } from 'models/Breadcrumbs';
+import { ArcRoutes } from 'routes/routes';
 
-export function PreLoginLayout({ children }: { children?: ReactJSXElement }) {
+const defaultRouteHandle: RouteHandleObject = {
+  sidebar: { visible: true },
+  crumbs: { routeName: '', elements: [] },
+  backButton: false
+};
+
+export function PreLoginLayout({ children }: { children?: ReactNode }) {
   const ASSISTANCE_MAIL = utils.config.assistanceLink;
   const onAssistanceClick = () => {
     window.open(`mailto:${ASSISTANCE_MAIL}`);
   };
-  const theme = useTheme();
+
+  const matches = useMatches();
+
+  const { backButton, backButtonText, backButtonFunction } = {
+    ...defaultRouteHandle,
+    ...(matches.find((match) => Boolean(match.handle))?.handle || {})
+  } as RouteHandleObject;
+
+  const brokerId = utils.storage.app.getBrokerId();
+  const { data: brokerInfo } = utils.loaders.public.useBrokerInfo(brokerId);
+
+  const rootLink: RootLinkType = {
+    label: brokerInfo?.brokerName ?? '',
+    href: ArcRoutes.DASHBOARD,
+    ariaLabel: brokerInfo?.brokerName ?? '',
+    title: brokerInfo?.brokerName ?? ''
+  };
 
   return (
-    <>
-      <Container
-        maxWidth={false}
-        disableGutters
-        sx={{
-          display: 'flex',
-          height: '100%',
-          minHeight: '100vh',
-          alignItems: 'baseline',
-          bgcolor: theme.palette.background.default
-        }}>
-        <Grid
-          container
-          height={'100%'}
-          minHeight="100vh"
-          flexDirection="column"
-          flexWrap={'nowrap'}>
-          <Grid item flexBasis={{ xs: 'fit-content' }} xs={12} height="fit-content">
-            <HeaderAccount
-              rootLink={utils.config.pagopaLink}
-              onAssistanceClick={onAssistanceClick}
-              enableLogin={false}
-            />
-          </Grid>
-          <Grid
-            item
-            flex={'1'}
-            display={'flex'}
-            alignItems={'center'}
-            justifyContent={'center'}
-            width={'100%'}>
-            {children || <Outlet />}
-          </Grid>
-          <Grid
-            item
-            xs={12}
-            mt="auto"
-            height="fit-content"
-            flexBasis={{ xs: 'fit-content' }}
-            flexShrink={3}>
-            {/*xs in flex basis is specified to override mui clas.*/}
-            <Footer />
-          </Grid>
-        </Grid>
-      </Container>
-    </>
+    <Stack>
+      <HeaderAccount
+        rootLink={rootLink}
+        onAssistanceClick={onAssistanceClick}
+        enableLogin={false}
+      />
+      <Box width={'100%'} component="main">
+        {backButton && <BackButton onClick={backButtonFunction} text={backButtonText} />}
+        {children || <Outlet />}
+      </Box>
+      <Footer />
+    </Stack>
   );
 }

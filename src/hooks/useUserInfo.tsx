@@ -17,5 +17,14 @@ export const useUserInfo = () => {
     }
   }, [isSuccess]);
 
-  return { userInfo: state.userInfo };
+  if (state.userInfo) {
+    return { userInfo: state.userInfo };
+  } else {
+    if (isSuccess && data) {
+      delete data.email;
+      const user: UserMemo = { name: data.name, familyName: data.familyName, userId: data.userId };
+      return { userInfo: user };
+    }
+    return { userInfo: null };
+  }
 };

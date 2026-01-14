@@ -1,5 +1,8 @@
 import { RootLinkType } from '@pagopa/mui-italia';
+import { CustomParamsSerializer } from 'axios';
+import queryString from 'query-string';
 import { z, ZodError } from 'zod';
+import storage from './storage';
 
 /** Useful default values  */
 /** APIHOST default value works in conjunction with the proxy server. See the .proxyrc file */
@@ -9,7 +12,7 @@ const {
   API_TIMEOUT = '10000',
   CHECKOUT_HOST = 'https://dev.checkout.pagopa.it',
   CHECKOUT_PLATFORM_URL = 'https://api.dev.platform.pagopa.it/checkout/ec/v1',
-  DEPLOY_PATH = '/pagamenti',
+  DEPLOY_PATH = '/cittadini',
   ENTITIES_LOGO_CDN,
   LOGIN_URL = 'https://api.dev.cittadini-p4pa.pagopa.it/arc/v1/login/oneidentity',
   VERSION = '',
@@ -32,6 +35,7 @@ const ENTITIES_LOGO_CDN_schema = z.string().url();
 const LOGIN_URL_schema = z.string().url();
 const VERSION_schema = z.string();
 const SHOW_NOTICES_schema = z.enum(['0', '1']);
+
 try {
   ENV_Schema.parse(process.env.ENV);
   APIHOST_schema.parse(process.env.APIHOST);
@@ -61,7 +65,9 @@ type Config = {
   pagopaLink: RootLinkType;
   tokenHeaderExcludePaths: string[];
   version: string;
+  brokerId: number;
   showNotices: boolean;
+  paramsSerializer: CustomParamsSerializer;
 };
 
 const assistanceLink: string = 'nomeprodotto@assistenza.pagopa.it';
@@ -103,7 +109,31 @@ const config: Config = {
   tokenHeaderExcludePaths: ['/token/oneidentity'],
   /** Running version, usually valued by pipelines */
   version: VERSION,
-  showNotices: PARSED_SHOW_NOTICES
+  brokerId: storage.app.getBrokerId(),
+  showNotices: PARSED_SHOW_NOTICES,
+  /** A global custom parameters serializer:
+   * - null value and empty string parameters are strippef off.
+   * - arrays separated by comma.
+   * - undefined parameters are always skipped.
+   *
+   * @example
+   * const params = {
+   *  a: "",
+   *  b: 'test',
+   *  c: null,
+   *  d: [1, 2],
+   *  e: undefined
+   * };
+   *
+   * console.log(paramsSerializer(params))
+   * => "b=test&d=1,2"
+   *  */
+  paramsSerializer: (params) =>
+    queryString.stringify(params, {
+      skipNull: true,
+      arrayFormat: 'comma',
+      skipEmptyString: true
+    })
 };
 
 export default config;
