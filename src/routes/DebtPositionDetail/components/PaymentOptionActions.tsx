@@ -3,6 +3,7 @@ import React from 'react';
 import { useTranslation } from 'react-i18next';
 import {
   DebtorInstallmentsOverviewDTO,
+  InstallmentStatus,
   PaymentOptionType
 } from '../../../../generated/data-contracts';
 import { addItem, deleteItem, isItemInCart, toggleCartDrawer } from 'store/CartStore';
@@ -110,7 +111,9 @@ const PaymentOptionsActions = (props: paymentOptionsActionProps) => {
     if (selectPaymentOptionType === PaymentOptionType.SINGLE_INSTALLMENT) {
       payItem();
     } else {
-      openInstallmentsDrawer();
+      openInstallmentsDrawer(
+        installments.filter((installment) => installment.status !== InstallmentStatus.PAID)
+      );
     }
   };
 

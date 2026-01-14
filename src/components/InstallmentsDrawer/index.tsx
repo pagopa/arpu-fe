@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useMemo } from 'react';
 import Box from '@mui/material/Box';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
@@ -16,8 +16,16 @@ import { useUserEmail } from 'hooks/useUserEmail';
 import PreCartItem from './InstallmentItem';
 import { UnpayableItems } from './UnpayableItems';
 import { closeInstallmentsDrawer } from 'store/installmentsDrawer';
+import {
+  DebtorInstallmentsOverviewDTO,
+  InstallmentStatus
+} from '../../../generated/data-contracts';
 
 const InstallmentsDrawer = () => {
+  const [addedInstallments, setAddedInstallments] = React.useState<DebtorInstallmentsOverviewDTO[]>(
+    []
+  );
+
   const { t } = useTranslation();
   const theme = useTheme();
   const styles = cartDrawerStyles(theme);
@@ -33,7 +41,7 @@ const InstallmentsDrawer = () => {
   const email = useUserEmail();
 
   const {
-    state: { cart }
+    state: { installmentsDrawer }
   } = useStore();
 
   const onEmptyButtonClick = () => {
@@ -41,9 +49,31 @@ const InstallmentsDrawer = () => {
   };
 
   const onPayButton = () => {
-    carts.mutate({ notices: cart.items, email });
     closeInstallmentsDrawer();
   };
+
+  console.log(installmentsDrawer.items);
+
+  const unpaidInstallments = useMemo(
+    () => installmentsDrawer.items.filter((item) => item.status === InstallmentStatus.UNPAID),
+    [installmentsDrawer.items]
+  );
+  const expiredInstallments = useMemo(
+    () => installmentsDrawer.items.filter((item) => item.status === InstallmentStatus.EXPIRED),
+    [installmentsDrawer.items]
+  );
+
+  useEffect(() => {
+    // Preselect the first unpaid installment
+    setAddedInstallments([unpaidInstallments[0]]);
+  }, [unpaidInstallments]);
+
+  const canBeAddedInstallments = useMemo(
+    () => unpaidInstallments.filter((item) => !addedInstallments.includes(item)),
+    [unpaidInstallments, addedInstallments]
+  );
+
+  console.log(unpaidInstallments, expiredInstallments);
 
   return (
     <>
@@ -52,8 +82,9 @@ const InstallmentsDrawer = () => {
           {/* Header Section */}
           <Box>
             <Stack direction="row" sx={styles.header}>
-              <ButtonNaked onClick={closeInstallmentsDrawer} aria-label={t('app.cart.header.close')}>
-
+              <ButtonNaked
+                onClick={closeInstallmentsDrawer}
+                aria-label={t('app.cart.header.close')}>
                 <CloseIcon />
               </ButtonNaked>
             </Stack>
@@ -67,7 +98,9 @@ const InstallmentsDrawer = () => {
           <Box>
             <Typography>Stai per pagare</Typography>
             <Stack spacing={3}>
-              <PreCartItem />
+              {addedInstallments.map((item) => (
+                <PreCartItem key={item.iuv} />
+              ))}
             </Stack>
           </Box>
 
@@ -75,13 +108,14 @@ const InstallmentsDrawer = () => {
           <Box>
             <Typography>Rate Disponibili:</Typography>
             <Stack spacing={3}>
-              <PreCartItem />
-              <PreCartItem />
+              {canBeAddedInstallments.map((item) => (
+                <PreCartItem key={item.iuv} />
+              ))}
             </Stack>
           </Box>
 
           {/* unpayble installments section */}
-          <UnpayableItems />
+          {expiredInstallments.length > 0 && <UnpayableItems />}
 
           {/* Action Button */}
           <Stack justifyContent="center" sx={styles.actionButton} spacing={2}>
@@ -97,7 +131,13 @@ const InstallmentsDrawer = () => {
       </Box>
       {/* Overlay */}
       (
-      <Box sx={styles.overlay} aria-hidden="true" role="presentation" onClick={closeInstallmentsDrawer} />)
+      <Box
+        sx={styles.overlay}
+        aria-hidden="true"
+        role="presentation"
+        onClick={closeInstallmentsDrawer}
+      />
+      )
     </>
   );
 };

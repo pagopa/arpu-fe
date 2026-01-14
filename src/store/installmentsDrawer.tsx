@@ -6,7 +6,9 @@ const defaultInstallmentsDrawerState: InstallmentsDrawerState = {
   items: []
 };
 
-export const installmentsDrawerState = signal<InstallmentsDrawerState>(defaultInstallmentsDrawerState);
+export const installmentsDrawerState = signal<InstallmentsDrawerState>(
+  defaultInstallmentsDrawerState
+);
 
 export function setInstallmentsDrawerState(items: InstallmentsDrawerState['items']) {
   installmentsDrawerState.value.items = items;
@@ -17,7 +19,10 @@ export function resetInstallmentsDrawer() {
 }
 
 export function toggleInstallmentsDrawer() {
-  installmentsDrawerState.value = { ...installmentsDrawerState.value, isOpen: !installmentsDrawerState.value.isOpen };
+  installmentsDrawerState.value = {
+    ...installmentsDrawerState.value,
+    isOpen: !installmentsDrawerState.value.isOpen
+  };
 }
 
 export function openInstallmentsDrawer(items?: InstallmentsDrawerState['items']) {
