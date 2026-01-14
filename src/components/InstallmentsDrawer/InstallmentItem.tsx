@@ -2,19 +2,26 @@ import React from 'react';
 import { Box, Stack, Typography } from '@mui/material';
 import IconButton from '@mui/material/IconButton';
 import AddCircleIcon from '@mui/icons-material/AddCircle';
+import RemoveCircleIcon from '@mui/icons-material/RemoveCircle';
 import utils from 'utils';
 import { InstallmentDrawerItem } from 'models/InstallmentDrawer';
 
 interface InstallmentItemProps {
   item: InstallmentDrawerItem;
   totalItems: number;
+  type: 'added' | 'available';
+  action: (item: InstallmentDrawerItem) => void;
 }
 
-const InstallmentItem = ({ item, totalItems }: InstallmentItemProps) => {
+const InstallmentItem = ({ item, totalItems, type, action }: InstallmentItemProps) => {
   return (
     <Stack direction="row">
       <IconButton aria-label="add">
-        <AddCircleIcon />
+        {type === 'added' ? (
+          <RemoveCircleIcon onClick={() => action(item)} />
+        ) : (
+          <AddCircleIcon onClick={() => action(item)} />
+        )}
       </IconButton>
       <Box
         sx={{
@@ -28,16 +35,19 @@ const InstallmentItem = ({ item, totalItems }: InstallmentItemProps) => {
         }}>
         <Stack direction="row" justifyContent="space-between" alignItems="center">
           <Stack>
-            <Typography>Rata {item.rateIndex} di {totalItems}</Typography>
+            <Typography>
+              Rata {item.rateIndex} di {totalItems}
+            </Typography>
             {
               /* Due date */
-              item.dueDate && <Typography>Entro il {utils.datetools.formatDate(item.dueDate)}</Typography>
+              item.dueDate && (
+                <Typography>Entro il {utils.datetools.formatDate(item.dueDate)}</Typography>
+              )
             }
           </Stack>
           {
             /* Amount */
-            item.amountCents &&
-            <Typography>{utils.converters.toEuro(item.amountCents)}</Typography>
+            item.amountCents && <Typography>{utils.converters.toEuro(item.amountCents)}</Typography>
           }
         </Stack>
       </Box>

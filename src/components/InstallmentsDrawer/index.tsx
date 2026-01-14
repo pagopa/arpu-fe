@@ -20,9 +20,7 @@ import { InstallmentDrawerItem } from 'models/InstallmentDrawer';
 import { InstallmentStatus } from '../../../generated/data-contracts';
 
 const InstallmentsDrawer = () => {
-  const [addedInstallments, setAddedInstallments] = React.useState<InstallmentDrawerItem[]>(
-    []
-  );
+  const [addedInstallments, setAddedInstallments] = React.useState<InstallmentDrawerItem[]>([]);
 
   const { t } = useTranslation();
   const theme = useTheme();
@@ -50,8 +48,6 @@ const InstallmentsDrawer = () => {
     closeInstallmentsDrawer();
   };
 
-  console.log(installmentsDrawer.items);
-
   const totalItems = installmentsDrawer.items.length;
 
   const unpaidInstallments = useMemo(
@@ -73,6 +69,15 @@ const InstallmentsDrawer = () => {
     () => unpaidInstallments.filter((item) => !addedInstallments.includes(item)),
     [unpaidInstallments, addedInstallments]
   );
+
+  const addInstallment = (item: InstallmentDrawerItem) => {
+    setAddedInstallments((prev) => [...prev, item]);
+  };
+
+  const removeInstallment = (item: InstallmentDrawerItem) => {
+    if (addedInstallments.length === 1) return; // Prevent removing the last installment
+    setAddedInstallments((prev) => prev.filter((i) => i.iuv !== item.iuv));
+  };
 
   return (
     <>
@@ -98,20 +103,34 @@ const InstallmentsDrawer = () => {
             <Typography>Stai per pagare</Typography>
             <Stack spacing={3}>
               {addedInstallments.map((item) => (
-                <PreCartItem key={item.iuv} item={item} totalItems={totalItems}/>
+                <PreCartItem
+                  key={item.iuv}
+                  item={item}
+                  totalItems={totalItems}
+                  type="added"
+                  action={removeInstallment}
+                />
               ))}
             </Stack>
           </Box>
 
           {/* Available installments section */}
-          <Box>
-            <Typography>Rate Disponibili:</Typography>
-            <Stack spacing={3}>
-              {canBeAddedInstallments.map((item) => (
-                <PreCartItem key={item.iuv} item={item} totalItems={totalItems}/>
-              ))}
-            </Stack>
-          </Box>
+          {canBeAddedInstallments.length > 0 && (
+            <Box>
+              <Typography>Rate Disponibili:</Typography>
+              <Stack spacing={3}>
+                {canBeAddedInstallments.map((item) => (
+                  <PreCartItem
+                    key={item.iuv}
+                    item={item}
+                    totalItems={totalItems}
+                    type="available"
+                    action={addInstallment}
+                  />
+                ))}
+              </Stack>
+            </Box>
+          )}
 
           {/* unpayble installments section */}
           {expiredInstallments.length > 0 && <UnpayableItems />}
