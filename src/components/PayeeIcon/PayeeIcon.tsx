@@ -11,7 +11,7 @@ export interface payeeIconProps {
 
 export const PayeeIcon = (props: payeeIconProps) => {
   function onErrorImage(e: SyntheticEvent) {
-    (e.target as HTMLImageElement).src = '/images/fallback-ec.png';
+    (e.target as HTMLImageElement).src = '/cittadini/images/fallback-ec.png';
     return;
   }
 

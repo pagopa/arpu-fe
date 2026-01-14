@@ -25,9 +25,10 @@ import { ReceiptDetail } from 'routes/Receipts/detail';
 import { DebtPositionsList } from 'routes/DebtPositions/list';
 import { ReceiptsSearch } from 'routes/Receipts/search';
 import DebtPositionDetail from 'routes/DebtPositionDetail';
+import { StorageItems } from 'utils/storage';
 
 const withGuard = (Component: () => React.JSX.Element) => (
-  <RouteGuard itemKeys={['accessToken']} storage={window.localStorage}>
+  <RouteGuard itemKeys={[StorageItems.TOKEN]} storage={window.localStorage}>
     <Component />
   </RouteGuard>
 );

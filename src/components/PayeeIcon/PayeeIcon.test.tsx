@@ -11,7 +11,7 @@ describe('Payeeicon component', () => {
     const payeeComponentImg = payeeComponent.getByTestId('payeelogoimg');
     fireEvent.error(payeeComponentImg);
 
-    expect(payeeComponentImg).toHaveAttribute('src', '/images/fallback-ec.png');
+    expect(payeeComponentImg).toHaveAttribute('src', '/cittadini/images/fallback-ec.png');
   });
 
   it('should render with an EC image', () => {

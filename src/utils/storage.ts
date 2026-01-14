@@ -18,9 +18,9 @@ const setSessionItem = (key: SessionItems, value: string) => {
 /** get a session item and return his value. If not possible returns null */
 const getSessionItem = (key: SessionItems) => sessionStorage.getItem(key);
 
-enum StorageItems {
-  TOKEN = 'accessToken',
-  BROKERID = 'brokerId'
+export enum StorageItems {
+  TOKEN = 'ARPU-accessToken',
+  BROKERID = 'ARPU-brokerId'
 }
 
 /** set a session item and return his value. If not possible returs null */
@@ -78,7 +78,7 @@ export default {
   app: {
     setBrokerId: (brokerId: string | number) =>
       setStorageItem(StorageItems.BROKERID, brokerId.toString()),
-    /** this check is necessaty because we land on the auth-callaback page without a brokerId in the URL */
+    /** this check is necessary because we land on the auth-callback page without a brokerId in the URL */
     getBrokerId: () =>
       window.location.pathname.split('/')[2] === 'auth-callback'
         ? Number(getStorageItem(StorageItems.BROKERID)) || -1

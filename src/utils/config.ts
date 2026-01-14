@@ -12,7 +12,7 @@ const {
   API_TIMEOUT = '10000',
   CHECKOUT_HOST = 'https://dev.checkout.pagopa.it',
   CHECKOUT_PLATFORM_URL = 'https://api.dev.platform.pagopa.it/checkout/ec/v1',
-  DEPLOY_PATH = '/pagamenti',
+  DEPLOY_PATH = '/cittadini',
   ENTITIES_LOGO_CDN,
   LOGIN_URL = 'https://api.dev.cittadini-p4pa.pagopa.it/arc/v1/login/oneidentity',
   VERSION = '',

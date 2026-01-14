@@ -1,7 +1,7 @@
 import { setupInterceptors } from './interceptors';
 import { Client } from 'models/Client';
 import { useNavigate } from 'react-router-dom';
-import storage from './storage';
+import storage, { StorageItems } from './storage';
 import { ArcRoutes, ArcErrors } from 'routes/routes';
 import { Mock } from 'vitest';
 import utils from 'utils';
@@ -44,7 +44,7 @@ describe('setupInterceptors', () => {
   it('should add Authorization header to request if token is present', () => {
     const request = { url: '/path3', headers: {} };
     const accessToken = 'token';
-    window.localStorage.setItem('accessToken', accessToken);
+    window.localStorage.setItem(StorageItems.TOKEN, accessToken);
     setupInterceptors(client);
     const requestInterceptor = (client.instance.interceptors.request.use as Mock).mock.calls[0][0];
     const result = requestInterceptor(request);
