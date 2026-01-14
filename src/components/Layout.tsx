@@ -15,6 +15,7 @@ import utils from 'utils';
 import { useStore } from 'store/GlobalStore';
 import { CartDrawer } from './Cart/CartDrawer';
 import PaymentTypeDrawer from './Spontanei/PaymentTypeDrawer';
+import InstallmentsDrawer from './InstallmentsDrawer';
 
 const defaultRouteHandle: RouteHandleObject = {
   sidebar: { visible: true },
@@ -25,7 +26,7 @@ const defaultRouteHandle: RouteHandleObject = {
 export function Layout() {
   const matches = useMatches();
   const {
-    state: { cart, paymentTypeDrawerVisibilityStatus }
+    state: { cart, installmentsDrawer, paymentTypeDrawerVisibilityStatus }
   } = useStore();
 
   const lg = useMediaQuery((theme: Theme) => theme.breakpoints.up('lg'));
@@ -67,6 +68,7 @@ export function Layout() {
         </Stack>
         <Footer />
         {cart.isOpen ? <CartDrawer /> : null}
+        {installmentsDrawer.isOpen ? <InstallmentsDrawer /> : null}
         {paymentTypeDrawerVisibilityStatus ? <PaymentTypeDrawer /> : null}
       </Container>
     </>

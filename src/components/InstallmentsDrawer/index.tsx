@@ -13,11 +13,11 @@ import { cartDrawerStyles } from './CartDrawer.styles';
 import { useStore } from 'store/GlobalStore';
 import { usePostCarts } from 'hooks/usePostCarts';
 import { useUserEmail } from 'hooks/useUserEmail';
-import PreCartItem from './PreCartItem';
+import PreCartItem from './InstallmentItem';
 import { UnpayableItems } from './UnpayableItems';
-import { closePreCartDrawer, closePreCartDrawer } from 'store/PreCartStore';
+import { closeInstallmentsDrawer } from 'store/installmentsDrawer';
 
-export const PreCartDrawer = () => {
+const InstallmentsDrawer = () => {
   const { t } = useTranslation();
   const theme = useTheme();
   const styles = cartDrawerStyles(theme);
@@ -37,13 +37,12 @@ export const PreCartDrawer = () => {
   } = useStore();
 
   const onEmptyButtonClick = () => {
-    closePreCartDrawer();
-    navigate(ArcRoutes.DEBT_POSITIONS);
+    closeInstallmentsDrawer();
   };
 
   const onPayButton = () => {
     carts.mutate({ notices: cart.items, email });
-    closePreCartDrawer();
+    closeInstallmentsDrawer();
   };
 
   return (
@@ -53,7 +52,8 @@ export const PreCartDrawer = () => {
           {/* Header Section */}
           <Box>
             <Stack direction="row" sx={styles.header}>
-              <ButtonNaked onClick={closePreCartDrawer} aria-label={t('app.cart.header.close')}>
+              <ButtonNaked onClick={closeInstallmentsDrawer} aria-label={t('app.cart.header.close')}>
+
                 <CloseIcon />
               </ButtonNaked>
             </Stack>
@@ -97,7 +97,9 @@ export const PreCartDrawer = () => {
       </Box>
       {/* Overlay */}
       (
-      <Box sx={styles.overlay} aria-hidden="true" role="presentation" onClick={closePreCartDrawer} />)
+      <Box sx={styles.overlay} aria-hidden="true" role="presentation" onClick={closeInstallmentsDrawer} />)
     </>
   );
 };
+
+export default InstallmentsDrawer;
