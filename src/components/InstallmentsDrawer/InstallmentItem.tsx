@@ -18,12 +18,12 @@ interface InstallmentItemProps {
 const InstallmentItem = ({ item, totalItems, type, action }: InstallmentItemProps) => {
   const { t } = useTranslation();
   return (
-    <Stack direction="row">
+    <Stack direction="row" data-testid={`installments-drawer-installment-item-${item.installmentId}`}>
       <IconButton aria-label="add">
         {type === 'added' ? (
-          <RemoveCircleOutlineIcon onClick={() => action(item)} color="error" />
+          <RemoveCircleOutlineIcon data-testid="remove-installment-button" onClick={() => action(item)} color="error" />
         ) : (
-          <AddCircleIcon onClick={() => action(item)} />
+          <AddCircleIcon data-testid="add-installment-button" onClick={() => action(item)} />
         )}
       </IconButton>
       <Box
@@ -39,7 +39,7 @@ const InstallmentItem = ({ item, totalItems, type, action }: InstallmentItemProp
         <Stack direction="row" justifyContent="space-between" alignItems="center">
           <Stack spacing={1}>
             {/*  Installment X of Y */}
-            <Box>
+            <Box data-testid="installment-index">
               <Accent>
                 {t('app.installmentsDrawer.installment.installmentNumber', {
                   installmentNumber: item.rateIndex,
@@ -50,7 +50,7 @@ const InstallmentItem = ({ item, totalItems, type, action }: InstallmentItemProp
             {
               /* Due date */
               item.dueDate && (
-                <Typography fontSize={16} fontWeight={400}>
+                <Typography fontSize={16} fontWeight={400} data-testid="installment-due-date">
                   <Trans
                     i18nKey={t('app.installmentsDrawer.installment.dueDate', {
                       date: utils.datetools.formatDate(item.dueDate)
@@ -73,7 +73,7 @@ const InstallmentItem = ({ item, totalItems, type, action }: InstallmentItemProp
           {
             /* Amount */
             item.amountCents && (
-              <Typography fontWeight={600} fontSize={18} fontStyle="semibold">
+              <Typography fontWeight={600} fontSize={18} fontStyle="semibold" data-testid="installment-amount">
                 {utils.converters.toEuro(item.amountCents)}
               </Typography>
             )
