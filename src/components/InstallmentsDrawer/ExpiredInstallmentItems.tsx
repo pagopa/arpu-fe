@@ -37,7 +37,10 @@ const ExpiredInstallmentItems = ({ items, totalItems }: ExpiredInstallmentItemsP
           <Typography variant="overline">
             {t('app.installmentsDrawer.expiredInstallments')}
           </Typography>
-          <IconButton aria-label="add" onClick={handleToggle}>
+          <IconButton
+            aria-label="add"
+            onClick={handleToggle}
+            data-testid="installments-drawer-expired-installments-toggle-button">
             {open ? <ExpandLessOutlinedIcon /> : <ExpandMoreOutlinedIcon />}
           </IconButton>
         </Stack>
@@ -48,7 +51,10 @@ const ExpiredInstallmentItems = ({ items, totalItems }: ExpiredInstallmentItemsP
               padding: 0
             }}>
             {items.map((item, index) => (
-              <li key={index} style={{ marginBottom: 32 }}>
+              <li
+                key={index}
+                style={{ marginBottom: 32 }}
+                data-testid={`installments-drawer-expired-installment-item-${item.installmentId}`}>
                 <Grid container spacing={2}>
                   <Grid size={6}>
                     <Typography
@@ -66,6 +72,7 @@ const ExpiredInstallmentItems = ({ items, totalItems }: ExpiredInstallmentItemsP
                   <Grid size={6}>
                     {item.amountCents && (
                       <Typography
+                        data-testid={`installments-drawer-expired-installment-amount-${item.installmentId}`}
                         fontWeight={600}
                         fontSize={16}
                         fontStyle="semibold"
@@ -89,6 +96,7 @@ const ExpiredInstallmentItems = ({ items, totalItems }: ExpiredInstallmentItemsP
                           components={{
                             strong: (
                               <Typography
+                                data-testid={`installments-drawer-expired-installment-expire-date-${item.installmentId}`}
                                 fontSize={16}
                                 fontWeight={600}
                                 component="span"

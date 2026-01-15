@@ -14,7 +14,7 @@ import { useStore } from 'store/GlobalStore';
 import { usePostCarts } from 'hooks/usePostCarts';
 import { useUserEmail } from 'hooks/useUserEmail';
 import InstallmentItem from './InstallmentItem';
-import ExpiredInstallmentItems from './ExpiredItems';
+import ExpiredInstallmentItems from './ExpiredInstallmentItems';
 import { closeInstallmentsDrawer } from 'store/installmentsDrawer';
 import { InstallmentDrawerItem } from 'models/InstallmentDrawer';
 import { InstallmentStatus } from '../../../generated/data-contracts';
