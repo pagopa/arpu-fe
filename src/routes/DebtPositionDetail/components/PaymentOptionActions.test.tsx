@@ -7,6 +7,7 @@ import {
   mockInstallmentsPaymentOption
 } from './__test__/mocks';
 import * as cartActions from 'store/CartStore';
+import * as installementsDrawerActions from 'store/installmentsDrawer';
 
 describe('PaymentOptionActions: single installment', () => {
   it('renders elements as expected', () => {
@@ -99,5 +100,29 @@ describe('PaymentOptionsAction: multiple installment', () => {
     const payButton = screen.getByTestId('payment-option-action-pay');
     expect(payButton).toBeVisible();
     expect(payButton.innerHTML).toContain('app.debtPositionDetail.payLater');
+  });
+
+  it('open the installments drawer as expected by calling openInstallmentsDrawer', () => {
+    render(
+      <PaymentOptionsActions
+        debtPositionId={1}
+        selectedPaymentOptionId={mockInstallmentsPaymentOption.paymentOptionId}
+        installments={mockInstallmentsPaymentOption.installments}
+        orgName="TestOrgName"
+        orgId="TestOrgId"
+        selectPaymentOptionType={PaymentOptionType.INSTALLMENTS}
+      />
+    );
+
+    const payButton = screen.getByTestId('payment-option-action-pay');
+    expect(payButton).toBeVisible();
+    expect(payButton.innerHTML).toContain('app.debtPositionDetail.payLater');
+
+    const spyOpenInstallmentsDrawer = vi.spyOn(
+      installementsDrawerActions,
+      'openInstallmentsDrawer'
+    );
+    fireEvent.click(payButton);
+    expect(spyOpenInstallmentsDrawer).toHaveBeenCalled();
   });
 });

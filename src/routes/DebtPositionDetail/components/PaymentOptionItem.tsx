@@ -25,30 +25,47 @@ import TimelineContent from '@mui/lab/TimelineContent/TimelineContent';
 import utils from 'utils';
 import { useTranslation } from 'react-i18next';
 
-const Accent = (props: { children: string }) => (
+export const Accent = (props: { children: string }) => (
   <Box
     sx={{ display: 'inline-block', backgroundColor: '#e1f5fe', borderRadius: '4px', paddingX: 1 }}>
-    <Typography color="#215C76" textTransform="capitalize">
+    <Typography color="#215C76" textTransform="capitalize" fontWeight={600} fontSize={14}>
       {props.children}
     </Typography>
   </Box>
 );
 
+const getInstallmentStatusColor = (status: InstallmentStatus) => {
+  switch (status) {
+    case 'PAID':
+      return 'success';
+    case 'UNPAID':
+      return 'default';
+    case 'EXPIRED':
+      return 'error';
+    default:
+      return 'default';
+  }
+};
+
+export const InstallmentStatusChip = ({
+  dataTestId,
+  status
+}: {
+  dataTestId?: string;
+  status: InstallmentStatus;
+}) => {
+  const { t } = useTranslation();
+  return (
+    <Chip
+      data-testid={dataTestId}
+      label={t(`app.debtPositionDetail.status.${status}`)}
+      color={getInstallmentStatusColor(status)}
+    />
+  );
+};
+
 const ExtraInfo = (props: { installments: DebtorPaymentOptionOverviewDTO['installments'] }) => {
   const { t } = useTranslation();
-
-  const getInstallmentStatusColor = (status: InstallmentStatus) => {
-    switch (status) {
-      case 'PAID':
-        return 'success';
-      case 'UNPAID':
-        return 'default';
-      case 'EXPIRED':
-        return 'warning';
-      default:
-        return 'default';
-    }
-  };
 
   return (
     <>
@@ -89,10 +106,9 @@ const ExtraInfo = (props: { installments: DebtorPaymentOptionOverviewDTO['instal
 
                 <Grid size={6} gap={2}>
                   <Stack direction="row" spacing={2} alignItems="center">
-                    <Chip
-                      data-testid={`payment-option-type-installments-installment-${index + 1}-status`}
-                      label={t(`app.debtPositionDetail.status.${installment.status}`)}
-                      color={getInstallmentStatusColor(installment.status)}
+                    <InstallmentStatusChip
+                      dataTestId={`payment-option-type-installments-installment-${index + 1}-status`}
+                      status={installment.status}
                     />
                     {installment.dueDate && (
                       <Typography

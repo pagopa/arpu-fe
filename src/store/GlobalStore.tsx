@@ -3,6 +3,7 @@ import { STATE, State, StoreContextProps } from './types';
 import { userInfoState } from './UserInfoStore';
 import { cartState } from './CartStore';
 import { paymentTypeDrawerVisibilityStore } from './PaymentTypeDrawerVisibilityStore';
+import { installmentsDrawerState } from './installmentsDrawer';
 
 const StoreContext = createContext<StoreContextProps | undefined>(undefined);
 
@@ -10,6 +11,7 @@ export const StoreProvider: React.FC<{ children: ReactNode }> = ({ children }) =
   const combinedState: State = {
     [STATE.USER_INFO]: userInfoState.state?.value,
     [STATE.CART]: cartState?.value,
+    [STATE.INSTALLMENTS_DRAWER]: installmentsDrawerState?.value,
     [STATE.PAYMENT_TYPE_DRAWER_VISIBILITY_STATUS]: paymentTypeDrawerVisibilityStore.value
   };
 

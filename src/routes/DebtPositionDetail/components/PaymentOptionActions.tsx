@@ -6,6 +6,7 @@ import {
   PaymentOptionType
 } from '../../../../generated/data-contracts';
 import { addItem, deleteItem, isItemInCart, toggleCartDrawer } from 'store/CartStore';
+import { openInstallmentsDrawer } from 'store/installmentsDrawer';
 import utils from 'utils';
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 import { usePostCarts } from 'hooks/usePostCarts';
@@ -105,6 +106,23 @@ const PaymentOptionsActions = (props: paymentOptionsActionProps) => {
     }
   };
 
+  const onPayButtonClick = () => {
+    if (selectPaymentOptionType === PaymentOptionType.SINGLE_INSTALLMENT) {
+      payItem();
+    } else {
+      openInstallmentsDrawer(
+        installments.map((inst, index) => ({
+          ...inst,
+          rateIndex: index + 1,
+          paFullName,
+          paTaxCode,
+          debtPositionId,
+          paymentOptionId: selectedPaymentOptionId
+        }))
+      );
+    }
+  };
+
   const removeItemFromCart = () => deleteItem(singleInstallmentItemId);
 
   return (
@@ -135,7 +153,7 @@ const PaymentOptionsActions = (props: paymentOptionsActionProps) => {
         variant="contained"
         size="large"
         data-testid="payment-option-action-pay"
-        onClick={payItem}>
+        onClick={onPayButtonClick}>
         {selectPaymentOptionType === PaymentOptionType.SINGLE_INSTALLMENT
           ? t('app.debtPositionDetail.payNow')
           : t('app.debtPositionDetail.payLater')}
