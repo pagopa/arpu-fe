@@ -42,7 +42,7 @@ const items: InstallmentsDrawerState['items'] = [
   }
 ];
 
-describe('installment drawer store', () => {
+describe('Installments drawer store', () => {
   it('toggles the cart drawer state', () => {
     toggleInstallmentsDrawer();
     expect(installmentsDrawerState.value.isOpen).toBeTruthy();
@@ -54,8 +54,15 @@ describe('installment drawer store', () => {
     expect(installmentsDrawerState.value.isOpen).toBeFalsy();
   });
 
-  it('adds item correctly', () => {
+  it('adds items correctly', () => {
     setInstallmentsDrawerState(items);
+    expect(installmentsDrawerState.value.items).toStrictEqual(items);
+    expect(installmentsDrawerState.value.items.length).toBe(2);
+  });
+
+  it('opens and adds items correctly', () => {
+    openInstallmentsDrawer(items);
+    expect(installmentsDrawerState.value.isOpen).toBeTruthy();
     expect(installmentsDrawerState.value.items).toStrictEqual(items);
     expect(installmentsDrawerState.value.items.length).toBe(2);
   });
