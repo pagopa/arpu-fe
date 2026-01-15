@@ -12,8 +12,8 @@ import PaymentButton from 'components/PaymentButton';
 import CustomPagination from 'components/DataGrid/CustomPagination';
 import { ReceiptItem } from '../components/item';
 import { DateRange } from 'components/DateRange';
-import { PickerValue } from '@mui/x-date-pickers/internals';
 import { Search } from '@mui/icons-material';
+import { Dayjs } from 'dayjs';
 
 type Filters = {
   noticeNumberOrIuv?: string;
@@ -27,8 +27,8 @@ export const ReceiptsList = () => {
   const mutation = utils.loaders.getPagedDebtorReceipts(brokerId);
 
   const [searchCode, setSearchCode] = useState('');
-  const [startDate, setStartDate] = useState<PickerValue | null>(null);
-  const [endDate, setEndDate] = useState<PickerValue | null>(null);
+  const [startDate, setStartDate] = useState<Dayjs | null>(null);
+  const [endDate, setEndDate] = useState<Dayjs | null>(null);
   const [appliedFilters, setAppliedFilters] = useState<Filters>({});
 
   const {
@@ -90,16 +90,14 @@ export const ReceiptsList = () => {
             value={searchCode}
             onChange={(e) => setSearchCode(e.target.value)}
             size="small"
-            slotProps={{
-              input: {
-                endAdornment: (
-                  <InputAdornment position="end">
-                    <Search />
-                  </InputAdornment>
-                )
-              }
+            InputProps={{
+              endAdornment: (
+                <InputAdornment position="end">
+                  <Search />
+                </InputAdornment>
+              )
             }}
-            sx={{ flex: 3 }}
+            sx={{ flex: { xs: 1, lg: 2 } }}
           />
 
           <Stack direction="row" gap={3} alignItems="center" flex={2}>
