@@ -1,4 +1,6 @@
 import React from 'react';
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+import { it } from 'date-fns/locale/it';
 import { Navigate, RouterProvider, createBrowserRouter } from 'react-router-dom';
 import { Theme } from './utils/style';
 import { Layout } from './components/Layout';
@@ -26,6 +28,7 @@ import { DebtPositionsList } from 'routes/DebtPositions/list';
 import { ReceiptsSearch } from 'routes/Receipts/search';
 import DebtPositionDetail from 'routes/DebtPositionDetail';
 import { StorageItems } from 'utils/storage';
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 
 const withGuard = (Component: () => React.JSX.Element) => (
   <RouteGuard itemKeys={[StorageItems.TOKEN]} storage={window.localStorage}>
@@ -218,8 +221,10 @@ const router = createBrowserRouter([
 export const App = () => (
   <>
     <HealthCheck />
-    <Theme>
-      <RouterProvider router={router} />
-    </Theme>
+    <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale={it.code}>
+      <Theme>
+        <RouterProvider router={router} />
+      </Theme>
+    </LocalizationProvider>
   </>
 );
