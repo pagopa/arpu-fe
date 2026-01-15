@@ -11,7 +11,7 @@ import {
 import { InstallmentsDrawerState } from 'models/InstallmentDrawer';
 import { InstallmentStatus } from '../../generated/data-contracts';
 
-const items: InstallmentsDrawerState['items'] = [
+export const items: InstallmentsDrawerState['items'] = [
   {
     installmentId: 1,
     rateIndex: 1,
