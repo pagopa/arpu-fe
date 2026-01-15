@@ -158,6 +158,7 @@
       "payee": "Nome dell’ente",
       "status": "Stato",
       "date": "Data",
+      "paymentDateTime": "Pagato il",
       "amount": "Importo",
       "higherAmount": "importo più alto",
       "lowerAmount": "importo più basso",
@@ -332,6 +333,14 @@
   "aria": {
     "a11y": "Accessibilità",
     "help": "Aiuto"
+  },
+  "dates": {
+    "from": "Dal",
+    "to": "Al"
+  },
+  "actions": {
+    "filter": "Filtra",
+    "resetFilters": "Rimuovi filtri"
   },
   "general": {
     "and": "e",

@@ -1,12 +1,12 @@
 import React from 'react';
 import { Button, Stack, Typography } from '@mui/material';
 import { Link } from 'react-router-dom';
-import { ReceiptsPreview } from 'routes/Receipts/components/ReceiptsPreview';
 import { Content } from 'components/Content';
 import { ArcRoutes } from 'routes/routes';
 import { useSearch } from 'hooks/useSearch';
 import { useTranslation } from 'react-i18next';
 import utils from 'utils';
+import { ReceiptItem } from 'routes/Receipts/components/item';
 
 export const Receipts = () => {
   const { t } = useTranslation();
@@ -43,7 +43,11 @@ export const Receipts = () => {
         queryKey="pagedDebtorReceipts"
         noDataTitle={t('app.receipts.empty.title')}
         noDataText={t('app.receipts.empty.subtitle')}>
-        <ReceiptsPreview rows={receipts.query.data?.content} hideDateOrdering />
+        <Stack gap={2}>
+          {receipts.query.data?.content?.map((receipt) => (
+            <ReceiptItem key={receipt.receiptId} receipt={receipt} />
+          ))}
+        </Stack>
       </Content>
     </Stack>
   );

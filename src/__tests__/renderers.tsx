@@ -6,6 +6,7 @@ import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { StoreProvider } from '../store/GlobalStore';
 import React from 'react';
 import { Theme } from 'utils/style';
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 
 const AllTheProviders = ({ children }: { children: React.ReactNode }) => {
   const queryClient = new QueryClient({ defaultOptions: { queries: { retry: false } } });
@@ -13,7 +14,7 @@ const AllTheProviders = ({ children }: { children: React.ReactNode }) => {
     <MemoryRouter>
       <QueryClientProvider client={queryClient}>
         <StoreProvider>
-          <LocalizationProvider adapterLocale={it}>
+          <LocalizationProvider adapterLocale={it.code} dateAdapter={AdapterDayjs}>
             <Theme>{children}</Theme>
           </LocalizationProvider>
         </StoreProvider>
