@@ -18,10 +18,16 @@ interface InstallmentItemProps {
 const InstallmentItem = ({ item, totalItems, type, action }: InstallmentItemProps) => {
   const { t } = useTranslation();
   return (
-    <Stack direction="row" data-testid={`installments-drawer-installment-item-${item.installmentId}`}>
+    <Stack
+      direction="row"
+      data-testid={`installments-drawer-installment-item-${item.installmentId}`}>
       <IconButton aria-label="add">
         {type === 'added' ? (
-          <RemoveCircleOutlineIcon data-testid="remove-installment-button" onClick={() => action(item)} color="error" />
+          <RemoveCircleOutlineIcon
+            data-testid="remove-installment-button"
+            onClick={() => action(item)}
+            color="error"
+          />
         ) : (
           <AddCircleIcon data-testid="add-installment-button" onClick={() => action(item)} />
         )}
@@ -73,7 +79,11 @@ const InstallmentItem = ({ item, totalItems, type, action }: InstallmentItemProp
           {
             /* Amount */
             item.amountCents && (
-              <Typography fontWeight={600} fontSize={18} fontStyle="semibold" data-testid="installment-amount">
+              <Typography
+                fontWeight={600}
+                fontSize={18}
+                fontStyle="semibold"
+                data-testid="installment-amount">
                 {utils.converters.toEuro(item.amountCents)}
               </Typography>
             )
