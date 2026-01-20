@@ -370,6 +370,24 @@ const getDebtPositionDetail = (brokerId: number, debtPositionId: number, organiz
     }
   });
 
+const getMostUsedSpontaneousDebtPositionTypeOrgsForCurrentYear = (brokerId: number, organizationId: number) =>
+  useQuery({
+    queryKey: ['getMostUsedSpontaneousDebtPositionTypeOrgsForCurrentYear', brokerId, organizationId],
+    queryFn: async () => {
+      const { data } = await utils.apiClient.brokers.getMostUsedSpontaneousDebtPositionTypeOrgsForCurrentYear(brokerId, organizationId);
+      return data;
+    },
+  });
+
+const getPublicMostUsedSpontaneousDebtPositionTypeOrgsForCurrentYear = (brokerId: number, organizationId: number) =>
+  useQuery({
+    queryKey: ['getPublicMostUsedSpontaneousDebtPositionTypeOrgsForCurrentYear', brokerId, organizationId],
+    queryFn: async () => {
+      const { data } = await utils.apiClient.public.getPublicMostUsedSpontaneousDebtPositionTypeOrgsForCurrentYear(brokerId, organizationId);
+      return data;
+    },
+  });
+
 export default {
   createSpontaneousDebtPosition,
   getDebtPositionTypeOrgsWithSpontaneous,
@@ -384,6 +402,7 @@ export default {
   usePagedUnpaidDebtPositions,
   useReceiptDetail,
   getDebtPositionDetail,
+  getMostUsedSpontaneousDebtPositionTypeOrgsForCurrentYear,
   public: {
     createPublicSpontaneousDebtPosition,
     getPublicDebtPositionTypeOrgsWithSpontaneous,
@@ -393,6 +412,7 @@ export default {
     useBrokerInfo,
     usePublicInstallmentsByIuvOrNav,
     usePublicDownloadReceipt,
-    usePublicReceiptDetail
+    usePublicReceiptDetail,
+    getPublicMostUsedSpontaneousDebtPositionTypeOrgsForCurrentYear
   }
 };

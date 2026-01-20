@@ -46,6 +46,19 @@ const DebtTypeSelect = () => {
     }
   };
 
+
+  const mostUsedDebtTypesQuery = isAnonymous
+    ? utils.loaders.public.getPublicMostUsedSpontaneousDebtPositionTypeOrgsForCurrentYear(
+        brokerId,
+        context?.org?.organizationId || 0
+      )
+    : utils.loaders.getMostUsedSpontaneousDebtPositionTypeOrgsForCurrentYear(
+        brokerId,
+        context?.org?.organizationId || 0
+      );
+
+  console.log(mostUsedDebtTypesQuery.data);
+
   return (
     <>
       <Card variant="outlined">
