@@ -46,7 +46,6 @@ const DebtTypeSelect = () => {
     }
   };
 
-
   const mostUsedDebtTypesQuery = isAnonymous
     ? utils.loaders.public.getPublicMostUsedSpontaneousDebtPositionTypeOrgsForCurrentYear(
         brokerId,

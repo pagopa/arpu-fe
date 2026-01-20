@@ -370,22 +370,44 @@ const getDebtPositionDetail = (brokerId: number, debtPositionId: number, organiz
     }
   });
 
-const getMostUsedSpontaneousDebtPositionTypeOrgsForCurrentYear = (brokerId: number, organizationId: number) =>
+const getMostUsedSpontaneousDebtPositionTypeOrgsForCurrentYear = (
+  brokerId: number,
+  organizationId: number
+) =>
   useQuery({
-    queryKey: ['getMostUsedSpontaneousDebtPositionTypeOrgsForCurrentYear', brokerId, organizationId],
+    queryKey: [
+      'getMostUsedSpontaneousDebtPositionTypeOrgsForCurrentYear',
+      brokerId,
+      organizationId
+    ],
     queryFn: async () => {
-      const { data } = await utils.apiClient.brokers.getMostUsedSpontaneousDebtPositionTypeOrgsForCurrentYear(brokerId, organizationId);
+      const { data } =
+        await utils.apiClient.brokers.getMostUsedSpontaneousDebtPositionTypeOrgsForCurrentYear(
+          brokerId,
+          organizationId
+        );
       return data;
-    },
+    }
   });
 
-const getPublicMostUsedSpontaneousDebtPositionTypeOrgsForCurrentYear = (brokerId: number, organizationId: number) =>
+const getPublicMostUsedSpontaneousDebtPositionTypeOrgsForCurrentYear = (
+  brokerId: number,
+  organizationId: number
+) =>
   useQuery({
-    queryKey: ['getPublicMostUsedSpontaneousDebtPositionTypeOrgsForCurrentYear', brokerId, organizationId],
+    queryKey: [
+      'getPublicMostUsedSpontaneousDebtPositionTypeOrgsForCurrentYear',
+      brokerId,
+      organizationId
+    ],
     queryFn: async () => {
-      const { data } = await utils.apiClient.public.getPublicMostUsedSpontaneousDebtPositionTypeOrgsForCurrentYear(brokerId, organizationId);
+      const { data } =
+        await utils.apiClient.public.getPublicMostUsedSpontaneousDebtPositionTypeOrgsForCurrentYear(
+          brokerId,
+          organizationId
+        );
       return data;
-    },
+    }
   });
 
 export default {
