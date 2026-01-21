@@ -49,7 +49,7 @@ export const Actions = ({ installment }: ActionMenuProps) => {
         <Visibility color="inherit" />
       </Typography>
     ),
-    label: t('app.receiptsSearch.actions.toDetail'),
+    label: t('actions.toDetail'),
     action: () => {
       if (
         installment?.receiptId &&
@@ -75,7 +75,7 @@ export const Actions = ({ installment }: ActionMenuProps) => {
         <Download color="inherit" />
       </Typography>
     ),
-    label: t('app.receiptsSearch.actions.download'),
+    label: t('actions.download'),
     action: onDownload
   };
 

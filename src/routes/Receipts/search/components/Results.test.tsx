@@ -45,9 +45,9 @@ describe('Results', () => {
     render(<Results installments={mockInstallments} />);
 
     // Check translation labels
-    expect(screen.getAllByText('app.receiptsSearch.fields.noticeCode')).toHaveLength(2);
-    expect(screen.getAllByText('app.receiptsSearch.fields.orgName')).toHaveLength(2);
-    expect(screen.getAllByText('app.receiptsSearch.fields.amount')).toHaveLength(2);
+    expect(screen.getAllByText('fields.noticeCode')).toHaveLength(2);
+    expect(screen.getAllByText('fields.orgName')).toHaveLength(2);
+    expect(screen.getAllByText('fields.amount')).toHaveLength(2);
 
     // Check installment values
     expect(screen.getByText('123456789012345678')).toBeInTheDocument();
@@ -106,11 +106,11 @@ describe('Results', () => {
     render(<Results installments={mockInstallments.slice(0, 1)} />); // Just first item
 
     // Check label-value pairs for first installment
-    expect(screen.getByText('app.receiptsSearch.fields.noticeCode')).toBeInTheDocument();
+    expect(screen.getByText('fields.noticeCode')).toBeInTheDocument();
     expect(screen.getByText('123456789012345678')).toBeInTheDocument();
-    expect(screen.getByText('app.receiptsSearch.fields.orgName')).toBeInTheDocument();
+    expect(screen.getByText('fields.orgName')).toBeInTheDocument();
     expect(screen.getByText('org1')).toBeInTheDocument();
-    expect(screen.getByText('app.receiptsSearch.fields.amount')).toBeInTheDocument();
+    expect(screen.getByText('fields.amount')).toBeInTheDocument();
     expect(screen.getByText('€ 100.00')).toBeInTheDocument();
   });
 });

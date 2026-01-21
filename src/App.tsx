@@ -29,6 +29,7 @@ import { ReceiptsSearch } from 'routes/Receipts/search';
 import DebtPositionDetail from 'routes/DebtPositionDetail';
 import { StorageItems } from 'utils/storage';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+import { DebtPositionsSearch } from 'routes/DebtPositions/search';
 
 const withGuard = (Component: () => React.JSX.Element) => (
   <RouteGuard itemKeys={[StorageItems.TOKEN]} storage={window.localStorage}>
@@ -75,6 +76,14 @@ const router = createBrowserRouter([
         element: (
           <PreLoginLayout>
             <ReceiptDetail />
+          </PreLoginLayout>
+        )
+      },
+      {
+        path: ArcRoutes.public.DEBT_POSITION_SEARCH,
+        element: (
+          <PreLoginLayout>
+            <DebtPositionsSearch />
           </PreLoginLayout>
         )
       },

@@ -37,16 +37,10 @@ export const Results = ({ installments }: ResultsProps) => {
             borderRadius: 1
           }}>
           <Stack direction="row" justifyContent="space-between" width="80%">
+            <Item label={t('fields.noticeCode')} value={propertyOrMissingValue(installment.iuv)} />
+            <Item label={t('fields.orgName')} value={propertyOrMissingValue(installment.orgName)} />
             <Item
-              label={t('app.receiptsSearch.fields.noticeCode')}
-              value={propertyOrMissingValue(installment.iuv)}
-            />
-            <Item
-              label={t('app.receiptsSearch.fields.orgName')}
-              value={propertyOrMissingValue(installment.orgName)}
-            />
-            <Item
-              label={t('app.receiptsSearch.fields.amount')}
+              label={t('fields.amount')}
               value={toEuroOrMissingValue(installment.amountCents)}
             />
           </Stack>

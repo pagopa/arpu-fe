@@ -21,7 +21,8 @@ export const ArcRoutes = {
     PAYMENTS_ON_THE_FLY: `${rootPrefix}/public/spontanei`,
     PAYMENTS_ON_THE_FLY_DOWNLOAD: `${rootPrefix}/public/spontanei/download/:orgId/:iuv`,
     RECEIPTS_SEARCH: `${rootPrefix}/public/ricevute/ricerca`,
-    RECEIPT: `${rootPrefix}/public/ricevute/:receiptId/:organizationId`
+    RECEIPT: `${rootPrefix}/public/ricevute/:receiptId/:organizationId`,
+    DEBT_POSITION_SEARCH: `${rootPrefix}/public/posizioni-debitorie/ricerca`
   }
 };
 
