@@ -14,9 +14,6 @@ import {
 } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import { BackButton } from 'components/BackButton';
-import utils from 'utils';
-import { Results } from './components/Results';
-import { Content } from 'components/Content';
 
 enum TabIndex {
   PERSONA_FISICA = 0,
@@ -35,31 +32,17 @@ interface FormValues {
   anonymous?: boolean;
 }
 
-export const ReceiptsSearch = () => {
+export const DebtPositionsSearch = () => {
   const { t } = useTranslation();
   const [currentTab, setCurrentTab] = useState<TabIndex>(TabIndex.PERSONA_FISICA);
-  const brokerId = utils.storage.app.getBrokerId();
-
-  const installmentsMutation = utils.loaders.public.usePublicInstallmentsByIuvOrNav(brokerId);
 
   const handleTabChange = (_: React.SyntheticEvent, newValue: TabIndex) => {
     formik.setValues((values) => ({ ...values, fiscalCode: '', anonymous: false }));
     setCurrentTab(newValue);
   };
 
-  const onSubmit = async (values: FormValues) => {
+  const onSubmit = async () => {
     await formik.validateForm();
-    if (formik.isValid) {
-      const fiscalCode = isTab1 && values.anonymous ? 'ANONIMO' : values.fiscalCode;
-      try {
-        await installmentsMutation.mutateAsync({
-          iuvOrNav: values.iuv,
-          fiscalCode: fiscalCode
-        });
-      } catch {
-        utils.notify.emit(t('app.receiptsSearch.searchError'));
-      }
-    }
   };
 
   const isTab1 = currentTab === TabIndex.PERSONA_FISICA;
@@ -93,9 +76,9 @@ export const ReceiptsSearch = () => {
         <Stack sx={{ gap: 2 }}>
           <Stack gap={1}>
             <Typography variant="h4" component="h1" fontWeight={700}>
-              {t('app.receiptsSearch.title')}
+              {t('app.debtPositionsSearch.title')}
             </Typography>
-            <Typography variant="body1">{t('app.receiptsSearch.description')}</Typography>
+            <Typography variant="body1">{t('app.debtPositionsSearch.description')}</Typography>
           </Stack>
           <form onSubmit={formik.handleSubmit}>
             <Tabs value={currentTab} onChange={handleTabChange}>
@@ -103,14 +86,6 @@ export const ReceiptsSearch = () => {
               <Tab label={t('common.company')} />
             </Tabs>
             <Stack sx={{ backgroundColor: 'background.paper', p: 3, borderRadius: 1, gap: 3 }}>
-              <Typography variant="h6" component="h2" fontWeight={700}>
-                {t('app.receiptsSearch.sub')}
-              </Typography>
-              <Typography variant="body1" maxWidth={800}>
-                {isTab1
-                  ? t('app.receiptsSearch.tab1.description')
-                  : t('app.receiptsSearch.tab2.description')}
-              </Typography>
               <Stack direction="row" gap={3}>
                 <TextField
                   fullWidth
@@ -158,24 +133,6 @@ export const ReceiptsSearch = () => {
               </Stack>
             </Stack>
           </form>
-        </Stack>
-      </Container>
-      <Container sx={{ mb: 4 }}>
-        <Stack gap={3}>
-          {installmentsMutation.isSuccess && (
-            <Typography component="h3" fontWeight={600}>
-              {t('app.receiptsSearch.result', { count: installmentsMutation?.data?.length || 0 })}
-            </Typography>
-          )}
-          <Content
-            showRetry={installmentsMutation.isError}
-            onRetry={() => onSubmit(formik.values)}
-            queryKey={['publicInstallmentsByIuvOrNav', brokerId]}
-            noDataText={t('app.receiptsSearch.noData.text')}
-            noDataTitle={t('app.receiptsSearch.noData.title')}
-            noData={installmentsMutation.isSuccess && !installmentsMutation.data?.length}>
-            <Results installments={installmentsMutation.data || []} />
-          </Content>
         </Stack>
       </Container>
     </Stack>

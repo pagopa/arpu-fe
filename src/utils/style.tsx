@@ -1,8 +1,14 @@
 import React from 'react';
-import { ThemeProvider, createTheme } from '@mui/material';
+import { ThemeOptions, ThemeProvider, createTheme } from '@mui/material';
 import { theme } from '@pagopa/mui-italia';
 import { PropsWithChildren } from 'react';
 import CssBaseline from '@mui/material/CssBaseline';
+
+declare module '@mui/material/Button' {
+  interface ButtonPropsVariantOverrides {
+    contrast: true;
+  }
+}
 
 const customTheme = createTheme({
   ...theme,
@@ -40,10 +46,28 @@ const customTheme = createTheme({
         sizeLarge: ({ theme }) => ({
           minHeight: theme.spacing(6)
         })
-      }
+      },
+      variants: [
+        {
+          props: { variant: 'contrast' },
+          style: ({ theme }) => ({
+            backgroundColor: theme.palette.background.paper,
+            border: `1px solid ${theme.palette.background.paper}`,
+            color: theme.palette.primary.main,
+            justifyContent: 'flex-start',
+            textAlign: 'left',
+            paddingX: 20,
+            paddingY: 11,
+            fontWeight: 700,
+            '&:hover': {
+              border: `1px solid ${theme.palette.primary.main}`
+            }
+          })
+        }
+      ]
     }
   }
-});
+} as ThemeOptions);
 
 const style = {
   theme: customTheme

@@ -49,24 +49,24 @@ describe('ReceiptsSearch', () => {
   it('renders form with both tabs', () => {
     render(<ReceiptsSearch />);
 
-    expect(screen.getByText('app.receiptsSearch.tab1.label')).toBeInTheDocument();
-    expect(screen.getByText('app.receiptsSearch.tab2.label')).toBeInTheDocument();
+    expect(screen.getByText('common.person')).toBeInTheDocument();
+    expect(screen.getByText('common.company')).toBeInTheDocument();
   });
 
   it('switches between fiscal code and PIVA field', () => {
     render(<ReceiptsSearch />);
 
-    expect(screen.getByLabelText('app.receiptsSearch.fields.fiscalcode')).toBeInTheDocument();
+    expect(screen.getByLabelText('fields.fiscalcode')).toBeInTheDocument();
 
-    fireEvent.click(screen.getByText('app.receiptsSearch.tab2.label'));
+    fireEvent.click(screen.getByText('common.company'));
 
-    expect(screen.getByLabelText('app.receiptsSearch.fields.piva')).toBeInTheDocument();
+    expect(screen.getByLabelText('fields.piva')).toBeInTheDocument();
   });
 
   it('disables fiscal code when anonymous is checked', () => {
     render(<ReceiptsSearch />);
 
-    const fiscalCodeField = screen.getByLabelText('app.receiptsSearch.fields.fiscalcode');
+    const fiscalCodeField = screen.getByLabelText('fields.fiscalcode');
     const anonymousCheckbox = screen.getByRole('checkbox');
 
     fireEvent.click(anonymousCheckbox);
@@ -77,14 +77,14 @@ describe('ReceiptsSearch', () => {
   it('submits form with values', async () => {
     render(<ReceiptsSearch />);
 
-    fireEvent.change(screen.getByLabelText('app.receiptsSearch.fields.iuv'), {
+    fireEvent.change(screen.getByLabelText('fields.iuv'), {
       target: { value: '123456789012345678' }
     });
-    fireEvent.change(screen.getByLabelText('app.receiptsSearch.fields.fiscalcode'), {
+    fireEvent.change(screen.getByLabelText('fields.fiscalcode'), {
       target: { value: 'RSSMRA80A01H501U' }
     });
 
-    fireEvent.click(screen.getByText('app.receiptsSearch.actions.search'));
+    fireEvent.click(screen.getByText('actions.search'));
 
     await waitFor(() => {
       expect(mockMutateAsync).toHaveBeenCalledWith({
@@ -97,11 +97,11 @@ describe('ReceiptsSearch', () => {
   it('submits with ANONIMO when anonymous is checked', async () => {
     render(<ReceiptsSearch />);
 
-    fireEvent.change(screen.getByLabelText('app.receiptsSearch.fields.iuv'), {
+    fireEvent.change(screen.getByLabelText('fields.iuv'), {
       target: { value: '123456789012345678' }
     });
     fireEvent.click(screen.getByRole('checkbox'));
-    fireEvent.click(screen.getByText('app.receiptsSearch.actions.search'));
+    fireEvent.click(screen.getByText('actions.search'));
 
     await waitFor(() => {
       expect(mockMutateAsync).toHaveBeenCalledWith({
@@ -116,13 +116,13 @@ describe('ReceiptsSearch', () => {
 
     render(<ReceiptsSearch />);
 
-    fireEvent.change(screen.getByLabelText('app.receiptsSearch.fields.iuv'), {
+    fireEvent.change(screen.getByLabelText('fields.iuv'), {
       target: { value: '123456789012345678' }
     });
-    fireEvent.change(screen.getByLabelText('app.receiptsSearch.fields.fiscalcode'), {
+    fireEvent.change(screen.getByLabelText('fields.fiscalcode'), {
       target: { value: 'RSSMRA80A01H501U' }
     });
-    fireEvent.click(screen.getByText('app.receiptsSearch.actions.search'));
+    fireEvent.click(screen.getByText('actions.search'));
 
     await waitFor(() => {
       expect(utils.notify.emit).toHaveBeenCalledWith('app.receiptsSearch.searchError');

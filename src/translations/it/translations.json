@@ -13,31 +13,19 @@
       "result_one": "Abbiamo trovato {{count}} ricevuta",
       "result_other": "Abbiamo trovato {{count}} ricevute",
       "tab1": {
-        "label": "Persona Fisica",
         "description": "Inserisci il Codice Avviso (o IUV) e il Codice Fiscale per avviare la ricerca della ricevuta. Se non possiedi il Codice Fiscale, puoi comunque recuperare la ricevuta."
       },
       "tab2": {
-        "label": "Persona Giuridica",
         "description": "Inserisci il Codice Avviso (o IUV) e la P.IVA per avviare la ricerca della ricevuta."
-      },
-      "fields": {
-        "iuv": "Codice Avviso/IUV",
-        "fiscalcode": "Codice Fiscale",
-        "piva": "Codice Fiscale/P.IVA",
-        "anonymous": "Non ho il Codice Fiscale",
-        "orgName": "Ente Creditore",
-        "amount": "Importo",
-        "noticeCode": "Codice Avviso"
       },
       "noData": {
         "title": "Non abbiamo trovato ricevute corrispondenti",
         "text": "Controlla i dati inseriti e riprova."
-      },
-      "actions": {
-        "search": "Cerca",
-        "toDetail": "Vai al dettaglio",
-        "download": "Scarica"
       }
+    },
+    "debtPositionsSearch": {
+      "title": "Cerca un avviso",
+      "description": "Recupera un avviso di pagamento compilando i campi con i dati richiesti."
     },
     "user": {
       "title": "I tuoi dati",
@@ -77,7 +65,7 @@
       "installment": {
         "installmentNumber": "Rata {{installmentNumber}} di {{totalInstallments}}",
         "dueDate": "Entro il <strong>{{date}}</strong>",
-        "expireDate": "il <strong>{{date}}</strong>" 
+        "expireDate": "il <strong>{{date}}</strong>"
       },
       "actions": {
         "add": "Aggiungi al carrello ({{count}})",
@@ -126,8 +114,9 @@
       "noAuth": {
         "title": "Vai di fretta?",
         "description": "Fai un pagamento spontaneo o recupera la ricevuta di un pagamento già fatto, tutto senza fare login.",
-        "CTA1": "Fai un pagamento",
-        "CTA2": "Recupera una ricevuta"
+        "CTA1": "Fai un pagamento spontaneo",
+        "CTA2": "Recupera una ricevuta",
+        "CTA3": "Cerca un avviso"
       }
     },
     "dashboard": {
@@ -340,7 +329,23 @@
   },
   "actions": {
     "filter": "Filtra",
-    "resetFilters": "Rimuovi filtri"
+    "resetFilters": "Rimuovi filtri",
+    "search": "Cerca",
+    "toDetail": "Vai al dettaglio",
+    "download": "Scarica"
+  },
+  "fields": {
+    "iuv": "Codice Avviso/IUV",
+    "fiscalcode": "Codice Fiscale",
+    "piva": "Codice Fiscale/P.IVA",
+    "anonymous": "Non ho il Codice Fiscale",
+    "orgName": "Ente Creditore",
+    "amount": "Importo",
+    "noticeCode": "Codice Avviso"
+  },
+  "common": {
+    "person": "Persona fisica",
+    "company": "Soggetto giuridico"
   },
   "general": {
     "and": "e",
