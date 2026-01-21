@@ -114,7 +114,7 @@ describe('Receipts Action', () => {
   it('should show error notification when installment data is incomplete for navigation', async () => {
     render(<Actions installment={mockIncompleteInstallment} />);
 
-    const viewDetailButton = screen.getByText('app.receiptsSearch.actions.toDetail');
+    const viewDetailButton = screen.getByText('actions.toDetail');
     fireEvent.click(viewDetailButton);
 
     await waitFor(() => {
@@ -134,7 +134,7 @@ describe('Receipts Action', () => {
 
       render(<Actions installment={mockInstallment} />);
 
-      const downloadButton = screen.getByText('app.receiptsSearch.actions.download');
+      const downloadButton = screen.getByText('actions.download');
       fireEvent.click(downloadButton);
 
       await waitFor(() => {
@@ -156,7 +156,7 @@ describe('Receipts Action', () => {
 
       render(<Actions installment={mockInstallment} />);
 
-      const downloadButton = screen.getByText('app.receiptsSearch.actions.download');
+      const downloadButton = screen.getByText('actions.download');
       fireEvent.click(downloadButton);
 
       await waitFor(() => {
@@ -174,7 +174,7 @@ describe('Receipts Action', () => {
 
       render(<Actions installment={mockInstallment} />);
 
-      const downloadButton = screen.getByText('app.receiptsSearch.actions.download');
+      const downloadButton = screen.getByText('actions.download');
       fireEvent.click(downloadButton);
 
       await waitFor(() => {
@@ -188,7 +188,7 @@ describe('Receipts Action', () => {
 
       render(<Actions installment={mockInstallment} />);
 
-      const downloadButton = screen.getByText('app.receiptsSearch.actions.download');
+      const downloadButton = screen.getByText('actions.download');
       fireEvent.click(downloadButton);
 
       await waitFor(() => {
@@ -200,7 +200,7 @@ describe('Receipts Action', () => {
     it('should show error notification when installment data is incomplete for download', async () => {
       render(<Actions installment={mockIncompleteInstallment} />);
 
-      const downloadButton = screen.getByText('app.receiptsSearch.actions.download');
+      const downloadButton = screen.getByText('actions.download');
       fireEvent.click(downloadButton);
 
       await waitFor(() => {
@@ -217,7 +217,7 @@ describe('Receipts Action', () => {
 
       render(<Actions installment={installmentWithoutReceiptId} />);
 
-      const downloadButton = screen.getByText('app.receiptsSearch.actions.download');
+      const downloadButton = screen.getByText('actions.download');
       fireEvent.click(downloadButton);
 
       await waitFor(() => {
@@ -230,8 +230,8 @@ describe('Receipts Action', () => {
     it('should render both menu items when action menu is opened', async () => {
       render(<Actions installment={mockInstallment} />);
 
-      expect(screen.getByText('app.receiptsSearch.actions.toDetail')).toBeInTheDocument();
-      expect(screen.getByText('app.receiptsSearch.actions.download')).toBeInTheDocument();
+      expect(screen.getByText('actions.toDetail')).toBeInTheDocument();
+      expect(screen.getByText('actions.download')).toBeInTheDocument();
     });
   });
 });
