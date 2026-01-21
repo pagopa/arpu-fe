@@ -822,3 +822,52 @@ describe('getDebtPositionDetail', () => {
     });
   });
 });
+
+describe('getMostUsedSpontaneousDebtPositionTypeOrgsForCurrentYear', () => {
+  it('calls API enpoint correctly', async () => {
+    const dataMock = createMock(debtPositionTypeOrgsWithSpontaneousDTOSchema);
+
+    const apiMock = vi
+      .spyOn(utils.apiClient.brokers, 'getMostUsedSpontaneousDebtPositionTypeOrgsForCurrentYear')
+      .mockResolvedValue({ data: dataMock } as AxiosResponse);
+
+    const query = renderHook(
+      () => loaders.getMostUsedSpontaneousDebtPositionTypeOrgsForCurrentYear(1, 1),
+      {
+        wrapper
+      }
+    );
+
+    await waitFor(() => {
+      expect(apiMock).toHaveBeenCalledWith(1, 1);
+      expect(query.result.current.isSuccess).toBeTruthy();
+      expect(query.result.current.data).toEqual(dataMock);
+    });
+  });
+});
+
+describe('getPublicMostUsedSpontaneousDebtPositionTypeOrgsForCurrentYear', () => {
+  it('calls API enpoint correctly', async () => {
+    const dataMock = createMock(debtPositionTypeOrgsWithSpontaneousDTOSchema);
+
+    const apiMock = vi
+      .spyOn(
+        utils.apiClient.public,
+        'getPublicMostUsedSpontaneousDebtPositionTypeOrgsForCurrentYear'
+      )
+      .mockResolvedValue({ data: dataMock } as AxiosResponse);
+
+    const query = renderHook(
+      () => loaders.public.getPublicMostUsedSpontaneousDebtPositionTypeOrgsForCurrentYear(1, 1),
+      {
+        wrapper
+      }
+    );
+
+    await waitFor(() => {
+      expect(apiMock).toHaveBeenCalledWith(1, 1);
+      expect(query.result.current.isSuccess).toBeTruthy();
+      expect(query.result.current.data).toEqual(dataMock);
+    });
+  });
+});
