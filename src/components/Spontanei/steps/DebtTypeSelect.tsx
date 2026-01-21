@@ -1,5 +1,15 @@
 import React, { useContext } from 'react';
-import { Autocomplete, Card, Stack, TextField, Typography } from '@mui/material';
+import {
+  Autocomplete,
+  Card,
+  FormControl,
+  FormControlLabel,
+  Radio,
+  RadioGroup,
+  Stack,
+  TextField,
+  Typography
+} from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import utils from 'utils';
 import { DebtPositionTypeOrgsWithSpontaneousDTO } from '../../../../generated/data-contracts';
@@ -34,7 +44,7 @@ const DebtTypeSelect = () => {
     })) || [];
 
   const handleDebtTypeChange = (
-    _event: React.SyntheticEvent<Element, Event>,
+    _event: React.SyntheticEvent<Element, Event> | null,
     value: string | debtTypeOptions | null
   ) => {
     if (value && typeof value !== 'string' && context) {
@@ -45,6 +55,18 @@ const DebtTypeSelect = () => {
       return context.setDebtType(selectedDebtType);
     }
   };
+
+  const mostUsedDebtTypesQuery = isAnonymous
+    ? utils.loaders.public.getPublicMostUsedSpontaneousDebtPositionTypeOrgsForCurrentYear(
+        brokerId,
+        context?.org?.organizationId || 0
+      )
+    : utils.loaders.getMostUsedSpontaneousDebtPositionTypeOrgsForCurrentYear(
+        brokerId,
+        context?.org?.organizationId || 0
+      );
+
+  console.log(mostUsedDebtTypesQuery.data);
 
   return (
     <>
@@ -58,6 +80,36 @@ const DebtTypeSelect = () => {
             options={debtTypeOptions}
             renderInput={(params) => <TextField {...params} label="Cerca per nome del servizio" />}
           />
+          {mostUsedDebtTypesQuery.data && mostUsedDebtTypesQuery.data.length > 0 && (
+            <>
+              <Typography variant="subtitle1">
+                {t('spontanei.form.steps.step2.mostUsedDebtTypes')}
+              </Typography>
+              <Stack
+                sx={{ borderRadius: 1, border: '1px solid', borderColor: 'grey.300', px: 4, py: 2 }}
+                spacing={2}>
+                <RadioGroup aria-label="debt-type" name="debt-type-group">
+                  {mostUsedDebtTypesQuery.data.map((debtType) => (
+                    <FormControl key={debtType.debtPositionTypeOrgId}>
+                      <FormControlLabel
+                        value={debtType.debtPositionTypeOrgId}
+                        control={
+                          <Radio
+                            onChange={() => context?.setDebtType(debtType)}
+                            checked={
+                              context?.debtType?.debtPositionTypeOrgId ===
+                              debtType.debtPositionTypeOrgId
+                            }
+                          />
+                        }
+                        label={debtType.description}
+                      />
+                    </FormControl>
+                  ))}
+                </RadioGroup>
+              </Stack>
+            </>
+          )}
         </Stack>
       </Card>
       <Controls shouldContinue={async () => context?.debtType !== null} />

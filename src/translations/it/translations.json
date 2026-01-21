@@ -470,7 +470,8 @@
           "step": "Seleziona il servizio",
           "title": "Seleziona il servizio",
           "description": "Inizia a digitare il nome del servizio per il quale vuoi effettuare il pagamento e selezionalo dalla lista.",
-          "search": "Cerca per nome del servizio"
+          "search": "Cerca per nome del servizio",
+          "mostUsedDebtTypes": "In base alla tua ricerca"
         },
         "step3": {
           "step": "Configura il pagamento",
