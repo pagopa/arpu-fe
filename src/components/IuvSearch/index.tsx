@@ -17,6 +17,7 @@ import { BackButton } from 'components/BackButton';
 import { Content } from 'components/Content';
 import utils from 'utils';
 import { Results } from 'routes/Receipts/search/components/Results';
+import { InstallmentType } from 'utils/loaders';
 
 enum TabIndex {
   PERSONA_FISICA = 0,
@@ -39,7 +40,7 @@ interface IuvSearchProps {
   noDataTextKey?: string;
   searchErrorKey?: string;
   resultKey?: string;
-  showResults?: boolean;
+  installmentType?: InstallmentType;
 }
 
 const initialValues: FormValues = {
@@ -57,8 +58,8 @@ export const IuvSearch = ({
   noDataTitleKey,
   noDataTextKey,
   searchErrorKey,
-  resultKey,
-  showResults = false
+  installmentType = InstallmentType.ALL,
+  resultKey
 }: IuvSearchProps) => {
   const { t } = useTranslation();
   const [currentTab, setCurrentTab] = useState<TabIndex>(TabIndex.PERSONA_FISICA);
@@ -89,7 +90,7 @@ export const IuvSearch = ({
 
   const onSubmit = async (values: FormValues) => {
     await formik.validateForm();
-    if (formik.isValid && showResults) {
+    if (formik.isValid) {
       const fiscalCode = isTab1 && values.anonymous ? 'ANONIMO' : values.fiscalCode;
       try {
         await installmentsMutation.mutateAsync({
@@ -192,26 +193,27 @@ export const IuvSearch = ({
           </form>
         </Stack>
       </Container>
-      {showResults && (
-        <Container sx={{ mb: 4 }}>
-          <Stack gap={3}>
-            {installmentsMutation.isSuccess && resultKey && (
-              <Typography component="h3" fontWeight={600}>
-                {t(resultKey, { count: installmentsMutation?.data?.length || 0 })}
-              </Typography>
-            )}
-            <Content
-              showRetry={installmentsMutation.isError}
-              onRetry={() => onSubmit(formik.values)}
-              queryKey={['publicInstallmentsByIuvOrNav', brokerId]}
-              noDataText={noDataTextKey ? t(noDataTextKey) : ''}
-              noDataTitle={noDataTitleKey ? t(noDataTitleKey) : ''}
-              noData={installmentsMutation.isSuccess && !installmentsMutation.data?.length}>
-              <Results installments={installmentsMutation.data || []} />
-            </Content>
-          </Stack>
-        </Container>
-      )}
+      <Container sx={{ mb: 4 }}>
+        <Stack gap={3}>
+          {installmentsMutation.isSuccess && resultKey && (
+            <Typography component="h3" fontWeight={600}>
+              {t(resultKey, { count: installmentsMutation?.data?.length || 0 })}
+            </Typography>
+          )}
+          <Content
+            showRetry={installmentsMutation.isError}
+            onRetry={() => onSubmit(formik.values)}
+            queryKey={['publicInstallmentsByIuvOrNav', brokerId]}
+            noDataText={noDataTextKey ? t(noDataTextKey) : ''}
+            noDataTitle={noDataTitleKey ? t(noDataTitleKey) : ''}
+            noData={installmentsMutation.isSuccess && !installmentsMutation.data?.length}>
+            <Results
+              installments={installmentsMutation.data || []}
+              installmentType={installmentType}
+            />
+          </Content>
+        </Stack>
+      </Container>
     </Stack>
   );
 };

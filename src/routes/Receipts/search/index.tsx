@@ -1,5 +1,6 @@
 import { IuvSearch } from 'components/IuvSearch';
 import React from 'react';
+import { InstallmentType } from 'utils/loaders';
 
 export const ReceiptsSearch = () => {
   return (
@@ -13,7 +14,7 @@ export const ReceiptsSearch = () => {
       noDataTextKey="app.receiptsSearch.noData.text"
       searchErrorKey="app.receiptsSearch.searchError"
       resultKey="app.receiptsSearch.result"
-      showResults={true}
+      installmentType={InstallmentType.RECEIPTS}
     />
   );
 };

@@ -331,7 +331,7 @@
     "filter": "Filtra",
     "resetFilters": "Rimuovi filtri",
     "search": "Cerca",
-    "toDetail": "Vai al dettaglio",
+    "detail": "Dettaglio",
     "download": "Scarica"
   },
   "fields": {
@@ -341,7 +341,21 @@
     "anonymous": "Non ho il Codice Fiscale",
     "orgName": "Ente Creditore",
     "amount": "Importo",
-    "noticeCode": "Codice Avviso"
+    "noticeCode": "Codice Avviso",
+    "status": "Stato"
+  },
+  "installments": {
+    "status": {
+      "CANCELLED": "Annullato",
+      "DRAFT": "Bozza",
+      "EXPIRED": "Scaduto",
+      "INVALID": "Non valido",
+      "PAID": "Pagato",
+      "REPORTED": "Segnalato",
+      "TO_SYNC": "Da sincronizzare",
+      "UNPAID": "Da pagare",
+      "UNPAYABLE": "Non pagabile"
+    }
   },
   "common": {
     "person": "Persona fisica",
