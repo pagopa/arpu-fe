@@ -187,12 +187,7 @@
       "paymentOptionInstallments": "Soluzione a rate",
       "installment": "rata",
       "installments": "rate",
-      "before": "entro il",
-      "status": {
-        "PAID": "Pagato",
-        "UNPAID": "Da pagare",
-        "EXPIRED": "Scaduta"
-      }
+      "before": "entro il"
     },
     "paymentNotice": {
       "preview": {
@@ -344,14 +339,14 @@
     "noticeCode": "Codice Avviso",
     "status": "Stato"
   },
-  "installments": {
+  "installment": {
     "status": {
       "CANCELLED": "Annullato",
       "DRAFT": "Bozza",
       "EXPIRED": "Scaduto",
       "INVALID": "Non valido",
       "PAID": "Pagato",
-      "REPORTED": "Segnalato",
+      "REPORTED": "Pagato",
       "TO_SYNC": "Da sincronizzare",
       "UNPAID": "Da pagare",
       "UNPAYABLE": "Non pagabile"

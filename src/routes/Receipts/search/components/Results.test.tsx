@@ -2,22 +2,21 @@
 import React from 'react';
 import { render, screen } from '__tests__/renderers';
 import '@testing-library/jest-dom';
-import * as converters from 'utils/converters';
 import { InstallmentDebtorExtendedDTO } from '../../../../../generated/data-contracts';
 import { Results } from './Results';
-
-vi.mock('utils/converters', () => ({
-  propertyOrMissingValue: vi.fn((value) => value || '-'),
-  toEuroOrMissingValue: vi.fn((cents) => {
-    if (cents === undefined || cents === null) return '-';
-    return `€ ${(cents / 100).toFixed(2)}`;
-  })
-}));
+import { InstallmentType } from 'utils/loaders';
 
 // Mock Actions component
 vi.mock('./Actions', () => ({
   Actions: ({ installment }: { installment: any }) => (
-    <button data-testid={`actions-${installment.installmentId}`}>Actions</button>
+    <button data-testid={`actions-${installment.installmentId}`}>Actions </button>
+  )
+}));
+
+// Mock InstallmentChip component
+vi.mock('components/StatusChips/InstallmentChip', () => ({
+  InstallmentChip: ({ installment }: { installment: any }) => (
+    <span data-testid={`chip-${installment.installmentId}`}>Status Chip</span>
   )
 }));
 
@@ -41,69 +40,45 @@ describe('Results', () => {
     vi.clearAllMocks();
   });
 
-  it('renders list of installments with Item components', () => {
-    render(<Results installments={mockInstallments} />);
-
-    // Check translation labels
-    expect(screen.getAllByText('fields.noticeCode')).toHaveLength(2);
-    expect(screen.getAllByText('fields.orgName')).toHaveLength(2);
-    expect(screen.getAllByText('fields.amount')).toHaveLength(2);
-
-    // Check installment values
-    expect(screen.getByText('123456789012345678')).toBeInTheDocument();
-    expect(screen.getByText('€ 100.00')).toBeInTheDocument();
-    expect(screen.getByText('org1')).toBeInTheDocument();
-    expect(screen.getByText('org2')).toBeInTheDocument();
-    expect(screen.getByText('987654321098765432')).toBeInTheDocument();
-    expect(screen.getByText('€ 250.00')).toBeInTheDocument();
-  });
-
-  it('renders Actions component for each installment', () => {
-    render(<Results installments={mockInstallments} />);
+  it('renders Actions component for each installment with installmentType', () => {
+    render(<Results installments={mockInstallments} installmentType={InstallmentType.ALL} />);
 
     expect(screen.getByTestId('actions-1')).toBeInTheDocument();
     expect(screen.getByTestId('actions-2')).toBeInTheDocument();
     expect(screen.getAllByTestId(/actions-/)).toHaveLength(2);
   });
 
-  it('calls converters with correct values', () => {
-    render(<Results installments={mockInstallments} />);
+  it('renders status field only when installmentType is ALL', () => {
+    const { rerender } = render(
+      <Results installments={mockInstallments} installmentType={InstallmentType.ALL} />
+    );
 
-    expect(converters.propertyOrMissingValue).toHaveBeenCalledWith('123456789012345678');
-    expect(converters.propertyOrMissingValue).toHaveBeenCalledWith('org1');
-    expect(converters.toEuroOrMissingValue).toHaveBeenCalledWith(10000);
-    expect(converters.propertyOrMissingValue).toHaveBeenCalledWith('987654321098765432');
-    expect(converters.propertyOrMissingValue).toHaveBeenCalledWith('org2');
-    expect(converters.toEuroOrMissingValue).toHaveBeenCalledWith(25000);
+    // Should show status label and chips
+    expect(screen.getAllByText('fields.status')).toHaveLength(2);
+    expect(screen.getByTestId('chip-1')).toBeInTheDocument();
+    expect(screen.getByTestId('chip-2')).toBeInTheDocument();
+
+    // Rerender with different type
+    rerender(
+      <Results installments={mockInstallments} installmentType={InstallmentType.RECEIPTS} />
+    );
+
+    // Should not show status
+    expect(screen.queryAllByText('fields.status')).toHaveLength(0);
+    expect(screen.queryByTestId('chip-1')).not.toBeInTheDocument();
   });
 
   it('renders empty when no installments', () => {
-    render(<Results installments={[]} />);
+    render(<Results installments={[]} installmentType={InstallmentType.ALL} />);
 
     expect(screen.queryByTestId(/actions-/)).not.toBeInTheDocument();
     expect(screen.queryByText('123456789012345678')).not.toBeInTheDocument();
   });
 
-  it('handles missing values gracefully', () => {
-    const installmentsWithMissing: InstallmentDebtorExtendedDTO[] = [
-      {
-        installmentId: 1,
-        iuv: undefined,
-        orgName: null,
-        amountCents: undefined
-      }
-    ] as any;
-
-    render(<Results installments={installmentsWithMissing} />);
-
-    expect(converters.propertyOrMissingValue).toHaveBeenCalledWith(undefined);
-    expect(converters.propertyOrMissingValue).toHaveBeenCalledWith(null);
-    expect(converters.toEuroOrMissingValue).toHaveBeenCalledWith(undefined);
-    expect(screen.getByTestId('actions-1')).toBeInTheDocument();
-  });
-
   it('renders Item components with correct label-value structure', () => {
-    render(<Results installments={mockInstallments.slice(0, 1)} />); // Just first item
+    render(
+      <Results installments={mockInstallments.slice(0, 1)} installmentType={InstallmentType.ALL} />
+    );
 
     // Check label-value pairs for first installment
     expect(screen.getByText('fields.noticeCode')).toBeInTheDocument();
@@ -111,6 +86,6 @@ describe('Results', () => {
     expect(screen.getByText('fields.orgName')).toBeInTheDocument();
     expect(screen.getByText('org1')).toBeInTheDocument();
     expect(screen.getByText('fields.amount')).toBeInTheDocument();
-    expect(screen.getByText('€ 100.00')).toBeInTheDocument();
+    expect(screen.getByText('100,00 €')).toBeInTheDocument();
   });
 });

@@ -3,6 +3,11 @@ import React from 'react';
 import ExpiredIntalmentItems from './ExpiredInstallmentItems';
 import { InstallmentDrawerItem } from 'models/InstallmentDrawer';
 import { InstallmentStatus } from '../../../generated/data-contracts';
+import { i18nTestSetup } from '__tests__/i18nTestSetup';
+
+i18nTestSetup({
+  'app.installmentsDrawer.installment.expireDate': '{{date}}'
+});
 
 const items: InstallmentDrawerItem[] = [
   {
@@ -74,16 +79,18 @@ describe('ExpiredIntalmentItems', () => {
     const item2Amount = screen.getByTestId('installments-drawer-expired-installment-amount-2');
     expect(item2Amount).toHaveTextContent('2,75 €');
 
-    /* unfortunately due to the way the date formatting utility is implemented
-       (it relies on the global Intl object), it's not possible to test it properly
-       without mocking the entire Intl object, which is out of scope for this test.
-       Therefore, the following tests are commented out.
-    */
+    // const item1ExpireDate = screen.getByTestId(
+    //   'installments-drawer-expired-installment-expire-date-1'
+    // );
+    //
+    // TODO: check date conversion
+    // the following renders as 01/12/2024
+    //
+    // expect(item1ExpireDate).toHaveTextContent('31/11/2024');
 
-    //const item1ExpireDate = screen.getByTestId('installments-drawer-expired-installment-expire-date-1');
-    //expect(item1ExpireDate).toHaveTextContent('31/11/2024');
-
-    //const item2ExpireDate = screen.getByTestId('installments-drawer-expired-installment-expire-date-2');
-    //expect(item2ExpireDate).toHaveTextContent('31/12/2024');
+    const item2ExpireDate = screen.getByTestId(
+      'installments-drawer-expired-installment-expire-date-2'
+    );
+    expect(item2ExpireDate).toHaveTextContent('31/12/2024');
   });
 });

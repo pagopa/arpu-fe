@@ -1,13 +1,11 @@
 import { useTranslation } from 'react-i18next';
-import {
-  InstallmentDebtorExtendedDTO,
-  InstallmentStatus
-} from '../../../../../generated/data-contracts';
+import { InstallmentDebtorExtendedDTO } from '../../../../../generated/data-contracts';
 import React from 'react';
-import { Card, Chip, ChipOwnProps, Stack, Typography } from '@mui/material';
+import { Card, Stack, Typography } from '@mui/material';
 import { propertyOrMissingValue, toEuroOrMissingValue } from 'utils/converters';
 import { Actions } from './Actions';
 import { InstallmentType } from 'utils/loaders';
+import { InstallmentChip } from 'components/StatusChips/InstallmentChip';
 
 type ResultsProps = {
   installments: InstallmentDebtorExtendedDTO[];
@@ -24,18 +22,6 @@ const Item = ({ label, value }: { label: string; value: React.ReactNode }) => (
     </Typography>
   </Stack>
 );
-
-const statusColorMap: Record<InstallmentStatus, ChipOwnProps['color']> = {
-  [InstallmentStatus.CANCELLED]: 'warning',
-  [InstallmentStatus.DRAFT]: 'default',
-  [InstallmentStatus.EXPIRED]: 'error',
-  [InstallmentStatus.INVALID]: 'error',
-  [InstallmentStatus.PAID]: 'success',
-  [InstallmentStatus.REPORTED]: 'warning',
-  [InstallmentStatus.TO_SYNC]: 'info',
-  [InstallmentStatus.UNPAID]: 'default',
-  [InstallmentStatus.UNPAYABLE]: 'error'
-};
 
 export const Results = ({ installments, installmentType }: ResultsProps) => {
   const { t } = useTranslation();
@@ -63,12 +49,7 @@ export const Results = ({ installments, installmentType }: ResultsProps) => {
             {installmentType === InstallmentType.ALL && (
               <Item
                 label={t('fields.status')}
-                value={
-                  <Chip
-                    label={t(`installments.status.${installment.status}`)}
-                    color={statusColorMap[installment.status]}
-                  />
-                }
+                value={<InstallmentChip installment={installment} />}
               />
             )}
           </Stack>

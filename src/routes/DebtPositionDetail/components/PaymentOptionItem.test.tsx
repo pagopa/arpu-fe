@@ -1,6 +1,7 @@
-import { render, screen } from '__tests__/renderers';
+import { render, screen, within } from '__tests__/renderers';
 import PaymentOptionItem from './PaymentOptionItem';
 import React from 'react';
+import '@testing-library/jest-dom';
 import {
   mockSingleUnpaidInstallmentPaymentOption,
   mockInstallmentsPaymentOption
@@ -43,58 +44,27 @@ describe('PaymentOptionItem: multiple installments', () => {
     const ExtraInfo = screen.getByTestId('payment-option-item-type-installments-extra-info');
     expect(ExtraInfo).toBeVisible();
 
+    const installments = screen.getAllByTestId('installment-item');
+
     // FIRST INSTALLMENT
-    const firstInstallmenStatus = screen.getByTestId(
-      'payment-option-type-installments-installment-1-status'
-    ).innerHTML;
-    expect(firstInstallmenStatus).toContain('app.debtPositionDetail.status.EXPIRED');
-    const firstInstallmenAmount = screen.getByTestId(
-      'payment-option-type-installments-installment-1-amount'
-    ).innerHTML;
-    expect(firstInstallmenAmount).toContain('1,00&nbsp;€');
-    const firstInstallmentLabel = screen.getByTestId(
-      'payment-option-type-installments-installment-1'
-    ).innerHTML;
-    expect(firstInstallmentLabel).toContain('app.debtPositionDetail.installment 1');
-    const firstInstallmentDueDate = screen.getByTestId(
-      'payment-option-type-installments-installment-1-due-date'
-    ).innerHTML;
-    expect(firstInstallmentDueDate).toContain('app.debtPositionDetail.before 15/07/2025');
+    const firstInstallment = within(installments[0]);
+    expect(firstInstallment.getByText('installment.status.EXPIRED')).toBeVisible();
+    expect(firstInstallment.getByText('1,00 €')).toBeVisible();
+    expect(firstInstallment.getByText('app.debtPositionDetail.installment 1')).toBeVisible();
+    expect(firstInstallment.getByText('app.debtPositionDetail.before 15/07/2025')).toBeVisible();
 
     // SECOND INSTALLMENT
-    const secondInstallmenStatus = screen.getByTestId(
-      'payment-option-type-installments-installment-2-status'
-    ).innerHTML;
-    expect(secondInstallmenStatus).toContain('app.debtPositionDetail.status.PAID');
-    const secondInstallmenAmount = screen.getByTestId(
-      'payment-option-type-installments-installment-2-amount'
-    ).innerHTML;
-    expect(secondInstallmenAmount).toContain('1,00&nbsp;€');
-    const secondInstallmentLabel = screen.getByTestId(
-      'payment-option-type-installments-installment-2'
-    ).innerHTML;
-    expect(secondInstallmentLabel).toContain('app.debtPositionDetail.installment 2');
-    const secondInstallmentDueDate = screen.getByTestId(
-      'payment-option-type-installments-installment-2-due-date'
-    ).innerHTML;
-    expect(secondInstallmentDueDate).toContain('app.debtPositionDetail.before 15/08/2025');
+    const secondInstallment = within(installments[1]);
+    expect(secondInstallment.getByText('installment.status.PAID')).toBeVisible();
+    expect(secondInstallment.getByText('1,00 €')).toBeVisible();
+    expect(secondInstallment.getByText('app.debtPositionDetail.installment 2')).toBeVisible();
+    expect(secondInstallment.getByText('app.debtPositionDetail.before 15/08/2025')).toBeVisible();
 
     // THIRD INSTALLMENT
-    const thirdInstallmenStatus = screen.getByTestId(
-      'payment-option-type-installments-installment-3-status'
-    ).innerHTML;
-    expect(thirdInstallmenStatus).toContain('app.debtPositionDetail.status.UNPAID');
-    const thirdInstallmenAmount = screen.getByTestId(
-      'payment-option-type-installments-installment-3-amount'
-    ).innerHTML;
-    expect(thirdInstallmenAmount).toContain('1,50&nbsp;€');
-    const thirdInstallmentLabel = screen.getByTestId(
-      'payment-option-type-installments-installment-3'
-    ).innerHTML;
-    expect(thirdInstallmentLabel).toContain('app.debtPositionDetail.installment 3');
-    const thirdInstallmentDueDate = screen.getByTestId(
-      'payment-option-type-installments-installment-3-due-date'
-    ).innerHTML;
-    expect(thirdInstallmentDueDate).toContain('app.debtPositionDetail.before 15/09/2025');
+    const thirdInstallment = within(installments[2]);
+    expect(thirdInstallment.getByText('installment.status.UNPAID')).toBeVisible();
+    expect(thirdInstallment.getByText('1,50 €')).toBeVisible();
+    expect(thirdInstallment.getByText('app.debtPositionDetail.installment 3')).toBeVisible();
+    expect(thirdInstallment.getByText('app.debtPositionDetail.before 15/09/2025')).toBeVisible();
   });
 });
