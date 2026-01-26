@@ -188,7 +188,15 @@
       "paymentOptionInstallments": "Soluzione a rate",
       "installment": "rata",
       "installments": "rate",
-      "before": "entro il"
+      "before": "entro il",
+      "receipts": "Ricevute",
+      "paidOptionReceipt": "Ricevuta del {{date}} di {{amount}}",
+      "downloadReceipt": "Scarica la ricevuta",
+      "status": {
+        "PAID": "Pagato",
+        "UNPAID": "Da pagare",
+        "EXPIRED": "Scaduta"
+      }
     },
     "paymentNotice": {
       "preview": {
