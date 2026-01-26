@@ -14,13 +14,24 @@ import {
 import { useField } from 'formik';
 import { PaymentNoticeInfo } from '.';
 import { PersonEntityType } from '../../../generated/apiClient';
+import utils from 'utils';
 
 const DebtorSection = ({ hasFlagAnonymousFiscalCode }: { hasFlagAnonymousFiscalCode: boolean }) => {
   const [fullName, fullNameMeta] = useField<PaymentNoticeInfo['fullName']>('fullName');
-  const [fiscalCode, fiscalCodeMeta] = useField<PaymentNoticeInfo['fiscalCode']>('fiscalCode');
+  const [fiscalCode, fiscalCodeMeta, fiscalCodeHelper] =
+    useField<PaymentNoticeInfo['fiscalCode']>('fiscalCode');
   const [email, emailMeta] = useField<PaymentNoticeInfo['email']>('email');
   const [entityType, , entityTypeHelper] = useField<PaymentNoticeInfo['entityType']>('entityType');
+  const [isChecked, setIsChecked] = React.useState(false);
   const isFisica = entityType.value === PersonEntityType.F;
+  const isAnonymous = utils.storage.user.isAnonymous();
+
+  const handleChange = (_event: React.ChangeEvent<HTMLInputElement>, checked: boolean) => {
+    if (checked) {
+      fiscalCodeHelper.setValue('ANONIMO');
+    }
+    setIsChecked(checked);
+  };
 
   return (
     <>
@@ -29,6 +40,7 @@ const DebtorSection = ({ hasFlagAnonymousFiscalCode }: { hasFlagAnonymousFiscalC
           row
           onChange={(_e: React.ChangeEvent<HTMLInputElement>, value) => {
             entityTypeHelper.setValue(value as PersonEntityType);
+            fiscalCodeHelper.setValue('');
           }}
           aria-labelledby="demo-radio-buttons-group-label"
           defaultValue="F"
@@ -40,7 +52,9 @@ const DebtorSection = ({ hasFlagAnonymousFiscalCode }: { hasFlagAnonymousFiscalC
       <Card variant="outlined" sx={{ padding: 2 }}>
         <Stack gap={2}>
           <Typography variant="h6">Dati del debitore</Typography>
-          <FormControlLabel control={<Switch defaultChecked />} label="Usa i tuoi dati" />
+          {isFisica && !isAnonymous && (
+            <FormControlLabel control={<Switch />} label="Usa i tuoi dati" />
+          )}
           <Stack direction="row" gap={1}>
             <TextField
               label={isFisica ? 'Nome e Cognome' : 'Denominazione'}
@@ -55,6 +69,7 @@ const DebtorSection = ({ hasFlagAnonymousFiscalCode }: { hasFlagAnonymousFiscalC
               label={isFisica ? 'Codice fiscale' : 'Partita IVA'}
               variant="outlined"
               required
+              disabled={isChecked && isFisica}
               {...fiscalCode}
               error={fiscalCodeMeta.touched && Boolean(fiscalCodeMeta.error)}
               helperText={fiscalCodeMeta.touched && fiscalCodeMeta.error}
@@ -72,7 +87,7 @@ const DebtorSection = ({ hasFlagAnonymousFiscalCode }: { hasFlagAnonymousFiscalC
           </Stack>
           {isFisica && hasFlagAnonymousFiscalCode && (
             <FormControlLabel
-              control={<Checkbox defaultChecked />}
+              control={<Checkbox onChange={(event, checked) => handleChange(event, checked)} />}
               label="Non ho il Codice Fiscale"
             />
           )}

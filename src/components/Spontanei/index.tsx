@@ -68,7 +68,7 @@ const Spontanei = () => {
     fiscalCode: z
       .string()
       .regex(
-        /(^[A-Za-z]{6}[0-9]{2}[A-Za-z]{1}[0-9]{2}[A-Za-z]{1}[0-9]{3}[A-Za-z]{1}$)|(^[0-9]{11}$)/,
+        /(^[A-Za-z]{6}[0-9]{2}[A-Za-z]{1}[0-9]{2}[A-Za-z]{1}[0-9]{3}[A-Za-z]{1}$)|(^[0-9]{11}$)|ANONIMO/,
         'Codice Fiscale o Partita IVA errato'
       ),
     email: z.string().email('Email non valida')

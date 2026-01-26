@@ -9,9 +9,7 @@ import { PaymentNoticeInfo } from '..';
 import Controls from '../Controls';
 
 const initialValues = {
-  payeeFiscalCode: '',
-  payeeFullName: '',
-  payeeDescription: ''
+  description: ''
 };
 
 function isEmpty(obj) {
@@ -40,18 +38,10 @@ const StandardForm = (props: { fixedAmount?: number; hasFlagAnonymousFiscalCode?
   }, [props.fixedAmount]);
 
   const validate = (values: typeof initialValues) => {
-    descriptionHelpers.setValue(
-      `${values.payeeFullName}#${values.payeeFiscalCode}#${values.payeeDescription}`
-    );
+    descriptionHelpers.setValue(`${values.description}`);
     const errors: Partial<typeof initialValues> = {};
-    if (!values.payeeFullName) {
-      errors.payeeFullName = t('spontanei.form.validation.required');
-    }
-    if (!values.payeeFiscalCode) {
-      errors.payeeFiscalCode = t('spontanei.form.validation.required');
-    }
-    if (!values.payeeDescription) {
-      errors.payeeDescription = t('spontanei.form.validation.required');
+    if (!values.description) {
+      errors.description = t('spontanei.form.validation.required');
     }
     return errors;
   };
@@ -70,9 +60,7 @@ const StandardForm = (props: { fixedAmount?: number; hasFlagAnonymousFiscalCode?
         <Typography>{t('spontanei.form.steps.step3.description')}</Typography>
         <Typography>*Campo obbligatorio</Typography>
 
-        <Card variant="outlined" sx={{ padding: 2, marginTop: 2 }}>
-          <DebtorSection hasFlagAnonymousFiscalCode={props.hasFlagAnonymousFiscalCode || false} />
-        </Card>
+        <DebtorSection hasFlagAnonymousFiscalCode={props.hasFlagAnonymousFiscalCode || false} />
 
         <Formik
           initialValues={initialValues}
@@ -99,12 +87,12 @@ const StandardForm = (props: { fixedAmount?: number; hasFlagAnonymousFiscalCode?
                   label="Causale"
                   variant="outlined"
                   required
-                  name="payeeDescription"
-                  value={values.payeeDescription}
+                  name="description"
+                  value={values.description}
                   onChange={handleChange}
                   onBlur={handleBlur}
-                  error={Boolean(errors.payeeDescription)}
-                  helperText={touched.payeeDescription && errors.payeeDescription}
+                  error={Boolean(errors.description)}
+                  helperText={touched.description && errors.description}
                   sx={{ width: '-webkit-fill-available' }}
                 />
               </Stack>
