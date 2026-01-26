@@ -166,7 +166,8 @@
       },
       "debtPositionItem": {
         "amount": "Importo",
-        "dueDate": "Da pagare entro il"
+        "dueDate": "Da pagare entro il",
+        "noDueDate": "Più opzioni di pagamento"
       },
       "list": {
         "title": "Importi da pagare"

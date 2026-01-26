@@ -6,7 +6,7 @@ import { theme } from '@pagopa/mui-italia';
 
 export interface ListItemField {
   label: string;
-  value: string | number;
+  value: React.ReactNode;
   variant?: 'body2' | 'caption';
   fontWeight?: number;
 }
@@ -82,15 +82,16 @@ export const ListItem = ({
           width={{ xs: '50%', sm: '30%', md: '25%', xl: '20%' }}>
           <Stack gap={2} alignItems="center" direction="row">
             <Divider orientation="vertical" flexItem />
-            <Stack gap={2}>
+            <Stack gap={1}>
               {fields.map((field, index) => (
                 <Stack key={index}>
-                  <Typography variant="caption" color="text.secondary">
+                  <Typography variant="caption" color="text.secondary" fontSize={16}>
                     {field.label}
                   </Typography>
                   <Typography
                     variant={field.variant || 'body2'}
                     fontWeight={field.fontWeight || 600}
+                    fontSize={18}
                     sx={{
                       whiteSpace: 'nowrap',
                       overflow: 'hidden',
