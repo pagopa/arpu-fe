@@ -232,34 +232,9 @@ describe('IuvSearch', () => {
     });
   });
 
-  describe('Form submission without results', () => {
-    it('does not call API when showResults is false', async () => {
-      render(<IuvSearch {...defaultProps} showResults={false} />);
-
-      fireEvent.change(screen.getByLabelText('fields.iuv'), {
-        target: { value: '123456789012345678' }
-      });
-
-      fireEvent.change(screen.getByLabelText('fields.fiscalcode'), {
-        target: { value: 'RSSMRA80A01H501U' }
-      });
-
-      fireEvent.click(screen.getByText('actions.search'));
-
-      await waitFor(() => {
-        expect(mockMutateAsync).not.toHaveBeenCalled();
-      });
-    });
-
-    it('does not show results section when showResults is false', () => {
-      render(<IuvSearch {...defaultProps} showResults={false} />);
-      expect(screen.queryByTestId('content-component')).not.toBeInTheDocument();
-    });
-  });
-
   describe('Form submission with results', () => {
     it('submits form with values', async () => {
-      render(<IuvSearch {...defaultProps} showResults={true} searchErrorKey="app.search.error" />);
+      render(<IuvSearch {...defaultProps} searchErrorKey="app.search.error" />);
 
       fireEvent.change(screen.getByLabelText('fields.iuv'), {
         target: { value: '123456789012345678' }
@@ -280,7 +255,7 @@ describe('IuvSearch', () => {
     });
 
     it('submits with ANONIMO when anonymous is checked', async () => {
-      render(<IuvSearch {...defaultProps} showResults={true} searchErrorKey="app.search.error" />);
+      render(<IuvSearch {...defaultProps} searchErrorKey="app.search.error" />);
 
       fireEvent.change(screen.getByLabelText('fields.iuv'), {
         target: { value: '123456789012345678' }
@@ -300,7 +275,7 @@ describe('IuvSearch', () => {
     it('shows error notification on mutation failure', async () => {
       mockMutateAsync.mockRejectedValue(new Error('Failed'));
 
-      render(<IuvSearch {...defaultProps} showResults={true} searchErrorKey="app.search.error" />);
+      render(<IuvSearch {...defaultProps} searchErrorKey="app.search.error" />);
 
       fireEvent.change(screen.getByLabelText('fields.iuv'), {
         target: { value: '123456789012345678' }
@@ -317,19 +292,6 @@ describe('IuvSearch', () => {
       });
     });
 
-    it('shows results section when showResults is true', () => {
-      (utils.loaders.public.usePublicInstallmentsByIuvOrNav as Mock).mockReturnValue({
-        mutateAsync: mockMutateAsync,
-        data: [{ id: 1 }],
-        isSuccess: true,
-        isError: false
-      });
-
-      render(<IuvSearch {...defaultProps} showResults={true} resultKey="app.search.result" />);
-
-      expect(screen.getByTestId('content-component')).toBeInTheDocument();
-    });
-
     it('displays result count when data is available', () => {
       (utils.loaders.public.usePublicInstallmentsByIuvOrNav as Mock).mockReturnValue({
         mutateAsync: mockMutateAsync,
@@ -338,7 +300,7 @@ describe('IuvSearch', () => {
         isError: false
       });
 
-      render(<IuvSearch {...defaultProps} showResults={true} resultKey="app.search.result" />);
+      render(<IuvSearch {...defaultProps} resultKey="app.search.result" />);
 
       expect(screen.getByText('app.search.result')).toBeInTheDocument();
     });
@@ -351,7 +313,7 @@ describe('IuvSearch', () => {
         isError: false
       });
 
-      render(<IuvSearch {...defaultProps} showResults={true} />);
+      render(<IuvSearch {...defaultProps} />);
 
       expect(screen.getByTestId('results-component')).toBeInTheDocument();
     });

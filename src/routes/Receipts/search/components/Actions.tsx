@@ -1,18 +1,19 @@
-import { Visibility, Download } from '@mui/icons-material';
-import { Typography } from '@mui/material';
+import { Download } from '@mui/icons-material';
+import { Button, IconButton, Stack } from '@mui/material';
 import { t } from 'i18next';
 import React from 'react';
 import { generatePath, useNavigate } from 'react-router-dom';
 import { ArcRoutes } from 'routes/routes';
 import { InstallmentDebtorExtendedDTO } from '../../../../../generated/apiClient';
 import utils from 'utils';
-import ActionMenu from 'components/ActionMenu/ActionMenu';
+import { InstallmentType } from 'utils/loaders';
 
-type ActionMenuProps = {
+type ActionsProps = {
   installment: InstallmentDebtorExtendedDTO;
+  installmentType: InstallmentType;
 };
 
-export const Actions = ({ installment }: ActionMenuProps) => {
+export const Actions = ({ installment, installmentType }: ActionsProps) => {
   const navigate = useNavigate();
   const brokerId = utils.storage.app.getBrokerId();
   const isAnonymous = utils.storage.user.isAnonymous();
@@ -43,47 +44,37 @@ export const Actions = ({ installment }: ActionMenuProps) => {
     }
   };
 
-  const navigateToDetail = {
-    icon: (
-      <Typography color="text.primary">
-        <Visibility color="inherit" />
-      </Typography>
-    ),
-    label: t('actions.toDetail'),
-    action: () => {
-      if (
-        installment?.receiptId &&
-        installment?.organizationId &&
-        installment?.iuv &&
-        installment?.debtor?.fiscalCode
-      ) {
-        const detailRoute = isAnonymous ? ArcRoutes.public.RECEIPT : ArcRoutes.RECEIPT;
-        const path = generatePath(detailRoute, {
-          receiptId: installment?.receiptId,
-          organizationId: installment.organizationId
-        });
-        navigate(path, { state: { fiscalCode: installment.debtor.fiscalCode } });
-      } else {
-        utils.notify.emit(t('errors.toast.default'));
-      }
+  const navigateToDetail = () => {
+    if (
+      installment?.receiptId &&
+      installment?.organizationId &&
+      installment?.iuv &&
+      installment?.debtor?.fiscalCode
+    ) {
+      const detailRoute = isAnonymous ? ArcRoutes.public.RECEIPT : ArcRoutes.RECEIPT;
+      const path = generatePath(detailRoute, {
+        receiptId: installment?.receiptId,
+        organizationId: installment.organizationId
+      });
+      navigate(path, { state: { fiscalCode: installment.debtor.fiscalCode } });
+    } else {
+      utils.notify.emit(t('errors.toast.default'));
     }
   };
 
-  const downloadReceipt = {
-    icon: (
-      <Typography color="text.primary">
-        <Download color="inherit" />
-      </Typography>
-    ),
-    label: t('actions.download'),
-    action: onDownload
-  };
-
   return (
-    <ActionMenu
-      rowId={installment.installmentId}
-      key={installment.installmentId}
-      menuItems={[navigateToDetail, downloadReceipt]}
-    />
+    <Stack key={installment.installmentId} alignItems="center" direction="row" gap={2}>
+      <IconButton
+        aria-label="download"
+        onClick={installmentType === InstallmentType.RECEIPTS ? onDownload : undefined}>
+        <Download />
+      </IconButton>
+      <Button
+        size="large"
+        variant="contained"
+        onClick={installmentType === InstallmentType.RECEIPTS ? navigateToDetail : undefined}>
+        {t('actions.detail')}
+      </Button>
+    </Stack>
   );
 };

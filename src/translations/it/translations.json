@@ -187,12 +187,7 @@
       "paymentOptionInstallments": "Soluzione a rate",
       "installment": "rata",
       "installments": "rate",
-      "before": "entro il",
-      "status": {
-        "PAID": "Pagato",
-        "UNPAID": "Da pagare",
-        "EXPIRED": "Scaduta"
-      }
+      "before": "entro il"
     },
     "paymentNotice": {
       "preview": {
@@ -331,7 +326,7 @@
     "filter": "Filtra",
     "resetFilters": "Rimuovi filtri",
     "search": "Cerca",
-    "toDetail": "Vai al dettaglio",
+    "detail": "Dettaglio",
     "download": "Scarica"
   },
   "fields": {
@@ -341,7 +336,21 @@
     "anonymous": "Non ho il Codice Fiscale",
     "orgName": "Ente Creditore",
     "amount": "Importo",
-    "noticeCode": "Codice Avviso"
+    "noticeCode": "Codice Avviso",
+    "status": "Stato"
+  },
+  "installment": {
+    "status": {
+      "CANCELLED": "Annullato",
+      "DRAFT": "Bozza",
+      "EXPIRED": "Scaduto",
+      "INVALID": "Non valido",
+      "PAID": "Pagato",
+      "REPORTED": "Pagato",
+      "TO_SYNC": "Da sincronizzare",
+      "UNPAID": "Da pagare",
+      "UNPAYABLE": "Non pagabile"
+    }
   },
   "common": {
     "person": "Persona fisica",

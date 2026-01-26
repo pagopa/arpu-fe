@@ -344,6 +344,13 @@ type InstallmentsByIuvOrNavArgs = {
   fiscalCode: string;
 };
 
+// TODO: remove when below API has its
+// own filter definition
+export enum InstallmentType {
+  RECEIPTS = 'receipts',
+  ALL = 'all'
+}
+
 const usePublicInstallmentsByIuvOrNav = (brokerId: number) =>
   useMutation({
     mutationKey: ['publicInstallmentsByIuvOrNav', brokerId],
