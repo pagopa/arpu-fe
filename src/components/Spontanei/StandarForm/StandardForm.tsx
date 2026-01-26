@@ -25,7 +25,8 @@ const StandardForm = (props: { fixedAmount?: number; hasFlagAnonymousFiscalCode?
   const { t } = useTranslation();
   const { validateForm, submitForm } = useFormikContext();
   const [amount, amountMeta, amountHelpers] = useField<PaymentNoticeInfo['amount']>('amount');
-  const [, , descriptionHelpers] = useField<PaymentNoticeInfo['description']>('description');
+  const [, descriptionMeta, descriptionHelpers] =
+    useField<PaymentNoticeInfo['description']>('description');
   const formikRef = useRef<ReturnType<typeof useFormik<typeof initialValues>>>(null);
 
   useEffect(() => {
@@ -70,7 +71,7 @@ const StandardForm = (props: { fixedAmount?: number; hasFlagAnonymousFiscalCode?
             validate={validate}
             onSubmit={console.log}
             innerRef={formikRef}>
-            {({ values, errors, touched, handleChange, handleBlur }) => (
+            {({ values, handleChange, handleBlur }) => (
               <Card variant="outlined" sx={{ padding: 3 }}>
                 <Stack gap={2}>
                   <Typography variant="h6">
@@ -102,8 +103,8 @@ const StandardForm = (props: { fixedAmount?: number; hasFlagAnonymousFiscalCode?
                       value={values.description}
                       onChange={handleChange}
                       onBlur={handleBlur}
-                      error={Boolean(errors.description)}
-                      helperText={touched.description && errors.description}
+                      error={descriptionMeta.touched && Boolean(descriptionMeta.error)}
+                      helperText={descriptionMeta.touched && descriptionMeta.error}
                       sx={{ width: '-webkit-fill-available' }}
                     />
                   </Stack>

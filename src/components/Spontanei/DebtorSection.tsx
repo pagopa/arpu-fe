@@ -16,23 +16,63 @@ import { PaymentNoticeInfo } from '.';
 import { PersonEntityType } from '../../../generated/apiClient';
 import utils from 'utils';
 import { useTranslation } from 'react-i18next';
+import { useUserInfo } from 'hooks/useUserInfo';
+import { useUserEmail } from 'hooks/useUserEmail';
+import { useUserFiscalCode } from 'hooks/useUserFiscalCode';
 
 const DebtorSection = ({ hasFlagAnonymousFiscalCode }: { hasFlagAnonymousFiscalCode: boolean }) => {
-  const [fullName, fullNameMeta] = useField<PaymentNoticeInfo['fullName']>('fullName');
+  const [fullName, fullNameMeta, fullNameHelper] =
+    useField<PaymentNoticeInfo['fullName']>('fullName');
   const [fiscalCode, fiscalCodeMeta, fiscalCodeHelper] =
     useField<PaymentNoticeInfo['fiscalCode']>('fiscalCode');
-  const [email, emailMeta] = useField<PaymentNoticeInfo['email']>('email');
+  const [email, emailMeta, emailHelper] = useField<PaymentNoticeInfo['email']>('email');
   const [entityType, , entityTypeHelper] = useField<PaymentNoticeInfo['entityType']>('entityType');
-  const [isChecked, setIsChecked] = React.useState(false);
+  const [isFlagNoFiscalCodeChecked, setIsFlagNoFiscalCodeChecked] = React.useState(false);
   const { t } = useTranslation();
-  const isFisica = entityType.value === PersonEntityType.F;
-  const isAnonymous = utils.storage.user.isAnonymous();
 
-  const handleChange = (_event: React.ChangeEvent<HTMLInputElement>, checked: boolean) => {
+  const isAnonymous = utils.storage.user.isAnonymous();
+  // Get user info if not anonymous
+  const { userInfo } = isAnonymous ? { userInfo: null } : useUserInfo();
+
+  // Prepare payer full name
+  const name = userInfo?.name || '';
+  const surname = userInfo?.familyName || '';
+  const payerFullName = `${name} ${surname}`;
+
+  // Get user email if not anonymous
+  const payerEmail = isAnonymous ? '' : useUserEmail() || '';
+
+  // Get user fiscal code if not anonymous
+  const payerFiscalCode = isAnonymous ? '' : useUserFiscalCode() || '';
+
+  const isFisica = entityType.value === PersonEntityType.F;
+
+  const handleFlagNoFiscalCode = (
+    _event: React.ChangeEvent<HTMLInputElement>,
+    checked: boolean
+  ) => {
     if (checked) {
       fiscalCodeHelper.setValue('ANONIMO');
     }
-    setIsChecked(checked);
+    setIsFlagNoFiscalCodeChecked(checked);
+  };
+
+  const handleEntityTypeChange = (_event: React.ChangeEvent<HTMLInputElement>, value: string) => {
+    entityTypeHelper.setValue(value as PersonEntityType);
+    fiscalCodeHelper.setValue('');
+  };
+
+  const handleUseYourDataSwitch = (
+    _event: React.ChangeEvent<HTMLInputElement>,
+    checked: boolean
+  ) => {
+    if (checked) {
+      fullNameHelper.setValue(payerFullName);
+      emailHelper.setValue(payerEmail);
+      if (!isFlagNoFiscalCodeChecked) {
+        fiscalCodeHelper.setValue(payerFiscalCode);
+      }
+    }
   };
 
   return (
@@ -40,15 +80,20 @@ const DebtorSection = ({ hasFlagAnonymousFiscalCode }: { hasFlagAnonymousFiscalC
       <FormControl sx={{ my: 3 }}>
         <RadioGroup
           row
-          onChange={(_e: React.ChangeEvent<HTMLInputElement>, value) => {
-            entityTypeHelper.setValue(value as PersonEntityType);
-            fiscalCodeHelper.setValue('');
-          }}
+          onChange={handleEntityTypeChange}
           aria-labelledby="entityType-radio-buttons-group-label"
           defaultValue="F"
           name="entityType">
-          <FormControlLabel value="F" control={<Radio />} label="Persona fisica" />
-          <FormControlLabel value="G" control={<Radio />} label="Soggetto giuridico" />
+          <FormControlLabel
+            value="F"
+            control={<Radio />}
+            label={t('spontanei.form.steps.step3.debtor.F.title')}
+          />
+          <FormControlLabel
+            value="G"
+            control={<Radio />}
+            label={t('spontanei.form.steps.step3.debtor.G.title')}
+          />
         </RadioGroup>
       </FormControl>
       <Card variant="outlined" sx={{ padding: 3 }}>
@@ -56,7 +101,7 @@ const DebtorSection = ({ hasFlagAnonymousFiscalCode }: { hasFlagAnonymousFiscalC
           <Typography variant="h6">{t('spontanei.form.steps.step3.debtor.title')}</Typography>
           {isFisica && !isAnonymous && (
             <FormControlLabel
-              control={<Switch sx={{ mx: 1 }} />}
+              control={<Switch sx={{ mx: 1 }} onChange={handleUseYourDataSwitch} />}
               label={t('spontanei.form.steps.step3.debtor.useYourData')}
             />
           )}
@@ -84,7 +129,7 @@ const DebtorSection = ({ hasFlagAnonymousFiscalCode }: { hasFlagAnonymousFiscalC
               }
               variant="outlined"
               required
-              disabled={isChecked && isFisica}
+              disabled={isFlagNoFiscalCodeChecked && isFisica}
               {...fiscalCode}
               error={fiscalCodeMeta.touched && Boolean(fiscalCodeMeta.error)}
               helperText={fiscalCodeMeta.touched && fiscalCodeMeta.error}
@@ -107,7 +152,7 @@ const DebtorSection = ({ hasFlagAnonymousFiscalCode }: { hasFlagAnonymousFiscalC
           </Stack>
           {isFisica && hasFlagAnonymousFiscalCode && (
             <FormControlLabel
-              control={<Checkbox onChange={(event, checked) => handleChange(event, checked)} />}
+              control={<Checkbox onChange={handleFlagNoFiscalCode} />}
               label={t('spontanei.form.steps.step3.debtor.noFiscalCode')}
             />
           )}
