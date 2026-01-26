@@ -59,7 +59,7 @@ const PaymentSummary = () => {
         <SummaryItem label="Nome" value={fullName.value} />
         <SummaryItem label="Codice Fiscale" value={fiscalCode.value} />
         <SummaryItem label="Oggetto del pagamento" value={description.value} />
-        <SummaryItem label="Importo" value={utils.converters.toEuro(amount.value)} />
+        <SummaryItem label="Importo" value={utils.converters.toEuro(amount.value * 100)} />
       </SummaryStructure>
       <Controls shouldContinue={async () => true} />
     </>

@@ -1,10 +1,9 @@
 import React, { useRef } from 'react';
-import { Card, Stack, TextField, Typography } from '@mui/material';
+import { Card, InputAdornment, Stack, TextField, Typography } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import DebtorSection from '../DebtorSection';
 import { Formik, useField, useFormik, useFormikContext } from 'formik';
 import { useEffect } from 'react';
-import utils from 'utils';
 import { PaymentNoticeInfo } from '..';
 import Controls from '../Controls';
 
@@ -31,7 +30,7 @@ const StandardForm = (props: { fixedAmount?: number; hasFlagAnonymousFiscalCode?
 
   useEffect(() => {
     if (props.fixedAmount !== undefined) {
-      amountHelpers.setValue(props.fixedAmount);
+      amountHelpers.setValue(props.fixedAmount / 100);
     } else {
       amountHelpers.setValue(0);
     }
@@ -72,14 +71,17 @@ const StandardForm = (props: { fixedAmount?: number; hasFlagAnonymousFiscalCode?
               <Typography>Dati dell'avviso di pagamento</Typography>
               <Stack direction="row" justifyContent={'space-between'} spacing={2}>
                 <TextField
-                  label="Importo (€)"
+                  label="Importo"
                   variant="outlined"
                   required
-                  name="amount"
+                  slotProps={{
+                    input: {
+                      startAdornment: <InputAdornment position="start">€</InputAdornment>
+                    }
+                  }}
+                  type="number"
                   disabled={props.fixedAmount !== undefined}
-                  value={utils.converters.toEuro(amount.value)}
-                  onChange={handleChange}
-                  onBlur={handleBlur}
+                  {...amount}
                   error={amountMeta.touched && Boolean(amountMeta.error)}
                   helperText={amountMeta.touched && amountMeta.error}
                 />

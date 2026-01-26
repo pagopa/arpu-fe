@@ -66,8 +66,6 @@ const DebtTypeSelect = () => {
         context?.org?.organizationId || 0
       );
 
-  console.log(mostUsedDebtTypesQuery.data);
-
   return (
     <>
       <Card variant="outlined">
