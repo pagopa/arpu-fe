@@ -1,14 +1,5 @@
 import React, { useRef } from 'react';
-import {
-  Card,
-  FormControl,
-  FormControlLabel,
-  Radio,
-  RadioGroup,
-  Stack,
-  TextField,
-  Typography
-} from '@mui/material';
+import { Card, Stack, TextField, Typography } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import DebtorSection from '../DebtorSection';
 import { Formik, useField, useFormik, useFormikContext } from 'formik';
@@ -16,7 +7,6 @@ import { useEffect } from 'react';
 import utils from 'utils';
 import { PaymentNoticeInfo } from '..';
 import Controls from '../Controls';
-import { PersonEntityType } from '../../../../generated/data-contracts';
 
 const initialValues = {
   payeeFiscalCode: '',
@@ -34,11 +24,10 @@ function isEmpty(obj) {
   return true;
 }
 
-const StandardForm = (props: { fixedAmount?: number }) => {
+const StandardForm = (props: { fixedAmount?: number; hasFlagAnonymousFiscalCode?: boolean }) => {
   const { t } = useTranslation();
   const { validateForm, submitForm } = useFormikContext();
   const [amount, amountMeta, amountHelpers] = useField<PaymentNoticeInfo['amount']>('amount');
-  const [value, , entityTypeMeta] = useField<PaymentNoticeInfo['entityType']>('entityType');
   const [, , descriptionHelpers] = useField<PaymentNoticeInfo['description']>('description');
   const formikRef = useRef<ReturnType<typeof useFormik<typeof initialValues>>>(null);
 
@@ -80,22 +69,9 @@ const StandardForm = (props: { fixedAmount?: number }) => {
         <Typography variant="h6">{t('spontanei.form.steps.step3.title')}</Typography>
         <Typography>{t('spontanei.form.steps.step3.description')}</Typography>
         <Typography>*Campo obbligatorio</Typography>
-        <FormControl>
-          <RadioGroup
-            row
-            onChange={(_e: any, value) => {
-              entityTypeMeta.setValue(value as PersonEntityType);
-            }}
-            aria-labelledby="demo-radio-buttons-group-label"
-            defaultValue="F"
-            name="entityType">
-            <FormControlLabel value="F" control={<Radio />} label="Persona fisica" />
-            <FormControlLabel value="G" control={<Radio />} label="Soggetto giuridico" />
-          </RadioGroup>
-        </FormControl>
 
         <Card variant="outlined" sx={{ padding: 2, marginTop: 2 }}>
-          <DebtorSection />
+          <DebtorSection hasFlagAnonymousFiscalCode={props.hasFlagAnonymousFiscalCode || false} />
         </Card>
 
         <Formik
