@@ -15,6 +15,7 @@ import { useField } from 'formik';
 import { PaymentNoticeInfo } from '.';
 import { PersonEntityType } from '../../../generated/apiClient';
 import utils from 'utils';
+import { useTranslation } from 'react-i18next';
 
 const DebtorSection = ({ hasFlagAnonymousFiscalCode }: { hasFlagAnonymousFiscalCode: boolean }) => {
   const [fullName, fullNameMeta] = useField<PaymentNoticeInfo['fullName']>('fullName');
@@ -23,6 +24,7 @@ const DebtorSection = ({ hasFlagAnonymousFiscalCode }: { hasFlagAnonymousFiscalC
   const [email, emailMeta] = useField<PaymentNoticeInfo['email']>('email');
   const [entityType, , entityTypeHelper] = useField<PaymentNoticeInfo['entityType']>('entityType');
   const [isChecked, setIsChecked] = React.useState(false);
+  const { t } = useTranslation();
   const isFisica = entityType.value === PersonEntityType.F;
   const isAnonymous = utils.storage.user.isAnonymous();
 
@@ -35,29 +37,37 @@ const DebtorSection = ({ hasFlagAnonymousFiscalCode }: { hasFlagAnonymousFiscalC
 
   return (
     <>
-      <FormControl>
+      <FormControl sx={{ my: 3 }}>
         <RadioGroup
           row
           onChange={(_e: React.ChangeEvent<HTMLInputElement>, value) => {
             entityTypeHelper.setValue(value as PersonEntityType);
             fiscalCodeHelper.setValue('');
           }}
-          aria-labelledby="demo-radio-buttons-group-label"
+          aria-labelledby="entityType-radio-buttons-group-label"
           defaultValue="F"
           name="entityType">
           <FormControlLabel value="F" control={<Radio />} label="Persona fisica" />
           <FormControlLabel value="G" control={<Radio />} label="Soggetto giuridico" />
         </RadioGroup>
       </FormControl>
-      <Card variant="outlined" sx={{ padding: 2 }}>
+      <Card variant="outlined" sx={{ padding: 3 }}>
         <Stack gap={2}>
-          <Typography variant="h6">Dati del debitore</Typography>
+          <Typography variant="h6">{t('spontanei.form.steps.step3.debtor.title')}</Typography>
           {isFisica && !isAnonymous && (
-            <FormControlLabel control={<Switch />} label="Usa i tuoi dati" />
+            <FormControlLabel
+              control={<Switch />}
+              label={t('spontanei.form.steps.step3.debtor.useYourData')}
+            />
           )}
           <Stack direction="row" gap={1}>
             <TextField
-              label={isFisica ? 'Nome e Cognome' : 'Denominazione'}
+              size="small"
+              label={
+                isFisica
+                  ? t('spontanei.form.steps.step3.debtor.F.name')
+                  : t('spontanei.form.steps.step3.debtor.G.name')
+              }
               variant="outlined"
               required
               {...fullName}
@@ -66,7 +76,12 @@ const DebtorSection = ({ hasFlagAnonymousFiscalCode }: { hasFlagAnonymousFiscalC
               sx={{ width: '-webkit-fill-available' }}
             />
             <TextField
-              label={isFisica ? 'Codice fiscale' : 'Partita IVA'}
+              size="small"
+              label={
+                isFisica
+                  ? t('spontanei.form.steps.step3.debtor.F.code')
+                  : t('spontanei.form.steps.step3.debtor.G.code')
+              }
               variant="outlined"
               required
               disabled={isChecked && isFisica}
@@ -76,7 +91,12 @@ const DebtorSection = ({ hasFlagAnonymousFiscalCode }: { hasFlagAnonymousFiscalC
               sx={{ width: '-webkit-fill-available' }}
             />
             <TextField
-              label="Email"
+              size="small"
+              label={
+                isFisica
+                  ? t('spontanei.form.steps.step3.debtor.F.email')
+                  : t('spontanei.form.steps.step3.debtor.G.email')
+              }
               variant="outlined"
               type="email"
               {...email}
@@ -88,7 +108,7 @@ const DebtorSection = ({ hasFlagAnonymousFiscalCode }: { hasFlagAnonymousFiscalC
           {isFisica && hasFlagAnonymousFiscalCode && (
             <FormControlLabel
               control={<Checkbox onChange={(event, checked) => handleChange(event, checked)} />}
-              label="Non ho il Codice Fiscale"
+              label={t('spontanei.form.steps.step3.debtor.noFiscalCode')}
             />
           )}
         </Stack>

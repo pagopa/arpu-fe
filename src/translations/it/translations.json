@@ -476,7 +476,30 @@
         "step3": {
           "step": "Configura il pagamento",
           "title": "Inserisci i dati",
-          "description": "Compila i campi con i dati richiesti per completare l'operazione."
+          "description": "Compila i campi con i dati richiesti per completare l'operazione.",
+          "requiredField": "* Campo obbligatorio",
+          "debtor": {
+            "title": "Dati del debitore",
+            "useYourData": "Usa i tuoi dati",
+            "F": {
+              "title": "Persona fisica",
+              "name": "Nome e cognome debitore",
+              "code": "Codice Fiscale debitore",
+              "email": "Email debitore"
+            },
+            "G": {
+              "title": "Soggetto giuridico",
+              "name": "Denominazione",
+              "code": "Codice Fiscale/P.IVA",
+              "email": "Email"
+            },
+            "noFiscalCode": "Non ho il Codice Fiscale"
+          },
+          "paymentData": {
+            "title": "Dati dell'avviso di pagamento",
+            "amount": "Importo",
+            "description": "Causale"
+          }
         },
         "step4": {
           "step": "Riepilogo",
