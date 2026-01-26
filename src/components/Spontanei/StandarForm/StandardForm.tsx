@@ -1,5 +1,14 @@
 import React, { useRef } from 'react';
-import { Card, Stack, TextField, Typography } from '@mui/material';
+import {
+  Card,
+  FormControl,
+  FormControlLabel,
+  Radio,
+  RadioGroup,
+  Stack,
+  TextField,
+  Typography
+} from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import DebtorSection from '../DebtorSection';
 import { Formik, useField, useFormik, useFormikContext } from 'formik';
@@ -7,6 +16,7 @@ import { useEffect } from 'react';
 import utils from 'utils';
 import { PaymentNoticeInfo } from '..';
 import Controls from '../Controls';
+import { PersonEntityType } from '../../../../generated/data-contracts';
 
 const initialValues = {
   payeeFiscalCode: '',
@@ -28,6 +38,7 @@ const StandardForm = (props: { fixedAmount?: number }) => {
   const { t } = useTranslation();
   const { validateForm, submitForm } = useFormikContext();
   const [amount, amountMeta, amountHelpers] = useField<PaymentNoticeInfo['amount']>('amount');
+  const [value, , entityTypeMeta] = useField<PaymentNoticeInfo['entityType']>('entityType');
   const [, , descriptionHelpers] = useField<PaymentNoticeInfo['description']>('description');
   const formikRef = useRef<ReturnType<typeof useFormik<typeof initialValues>>>(null);
 
@@ -65,42 +76,36 @@ const StandardForm = (props: { fixedAmount?: number }) => {
 
   return (
     <>
-      <Formik
-        initialValues={initialValues}
-        validate={validate}
-        onSubmit={console.log}
-        innerRef={formikRef}>
-        {({ values, errors, touched, handleChange, handleBlur }) => (
-          <Card variant="outlined">
-            <Stack spacing={2} padding={4}>
-              <Typography variant="h6">{t('spontanei.form.steps.step3.title')}</Typography>
-              <Typography>{t('spontanei.form.steps.step3.description')}</Typography>
-              <Stack direction="row" justifyContent={'space-between'} spacing={2}>
-                <TextField
-                  label="Nome Cognome / Ragione Sociale"
-                  variant="outlined"
-                  required
-                  name="payeeFullName"
-                  value={values.payeeFullName}
-                  onChange={handleChange}
-                  onBlur={handleBlur}
-                  error={Boolean(errors.payeeFullName)}
-                  helperText={touched.payeeFullName && errors.payeeFullName}
-                  sx={{ width: '-webkit-fill-available' }}
-                />
-                <TextField
-                  label="Codice Fiscale / Partita IVA"
-                  variant="outlined"
-                  required
-                  name="payeeFiscalCode"
-                  value={values.payeeFiscalCode}
-                  onChange={handleChange}
-                  onBlur={handleBlur}
-                  error={Boolean(errors.payeeFiscalCode)}
-                  helperText={touched.payeeFiscalCode && errors.payeeFiscalCode}
-                  sx={{ width: '-webkit-fill-available' }}
-                />
-              </Stack>
+      <Card sx={{ padding: 3 }}>
+        <Typography variant="h6">{t('spontanei.form.steps.step3.title')}</Typography>
+        <Typography>{t('spontanei.form.steps.step3.description')}</Typography>
+        <Typography>*Campo obbligatorio</Typography>
+        <FormControl>
+          <RadioGroup
+            row
+            onChange={(_e: any, value) => {
+              entityTypeMeta.setValue(value as PersonEntityType);
+            }}
+            aria-labelledby="demo-radio-buttons-group-label"
+            defaultValue="F"
+            name="entityType">
+            <FormControlLabel value="F" control={<Radio />} label="Persona fisica" />
+            <FormControlLabel value="G" control={<Radio />} label="Soggetto giuridico" />
+          </RadioGroup>
+        </FormControl>
+
+        <Card variant="outlined" sx={{ padding: 2, marginTop: 2 }}>
+          <DebtorSection />
+        </Card>
+
+        <Formik
+          initialValues={initialValues}
+          validate={validate}
+          onSubmit={console.log}
+          innerRef={formikRef}>
+          {({ values, errors, touched, handleChange, handleBlur }) => (
+            <Card variant="outlined" sx={{ padding: 2, marginTop: 2 }}>
+              <Typography>Dati dell'avviso di pagamento</Typography>
               <Stack direction="row" justifyContent={'space-between'} spacing={2}>
                 <TextField
                   label="Importo (€)"
@@ -127,14 +132,9 @@ const StandardForm = (props: { fixedAmount?: number }) => {
                   sx={{ width: '-webkit-fill-available' }}
                 />
               </Stack>
-            </Stack>
-          </Card>
-        )}
-      </Formik>
-      <Card variant="outlined">
-        <Stack spacing={2} padding={4}>
-          <DebtorSection />
-        </Stack>
+            </Card>
+          )}
+        </Formik>
       </Card>
       <Controls shouldContinue={shouldContinue} />
     </>

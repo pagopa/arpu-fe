@@ -75,6 +75,7 @@ const Spontanei = () => {
   });
 
   const validate = (values: PaymentNoticeInfo) => {
+    console.log('Validating', values);
     const errors: Partial<PaymentNoticeInfo> = {};
     const result = PaymentNoticeInfoSchema.safeParse(values);
     if (!result.success) {

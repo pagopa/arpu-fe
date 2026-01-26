@@ -1,5 +1,15 @@
 import React from 'react';
-import { Stack, TextField, ToggleButton, ToggleButtonGroup, Typography } from '@mui/material';
+import {
+  Box,
+  Checkbox,
+  FormControlLabel,
+  Stack,
+  Switch,
+  TextField,
+  ToggleButton,
+  ToggleButtonGroup,
+  Typography
+} from '@mui/material';
 import { useField } from 'formik';
 import { PaymentNoticeInfo } from '.';
 import { PersonEntityType } from '../../../generated/apiClient';
@@ -8,28 +18,14 @@ const DebtorSection = () => {
   const [fullName, fullNameMeta] = useField<PaymentNoticeInfo['fullName']>('fullName');
   const [fiscalCode, fiscalCodeMeta] = useField<PaymentNoticeInfo['fiscalCode']>('fiscalCode');
   const [email, emailMeta] = useField<PaymentNoticeInfo['email']>('email');
-  const [type, , meta] = useField<PaymentNoticeInfo['entityType']>('entityType');
+  const [type] = useField<PaymentNoticeInfo['entityType']>('entityType');
   const isFisica = type.value === PersonEntityType.F;
 
   return (
-    <>
-      <Typography variant="h6" mt={2} mb={2}>
-        Dati intestatario
-      </Typography>
-      <ToggleButtonGroup
-        color="primary"
-        exclusive
-        aria-label="Platform"
-        value={type.value}
-        onChange={(_, value: PersonEntityType) => meta.setValue(value)}>
-        <ToggleButton value="F" name={type.name}>
-          Fisica
-        </ToggleButton>
-        <ToggleButton value="G" name={type.name}>
-          Giuridica
-        </ToggleButton>
-      </ToggleButtonGroup>
-      <Stack direction="row" gap={2} mt={2}>
+    <Stack gap={2}>
+      <Typography variant="h6">Dati del debitore</Typography>
+      <FormControlLabel control={<Switch defaultChecked />} label="Usa i tuoi dati" />
+      <Stack direction="row" gap={1}>
         <TextField
           label={isFisica ? 'Nome e Cognome' : 'Denominazione'}
           variant="outlined"
@@ -58,7 +54,8 @@ const DebtorSection = () => {
           sx={{ width: '-webkit-fill-available' }}
         />
       </Stack>
-    </>
+      <FormControlLabel control={<Checkbox defaultChecked />} label="Non ho il Codice Fiscale" />
+    </Stack>
   );
 };
 
