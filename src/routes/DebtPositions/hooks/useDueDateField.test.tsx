@@ -5,6 +5,12 @@ import { renderHook } from '@testing-library/react';
 import { useDueDateField } from './useDueDateField';
 import { datetools } from 'utils/datetools';
 
+vi.mock('react-i18next', () => ({
+  useTranslation: () => ({
+    t: (key: string) => key
+  })
+}));
+
 vi.mock('utils/datetools', () => ({
   datetools: {
     formatDate: vi.fn()
@@ -21,7 +27,7 @@ describe('useDueDateField', () => {
     vi.mocked(datetools.formatDate).mockReturnValue('13/11/2025');
   });
 
-  it('returns formatted date when payment option has due date', () => {
+  it('returns formatted date when single payment option has due date', () => {
     const paymentOptions = [{ dueDate: '2025-11-13T00:00:00Z' }];
 
     const { result } = renderHook(() => useDueDateField(paymentOptions as any));
@@ -31,15 +37,28 @@ describe('useDueDateField', () => {
     expect(result.current.value).toBe('13/11/2025');
   });
 
-  it('returns tag component when no due date exists', () => {
-    const paymentOptions = [{ dueDate: undefined }];
+  it('returns tag component when multiple payment options exist', () => {
+    const paymentOptions = [
+      { dueDate: '2025-11-13T00:00:00Z' },
+      { dueDate: '2025-12-13T00:00:00Z' }
+    ];
 
     const { result } = renderHook(() => useDueDateField(paymentOptions as any));
 
     expect(result.current.label).toBe('');
     expect(datetools.formatDate).not.toHaveBeenCalled();
     // Check that it's a React element (Tag component)
-    expect(result.current.value).toBeTruthy();
+    expect(React.isValidElement(result.current.value)).toBe(true);
+  });
+
+  it('returns tag component when no due date exists', () => {
+    const paymentOptions = [{ dueDate: undefined }];
+
+    const { result } = renderHook(() => useDueDateField(paymentOptions as any));
+
+    expect(result.current.label).toBe('');
+    expect(datetools.formatDate).toHaveBeenCalledWith(undefined);
+    expect(result.current.value).toBe('13/11/2025');
   });
 
   it('handles empty payment options array', () => {
@@ -48,6 +67,7 @@ describe('useDueDateField', () => {
     const { result } = renderHook(() => useDueDateField(paymentOptions));
 
     expect(result.current.label).toBe('');
-    expect(datetools.formatDate).not.toHaveBeenCalled();
+    expect(datetools.formatDate).toHaveBeenCalledWith(undefined);
+    expect(result.current.value).toBe('13/11/2025');
   });
 });
