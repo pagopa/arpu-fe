@@ -474,7 +474,7 @@
           "mostUsedDebtTypes": "In base alla tua ricerca"
         },
         "step3": {
-          "step": "Configura il pagamento",
+          "step": "Inserisci i dati",
           "title": "Inserisci i dati",
           "description": "Compila i campi con i dati richiesti per completare l'operazione.",
           "requiredField": "* Campo obbligatorio",

@@ -73,7 +73,9 @@ const StandardForm = (props: { fixedAmount?: number; hasFlagAnonymousFiscalCode?
             {({ values, errors, touched, handleChange, handleBlur }) => (
               <Card variant="outlined" sx={{ padding: 3 }}>
                 <Stack gap={2}>
-                  <Typography>{t('spontanei.form.steps.step3.paymentData.title')}</Typography>
+                  <Typography variant="h6">
+                    {t('spontanei.form.steps.step3.paymentData.title')}
+                  </Typography>
                   <Stack direction="row" justifyContent={'space-between'} spacing={2}>
                     <TextField
                       size="small"

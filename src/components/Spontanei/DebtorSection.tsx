@@ -56,7 +56,7 @@ const DebtorSection = ({ hasFlagAnonymousFiscalCode }: { hasFlagAnonymousFiscalC
           <Typography variant="h6">{t('spontanei.form.steps.step3.debtor.title')}</Typography>
           {isFisica && !isAnonymous && (
             <FormControlLabel
-              control={<Switch />}
+              control={<Switch sx={{ mx: 1 }} />}
               label={t('spontanei.form.steps.step3.debtor.useYourData')}
             />
           )}
