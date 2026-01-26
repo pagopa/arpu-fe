@@ -16,12 +16,6 @@ vi.mock('react-router-dom', async (importActual) => {
   };
 });
 
-vi.mock('react-i18next', () => ({
-  useTranslation: () => ({
-    t: (key: string) => key
-  })
-}));
-
 vi.mock('utils/converters', () => ({
   toEuroOrMissingValue: vi.fn(),
   formatDateOrMissingValue: vi.fn(),
