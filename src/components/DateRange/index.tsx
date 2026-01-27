@@ -50,7 +50,7 @@ export const DateRange = ({ from, to }: DateRangeProps) => {
     <>
       <DatePicker
         label={t('dates.from')}
-        value={from.value}
+        value={from.value?.startOf('day')}
         onChange={handleStartDateChange}
         onAccept={handleStartDateOnAccept}
         onError={setStartDateError}
@@ -68,14 +68,14 @@ export const DateRange = ({ from, to }: DateRangeProps) => {
             size: 'small',
             variant: 'outlined',
             error: !!startDateError,
-            helperText: startDateError ? from.errorMessage || t('dates.validations.from') : ''
+            helperText: startDateError ? from.errorMessage || t('dates.validation') : ''
           }
         }}
       />
 
       <DatePicker
         label={t('dates.to')}
-        value={to.value}
+        value={to?.value?.endOf('day')}
         onChange={handleEndDateChange}
         minDate={from.value ?? undefined}
         open={isToDialogOpen}
@@ -87,7 +87,7 @@ export const DateRange = ({ from, to }: DateRangeProps) => {
             size: 'small',
             variant: 'outlined',
             error: !!endDateError,
-            helperText: endDateError ? to.errorMessage || t('dates.validations.to') : ''
+            helperText: endDateError ? to.errorMessage || t('dates.validation') : ''
           },
           openPickerIcon: {
             color: 'action'

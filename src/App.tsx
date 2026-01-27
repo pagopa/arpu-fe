@@ -1,6 +1,5 @@
 import React from 'react';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
-import { it } from 'date-fns/locale/it';
 import { Navigate, RouterProvider, createBrowserRouter } from 'react-router-dom';
 import { Theme } from './utils/style';
 import { Layout } from './components/Layout';
@@ -30,6 +29,7 @@ import DebtPositionDetail from 'routes/DebtPositionDetail';
 import { StorageItems } from 'utils/storage';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { DebtPositionsSearch } from 'routes/DebtPositions/search';
+import { it } from 'date-fns/locale/it';
 
 const withGuard = (Component: () => React.JSX.Element) => (
   <RouteGuard itemKeys={[StorageItems.TOKEN]} storage={window.localStorage}>
