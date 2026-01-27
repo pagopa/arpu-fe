@@ -1,17 +1,14 @@
 import React, { useRef } from 'react';
-import { Card, Stack, TextField, Typography } from '@mui/material';
+import { Card, InputAdornment, Stack, TextField, Typography } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import DebtorSection from '../DebtorSection';
 import { Formik, useField, useFormik, useFormikContext } from 'formik';
 import { useEffect } from 'react';
-import utils from 'utils';
 import { PaymentNoticeInfo } from '..';
 import Controls from '../Controls';
 
 const initialValues = {
-  payeeFiscalCode: '',
-  payeeFullName: '',
-  payeeDescription: ''
+  description: ''
 };
 
 function isEmpty(obj) {
@@ -24,34 +21,27 @@ function isEmpty(obj) {
   return true;
 }
 
-const StandardForm = (props: { fixedAmount?: number }) => {
+const StandardForm = (props: { fixedAmount?: number; hasFlagAnonymousFiscalCode?: boolean }) => {
   const { t } = useTranslation();
   const { validateForm, submitForm } = useFormikContext();
   const [amount, amountMeta, amountHelpers] = useField<PaymentNoticeInfo['amount']>('amount');
-  const [, , descriptionHelpers] = useField<PaymentNoticeInfo['description']>('description');
+  const [, descriptionMeta, descriptionHelpers] =
+    useField<PaymentNoticeInfo['description']>('description');
   const formikRef = useRef<ReturnType<typeof useFormik<typeof initialValues>>>(null);
 
   useEffect(() => {
     if (props.fixedAmount !== undefined) {
-      amountHelpers.setValue(props.fixedAmount);
+      amountHelpers.setValue(props.fixedAmount / 100);
     } else {
       amountHelpers.setValue(0);
     }
   }, [props.fixedAmount]);
 
   const validate = (values: typeof initialValues) => {
-    descriptionHelpers.setValue(
-      `${values.payeeFullName}#${values.payeeFiscalCode}#${values.payeeDescription}`
-    );
+    descriptionHelpers.setValue(`${values.description}`);
     const errors: Partial<typeof initialValues> = {};
-    if (!values.payeeFullName) {
-      errors.payeeFullName = t('spontanei.form.validation.required');
-    }
-    if (!values.payeeFiscalCode) {
-      errors.payeeFiscalCode = t('spontanei.form.validation.required');
-    }
-    if (!values.payeeDescription) {
-      errors.payeeDescription = t('spontanei.form.validation.required');
+    if (!values.description) {
+      errors.description = t('spontanei.form.validation.required');
     }
     return errors;
   };
@@ -65,75 +55,63 @@ const StandardForm = (props: { fixedAmount?: number }) => {
 
   return (
     <>
-      <Formik
-        initialValues={initialValues}
-        validate={validate}
-        onSubmit={console.log}
-        innerRef={formikRef}>
-        {({ values, errors, touched, handleChange, handleBlur }) => (
-          <Card variant="outlined">
-            <Stack spacing={2} padding={4}>
-              <Typography variant="h6">{t('spontanei.form.steps.step3.title')}</Typography>
-              <Typography>{t('spontanei.form.steps.step3.description')}</Typography>
-              <Stack direction="row" justifyContent={'space-between'} spacing={2}>
-                <TextField
-                  label="Nome Cognome / Ragione Sociale"
-                  variant="outlined"
-                  required
-                  name="payeeFullName"
-                  value={values.payeeFullName}
-                  onChange={handleChange}
-                  onBlur={handleBlur}
-                  error={Boolean(errors.payeeFullName)}
-                  helperText={touched.payeeFullName && errors.payeeFullName}
-                  sx={{ width: '-webkit-fill-available' }}
-                />
-                <TextField
-                  label="Codice Fiscale / Partita IVA"
-                  variant="outlined"
-                  required
-                  name="payeeFiscalCode"
-                  value={values.payeeFiscalCode}
-                  onChange={handleChange}
-                  onBlur={handleBlur}
-                  error={Boolean(errors.payeeFiscalCode)}
-                  helperText={touched.payeeFiscalCode && errors.payeeFiscalCode}
-                  sx={{ width: '-webkit-fill-available' }}
-                />
-              </Stack>
-              <Stack direction="row" justifyContent={'space-between'} spacing={2}>
-                <TextField
-                  label="Importo (€)"
-                  variant="outlined"
-                  required
-                  name="amount"
-                  disabled={props.fixedAmount !== undefined}
-                  value={utils.converters.toEuro(amount.value)}
-                  onChange={handleChange}
-                  onBlur={handleBlur}
-                  error={amountMeta.touched && Boolean(amountMeta.error)}
-                  helperText={amountMeta.touched && amountMeta.error}
-                />
-                <TextField
-                  label="Causale"
-                  variant="outlined"
-                  required
-                  name="payeeDescription"
-                  value={values.payeeDescription}
-                  onChange={handleChange}
-                  onBlur={handleBlur}
-                  error={Boolean(errors.payeeDescription)}
-                  helperText={touched.payeeDescription && errors.payeeDescription}
-                  sx={{ width: '-webkit-fill-available' }}
-                />
-              </Stack>
-            </Stack>
-          </Card>
-        )}
-      </Formik>
-      <Card variant="outlined">
-        <Stack spacing={2} padding={4}>
-          <DebtorSection />
+      <Card sx={{ padding: 3 }}>
+        <Stack gap={2}>
+          <Typography variant="h6">{t('spontanei.form.steps.step3.title')}</Typography>
+          <Typography>{t('spontanei.form.steps.step3.description')}</Typography>
+          <Typography color="error.dark">
+            {t('spontanei.form.steps.step3.requiredField')}
+          </Typography>
+        </Stack>
+
+        <Stack gap={2}>
+          <DebtorSection hasFlagAnonymousFiscalCode={props.hasFlagAnonymousFiscalCode || false} />
+          <Formik
+            initialValues={initialValues}
+            validate={validate}
+            onSubmit={console.log}
+            innerRef={formikRef}>
+            {({ values, handleChange, handleBlur }) => (
+              <Card variant="outlined" sx={{ padding: 3 }}>
+                <Stack gap={2}>
+                  <Typography variant="h6">
+                    {t('spontanei.form.steps.step3.paymentData.title')}
+                  </Typography>
+                  <Stack direction="row" justifyContent={'space-between'} spacing={2}>
+                    <TextField
+                      size="small"
+                      label={t('spontanei.form.steps.step3.paymentData.amount')}
+                      variant="outlined"
+                      required
+                      slotProps={{
+                        input: {
+                          startAdornment: <InputAdornment position="start">€</InputAdornment>
+                        }
+                      }}
+                      type="number"
+                      disabled={props.fixedAmount !== undefined}
+                      {...amount}
+                      error={amountMeta.touched && Boolean(amountMeta.error)}
+                      helperText={amountMeta.touched && amountMeta.error}
+                    />
+                    <TextField
+                      size="small"
+                      label={t('spontanei.form.steps.step3.paymentData.description')}
+                      variant="outlined"
+                      required
+                      name="description"
+                      value={values.description}
+                      onChange={handleChange}
+                      onBlur={handleBlur}
+                      error={descriptionMeta.touched && Boolean(descriptionMeta.error)}
+                      helperText={descriptionMeta.touched && descriptionMeta.error}
+                      sx={{ width: '-webkit-fill-available' }}
+                    />
+                  </Stack>
+                </Stack>
+              </Card>
+            )}
+          </Formik>
         </Stack>
       </Card>
       <Controls shouldContinue={shouldContinue} />

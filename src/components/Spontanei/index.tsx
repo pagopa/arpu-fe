@@ -7,11 +7,8 @@ import OrgSelect from './steps/OrgSelect';
 import DebtTypeSelect from './steps/DebtTypeSelect';
 import DebtTypeConfig from './steps/DebtTypeConfig';
 import Summary from './steps/Summary';
-
 import { useTranslation } from 'react-i18next';
 import * as z from 'zod';
-import { useUserEmail } from 'hooks/useUserEmail';
-import { useUserInfo } from 'hooks/useUserInfo';
 import { Formik, useFormik } from 'formik';
 import {
   DebtPositionTypeOrgsWithSpontaneousDTO,
@@ -19,7 +16,6 @@ import {
   PersonEntityType
 } from '../../../generated/data-contracts';
 import Payment from './steps/Payment';
-import utils from 'utils';
 
 export type PaymentNoticeInfo = {
   fullName: string;
@@ -39,42 +35,35 @@ const Spontanei = () => {
   const [debtType, setDebtType] = React.useState<DebtPositionTypeOrgsWithSpontaneousDTO | null>(
     null
   );
-  const isAnonymous = utils.storage.user.isAnonymous();
 
   const { t } = useTranslation();
 
   const formikRef = useRef<ReturnType<typeof useFormik<PaymentNoticeInfo>>>(null);
 
-  const payerEmail = isAnonymous ? '' : useUserEmail() || '';
-  const { userInfo } = isAnonymous ? { userInfo: null } : useUserInfo();
-  const name = userInfo?.name || '';
-  const surname = userInfo?.familyName || '';
-  const payerFullName = `${name} ${surname}`;
-  const payerFiscalCode = ''; //TO BE FIXED
-
   const defaultPaymentNoticeInfo: PaymentNoticeInfo = {
-    fullName: payerFullName,
+    fullName: '',
     entityType: PersonEntityType.F,
-    email: payerEmail,
-    fiscalCode: payerFiscalCode,
+    email: '',
+    fiscalCode: '',
     amount: 0,
     description: ''
   };
 
   const PaymentNoticeInfoSchema = z.object({
-    description: z.string().min(1, 'Causale troppo corta'),
+    description: z.string().min(2, 'Causale troppo corta'),
     amount: z.number().min(1, 'Importo non valido'),
-    fullName: z.string().min(1, 'campo obbligatorio'),
+    fullName: z.string().min(2, 'campo obbligatorio'),
     fiscalCode: z
       .string()
       .regex(
-        /(^[A-Za-z]{6}[0-9]{2}[A-Za-z]{1}[0-9]{2}[A-Za-z]{1}[0-9]{3}[A-Za-z]{1}$)|(^[0-9]{11}$)/,
+        /(^[A-Za-z]{6}[0-9]{2}[A-Za-z]{1}[0-9]{2}[A-Za-z]{1}[0-9]{3}[A-Za-z]{1}$)|(^[0-9]{11}$)|ANONIMO/,
         'Codice Fiscale o Partita IVA errato'
       ),
     email: z.string().email('Email non valida')
   });
 
   const validate = (values: PaymentNoticeInfo) => {
+    console.log('Validating', values);
     const errors: Partial<PaymentNoticeInfo> = {};
     const result = PaymentNoticeInfoSchema.safeParse(values);
     if (!result.success) {
