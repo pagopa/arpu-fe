@@ -7,6 +7,12 @@ import { useParams } from 'react-router-dom';
 import utils from 'utils';
 import { fromTaxCodeToSrcImage, propertyOrMissingValue } from 'utils/converters';
 import PaymentOptionWrapper from './components/PaymentOptions';
+import {
+  DebtorPaymentOptionOverviewDTO,
+  InstallmentStatus,
+  PaymentOptionType
+} from '../../../generated/data-contracts';
+import { PaidOptionReceipt } from './components/PaidOptionReceipt';
 
 const DebtPositionDetail = () => {
   const brokerId = utils.storage.app.getBrokerId();
@@ -36,13 +42,26 @@ const DebtPositionDetail = () => {
     orgId: data.orgFiscalCode
   };
 
+  const paidOptions = data.paymentOptions.reduce(
+    (acc: DebtorPaymentOptionOverviewDTO[], paymentOption: DebtorPaymentOptionOverviewDTO) => {
+      const { paymentOptionType, installments } = paymentOption;
+      if (
+        paymentOptionType == PaymentOptionType.INSTALLMENTS &&
+        installments.some(({ status }) => status === InstallmentStatus.PAID)
+      ) {
+        return [...acc, paymentOption];
+      }
+      return acc;
+    },
+    []
+  );
+
   return (
-    <>
+    <Stack gap={3}>
       <Typography
         variant="h4"
         component="h1"
         marginInlineStart={1}
-        mb={2}
         data-testid="debt-position-detail-title">
         {data.debtPositionTypeOrgDescription || t('debtPositionDetail.title')}
       </Typography>
@@ -79,7 +98,17 @@ const DebtPositionDetail = () => {
         orgInfo={orgInfo}
         debtPositionId={Number(debtPositionId)}
       />
-    </>
+      {!!paidOptions?.length && (
+        <Card sx={{ padding: 3, gap: 3, display: 'flex', flexDirection: 'column' }}>
+          <Typography variant="body1" component="h2" fontWeight="600" fontStyle="semibold">
+            {t('app.debtPositionDetail.receipts')}
+          </Typography>
+          {paidOptions.map((option) => (
+            <PaidOptionReceipt key={option.paymentOptionId} paymentOption={option} />
+          ))}
+        </Card>
+      )}
+    </Stack>
   );
 };
 

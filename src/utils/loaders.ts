@@ -21,7 +21,8 @@ const getUserInfo = () => {
       const { data: userInfo } = await utils.apiClient.auth.getUserInfo();
       parseAndLog(zodSchema.userInfoSchema, userInfo);
       return userInfo;
-    }
+    },
+    gcTime: Infinity
   });
 };
 
@@ -377,6 +378,25 @@ const getDebtPositionDetail = (brokerId: number, debtPositionId: number, organiz
     }
   });
 
+const getDebtorReceipts = (
+  brokerId: number,
+  organizationId: number,
+  debtPositionId: number,
+  paymentOptionId: number
+) =>
+  useQuery({
+    queryKey: ['getDebtorReceipts', brokerId, organizationId, debtPositionId, paymentOptionId],
+    queryFn: async () => {
+      const { data } = await utils.apiClient.brokers.getDebtorReceipts(
+        brokerId,
+        organizationId,
+        debtPositionId,
+        paymentOptionId
+      );
+      return data;
+    }
+  });
+
 const getMostUsedSpontaneousDebtPositionTypeOrgsForCurrentYear = (
   brokerId: number,
   organizationId: number
@@ -431,6 +451,7 @@ export default {
   usePagedUnpaidDebtPositions,
   useReceiptDetail,
   getDebtPositionDetail,
+  getDebtorReceipts,
   getMostUsedSpontaneousDebtPositionTypeOrgsForCurrentYear,
   public: {
     createPublicSpontaneousDebtPosition,
