@@ -200,7 +200,7 @@ describe('DateRange Component', () => {
       const fromInput = screen.getByTestId('input-From');
       fireEvent.change(fromInput, { target: { value: '' } });
 
-      expect(mockOnChange).toHaveBeenCalledWith(null);
+      expect(mockOnChange).not.toHaveBeenCalled();
     });
 
     it('allows changing from date multiple times', () => {

@@ -27,7 +27,9 @@ export const DateRange = ({ from, to }: DateRangeProps) => {
   const { t } = useTranslation();
 
   const handleStartDateChange = (fromDate: Dayjs | null) => {
-    from.onChange(fromDate);
+    if (!fromDate) return;
+    const fromValue = fromDate.startOf('day');
+    from.onChange(fromValue);
   };
 
   const handleStartDateOnAccept = (fromDate: Dayjs | null) => {
@@ -42,7 +44,8 @@ export const DateRange = ({ from, to }: DateRangeProps) => {
     if (!toDate) return;
 
     if (!from.value?.isValid() || toDate.isSame(from.value) || toDate.isAfter(from.value)) {
-      to.onChange(toDate);
+      const toValue = toDate.endOf('day');
+      to.onChange(toValue);
     }
   };
 
