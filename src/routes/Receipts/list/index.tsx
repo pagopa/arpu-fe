@@ -47,10 +47,11 @@ export const ReceiptsList = () => {
     }
 
     if (startDate) {
-      newFilters.paymentDateTimeFrom = startDate.toISOString();
+      newFilters.paymentDateTimeFrom = startDate.format();
     }
+
     if (endDate) {
-      newFilters.paymentDateTimeTo = endDate.toISOString();
+      newFilters.paymentDateTimeTo = endDate.format();
     }
 
     setAppliedFilters(newFilters);

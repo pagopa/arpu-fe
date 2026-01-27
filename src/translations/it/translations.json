@@ -321,7 +321,8 @@
   },
   "dates": {
     "from": "Dal",
-    "to": "Al"
+    "to": "Al",
+    "validation": "Data non valida"
   },
   "actions": {
     "filter": "Filtra",
