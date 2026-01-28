@@ -1,4 +1,4 @@
-import { formatDate, parse, endOfDay } from 'date-fns';
+import dayjs from 'dayjs';
 import { unflatten, flatten } from 'flat';
 import queryString from 'query-string';
 
@@ -7,34 +7,22 @@ function sanitizeKeyChars(input: string): string {
   return input.replace(/[^a-zA-Z0-9._]/g, '');
 }
 
-const toDate = (value: string): Date => {
-  return parse(value, 'dd-MM-yyyy', new Date());
-};
-
-function isDateString(value: string): boolean {
-  const isDate = /^(\d{2})-(\d{2})-(\d{4})$/;
-  return isDate.test(value);
-}
-
 function encodeValue(value: unknown): string {
-  return value instanceof Date ? formatDate(value, 'dd-MM-yyyy') : String(value);
+  if (dayjs.isDayjs(value)) {
+    return value.format('YYYY-MM-DD');
+  } else if (typeof value === 'string' && value.length <= 10 && dayjs(value).isValid()) {
+    return dayjs(value).format('YYYY-MM-DD');
+  }
+  return String(value);
 }
 
-function decode(fragment: string): Record<string, string | Date> {
+function decode(fragment: string): Record<string, string> {
   const parsed = queryString.parse(fragment) as Record<string, string>;
-  const flatObj: Record<string, string | Date> = {};
+  const flatObj: Record<string, string> = {};
 
   Object.entries(parsed).forEach(([key, value]) => {
     const sanitizedKey = sanitizeKeyChars(key);
-    if (isDateString(value)) {
-      if (/to$/i.test(sanitizedKey)) {
-        flatObj[sanitizedKey] = endOfDay(toDate(value));
-      } else {
-        flatObj[sanitizedKey] = toDate(value);
-      }
-    } else {
-      flatObj[sanitizedKey] = value;
-    }
+    flatObj[sanitizedKey] = value;
   });
 
   return unflatten(flatObj);
