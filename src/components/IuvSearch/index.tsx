@@ -52,7 +52,6 @@ export const IuvSearch = ({
   tab2DescriptionKey,
   noDataTitleKey,
   noDataTextKey,
-  searchErrorKey,
   installmentType = InstallmentType.ALL,
   resultKey
 }: IuvSearchProps) => {
