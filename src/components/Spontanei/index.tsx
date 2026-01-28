@@ -82,12 +82,10 @@ const Spontanei = () => {
           <FormContext.Provider value={{ org, setOrg, debtType, setDebtType, step, setStep }}>
             <Stack>
               <Typography variant="h6" mb={1}>
-                {step !== 4 ? t('spontanei.form.title') : t('spontanei.form.summaryTitle')}
+                {t('spontanei.form.title')}
               </Typography>
               <Typography>
-                {step !== 4
-                  ? t('spontanei.form.description')
-                  : t('spontanei.form.summaryDescription')}
+                {t('spontanei.form.description')}
               </Typography>
               <Stack spacing={4} mt={4}>
                 <Steps activeStep={step - 1} />

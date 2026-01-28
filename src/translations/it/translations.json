@@ -472,10 +472,8 @@
         }
     },
     "form": {
-      "title": "Effettua un pagamento spontaneo",
+      "title": "Fai un pagamento spontaneo",
       "description": "Compila i campi richiesti e procedi col pagamento.",
-      "summaryTitle": "Riepilogo",
-      "summaryDescription": "Rivedi qui i dati inseriti per effettuare il tuo pagamento spontaneo.",
       "steps": {
         "step1": {
           "step": "Seleziona l’ente",
@@ -515,12 +513,12 @@
           "paymentData": {
             "title": "Dati dell'avviso di pagamento",
             "amount": "Importo",
-            "description": "Causale"
+            "description": "Oggetto del pagamento"
           }
         },
         "step4": {
           "step": "Controlla i dati",
-          "title": "Ecco i dati del tuo pagamento.",
+          "title": "Ecco i dati che hai inserito.",
           "description": "Controlla i dati inseriti e conferma per procedere al pagamento.",
           "org": {
             "title": "Ente beneficiario",
@@ -569,6 +567,7 @@
         "close": "Chiudi"
       },
       "continue": "Continua",
+      "confirm": "Conferma i dati",
       "abort": "Esci",
       "back": "Indietro"
     },

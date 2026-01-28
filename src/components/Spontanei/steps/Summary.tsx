@@ -9,7 +9,7 @@ import Controls from '../Controls';
 
 const SummaryStructure = (props: { title: string; children: React.ReactNode }) => (
   <Stack direction="column" padding={3} gap={2}>
-    <Typography fontSize={14} fontWeight={700} textTransform="uppercase">
+    <Typography fontSize={18} fontWeight={600} fontStyle="semibold">
       {props.title}
     </Typography>
     {props.children}
@@ -19,12 +19,12 @@ const SummaryStructure = (props: { title: string; children: React.ReactNode }) =
 const SummaryItem = (props: { label: string; value: string }) => (
   <Grid container>
     <Grid size={4}>
-      <Typography fontSize={16} fontWeight={400}>
+      <Typography variant='body2'>
         {props.label}
       </Typography>
     </Grid>
     <Grid size={8}>
-      <Typography fontSize={18} fontWeight={600}>
+      <Typography variant='body2' fontWeight={600}>
         {props.value}
       </Typography>
     </Grid>
