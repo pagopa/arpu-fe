@@ -7,7 +7,7 @@ import notify from 'utils/notify';
 import { useStore } from 'store/GlobalStore';
 import utils from 'utils';
 import { generatePath, useNavigate } from 'react-router-dom';
-import { DebtPositionRequestDTO } from '../../../../generated/data-contracts';
+import { DebtPositionRequestDTO, FormTypeEnum } from '../../../../generated/data-contracts';
 import { useField } from 'formik';
 import { PaymentNoticeInfo } from '..';
 import FormContext, { FormContextType } from '../FormContext';
@@ -34,6 +34,7 @@ const Payment = () => {
 
   const navigate = useNavigate();
   const brokerId = utils.storage.app.getBrokerId();
+  const formType = context?.formType;
 
   if (!organizationId || !debtPositionTypeOrgId || !brokerId) {
     throw new Error('Missing required parameters');
@@ -55,7 +56,7 @@ const Payment = () => {
           {
             amountCents: amount.value * 100,
             remittanceInformation: description.value,
-            userRemittanceInformation: userDescription,
+            userRemittanceInformation: formType !== FormTypeEnum.CUSTOM ? description.value : userDescription,
             debtor: {
               entityType: entityType.value,
               fiscalCode: fiscalCode.value,
