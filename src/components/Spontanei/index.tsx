@@ -12,6 +12,7 @@ import * as z from 'zod';
 import { Formik, useFormik } from 'formik';
 import {
   DebtPositionTypeOrgsWithSpontaneousDTO,
+  FormTypeEnum,
   OrganizationsWithSpontaneousDTO,
   PersonEntityType
 } from '../../../generated/data-contracts';
@@ -35,6 +36,10 @@ const Spontanei = () => {
   const [debtType, setDebtType] = React.useState<DebtPositionTypeOrgsWithSpontaneousDTO | null>(
     null
   );
+  // form type state
+  const [formType, setFormType] = React.useState<FormTypeEnum | null>(null);
+  // user description state
+  const [userDescription, setUserDescription] = React.useState<string | null>(null);
 
   const { t } = useTranslation();
 
@@ -79,14 +84,24 @@ const Spontanei = () => {
     <Container>
       <Box padding={3} width={'100%'} component="main">
         <Formik initialValues={defaultPaymentNoticeInfo} validate={validate} onSubmit={console.log}>
-          <FormContext.Provider value={{ org, setOrg, debtType, setDebtType, step, setStep }}>
+          <FormContext.Provider
+            value={{
+              org,
+              setOrg,
+              debtType,
+              setDebtType,
+              step,
+              setStep,
+              formType,
+              setFormType,
+              userDescription,
+              setUserDescription
+            }}>
             <Stack>
               <Typography variant="h6" mb={1}>
                 {t('spontanei.form.title')}
               </Typography>
-              <Typography>
-                {t('spontanei.form.description')}
-              </Typography>
+              <Typography>{t('spontanei.form.description')}</Typography>
               <Stack spacing={4} mt={4}>
                 <Steps activeStep={step - 1} />
                 {step === 1 && <OrgSelect />}

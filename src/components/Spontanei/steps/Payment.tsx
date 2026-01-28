@@ -30,6 +30,7 @@ const Payment = () => {
 
   const organizationId = context?.org?.organizationId;
   const debtPositionTypeOrgId = context?.debtType?.debtPositionTypeOrgId;
+  const userDescription = context?.userDescription || undefined;
 
   const navigate = useNavigate();
   const brokerId = utils.storage.app.getBrokerId();
@@ -54,6 +55,7 @@ const Payment = () => {
           {
             amountCents: amount.value * 100,
             remittanceInformation: description.value,
+            userRemittanceInformation: userDescription,
             debtor: {
               entityType: entityType.value,
               fiscalCode: fiscalCode.value,
@@ -108,7 +110,7 @@ const Payment = () => {
       paFullName: orgName,
       description: remittanceInformation
     };
-    carts.mutate({ notices: [item], email: email.value });
+    debugger;
   };
 
   const goToDownloadPaymentNoticePage = () => {

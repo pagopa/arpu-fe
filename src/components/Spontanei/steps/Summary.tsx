@@ -1,4 +1,4 @@
-import React, { useContext } from 'react';
+import React, { useContext, useEffect } from 'react';
 import { Card, Grid, Stack, Typography } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import FormContext, { FormContextType } from '../FormContext';
@@ -19,12 +19,10 @@ const SummaryStructure = (props: { title: string; children: React.ReactNode }) =
 const SummaryItem = (props: { label: string; value: string }) => (
   <Grid container>
     <Grid size={4}>
-      <Typography variant='body2'>
-        {props.label}
-      </Typography>
+      <Typography variant="body2">{props.label}</Typography>
     </Grid>
     <Grid size={8}>
-      <Typography variant='body2' fontWeight={600}>
+      <Typography variant="body2" fontWeight={600}>
         {props.value}
       </Typography>
     </Grid>
@@ -37,6 +35,7 @@ const OrgAndServiceSummary = () => {
   const orgName = context?.org?.orgName as string;
   const orgCode = context?.org?.orgFiscalCode as string;
   const debtTypeName = context?.debtType?.description as string;
+
   return (
     <Card sx={{ marginBottom: 2 }} variant="outlined">
       <SummaryStructure title={t('spontanei.form.steps.step4.org.title')}>
@@ -96,11 +95,23 @@ const PaymentSummary = () => {
   const { t } = useTranslation();
   const [amount] = useField<PaymentNoticeInfo['amount']>('amount');
   const [description] = useField<PaymentNoticeInfo['description']>('description');
+  const context = useContext<FormContextType | null>(FormContext);
+  const formType = context?.formType;
+  const debtTypeName = context?.debtType?.description as string;
+
+  const descriptionLabel =
+    formType === 'CUSTOM' ? `Pagamento spontaneo - ${debtTypeName}` : description.value;
+
+  useEffect(() => {
+    if (formType === 'CUSTOM') {
+      context?.setUserDescription(descriptionLabel);
+    }
+  }, []);
 
   return (
     <Card sx={{ marginBottom: 2 }} variant="outlined">
       <SummaryStructure title={t("Dati dell'avviso di pagamento")}>
-        <SummaryItem label="Oggetto del pagamento" value={description.value} />
+        <SummaryItem label="Oggetto del pagamento" value={descriptionLabel} />
         <SummaryItem label="Importo" value={utils.converters.toEuro(amount.value * 100)} />
       </SummaryStructure>
     </Card>
