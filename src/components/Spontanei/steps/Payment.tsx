@@ -49,10 +49,10 @@ const Payment = () => {
     debtPositionTypeOrgId: debtPositionTypeOrgId,
     paymentOptions: [
       {
-        totalAmountCents: amount.value,
+        totalAmountCents: amount.value * 100,
         installments: [
           {
-            amountCents: amount.value,
+            amountCents: amount.value * 100,
             remittanceInformation: description.value,
             debtor: {
               entityType: entityType.value,

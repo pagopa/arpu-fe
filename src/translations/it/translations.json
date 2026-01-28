@@ -458,7 +458,7 @@
     "userpage": "I tuoi dati"
   },
   "spontanei": {
-      "drawer": {
+    "drawer": {
         "title": "PAGA UN AVVISO",
         "card1": {
           "title": "Hai ricevuto un avviso di pagamento?",
@@ -470,7 +470,7 @@
           "description": "Vuoi pagare la Pubblica Amministrazione perchè ti va e perchè sei un buono",
           "cta": "Configura il pagamento"
         }
-      },
+    },
     "form": {
       "title": "Effettua un pagamento spontaneo",
       "description": "Compila i campi richiesti e procedi col pagamento.",
@@ -519,9 +519,31 @@
           }
         },
         "step4": {
-          "step": "Riepilogo",
-          "title": "Riepilogo",
-          "description": "Aggiungi l'avviso nel carrello e procedi con il pagamento."
+          "step": "Controlla i dati",
+          "title": "Ecco i dati del tuo pagamento.",
+          "description": "Controlla i dati inseriti e conferma per procedere al pagamento.",
+          "org": {
+            "title": "Ente beneficiario",
+            "name": " Nome Ente",
+            "code": "Codice Fiscale ente"
+          },
+          "service": {
+            "title": "Servizio",
+            "name": "Nome servizio"
+          },
+          "debtor": {
+            "title": "Dati del debitore",
+            "F":{
+              "name": "Nome e cognome debitore",
+              "code": "Codice Fiscale debitore",
+              "email": "Email debitore"  
+            },
+            "G":{
+              "name": "Denominazione",
+              "code": "Codice Fiscale/P.IVA",
+              "email": "Email"  
+            }
+          }
         },
         "step5": {
           "step": "Completa il pagamento",
@@ -540,26 +562,26 @@
           }
         }
       },
+      "download": {
+        "title": "Il download dell’avviso è in corso",
+        "help": "Se non parte automaticamente, clicca <link1>qui.</link1>",
+        "info": "Scopri i canali abilitati",
+        "close": "Chiudi"
+      },
       "continue": "Continua",
       "abort": "Esci",
       "back": "Indietro"
     },
-    "download": {
-      "title": "Il download dell’avviso è in corso",
-      "help": "Se non parte automaticamente, clicca <link1>qui.</link1>",
-      "info": "Scopri i canali abilitati",
-      "close": "Chiudi"
-    }
-  },
-  "errors": {
-    "form": {
-      "required": "Questo campo non puoi essere vuoto."
-    },
-    "toast": {
-      "403": "Non hai i permessi per eseguire questa azione.",
-      "404": "Risorsa non trovata.",
-      "500": "Errore del server, riprova più tardi.",
-      "default": "Si è verificato un errore imprevisto. Riprova più tardi."
+    "errors": {
+      "form": {
+        "required": "Questo campo non puoi essere vuoto."
+      },
+      "toast": {
+        "403": "Non hai i permessi per eseguire questa azione.",
+        "404": "Risorsa non trovata.",
+        "500": "Errore del server, riprova più tardi.",
+        "default": "Si è verificato un errore imprevisto. Riprova più tardi."
+      }
     }
   }
 }

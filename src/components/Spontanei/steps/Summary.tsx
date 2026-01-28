@@ -1,5 +1,5 @@
 import React, { useContext } from 'react';
-import { Card, Stack, Typography } from '@mui/material';
+import { Card, Grid, Stack, Typography } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import FormContext, { FormContextType } from '../FormContext';
 import utils from 'utils';
@@ -8,75 +8,125 @@ import { PaymentNoticeInfo } from '..';
 import Controls from '../Controls';
 
 const SummaryStructure = (props: { title: string; children: React.ReactNode }) => (
-  <Card sx={{ marginBottom: 2 }}>
-    <Stack direction="column" padding={3} gap={2}>
-      <Typography fontSize={14} fontWeight={700} textTransform="uppercase">
-        {props.title}
-      </Typography>
-      {props.children}
-    </Stack>
-  </Card>
-);
-
-const SummaryItem = (props: { label: string; value: string }) => (
-  <Stack direction="column">
-    <Typography fontSize={16} fontWeight={400}>
-      {props.label}
+  <Stack direction="column" padding={3} gap={2}>
+    <Typography fontSize={14} fontWeight={700} textTransform="uppercase">
+      {props.title}
     </Typography>
-    <Typography fontSize={18} fontWeight={600}>
-      {props.value}
-    </Typography>
+    {props.children}
   </Stack>
 );
 
-const OrgSummary = (props: { orgName: string }) => {
+const SummaryItem = (props: { label: string; value: string }) => (
+  <Grid container>
+    <Grid size={4}>
+      <Typography fontSize={16} fontWeight={400}>
+        {props.label}
+      </Typography>
+    </Grid>
+    <Grid size={8}>
+      <Typography fontSize={18} fontWeight={600}>
+        {props.value}
+      </Typography>
+    </Grid>
+  </Grid>
+);
+
+const OrgAndServiceSummary = () => {
   const { t } = useTranslation();
+  const context = useContext<FormContextType | null>(FormContext);
+  const orgName = context?.org?.orgName as string;
+  const orgCode = context?.org?.orgFiscalCode as string;
+  const debtTypeName = context?.debtType?.description as string;
   return (
-    <SummaryStructure title={t('Ente Beneficiario')}>
-      <SummaryItem label="Nome Ente" value={props.orgName} />
-    </SummaryStructure>
+    <Card sx={{ marginBottom: 2 }} variant="outlined">
+      <SummaryStructure title={t('spontanei.form.steps.step4.org.title')}>
+        <SummaryItem label={t('spontanei.form.steps.step4.org.name')} value={orgName} />
+        <SummaryItem label={t('spontanei.form.steps.step4.org.code')} value={orgCode} />
+      </SummaryStructure>
+      <SummaryStructure title={t('spontanei.form.steps.step4.service.title')}>
+        <SummaryItem label={t('spontanei.form.steps.step4.service.name')} value={debtTypeName} />
+      </SummaryStructure>
+    </Card>
   );
 };
 
-const DebtTypeSummary = (props: { debtTypeName: string }) => {
+const DebtTypeSummary = () => {
   const { t } = useTranslation();
+  const [entityType] = useField<PaymentNoticeInfo['entityType']>('entityType');
+  const [fullName] = useField<PaymentNoticeInfo['fullName']>('fullName');
+  const [fiscalCode] = useField<PaymentNoticeInfo['fiscalCode']>('fiscalCode');
+  const [email] = useField<PaymentNoticeInfo['email']>('email');
+  const isFisicalPerson = entityType.value === 'F';
+
   return (
-    <SummaryStructure title={t('Servizio')}>
-      <SummaryItem label="Nome Servizio" value={props.debtTypeName} />
-    </SummaryStructure>
+    <Card sx={{ marginBottom: 2 }} variant="outlined">
+      <SummaryStructure title={t('Dati del debitore')}>
+        <SummaryItem
+          label={
+            isFisicalPerson
+              ? t('spontanei.form.steps.step4.debtor.F.name')
+              : t('spontanei.form.steps.step4.debtor.G.name')
+          }
+          value={fullName.value}
+        />
+        <SummaryItem
+          label={
+            isFisicalPerson
+              ? t('spontanei.form.steps.step4.debtor.F.code')
+              : t('spontanei.form.steps.step4.debtor.G.code')
+          }
+          value={fiscalCode.value}
+        />
+        {email.value && (
+          <SummaryItem
+            label={
+              isFisicalPerson
+                ? t('spontanei.form.steps.step4.debtor.F.email')
+                : t('spontanei.form.steps.step4.debtor.G.email')
+            }
+            value={email.value}
+          />
+        )}
+      </SummaryStructure>
+    </Card>
   );
 };
 
 const PaymentSummary = () => {
   const { t } = useTranslation();
-  const [fullName] = useField<PaymentNoticeInfo['fullName']>('fullName');
   const [amount] = useField<PaymentNoticeInfo['amount']>('amount');
   const [description] = useField<PaymentNoticeInfo['description']>('description');
-  const [fiscalCode] = useField<PaymentNoticeInfo['fiscalCode']>('fiscalCode');
+
   return (
-    <>
-      <SummaryStructure title={t('Dati del pagamento')}>
-        <SummaryItem label="Nome" value={fullName.value} />
-        <SummaryItem label="Codice Fiscale" value={fiscalCode.value} />
+    <Card sx={{ marginBottom: 2 }} variant="outlined">
+      <SummaryStructure title={t("Dati dell'avviso di pagamento")}>
         <SummaryItem label="Oggetto del pagamento" value={description.value} />
         <SummaryItem label="Importo" value={utils.converters.toEuro(amount.value * 100)} />
       </SummaryStructure>
-      <Controls shouldContinue={async () => true} />
-    </>
+    </Card>
   );
 };
 
 const Summary = () => {
-  const context = useContext<FormContextType | null>(FormContext);
-  const orgName = context?.org?.orgName;
-  const debtTypeName = context?.debtType?.description;
+  const { t } = useTranslation();
 
   return (
-    <Stack direction="column">
-      {orgName && <OrgSummary orgName={orgName} />}
-      {debtTypeName && <DebtTypeSummary debtTypeName={debtTypeName} />}
-      {<PaymentSummary />}
-    </Stack>
+    <>
+      <Card sx={{ padding: 3 }}>
+        <Typography variant="h6" mb={2}>
+          {t('spontanei.form.steps.step4.title')}
+        </Typography>
+        <Typography variant="body1" mb={3}>
+          {t('spontanei.form.steps.step4.description')}
+        </Typography>
+        <Stack direction="column">
+          <OrgAndServiceSummary />
+          <DebtTypeSummary />
+          <PaymentSummary />
+        </Stack>
+      </Card>
+      <Controls shouldContinue={async () => true} />
+    </>
   );
 };
 

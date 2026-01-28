@@ -59,11 +59,10 @@ const Spontanei = () => {
         /(^[A-Za-z]{6}[0-9]{2}[A-Za-z]{1}[0-9]{2}[A-Za-z]{1}[0-9]{3}[A-Za-z]{1}$)|(^[0-9]{11}$)|ANONIMO/,
         'Codice Fiscale o Partita IVA errato'
       ),
-    email: z.string().email('Email non valida')
+    email: z.string().email('Email non valida').optional().or(z.literal(''))
   });
 
   const validate = (values: PaymentNoticeInfo) => {
-    console.log('Validating', values);
     const errors: Partial<PaymentNoticeInfo> = {};
     const result = PaymentNoticeInfoSchema.safeParse(values);
     if (!result.success) {
