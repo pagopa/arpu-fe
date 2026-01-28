@@ -110,7 +110,7 @@ const Payment = () => {
       paFullName: orgName,
       description: remittanceInformation
     };
-    debugger;
+    carts.mutate({ notices: [item], email: email.value });
   };
 
   const goToDownloadPaymentNoticePage = () => {

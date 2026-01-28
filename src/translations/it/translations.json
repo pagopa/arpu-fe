@@ -569,7 +569,14 @@
       "continue": "Continua",
       "confirm": "Conferma i dati",
       "abort": "Esci",
-      "back": "Indietro"
+      "back": "Indietro",
+      "errors": {
+        "description": "Causale troppo corta o mancante.",
+        "amount": "Importo non valido.",
+        "fullName": "Nome e cognome non validi.",
+        "fiscalCode": "Codice Fiscale o Partita IVA errato.",
+        "email": "Email non valida."
+      }
     },
     "errors": {
       "form": {
