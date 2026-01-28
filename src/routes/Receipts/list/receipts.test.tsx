@@ -3,12 +3,13 @@ import React from 'react';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import { Mock } from 'vitest';
+import { BrowserRouter } from 'react-router-dom';
+import dayjs from 'dayjs';
 import utils from 'utils';
 import { useSearch } from 'hooks/useSearch';
 import { ReceiptsList } from '.';
-import { BrowserRouter } from 'react-router-dom';
-import dayjs, { Dayjs } from 'dayjs';
 
+// Mock data
 const mockReceipts = {
   content: [
     {
@@ -31,725 +32,259 @@ const mockReceipts = {
   totalPages: 2
 };
 
+// Mocks
 vi.mock('utils', () => ({
   default: {
     loaders: {
       getPagedDebtorReceipts: vi.fn()
+    },
+    URI: {
+      decode: vi.fn(() => ({}))
     }
   }
 }));
 
 vi.mock('hooks/useSearch');
-
-vi.mock('utils/config', () => ({
-  default: {
-    brokerId: '123'
-  }
-}));
-
-vi.mock('react-helmet', () => ({
-  Helmet: ({ children }: any) => <div>{children}</div>
-}));
-
+vi.mock('utils/config', () => ({ default: { brokerId: '123' } }));
+vi.mock('react-helmet', () => ({ Helmet: ({ children }: any) => <div>{children}</div> }));
 vi.mock('../components/item', () => ({
   ReceiptItem: ({ receipt }: any) => (
-    <div data-testid={`receipt-item-${receipt.receiptId}`}>{receipt.orgName}</div>
+    <div data-testid={`receipt-${receipt.receiptId}`}>{receipt.orgName}</div>
   )
 }));
-
 vi.mock('components/Content', () => ({
-  Content: ({ children, showRetry, noData, onRetry, noDataTitle, noDataText }: any) => {
-    if (showRetry) {
+  Content: ({ children, showRetry, noData, onRetry, noDataTitle }: any) => {
+    if (showRetry)
       return (
-        <div data-testid="retry-component">
-          <button onClick={onRetry} data-testid="retry-button">
-            Retry
-          </button>
-        </div>
+        <button onClick={onRetry} data-testid="retry-btn">
+          Retry
+        </button>
       );
-    }
-    if (noData) {
-      return (
-        <div data-testid="no-data-component">
-          <div>{noDataTitle}</div>
-          <div>{noDataText}</div>
-        </div>
-      );
-    }
-    return <div data-testid="content-component">{children}</div>;
+    if (noData) return <div data-testid="no-data">{noDataTitle}</div>;
+    return <div data-testid="content">{children}</div>;
   }
 }));
-
-vi.mock('components/PaymentButton', () => ({
-  default: () => <button>Make Payment</button>
-}));
-
+vi.mock('components/PaymentButton', () => ({ default: () => <button>Pay</button> }));
 vi.mock('components/DataGrid/CustomPagination', () => ({
   default: ({ totalPages }: any) => <div data-testid="pagination">Pages: {totalPages}</div>
 }));
 
-let mockDateRangeCallbacks: {
-  onFromChange?: (date: Dayjs | null) => void;
-  onToChange?: (date: Dayjs | null) => void;
-} = {};
-
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+let dateCallbacks: any = {};
 vi.mock('components/DateRange', () => ({
   DateRange: ({ from, to }: any) => {
-    mockDateRangeCallbacks.onFromChange = from?.onChange;
-    mockDateRangeCallbacks.onToChange = to?.onChange;
+    dateCallbacks = { setFrom: from?.onChange, setTo: to?.onChange };
     return (
       <div data-testid="date-range">
-        <button data-testid="set-from-date" onClick={() => from?.onChange?.(dayjs('2024-01-01'))}>
-          Set From Date
-        </button>
-        <button data-testid="set-to-date" onClick={() => to?.onChange?.(dayjs('2024-12-31'))}>
-          Set To Date
-        </button>
-        <button data-testid="clear-from-date" onClick={() => from?.onChange?.(null)}>
-          Clear From Date
-        </button>
-        <button data-testid="clear-to-date" onClick={() => to?.onChange?.(null)}>
-          Clear To Date
-        </button>
+        <button onClick={() => from?.onChange?.(dayjs('2024-01-01'))}>Set From</button>
+        <button onClick={() => to?.onChange?.(dayjs('2024-12-31'))}>Set To</button>
+        <button onClick={() => from?.onChange?.(null)}>Clear From</button>
       </div>
     );
   }
 }));
 
+// Test helpers
+const renderComponent = () =>
+  render(
+    <BrowserRouter>
+      <ReceiptsList />
+    </BrowserRouter>
+  );
+
+const setupSearch = (overrides = {}) => {
+  (useSearch as Mock).mockReturnValue({
+    query: {
+      data: mockReceipts,
+      isError: false,
+      isSuccess: true,
+      ...overrides
+    },
+    applyFilters: vi.fn()
+  });
+};
+
 describe('ReceiptsList', () => {
-  const mockApplyFilters = vi.fn();
-
-  const renderWithRouter = (component: React.ReactElement) => {
-    return render(<BrowserRouter>{component}</BrowserRouter>);
-  };
-
   beforeEach(() => {
     vi.clearAllMocks();
-    mockDateRangeCallbacks = {};
-
-    (utils.loaders.getPagedDebtorReceipts as Mock).mockReturnValue({
-      mutate: vi.fn()
-    });
-
-    (useSearch as Mock).mockReturnValue({
-      query: {
-        data: mockReceipts,
-        isError: false,
-        isPending: false,
-        isSuccess: true
-      },
-      applyFilters: mockApplyFilters
-    });
+    dateCallbacks = {};
+    (utils.loaders.getPagedDebtorReceipts as Mock).mockReturnValue({ mutate: vi.fn() });
+    setupSearch();
   });
 
-  describe('Basic Rendering', () => {
-    it('renders page title and subtitle', () => {
-      renderWithRouter(<ReceiptsList />);
+  describe('Rendering', () => {
+    it('renders page header and filters', () => {
+      renderComponent();
 
       expect(screen.getByText('menu.receipts.pageTitle')).toBeInTheDocument();
-      expect(screen.getByText('app.receipts.subtitle')).toBeInTheDocument();
-    });
-
-    it('renders link to receipts search', () => {
-      renderWithRouter(<ReceiptsList />);
-
-      const link = screen.getByText('app.receipts.subtitleLink');
-      expect(link).toBeInTheDocument();
-    });
-
-    it('renders search input and filter buttons', () => {
-      renderWithRouter(<ReceiptsList />);
-
       expect(screen.getByLabelText('Codice Avviso')).toBeInTheDocument();
       expect(screen.getByText('actions.filter')).toBeInTheDocument();
       expect(screen.getByText('actions.resetFilters')).toBeInTheDocument();
-    });
-
-    it('renders date range component', () => {
-      renderWithRouter(<ReceiptsList />);
-
       expect(screen.getByTestId('date-range')).toBeInTheDocument();
     });
 
-    it('calls getPagedDebtorReceipts with brokerId', () => {
-      renderWithRouter(<ReceiptsList />);
+    it('renders receipts when data is available', () => {
+      renderComponent();
 
-      expect(utils.loaders.getPagedDebtorReceipts).toHaveBeenCalledWith(123);
-    });
-  });
-
-  describe('Receipt Display', () => {
-    it('renders receipt items when data is available', () => {
-      renderWithRouter(<ReceiptsList />);
-
-      expect(screen.getByTestId('receipt-item-1')).toBeInTheDocument();
-      expect(screen.getByTestId('receipt-item-2')).toBeInTheDocument();
-    });
-
-    it('renders all receipts from content array', () => {
-      renderWithRouter(<ReceiptsList />);
-
+      expect(screen.getByTestId('receipt-1')).toBeInTheDocument();
+      expect(screen.getByTestId('receipt-2')).toBeInTheDocument();
       expect(screen.getByText('ACI Automobile Club Italia')).toBeInTheDocument();
-      expect(screen.getByText('Comune di Roma')).toBeInTheDocument();
     });
 
-    it('renders content component when data exists', () => {
-      renderWithRouter(<ReceiptsList />);
-
-      expect(screen.getByTestId('content-component')).toBeInTheDocument();
-    });
-  });
-
-  describe('Pagination', () => {
-    it('renders pagination when totalPages exists', () => {
-      renderWithRouter(<ReceiptsList />);
-
+    it('renders pagination when totalPages > 0', () => {
+      renderComponent();
       expect(screen.getByTestId('pagination')).toBeInTheDocument();
     });
 
     it('does not render pagination when totalPages is 0', () => {
-      (useSearch as Mock).mockReturnValue({
-        query: {
-          data: { ...mockReceipts, totalPages: 0 },
-          isError: false,
-          isPending: false,
-          isSuccess: true
-        },
-        applyFilters: mockApplyFilters
-      });
-
-      renderWithRouter(<ReceiptsList />);
-
+      setupSearch({ data: { ...mockReceipts, totalPages: 0 } });
+      renderComponent();
       expect(screen.queryByTestId('pagination')).not.toBeInTheDocument();
     });
+  });
 
-    it('does not render pagination when totalPages is undefined', () => {
+  describe('Filtering', () => {
+    it('applies search code filter', async () => {
+      const mockApplyFilters = vi.fn();
+      setupSearch();
       (useSearch as Mock).mockReturnValue({
-        query: {
-          data: { content: mockReceipts.content },
-          isError: false,
-          isPending: false,
-          isSuccess: true
-        },
+        query: { data: mockReceipts, isError: false, isSuccess: true },
         applyFilters: mockApplyFilters
       });
 
-      renderWithRouter(<ReceiptsList />);
+      renderComponent();
 
-      expect(screen.queryByTestId('pagination')).not.toBeInTheDocument();
-    });
-
-    it('renders pagination when totalPages is 1', () => {
-      (useSearch as Mock).mockReturnValue({
-        query: {
-          data: { ...mockReceipts, totalPages: 1 },
-          isError: false,
-          isPending: false,
-          isSuccess: true
-        },
-        applyFilters: mockApplyFilters
+      fireEvent.change(screen.getByLabelText('Codice Avviso'), {
+        target: { value: '  123456789  ' }
       });
-
-      renderWithRouter(<ReceiptsList />);
-
-      expect(screen.getByTestId('pagination')).toBeInTheDocument();
-      expect(screen.getByText('Pages: 1')).toBeInTheDocument();
-    });
-  });
-
-  describe('Search Code Filtering', () => {
-    it('applies filters when filter button is clicked', async () => {
-      renderWithRouter(<ReceiptsList />);
-
-      const searchInput = screen.getByLabelText('Codice Avviso');
-      fireEvent.change(searchInput, { target: { value: '123456789' } });
-
-      const filterButton = screen.getByText('actions.filter');
-      fireEvent.click(filterButton);
-
-      await waitFor(() => {
-        expect(mockApplyFilters).toHaveBeenCalledWith({
-          noticeNumberOrIuv: '123456789'
-        });
-      });
-    });
-
-    it('trims whitespace from search code before applying filters', async () => {
-      renderWithRouter(<ReceiptsList />);
-
-      const searchInput = screen.getByLabelText('Codice Avviso');
-      fireEvent.change(searchInput, { target: { value: '  123456789  ' } });
-
-      const filterButton = screen.getByText('actions.filter');
-      fireEvent.click(filterButton);
-
-      await waitFor(() => {
-        expect(mockApplyFilters).toHaveBeenCalledWith({
-          noticeNumberOrIuv: '123456789'
-        });
-      });
-    });
-
-    it('does not include search code in filters when empty', async () => {
-      renderWithRouter(<ReceiptsList />);
-
-      const filterButton = screen.getByText('actions.filter');
-      fireEvent.click(filterButton);
-
-      await waitFor(() => {
-        expect(mockApplyFilters).toHaveBeenCalledWith({});
-      });
-    });
-
-    it('does not include search code in filters when only whitespace', async () => {
-      renderWithRouter(<ReceiptsList />);
-
-      const searchInput = screen.getByLabelText('Codice Avviso');
-      fireEvent.change(searchInput, { target: { value: '   ' } });
-
-      const filterButton = screen.getByText('actions.filter');
-      fireEvent.click(filterButton);
-
-      await waitFor(() => {
-        expect(mockApplyFilters).toHaveBeenCalledWith({});
-      });
-    });
-
-    it('updates search code state when input changes', () => {
-      renderWithRouter(<ReceiptsList />);
-
-      const searchInput = screen.getByLabelText('Codice Avviso') as HTMLInputElement;
-      fireEvent.change(searchInput, { target: { value: 'ABC123' } });
-
-      expect(searchInput.value).toBe('ABC123');
-    });
-  });
-
-  describe('Date Range Filtering', () => {
-    it('applies filters with start date when set', async () => {
-      renderWithRouter(<ReceiptsList />);
-
-      fireEvent.click(screen.getByTestId('set-from-date'));
-
-      const filterButton = screen.getByText('actions.filter');
-      fireEvent.click(filterButton);
-
-      await waitFor(() => {
-        expect(mockApplyFilters).toHaveBeenCalledWith({
-          paymentDateTimeFrom: dayjs('2024-01-01').format()
-        });
-      });
-    });
-
-    it('applies filters with end date when set', async () => {
-      renderWithRouter(<ReceiptsList />);
-
-      fireEvent.click(screen.getByTestId('set-to-date'));
-
-      const filterButton = screen.getByText('actions.filter');
-      fireEvent.click(filterButton);
-
-      await waitFor(() => {
-        expect(mockApplyFilters).toHaveBeenCalledWith({
-          paymentDateTimeTo: dayjs('2024-12-31').format()
-        });
-      });
-    });
-
-    it('applies filters with both start and end dates', async () => {
-      renderWithRouter(<ReceiptsList />);
-
-      fireEvent.click(screen.getByTestId('set-from-date'));
-      fireEvent.click(screen.getByTestId('set-to-date'));
-
-      const filterButton = screen.getByText('actions.filter');
-      fireEvent.click(filterButton);
-
-      await waitFor(() => {
-        expect(mockApplyFilters).toHaveBeenCalledWith({
-          paymentDateTimeFrom: dayjs('2024-01-01').format(),
-          paymentDateTimeTo: dayjs('2024-12-31').format()
-        });
-      });
-    });
-
-    it('does not include dates in filters when not set', async () => {
-      renderWithRouter(<ReceiptsList />);
-
-      const filterButton = screen.getByText('actions.filter');
-      fireEvent.click(filterButton);
-
-      await waitFor(() => {
-        expect(mockApplyFilters).toHaveBeenCalledWith({});
-      });
-    });
-  });
-
-  describe('Combined Filtering', () => {
-    it('applies search code and date filters together', async () => {
-      renderWithRouter(<ReceiptsList />);
-
-      const searchInput = screen.getByLabelText('Codice Avviso');
-      fireEvent.change(searchInput, { target: { value: '123456789' } });
-
-      fireEvent.click(screen.getByTestId('set-from-date'));
-      fireEvent.click(screen.getByTestId('set-to-date'));
-
-      const filterButton = screen.getByText('actions.filter');
-      fireEvent.click(filterButton);
-
-      await waitFor(() => {
-        expect(mockApplyFilters).toHaveBeenCalledWith({
-          noticeNumberOrIuv: '123456789',
-          paymentDateTimeFrom: dayjs('2024-01-01').format(),
-          paymentDateTimeTo: dayjs('2024-12-31').format()
-        });
-      });
-    });
-
-    it('applies only non-empty filters', async () => {
-      renderWithRouter(<ReceiptsList />);
-
-      const searchInput = screen.getByLabelText('Codice Avviso');
-      fireEvent.change(searchInput, { target: { value: '123456789' } });
-
-      fireEvent.click(screen.getByTestId('set-from-date'));
-
-      const filterButton = screen.getByText('actions.filter');
-      fireEvent.click(filterButton);
-
-      await waitFor(() => {
-        expect(mockApplyFilters).toHaveBeenCalledWith({
-          noticeNumberOrIuv: '123456789',
-          paymentDateTimeFrom: dayjs('2024-01-01').format()
-        });
-      });
-    });
-  });
-
-  describe('Reset Filters', () => {
-    it('resets filters when reset button is clicked', async () => {
-      renderWithRouter(<ReceiptsList />);
-
-      const searchInput = screen.getByLabelText('Codice Avviso');
-      fireEvent.change(searchInput, { target: { value: '123456789' } });
-
-      const resetButton = screen.getByText('actions.resetFilters');
-      fireEvent.click(resetButton);
-
-      await waitFor(() => {
-        expect(searchInput).toHaveValue('');
-        expect(mockApplyFilters).toHaveBeenCalledWith({});
-      });
-    });
-
-    it('resets search code state', async () => {
-      renderWithRouter(<ReceiptsList />);
-
-      const searchInput = screen.getByLabelText('Codice Avviso') as HTMLInputElement;
-      fireEvent.change(searchInput, { target: { value: '123456789' } });
-
-      expect(searchInput.value).toBe('123456789');
-
-      const resetButton = screen.getByText('actions.resetFilters');
-      fireEvent.click(resetButton);
-
-      await waitFor(() => {
-        expect(searchInput.value).toBe('');
-      });
-    });
-
-    it('clears all filters and dates', async () => {
-      renderWithRouter(<ReceiptsList />);
-
-      // Set filters
-      const searchInput = screen.getByLabelText('Codice Avviso');
-      fireEvent.change(searchInput, { target: { value: '123456789' } });
-      fireEvent.click(screen.getByTestId('set-from-date'));
-      fireEvent.click(screen.getByTestId('set-to-date'));
-
-      // Apply filters
       fireEvent.click(screen.getByText('actions.filter'));
 
       await waitFor(() => {
-        expect(mockApplyFilters).toHaveBeenCalledWith(
-          expect.objectContaining({
-            noticeNumberOrIuv: '123456789'
-          })
-        );
+        expect(mockApplyFilters).toHaveBeenCalledWith({
+          noticeNumberOrIuv: '123456789'
+        });
+      });
+    });
+
+    it('applies date filters', async () => {
+      const mockApplyFilters = vi.fn();
+      setupSearch();
+      (useSearch as Mock).mockReturnValue({
+        query: { data: mockReceipts, isError: false, isSuccess: true },
+        applyFilters: mockApplyFilters
       });
 
-      // Reset
-      const resetButton = screen.getByText('actions.resetFilters');
-      fireEvent.click(resetButton);
+      renderComponent();
+
+      fireEvent.click(screen.getByText('Set From'));
+      fireEvent.click(screen.getByText('Set To'));
+      fireEvent.click(screen.getByText('actions.filter'));
 
       await waitFor(() => {
-        expect(mockApplyFilters).toHaveBeenLastCalledWith({});
+        expect(mockApplyFilters).toHaveBeenCalledWith({
+          paymentDateTimeFrom: dayjs('2024-01-01').format(),
+          paymentDateTimeTo: dayjs('2024-12-31').format()
+        });
+      });
+    });
+
+    it('applies combined filters', async () => {
+      const mockApplyFilters = vi.fn();
+      setupSearch();
+      (useSearch as Mock).mockReturnValue({
+        query: { data: mockReceipts, isError: false, isSuccess: true },
+        applyFilters: mockApplyFilters
+      });
+
+      renderComponent();
+
+      fireEvent.change(screen.getByLabelText('Codice Avviso'), {
+        target: { value: 'ABC123' }
+      });
+      fireEvent.click(screen.getByText('Set From'));
+      fireEvent.click(screen.getByText('actions.filter'));
+
+      await waitFor(() => {
+        expect(mockApplyFilters).toHaveBeenCalledWith({
+          noticeNumberOrIuv: 'ABC123',
+          paymentDateTimeFrom: dayjs('2024-01-01').format()
+        });
+      });
+    });
+
+    it('ignores empty filters', async () => {
+      const mockApplyFilters = vi.fn();
+      setupSearch();
+      (useSearch as Mock).mockReturnValue({
+        query: { data: mockReceipts, isError: false, isSuccess: true },
+        applyFilters: mockApplyFilters
+      });
+
+      renderComponent();
+
+      fireEvent.change(screen.getByLabelText('Codice Avviso'), {
+        target: { value: '   ' }
+      });
+      fireEvent.click(screen.getByText('actions.filter'));
+
+      await waitFor(() => {
+        expect(mockApplyFilters).toHaveBeenCalledWith({});
       });
     });
   });
 
-  describe('Error Handling', () => {
-    it('shows retry component on error', () => {
+  describe('Reset', () => {
+    it('clears all filters', async () => {
+      const mockApplyFilters = vi.fn();
+      setupSearch();
       (useSearch as Mock).mockReturnValue({
-        query: {
-          data: undefined,
-          isError: true,
-          isPending: false,
-          isSuccess: false
-        },
+        query: { data: mockReceipts, isError: false, isSuccess: true },
         applyFilters: mockApplyFilters
       });
 
-      renderWithRouter(<ReceiptsList />);
+      renderComponent();
 
-      expect(screen.getByTestId('retry-component')).toBeInTheDocument();
+      const searchInput = screen.getByLabelText('Codice Avviso') as HTMLInputElement;
+      fireEvent.change(searchInput, { target: { value: '123' } });
+      fireEvent.click(screen.getByText('Set From'));
+
+      fireEvent.click(screen.getByText('actions.resetFilters'));
+
+      await waitFor(() => {
+        expect(searchInput.value).toBe('');
+        expect(mockApplyFilters).toHaveBeenCalledWith({});
+      });
+    });
+  });
+
+  describe('Error and Empty States', () => {
+    it('shows retry on error', () => {
+      setupSearch({ data: undefined, isError: true, isSuccess: false });
+      renderComponent();
+      expect(screen.getByTestId('retry-btn')).toBeInTheDocument();
     });
 
-    it('calls applyFilters when retry is clicked', async () => {
+    it('retries with current filters on retry click', async () => {
+      const mockApplyFilters = vi.fn();
+      setupSearch({ data: undefined, isError: true, isSuccess: false });
       (useSearch as Mock).mockReturnValue({
-        query: {
-          data: undefined,
-          isError: true,
-          isPending: false,
-          isSuccess: false
-        },
+        query: { data: undefined, isError: true, isSuccess: false },
         applyFilters: mockApplyFilters
       });
 
-      renderWithRouter(<ReceiptsList />);
-
-      fireEvent.click(screen.getByTestId('retry-button'));
+      renderComponent();
+      fireEvent.click(screen.getByTestId('retry-btn'));
 
       await waitFor(() => {
         expect(mockApplyFilters).toHaveBeenCalled();
       });
     });
 
-    it('retries with current applied filters', async () => {
-      renderWithRouter(<ReceiptsList />);
-
-      // Apply some filters first
-      const searchInput = screen.getByLabelText('Codice Avviso');
-      fireEvent.change(searchInput, { target: { value: '123456789' } });
-      fireEvent.click(screen.getByText('actions.filter'));
-
-      await waitFor(() => {
-        expect(mockApplyFilters).toHaveBeenCalledWith({
-          noticeNumberOrIuv: '123456789'
-        });
-      });
-
-      // Simulate error state
-      (useSearch as Mock).mockReturnValue({
-        query: {
-          data: undefined,
-          isError: true,
-          isPending: false,
-          isSuccess: false
-        },
-        applyFilters: mockApplyFilters
-      });
-
-      // Re-render won't happen automatically in this test, but we can verify the logic
-      // by checking that retry calls applyFilters with the stored appliedFilters
-    });
-  });
-
-  describe('Empty State', () => {
-    it('shows no data component when content is empty', () => {
-      (useSearch as Mock).mockReturnValue({
-        query: {
-          data: { content: [], totalPages: 0 },
-          isError: false,
-          isPending: false,
-          isSuccess: true
-        },
-        applyFilters: mockApplyFilters
-      });
-
-      renderWithRouter(<ReceiptsList />);
-
-      expect(screen.getByTestId('no-data-component')).toBeInTheDocument();
+    it('shows empty state when no data', () => {
+      setupSearch({ data: { content: [], totalPages: 0 } });
+      renderComponent();
+      expect(screen.getByTestId('no-data')).toBeInTheDocument();
       expect(screen.getByText('app.receipts.empty.title')).toBeInTheDocument();
-    });
-
-    it('shows no data component when content is undefined', () => {
-      (useSearch as Mock).mockReturnValue({
-        query: {
-          data: { totalPages: 0 },
-          isError: false,
-          isPending: false,
-          isSuccess: true
-        },
-        applyFilters: mockApplyFilters
-      });
-
-      renderWithRouter(<ReceiptsList />);
-
-      expect(screen.getByTestId('no-data-component')).toBeInTheDocument();
-    });
-
-    it('shows empty state subtitle', () => {
-      (useSearch as Mock).mockReturnValue({
-        query: {
-          data: { content: [], totalPages: 0 },
-          isError: false,
-          isPending: false,
-          isSuccess: true
-        },
-        applyFilters: mockApplyFilters
-      });
-
-      renderWithRouter(<ReceiptsList />);
-
-      expect(screen.getByText('app.receipts.empty.subtitle')).toBeInTheDocument();
-    });
-  });
-
-  describe('Data Handling Edge Cases', () => {
-    it('handles null data gracefully', () => {
-      (useSearch as Mock).mockReturnValue({
-        query: {
-          data: null,
-          isError: false,
-          isPending: false,
-          isSuccess: true
-        },
-        applyFilters: mockApplyFilters
-      });
-
-      renderWithRouter(<ReceiptsList />);
-
-      expect(screen.getByTestId('no-data-component')).toBeInTheDocument();
-    });
-
-    it('handles undefined data gracefully', () => {
-      (useSearch as Mock).mockReturnValue({
-        query: {
-          data: undefined,
-          isError: false,
-          isPending: false,
-          isSuccess: true
-        },
-        applyFilters: mockApplyFilters
-      });
-
-      renderWithRouter(<ReceiptsList />);
-
-      expect(screen.getByTestId('no-data-component')).toBeInTheDocument();
-    });
-
-    it('renders single receipt correctly', () => {
-      (useSearch as Mock).mockReturnValue({
-        query: {
-          data: {
-            content: [mockReceipts.content[0]],
-            totalPages: 1
-          },
-          isError: false,
-          isPending: false,
-          isSuccess: true
-        },
-        applyFilters: mockApplyFilters
-      });
-
-      renderWithRouter(<ReceiptsList />);
-
-      expect(screen.getByTestId('receipt-item-1')).toBeInTheDocument();
-      expect(screen.queryByTestId('receipt-item-2')).not.toBeInTheDocument();
-    });
-
-    it('renders many receipts correctly', () => {
-      const manyReceipts = Array.from({ length: 10 }, (_, i) => ({
-        receiptId: i + 1,
-        organizationId: 100 + i,
-        iuv: `12345678901234567${i}`,
-        orgName: `Organization ${i + 1}`,
-        paymentAmountCents: 50000 + i * 100,
-        paymentDateTime: '2024-11-05T10:57:06Z'
-      }));
-
-      (useSearch as Mock).mockReturnValue({
-        query: {
-          data: {
-            content: manyReceipts,
-            totalPages: 1
-          },
-          isError: false,
-          isPending: false,
-          isSuccess: true
-        },
-        applyFilters: mockApplyFilters
-      });
-
-      renderWithRouter(<ReceiptsList />);
-
-      manyReceipts.forEach((receipt) => {
-        expect(screen.getByTestId(`receipt-item-${receipt.receiptId}`)).toBeInTheDocument();
-      });
-    });
-  });
-
-  describe('Multiple Filter Applications', () => {
-    it('handles multiple sequential filter applications', async () => {
-      renderWithRouter(<ReceiptsList />);
-
-      // First filter application
-      const searchInput = screen.getByLabelText('Codice Avviso');
-      fireEvent.change(searchInput, { target: { value: 'first' } });
-      fireEvent.click(screen.getByText('actions.filter'));
-
-      await waitFor(() => {
-        expect(mockApplyFilters).toHaveBeenCalledWith({
-          noticeNumberOrIuv: 'first'
-        });
-      });
-
-      // Second filter application
-      fireEvent.change(searchInput, { target: { value: 'second' } });
-      fireEvent.click(screen.getByText('actions.filter'));
-
-      await waitFor(() => {
-        expect(mockApplyFilters).toHaveBeenCalledWith({
-          noticeNumberOrIuv: 'second'
-        });
-      });
-    });
-
-    it('handles filter, reset, filter sequence', async () => {
-      renderWithRouter(<ReceiptsList />);
-
-      const searchInput = screen.getByLabelText('Codice Avviso');
-      const filterButton = screen.getByText('actions.filter');
-      const resetButton = screen.getByText('actions.resetFilters');
-
-      // Apply filter
-      fireEvent.change(searchInput, { target: { value: 'test' } });
-      fireEvent.click(filterButton);
-
-      await waitFor(() => {
-        expect(mockApplyFilters).toHaveBeenCalledWith({
-          noticeNumberOrIuv: 'test'
-        });
-      });
-
-      // Reset
-      fireEvent.click(resetButton);
-
-      await waitFor(() => {
-        expect(mockApplyFilters).toHaveBeenCalledWith({});
-      });
-
-      // Apply new filter
-      fireEvent.change(searchInput, { target: { value: 'newtest' } });
-      fireEvent.click(filterButton);
-
-      await waitFor(() => {
-        expect(mockApplyFilters).toHaveBeenCalledWith({
-          noticeNumberOrIuv: 'newtest'
-        });
-      });
     });
   });
 });

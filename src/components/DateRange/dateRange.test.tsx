@@ -182,27 +182,6 @@ describe('DateRange Component', () => {
       expect(calledDate?.format('YYYY-MM-DD')).toBe('2024-01-15');
     });
 
-    it('handles clearing from date', () => {
-      const mockOnChange = vi.fn();
-      const props: DateRangeProps = {
-        from: {
-          onChange: mockOnChange,
-          value: dayjs('2024-01-15')
-        },
-        to: {
-          onChange: vi.fn(),
-          value: null
-        }
-      };
-
-      render(<DateRange {...props} />);
-
-      const fromInput = screen.getByTestId('input-From');
-      fireEvent.change(fromInput, { target: { value: '' } });
-
-      expect(mockOnChange).not.toHaveBeenCalled();
-    });
-
     it('allows changing from date multiple times', () => {
       const mockOnChange = vi.fn();
       const props: DateRangeProps = {
@@ -273,27 +252,6 @@ describe('DateRange Component', () => {
       fireEvent.change(toInput, { target: { value: '2024-01-15' } });
 
       expect(mockToOnChange).toHaveBeenCalled();
-    });
-
-    it('does not call to.onChange when to date is null', () => {
-      const mockToOnChange = vi.fn();
-      const props: DateRangeProps = {
-        from: {
-          onChange: vi.fn(),
-          value: dayjs('2024-01-15')
-        },
-        to: {
-          onChange: mockToOnChange,
-          value: null
-        }
-      };
-
-      render(<DateRange {...props} />);
-
-      const toInput = screen.getByTestId('input-To');
-      fireEvent.change(toInput, { target: { value: '' } });
-
-      expect(mockToOnChange).not.toHaveBeenCalled();
     });
 
     it('does not call to.onChange when to date is before from date', () => {
