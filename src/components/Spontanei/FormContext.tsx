@@ -1,6 +1,7 @@
 import { createContext } from 'react';
 import {
   DebtPositionTypeOrgsWithSpontaneousDTO,
+  FormTypeEnum,
   OrganizationsWithSpontaneousDTO
 } from '../../../generated/data-contracts';
 
@@ -11,6 +12,10 @@ export type FormContextType = {
   setOrg: React.Dispatch<React.SetStateAction<OrganizationsWithSpontaneousDTO | null>>;
   debtType: DebtPositionTypeOrgsWithSpontaneousDTO | null;
   setDebtType: React.Dispatch<React.SetStateAction<DebtPositionTypeOrgsWithSpontaneousDTO | null>>;
+  formType: FormTypeEnum | null;
+  setFormType: React.Dispatch<React.SetStateAction<FormTypeEnum | null>>;
+  userDescription: string | null;
+  setUserDescription: React.Dispatch<React.SetStateAction<string | null>>;
 };
 
 const FormContext = createContext<FormContextType | null>(null);

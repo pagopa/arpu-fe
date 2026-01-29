@@ -24,16 +24,15 @@ const DinamicForm = ({ fieldBeans, campoTotaleInclusoInXSD, formikRef }: Dinamic
     // causale update
     const { sys_type } = values;
     descriptionHelpers.setValue(sys_type);
-
     // importo update
-    let importo = 0;
+    let amount;
     if (hasCustomImportField && campoTotaleInclusoInXSD) {
-      importo = values[campoTotaleInclusoInXSD];
+      amount = values[campoTotaleInclusoInXSD];
     } else {
-      importo = values.importo;
+      amount = values.importo;
     }
-    if (importo) {
-      amountHelpers.setValue(importo * 100);
+    if (amount) {
+      amountHelpers.setValue(parseFloat(amount));
     }
 
     const errors = {};
@@ -52,14 +51,9 @@ const DinamicForm = ({ fieldBeans, campoTotaleInclusoInXSD, formikRef }: Dinamic
           onSubmit={console.log}
           initialValues={BuildFormState(fieldBeans)}
           validate={validate}>
-          {({ values }) => {
-            console.log(values);
-            return (
-              <Form>
-                <Stack gap={2}>{fields}</Stack>
-              </Form>
-            );
-          }}
+          <Form>
+            <Stack gap={2}>{fields}</Stack>
+          </Form>
         </Formik>
       </LocalizationProvider>
     </>

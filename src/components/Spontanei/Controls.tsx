@@ -38,7 +38,7 @@ const Controls = (props: Props) => {
       </Button>
       {!props.hideContinue && (
         <Button size="large" variant="contained" onClick={onContinue}>
-          {t('spontanei.form.continue')}
+          {step === 4 ? t('spontanei.form.confirm') : t('spontanei.form.continue')}
         </Button>
       )}
     </Stack>

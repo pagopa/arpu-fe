@@ -25,6 +25,8 @@ const DebtTypeConfig = () => {
       );
 
   const type = data?.formType;
+  context?.setFormType(type || null);
+
   const hasFlagAnonymousFiscalCode = data?.flagAnonymousFiscalCode || false;
 
   const renderFormByType = () => {

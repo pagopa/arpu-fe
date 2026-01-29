@@ -12,6 +12,7 @@ import * as z from 'zod';
 import { Formik, useFormik } from 'formik';
 import {
   DebtPositionTypeOrgsWithSpontaneousDTO,
+  FormTypeEnum,
   OrganizationsWithSpontaneousDTO,
   PersonEntityType
 } from '../../../generated/data-contracts';
@@ -35,6 +36,10 @@ const Spontanei = () => {
   const [debtType, setDebtType] = React.useState<DebtPositionTypeOrgsWithSpontaneousDTO | null>(
     null
   );
+  // form type state
+  const [formType, setFormType] = React.useState<FormTypeEnum | null>(null);
+  // user description state
+  const [userDescription, setUserDescription] = React.useState<string | null>(null);
 
   const { t } = useTranslation();
 
@@ -50,21 +55,20 @@ const Spontanei = () => {
   };
 
   const PaymentNoticeInfoSchema = z.object({
-    description: z.string().min(2, 'Causale troppo corta'),
-    amount: z.number().min(1, 'Importo non valido'),
-    fullName: z.string().min(2, 'campo obbligatorio'),
+    description: z.string().min(2, t('spontanei.form.errors.description')),
+    amount: z.number().min(1, t('spontanei.form.errors.amount')),
+    fullName: z.string().min(2, t('spontanei.form.errors.fullName')),
     fiscalCode: z
       .string()
       .regex(
         /(^[A-Za-z]{6}[0-9]{2}[A-Za-z]{1}[0-9]{2}[A-Za-z]{1}[0-9]{3}[A-Za-z]{1}$)|(^[0-9]{11}$)|ANONIMO/,
-        'Codice Fiscale o Partita IVA errato'
+        t('spontanei.form.errors.fullName')
       ),
-    email: z.string().email('Email non valida')
+    email: z.string().email(t('spontanei.form.errors.email')).optional().or(z.literal(''))
   });
 
   const validate = (values: PaymentNoticeInfo) => {
-    console.log('Validating', values);
-    const errors: Partial<PaymentNoticeInfo> = {};
+    const errors: Record<string | number, string> = {};
     const result = PaymentNoticeInfoSchema.safeParse(values);
     if (!result.success) {
       result.error.issues.forEach((issue) => (errors[issue.path[0]] = issue.message));
@@ -80,16 +84,24 @@ const Spontanei = () => {
     <Container>
       <Box padding={3} width={'100%'} component="main">
         <Formik initialValues={defaultPaymentNoticeInfo} validate={validate} onSubmit={console.log}>
-          <FormContext.Provider value={{ org, setOrg, debtType, setDebtType, step, setStep }}>
+          <FormContext.Provider
+            value={{
+              org,
+              setOrg,
+              debtType,
+              setDebtType,
+              step,
+              setStep,
+              formType,
+              setFormType,
+              userDescription,
+              setUserDescription
+            }}>
             <Stack>
               <Typography variant="h6" mb={1}>
-                {step !== 4 ? t('spontanei.form.title') : t('spontanei.form.summaryTitle')}
+                {t('spontanei.form.title')}
               </Typography>
-              <Typography>
-                {step !== 4
-                  ? t('spontanei.form.description')
-                  : t('spontanei.form.summaryDescription')}
-              </Typography>
+              <Typography>{t('spontanei.form.description')}</Typography>
               <Stack spacing={4} mt={4}>
                 <Steps activeStep={step - 1} />
                 {step === 1 && <OrgSelect />}
