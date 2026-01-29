@@ -100,7 +100,7 @@ const PaymentSummary = () => {
   const debtTypeName = context?.debtType?.description as string;
 
   const descriptionLabel =
-    formType === 'CUSTOM' ? `Pagamento spontaneo - ${debtTypeName}` : description.value;
+    `Pagamento on-the-fly ${ formType === 'CUSTOM' ? debtTypeName : description.value }`;
 
   useEffect(() => {
     if (formType === 'CUSTOM') {
