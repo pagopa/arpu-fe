@@ -25,14 +25,14 @@ const DinamicForm = ({ fieldBeans, campoTotaleInclusoInXSD, formikRef }: Dinamic
     const { sys_type } = values;
     descriptionHelpers.setValue(sys_type);
     // importo update
-    let importo = 0;
+    let amount;
     if (hasCustomImportField && campoTotaleInclusoInXSD) {
-      importo = values[campoTotaleInclusoInXSD];
+      amount = values[campoTotaleInclusoInXSD];
     } else {
-      importo = values.importo;
+      amount = values.importo;
     }
-    if (importo) {
-      amountHelpers.setValue(importo * 1);
+    if (amount) {
+      amountHelpers.setValue(parseFloat(amount));
     }
 
     const errors = {};
