@@ -51,11 +51,9 @@ const DinamicForm = ({ fieldBeans, campoTotaleInclusoInXSD, formikRef }: Dinamic
           onSubmit={console.log}
           initialValues={BuildFormState(fieldBeans)}
           validate={validate}>
-              <Form>
-                <Stack gap={2}>{fields}</Stack>
-              </Form>
-
-
+          <Form>
+            <Stack gap={2}>{fields}</Stack>
+          </Form>
         </Formik>
       </LocalizationProvider>
     </>

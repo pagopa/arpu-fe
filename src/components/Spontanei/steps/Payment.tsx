@@ -56,7 +56,8 @@ const Payment = () => {
           {
             amountCents: amount.value * 100,
             remittanceInformation: description.value,
-            userRemittanceInformation: formType !== FormTypeEnum.CUSTOM ? description.value : userDescription,
+            userRemittanceInformation:
+              formType !== FormTypeEnum.CUSTOM ? description.value : userDescription,
             debtor: {
               entityType: entityType.value,
               fiscalCode: fiscalCode.value,
