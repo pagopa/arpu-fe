@@ -34,12 +34,18 @@ vi.mock('utils', () => ({
     },
     notify: {
       emit: vi.fn()
+    },
+    URI: {
+      decode: vi.fn(() => ({})),
+      encode: vi.fn((params: any) => JSON.stringify(params)),
+      set: vi.fn()
     }
   }
 }));
 
 describe('IuvSearch', () => {
   const mockMutateAsync = vi.fn();
+  const mockReset = vi.fn();
 
   const defaultProps = {
     titleKey: 'app.search.title',
@@ -49,11 +55,13 @@ describe('IuvSearch', () => {
   beforeEach(() => {
     (utils.loaders.public.usePublicInstallmentsByIuvOrNav as Mock).mockReturnValue({
       mutateAsync: mockMutateAsync,
+      reset: mockReset,
       data: undefined,
       isSuccess: false,
       isError: false
     });
     mockMutateAsync.mockResolvedValue([]);
+    (utils.URI.decode as Mock).mockReturnValue({});
   });
 
   afterEach(() => {
@@ -90,6 +98,112 @@ describe('IuvSearch', () => {
 
       expect(screen.getByText('app.search.tab2.description')).toBeInTheDocument();
     });
+
+    it('renders with accessibility attributes', () => {
+      render(<IuvSearch {...defaultProps} />);
+
+      const form = screen.getByLabelText('ui.a11y.searchForm');
+      expect(form).toBeInTheDocument();
+
+      const tabs = screen.getByLabelText('tabs');
+      expect(tabs).toBeInTheDocument();
+    });
+  });
+
+  describe('Initial URL params loading', () => {
+    it('loads initial values from URL params', () => {
+      (utils.URI.decode as Mock).mockReturnValue({
+        iuvOrNav: '123456789012345678',
+        fiscalCode: 'RSSMRA80A01H501U',
+        anonymous: 'false',
+        initialTab: '0'
+      });
+
+      render(<IuvSearch {...defaultProps} />);
+
+      expect(screen.getByLabelText('fields.iuv')).toHaveValue('123456789012345678');
+      expect(screen.getByLabelText('fields.fiscalcode')).toHaveValue('RSSMRA80A01H501U');
+    });
+
+    it('loads anonymous state from URL params', () => {
+      (utils.URI.decode as Mock).mockReturnValue({
+        iuvOrNav: '123456789012345678',
+        anonymous: 'true',
+        initialTab: '0'
+      });
+
+      render(<IuvSearch {...defaultProps} />);
+
+      expect(screen.getByRole('checkbox')).toBeChecked();
+    });
+
+    it('loads initial tab from URL params', () => {
+      (utils.URI.decode as Mock).mockReturnValue({
+        iuvOrNav: '123456789012345678',
+        fiscalCode: '12345678901',
+        initialTab: '1'
+      });
+
+      render(<IuvSearch {...defaultProps} />);
+
+      expect(screen.getByLabelText('fields.piva')).toBeInTheDocument();
+    });
+
+    it('auto-submits when URL has valid params for person tab', async () => {
+      (utils.URI.decode as Mock).mockReturnValue({
+        iuvOrNav: '123456789012345678',
+        fiscalCode: 'RSSMRA80A01H501U',
+        anonymous: 'false',
+        initialTab: '0'
+      });
+
+      render(<IuvSearch {...defaultProps} />);
+
+      await waitFor(() => {
+        expect(mockMutateAsync).toHaveBeenCalledWith({
+          iuvOrNav: '123456789012345678',
+          fiscalCode: 'RSSMRA80A01H501U'
+        });
+      });
+    });
+
+    it('auto-submits when URL has anonymous params', async () => {
+      (utils.URI.decode as Mock).mockReturnValue({
+        iuvOrNav: '123456789012345678',
+        anonymous: 'true',
+        initialTab: '0'
+      });
+
+      render(<IuvSearch {...defaultProps} />);
+
+      await waitFor(() => {
+        expect(mockMutateAsync).toHaveBeenCalledWith({
+          iuvOrNav: '123456789012345678',
+          fiscalCode: 'ANONIMO'
+        });
+      });
+    });
+
+    it('does not auto-submit without iuvOrNav', () => {
+      (utils.URI.decode as Mock).mockReturnValue({
+        fiscalCode: 'RSSMRA80A01H501U'
+      });
+
+      render(<IuvSearch {...defaultProps} />);
+
+      expect(mockMutateAsync).not.toHaveBeenCalled();
+    });
+
+    it('does not auto-submit without fiscalCode or anonymous on person tab', () => {
+      (utils.URI.decode as Mock).mockReturnValue({
+        iuvOrNav: '123456789012345678',
+        initialTab: '0'
+      });
+
+      render(<IuvSearch {...defaultProps} />);
+
+      expect(mockMutateAsync).not.toHaveBeenCalled();
+    });
   });
 
   describe('Tab switching', () => {
@@ -115,6 +229,14 @@ describe('IuvSearch', () => {
 
       expect(screen.getByLabelText('fields.fiscalcode')).toHaveValue('');
       expect(screen.getByRole('checkbox')).not.toBeChecked();
+    });
+
+    it('resets mutation when switching tabs', () => {
+      render(<IuvSearch {...defaultProps} />);
+
+      fireEvent.click(screen.getByText('common.company'));
+
+      expect(mockReset).toHaveBeenCalled();
     });
 
     it('hides anonymous checkbox on company tab', () => {
@@ -234,7 +356,7 @@ describe('IuvSearch', () => {
 
   describe('Form submission with results', () => {
     it('submits form with values', async () => {
-      render(<IuvSearch {...defaultProps} searchErrorKey="app.search.error" />);
+      render(<IuvSearch {...defaultProps} />);
 
       fireEvent.change(screen.getByLabelText('fields.iuv'), {
         target: { value: '123456789012345678' }
@@ -255,7 +377,7 @@ describe('IuvSearch', () => {
     });
 
     it('submits with ANONIMO when anonymous is checked', async () => {
-      render(<IuvSearch {...defaultProps} searchErrorKey="app.search.error" />);
+      render(<IuvSearch {...defaultProps} />);
 
       fireEvent.change(screen.getByLabelText('fields.iuv'), {
         target: { value: '123456789012345678' }
@@ -272,10 +394,8 @@ describe('IuvSearch', () => {
       });
     });
 
-    it('shows error notification on mutation failure', async () => {
-      mockMutateAsync.mockRejectedValue(new Error('Failed'));
-
-      render(<IuvSearch {...defaultProps} searchErrorKey="app.search.error" />);
+    it('updates URL with search params after successful submission', async () => {
+      render(<IuvSearch {...defaultProps} />);
 
       fireEvent.change(screen.getByLabelText('fields.iuv'), {
         target: { value: '123456789012345678' }
@@ -288,13 +408,60 @@ describe('IuvSearch', () => {
       fireEvent.click(screen.getByText('actions.search'));
 
       await waitFor(() => {
-        expect(utils.notify.emit).toHaveBeenCalledWith('app.search.error');
+        expect(utils.URI.encode).toHaveBeenCalledWith({
+          iuvOrNav: '123456789012345678',
+          anonymous: false,
+          initialTab: 0,
+          fiscalCode: 'RSSMRA80A01H501U'
+        });
+        expect(utils.URI.set).toHaveBeenCalledWith(expect.any(String), { replace: true });
+      });
+    });
+
+    it('does not encode fiscalCode to URI when anonymous is checked', async () => {
+      render(<IuvSearch {...defaultProps} />);
+
+      fireEvent.change(screen.getByLabelText('fields.iuv'), {
+        target: { value: '123456789012345678' }
+      });
+
+      fireEvent.click(screen.getByRole('checkbox'));
+      fireEvent.click(screen.getByText('actions.search'));
+
+      await waitFor(() => {
+        expect(utils.URI.encode).toHaveBeenCalledWith({
+          iuvOrNav: '123456789012345678',
+          anonymous: true,
+          initialTab: 0,
+          fiscalCode: ''
+        });
+      });
+    });
+
+    it('shows default error notification on mutation failure', async () => {
+      mockMutateAsync.mockRejectedValue(new Error('Failed'));
+
+      render(<IuvSearch {...defaultProps} />);
+
+      fireEvent.change(screen.getByLabelText('fields.iuv'), {
+        target: { value: '123456789012345678' }
+      });
+
+      fireEvent.change(screen.getByLabelText('fields.fiscalcode'), {
+        target: { value: 'RSSMRA80A01H501U' }
+      });
+
+      fireEvent.click(screen.getByText('actions.search'));
+
+      await waitFor(() => {
+        expect(utils.notify.emit).toHaveBeenCalledWith('errors.toast.default');
       });
     });
 
     it('displays result count when data is available', () => {
       (utils.loaders.public.usePublicInstallmentsByIuvOrNav as Mock).mockReturnValue({
         mutateAsync: mockMutateAsync,
+        reset: mockReset,
         data: [{ id: 1 }, { id: 2 }],
         isSuccess: true,
         isError: false
@@ -308,6 +475,7 @@ describe('IuvSearch', () => {
     it('renders Results component when data is available', () => {
       (utils.loaders.public.usePublicInstallmentsByIuvOrNav as Mock).mockReturnValue({
         mutateAsync: mockMutateAsync,
+        reset: mockReset,
         data: [{ id: 1 }],
         isSuccess: true,
         isError: false
@@ -316,6 +484,43 @@ describe('IuvSearch', () => {
       render(<IuvSearch {...defaultProps} />);
 
       expect(screen.getByTestId('results-component')).toBeInTheDocument();
+    });
+
+    it('shows no data message when result is empty', () => {
+      (utils.loaders.public.usePublicInstallmentsByIuvOrNav as Mock).mockReturnValue({
+        mutateAsync: mockMutateAsync,
+        reset: mockReset,
+        data: [],
+        isSuccess: true,
+        isError: false
+      });
+
+      render(
+        <IuvSearch
+          {...defaultProps}
+          noDataTitleKey="app.search.nodata.title"
+          noDataTextKey="app.search.nodata.text"
+        />
+      );
+
+      expect(screen.getByText('No data')).toBeInTheDocument();
+    });
+  });
+
+  describe('Error handling and retry', () => {
+    it('shows retry option on error', () => {
+      (utils.loaders.public.usePublicInstallmentsByIuvOrNav as Mock).mockReturnValue({
+        mutateAsync: mockMutateAsync,
+        reset: mockReset,
+        data: undefined,
+        isSuccess: false,
+        isError: true
+      });
+
+      render(<IuvSearch {...defaultProps} />);
+
+      const contentComponent = screen.getByTestId('content-component');
+      expect(contentComponent).toBeInTheDocument();
     });
   });
 });

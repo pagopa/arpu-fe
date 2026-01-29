@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { useFormik } from 'formik';
+import React, { useEffect, useState } from 'react';
+
 import {
   Tabs,
   Tab,
@@ -18,6 +18,7 @@ import { Content } from 'components/Content';
 import utils from 'utils';
 import { Results } from 'routes/Receipts/search/components/Results';
 import { InstallmentType } from 'utils/loaders';
+import { useFormik } from 'formik';
 
 enum TabIndex {
   PERSONA_FISICA = 0,
@@ -25,7 +26,7 @@ enum TabIndex {
 }
 
 interface FormValues {
-  iuv: string;
+  iuvOrNav: string;
   fiscalCode: string;
   anonymous?: boolean;
 }
@@ -43,12 +44,6 @@ interface IuvSearchProps {
   installmentType?: InstallmentType;
 }
 
-const initialValues: FormValues = {
-  iuv: '',
-  fiscalCode: '',
-  anonymous: false
-};
-
 export const IuvSearch = ({
   titleKey,
   descriptionKey,
@@ -57,18 +52,22 @@ export const IuvSearch = ({
   tab2DescriptionKey,
   noDataTitleKey,
   noDataTextKey,
-  searchErrorKey,
   installmentType = InstallmentType.ALL,
   resultKey
 }: IuvSearchProps) => {
   const { t } = useTranslation();
-  const [currentTab, setCurrentTab] = useState<TabIndex>(TabIndex.PERSONA_FISICA);
   const brokerId = utils.storage.app.getBrokerId();
+  // get initial values from hash params
+  const { iuvOrNav, fiscalCode, anonymous, initialTab } = utils.URI.decode(window.location.hash);
+  const initialValues: FormValues = { iuvOrNav, fiscalCode, anonymous: anonymous === 'true' };
 
+  const [currentTab, setCurrentTab] = useState(Number(initialTab) || TabIndex.PERSONA_FISICA);
   const installmentsMutation = utils.loaders.public.usePublicInstallmentsByIuvOrNav(brokerId);
 
   const handleTabChange = (_: React.SyntheticEvent, newValue: TabIndex) => {
+    // only keep iuvOrNav when changing tabs
     formik.setValues((values) => ({ ...values, fiscalCode: '', anonymous: false }));
+    installmentsMutation.reset();
     setCurrentTab(newValue);
   };
 
@@ -77,8 +76,8 @@ export const IuvSearch = ({
   const validate = (values: FormValues) => {
     const errors: Partial<Record<keyof FormValues, string>> = {};
 
-    if (!values.iuv || values.iuv.trim() === '') {
-      errors.iuv = t('errors.form.required');
+    if (!values.iuvOrNav || values.iuvOrNav.trim() === '') {
+      errors.iuvOrNav = t('errors.form.required');
     }
 
     if (!values.anonymous && (!values.fiscalCode || values.fiscalCode.trim() === '')) {
@@ -91,16 +90,25 @@ export const IuvSearch = ({
   const onSubmit = async (values: FormValues) => {
     await formik.validateForm();
     if (formik.isValid) {
+      // send 'ANONIMO' to api when anonymous is checked
       const fiscalCode = isTab1 && values.anonymous ? 'ANONIMO' : values.fiscalCode;
       try {
         await installmentsMutation.mutateAsync({
-          iuvOrNav: values.iuv,
-          fiscalCode: fiscalCode
+          iuvOrNav: values.iuvOrNav,
+          fiscalCode
         });
+
+        const params = {
+          iuvOrNav: values.iuvOrNav,
+          anonymous: values.anonymous,
+          initialTab: currentTab,
+          // don't encode fiscalCode to URI when anonymous is checked
+          fiscalCode: isTab1 && values.anonymous ? '' : values.fiscalCode
+        };
+        const encodedParams = utils.URI.encode(params);
+        utils.URI.set(encodedParams, { replace: true });
       } catch {
-        if (searchErrorKey) {
-          utils.notify.emit(t(searchErrorKey));
-        }
+        utils.notify.emit(t('errors.toast.default'));
       }
     }
   };
@@ -110,6 +118,19 @@ export const IuvSearch = ({
     validate,
     onSubmit
   });
+
+  useEffect(() => {
+    if (iuvOrNav && ((isTab1 && anonymous) || fiscalCode)) {
+      onSubmit(formik.values);
+    }
+  }, []);
+
+  const tabA11yProps = (index: number) => {
+    return {
+      id: `tab-${index}`,
+      'aria-controls': `tabpanel-${index}`
+    };
+  };
 
   return (
     <Stack sx={{ justifyContent: 'center', backgroundColor: 'background.default' }}>
@@ -124,10 +145,10 @@ export const IuvSearch = ({
             </Typography>
             <Typography variant="body1">{t(descriptionKey)}</Typography>
           </Stack>
-          <form onSubmit={formik.handleSubmit}>
-            <Tabs value={currentTab} onChange={handleTabChange}>
-              <Tab label={t('common.person')} />
-              <Tab label={t('common.company')} />
+          <form onSubmit={formik.handleSubmit} aria-label={t('ui.a11y.searchForm')}>
+            <Tabs value={currentTab} onChange={handleTabChange} aria-label="tabs">
+              <Tab label={t('common.person')} {...tabA11yProps(TabIndex.PERSONA_FISICA)} />
+              <Tab label={t('common.company')} {...tabA11yProps(TabIndex.PERSONA_GIURIDICA)} />
             </Tabs>
             <Stack sx={{ backgroundColor: 'background.paper', p: 3, borderRadius: 1, gap: 3 }}>
               {subtitleKey && (
@@ -148,11 +169,11 @@ export const IuvSearch = ({
                 <TextField
                   fullWidth
                   label={t('fields.iuv')}
-                  name="iuv"
-                  id="iuv"
-                  error={formik.touched.iuv && Boolean(formik.errors.iuv)}
-                  helperText={formik.touched.iuv && formik.errors.iuv}
-                  value={formik.values.iuv}
+                  name="iuvOrNav"
+                  id="iuvOrNav"
+                  error={formik.touched.iuvOrNav && Boolean(formik.errors.iuvOrNav)}
+                  helperText={formik.touched.iuvOrNav && formik.errors.iuvOrNav}
+                  value={formik.values.iuvOrNav}
                   onChange={formik.handleChange}
                   onBlur={formik.handleBlur}
                 />
