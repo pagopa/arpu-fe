@@ -176,8 +176,8 @@ const cartItemsToCartsRequest = (cartItems: CartItem[]) => {
     })),
     returnUrls: {
       returnOkUrl: `${ORIGIN}${ArcRoutes.DASHBOARD}?fromAction=payment-success`,
-      returnCancelUrl: `${ORIGIN}${ArcRoutes.PAYMENT_NOTICES}?fromAction=payment-cancel`,
-      returnErrorUrl: `${ORIGIN}${ArcRoutes.PAYMENT_NOTICES}?fromAction=payment-error`
+      returnCancelUrl: `${ORIGIN}${ArcRoutes.DEBT_POSITIONS}?fromAction=payment-cancel`,
+      returnErrorUrl: `${ORIGIN}${ArcRoutes.DEBT_POSITIONS}?fromAction=payment-error`
     }
   };
 };

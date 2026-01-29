@@ -21,7 +21,8 @@ const getUserInfo = () => {
       const { data: userInfo } = await utils.apiClient.auth.getUserInfo();
       parseAndLog(zodSchema.userInfoSchema, userInfo);
       return userInfo;
-    }
+    },
+    gcTime: Infinity
   });
 };
 
@@ -344,6 +345,13 @@ type InstallmentsByIuvOrNavArgs = {
   fiscalCode: string;
 };
 
+// TODO: remove when below API has its
+// own filter definition
+export enum InstallmentType {
+  RECEIPTS = 'receipts',
+  ALL = 'all'
+}
+
 const usePublicInstallmentsByIuvOrNav = (brokerId: number) =>
   useMutation({
     mutationKey: ['publicInstallmentsByIuvOrNav', brokerId],
@@ -370,6 +378,65 @@ const getDebtPositionDetail = (brokerId: number, debtPositionId: number, organiz
     }
   });
 
+const getDebtorReceipts = (
+  brokerId: number,
+  organizationId: number,
+  debtPositionId: number,
+  paymentOptionId: number
+) =>
+  useQuery({
+    queryKey: ['getDebtorReceipts', brokerId, organizationId, debtPositionId, paymentOptionId],
+    queryFn: async () => {
+      const { data } = await utils.apiClient.brokers.getDebtorReceipts(
+        brokerId,
+        organizationId,
+        debtPositionId,
+        paymentOptionId
+      );
+      return data;
+    }
+  });
+
+const getMostUsedSpontaneousDebtPositionTypeOrgsForCurrentYear = (
+  brokerId: number,
+  organizationId: number
+) =>
+  useQuery({
+    queryKey: [
+      'getMostUsedSpontaneousDebtPositionTypeOrgsForCurrentYear',
+      brokerId,
+      organizationId
+    ],
+    queryFn: async () => {
+      const { data } =
+        await utils.apiClient.brokers.getMostUsedSpontaneousDebtPositionTypeOrgsForCurrentYear(
+          brokerId,
+          organizationId
+        );
+      return data;
+    }
+  });
+
+const getPublicMostUsedSpontaneousDebtPositionTypeOrgsForCurrentYear = (
+  brokerId: number,
+  organizationId: number
+) =>
+  useQuery({
+    queryKey: [
+      'getPublicMostUsedSpontaneousDebtPositionTypeOrgsForCurrentYear',
+      brokerId,
+      organizationId
+    ],
+    queryFn: async () => {
+      const { data } =
+        await utils.apiClient.public.getPublicMostUsedSpontaneousDebtPositionTypeOrgsForCurrentYear(
+          brokerId,
+          organizationId
+        );
+      return data;
+    }
+  });
+
 export default {
   createSpontaneousDebtPosition,
   getDebtPositionTypeOrgsWithSpontaneous,
@@ -384,6 +451,8 @@ export default {
   usePagedUnpaidDebtPositions,
   useReceiptDetail,
   getDebtPositionDetail,
+  getDebtorReceipts,
+  getMostUsedSpontaneousDebtPositionTypeOrgsForCurrentYear,
   public: {
     createPublicSpontaneousDebtPosition,
     getPublicDebtPositionTypeOrgsWithSpontaneous,
@@ -393,6 +462,7 @@ export default {
     useBrokerInfo,
     usePublicInstallmentsByIuvOrNav,
     usePublicDownloadReceipt,
-    usePublicReceiptDetail
+    usePublicReceiptDetail,
+    getPublicMostUsedSpontaneousDebtPositionTypeOrgsForCurrentYear
   }
 };

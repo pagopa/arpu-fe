@@ -3,6 +3,10 @@ import React from 'react';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen } from '__tests__/renderers';
 import { DebtorUnpaidDebtPositionDTO } from '../../../../generated/data-contracts';
+import { generatePath } from 'react-router-dom';
+import { toEuroOrMissingValue, fromTaxCodeToSrcImage } from 'utils/converters';
+import { useDueDateField } from '../hooks/useDueDateField';
+import { DebtPositionItem } from './item';
 
 vi.mock('react-router-dom', async (importActual) => {
   const actual: any = await importActual();
@@ -11,12 +15,6 @@ vi.mock('react-router-dom', async (importActual) => {
     generatePath: vi.fn()
   };
 });
-
-vi.mock('react-i18next', () => ({
-  useTranslation: () => ({
-    t: (key: string) => key
-  })
-}));
 
 vi.mock('utils/converters', () => ({
   toEuroOrMissingValue: vi.fn(),
@@ -28,13 +26,9 @@ vi.mock('components/PayeeIcon', () => ({
   PayeeIcon: ({ alt }: { alt: string }) => <div data-testid="payee-icon">{alt}</div>
 }));
 
-import { generatePath } from 'react-router-dom';
-import {
-  toEuroOrMissingValue,
-  formatDateOrMissingValue,
-  fromTaxCodeToSrcImage
-} from 'utils/converters';
-import { DebtPositionItem } from './item';
+vi.mock('../hooks/useDueDateField', () => ({
+  useDueDateField: vi.fn()
+}));
 
 const debtPositionMock: DebtorUnpaidDebtPositionDTO = {
   orgName: 'Comune di Milano',
@@ -48,12 +42,13 @@ const debtPositionMock: DebtorUnpaidDebtPositionDTO = {
 describe('DebtPositionItem', () => {
   beforeEach(() => {
     vi.clearAllMocks();
-
     vi.mocked(generatePath).mockReturnValue('/debt-positions/debt-123/org-456');
-
     vi.mocked(toEuroOrMissingValue).mockReturnValue('€50.00');
-    vi.mocked(formatDateOrMissingValue).mockReturnValue('31/01/2025');
     vi.mocked(fromTaxCodeToSrcImage).mockReturnValue('icon-src');
+    vi.mocked(useDueDateField).mockReturnValue({
+      label: 'app.debtPositions.debtPositionItem.dueDate',
+      value: '31/01/2025'
+    });
   });
 
   it('renders organization name and debt description', () => {
@@ -68,8 +63,13 @@ describe('DebtPositionItem', () => {
 
     expect(screen.getByText('app.debtPositions.debtPositionItem.amount')).toBeInTheDocument();
     expect(screen.getByText('€50.00')).toBeInTheDocument();
-
     expect(screen.getByText('app.debtPositions.debtPositionItem.dueDate')).toBeInTheDocument();
     expect(screen.getByText('31/01/2025')).toBeInTheDocument();
+  });
+
+  it('calls useDueDateField with payment options', () => {
+    render(<DebtPositionItem debtPosition={debtPositionMock} />);
+
+    expect(useDueDateField).toHaveBeenCalledWith(debtPositionMock.paymentOptions);
   });
 });

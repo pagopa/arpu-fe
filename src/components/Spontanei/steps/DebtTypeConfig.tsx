@@ -25,13 +25,21 @@ const DebtTypeConfig = () => {
       );
 
   const type = data?.formType;
+  context?.setFormType(type || null);
+
+  const hasFlagAnonymousFiscalCode = data?.flagAnonymousFiscalCode || false;
 
   const renderFormByType = () => {
     switch (type) {
       case 'STANDARD':
-        return <StandardForm />;
+        return <StandardForm hasFlagAnonymousFiscalCode={hasFlagAnonymousFiscalCode} />;
       case 'PRESET_AMOUNT':
-        return <StandardForm fixedAmount={data?.amountCents} />;
+        return (
+          <StandardForm
+            fixedAmount={data?.amountCents}
+            hasFlagAnonymousFiscalCode={hasFlagAnonymousFiscalCode}
+          />
+        );
       case 'CUSTOM':
         return (
           <CustomForm

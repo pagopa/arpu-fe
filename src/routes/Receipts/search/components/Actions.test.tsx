@@ -4,52 +4,13 @@ import '@testing-library/jest-dom';
 import { Actions } from './Actions';
 import React from 'react';
 import { InstallmentDebtorExtendedDTO, PersonDTO } from '../../../../../generated/data-contracts';
+import { InstallmentType } from 'utils/loaders';
 
-const mockNavigate = vi.fn();
 const mockMutateAsync = vi.fn();
 const mockNotifyEmit = vi.fn();
 const mockGetBrokerId = vi.fn();
 const mockIsAnonymous = vi.fn();
 const mockDownloadBlob = vi.fn();
-
-vi.mock('react-router', async (importOriginal) => {
-  const actual = await importOriginal<typeof import('react-router')>();
-  return {
-    ...actual,
-    useNavigate: () => mockNavigate,
-    generatePath: vi.fn((route, params) => {
-      if (route.includes('public')) {
-        return `/public/receipt/${params.organizationId}/${params.receiptId}`;
-      }
-      return `/receipt/${params.organizationId}/${params.receiptId}`;
-    })
-  };
-});
-
-vi.mock('routes/routes', () => ({
-  ArcRoutes: {
-    RECEIPT: '/receipt/:organizationId/:receiptId',
-    public: {
-      RECEIPT: '/public/receipt/:organizationId/:receiptId'
-    }
-  }
-}));
-
-// Mock ActionMenu component
-vi.mock('components/ActionMenu/ActionMenu', () => ({
-  default: ({ rowId, menuItems }: any) => (
-    <div>
-      <button data-testid={`action-menu-${rowId}`}>Menu</button>
-      <div data-testid={`menu-items-${rowId}`}>
-        {menuItems.map((item: any, index: number) => (
-          <button key={index} onClick={item.action} data-testid={`menu-item-${index}`}>
-            {item.label}
-          </button>
-        ))}
-      </div>
-    </div>
-  )
-}));
 
 vi.mock('utils', () => ({
   default: {
@@ -95,10 +56,9 @@ const mockIncompleteInstallment = {
   amountCents: 10000
 } as InstallmentDebtorExtendedDTO;
 
-describe('Receipts Action', () => {
+describe('Actions', () => {
   beforeEach(() => {
     vi.clearAllMocks();
-    mockNavigate.mockClear();
     mockMutateAsync.mockClear();
     mockNotifyEmit.mockClear();
     mockGetBrokerId.mockReturnValue('broker123');
@@ -106,24 +66,30 @@ describe('Receipts Action', () => {
     mockDownloadBlob.mockClear();
   });
 
-  it('should render', () => {
-    render(<Actions installment={mockInstallment} />);
-    expect(screen.getByTestId('action-menu-1')).toBeInTheDocument();
+  it('should render download icon button and detail button', () => {
+    render(<Actions installment={mockInstallment} installmentType={InstallmentType.RECEIPTS} />);
+
+    expect(screen.getByLabelText('download')).toBeInTheDocument();
+    expect(screen.getByText('actions.detail')).toBeInTheDocument();
   });
 
-  it('should show error notification when installment data is incomplete for navigation', async () => {
-    render(<Actions installment={mockIncompleteInstallment} />);
+  describe('When installmentType is RECEIPTS', () => {
+    it('should show error notification when installment data is incomplete for navigation', async () => {
+      render(
+        <Actions
+          installment={mockIncompleteInstallment}
+          installmentType={InstallmentType.RECEIPTS}
+        />
+      );
 
-    const viewDetailButton = screen.getByText('app.receiptsSearch.actions.toDetail');
-    fireEvent.click(viewDetailButton);
+      const detailButton = screen.getByText('actions.detail');
+      fireEvent.click(detailButton);
 
-    await waitFor(() => {
-      expect(mockNotifyEmit).toHaveBeenCalledWith('errors.toast.default');
-      expect(mockNavigate).not.toHaveBeenCalled();
+      await waitFor(() => {
+        expect(mockNotifyEmit).toHaveBeenCalledWith('errors.toast.default');
+      });
     });
-  });
 
-  describe('Download receipt', () => {
     it('should download receipt successfully for authenticated user', async () => {
       mockIsAnonymous.mockReturnValue(false);
       const mockBlob = new Blob(['test'], { type: 'application/pdf' });
@@ -132,9 +98,9 @@ describe('Receipts Action', () => {
         filename: 'receipt.pdf'
       });
 
-      render(<Actions installment={mockInstallment} />);
+      render(<Actions installment={mockInstallment} installmentType={InstallmentType.RECEIPTS} />);
 
-      const downloadButton = screen.getByText('app.receiptsSearch.actions.download');
+      const downloadButton = screen.getByLabelText('download');
       fireEvent.click(downloadButton);
 
       await waitFor(() => {
@@ -154,9 +120,9 @@ describe('Receipts Action', () => {
         filename: null
       });
 
-      render(<Actions installment={mockInstallment} />);
+      render(<Actions installment={mockInstallment} installmentType={InstallmentType.RECEIPTS} />);
 
-      const downloadButton = screen.getByText('app.receiptsSearch.actions.download');
+      const downloadButton = screen.getByLabelText('download');
       fireEvent.click(downloadButton);
 
       await waitFor(() => {
@@ -172,9 +138,9 @@ describe('Receipts Action', () => {
         filename: 'receipt.pdf'
       });
 
-      render(<Actions installment={mockInstallment} />);
+      render(<Actions installment={mockInstallment} installmentType={InstallmentType.RECEIPTS} />);
 
-      const downloadButton = screen.getByText('app.receiptsSearch.actions.download');
+      const downloadButton = screen.getByLabelText('download');
       fireEvent.click(downloadButton);
 
       await waitFor(() => {
@@ -186,9 +152,9 @@ describe('Receipts Action', () => {
     it('should show error notification when download fails', async () => {
       mockMutateAsync.mockRejectedValue(new Error('Download failed'));
 
-      render(<Actions installment={mockInstallment} />);
+      render(<Actions installment={mockInstallment} installmentType={InstallmentType.RECEIPTS} />);
 
-      const downloadButton = screen.getByText('app.receiptsSearch.actions.download');
+      const downloadButton = screen.getByLabelText('download');
       fireEvent.click(downloadButton);
 
       await waitFor(() => {
@@ -198,9 +164,14 @@ describe('Receipts Action', () => {
     });
 
     it('should show error notification when installment data is incomplete for download', async () => {
-      render(<Actions installment={mockIncompleteInstallment} />);
+      render(
+        <Actions
+          installment={mockIncompleteInstallment}
+          installmentType={InstallmentType.RECEIPTS}
+        />
+      );
 
-      const downloadButton = screen.getByText('app.receiptsSearch.actions.download');
+      const downloadButton = screen.getByLabelText('download');
       fireEvent.click(downloadButton);
 
       await waitFor(() => {
@@ -215,9 +186,14 @@ describe('Receipts Action', () => {
         receiptId: undefined
       };
 
-      render(<Actions installment={installmentWithoutReceiptId} />);
+      render(
+        <Actions
+          installment={installmentWithoutReceiptId}
+          installmentType={InstallmentType.RECEIPTS}
+        />
+      );
 
-      const downloadButton = screen.getByText('app.receiptsSearch.actions.download');
+      const downloadButton = screen.getByLabelText('download');
       fireEvent.click(downloadButton);
 
       await waitFor(() => {
@@ -226,12 +202,24 @@ describe('Receipts Action', () => {
     });
   });
 
-  describe('Action menu items', () => {
-    it('should render both menu items when action menu is opened', async () => {
-      render(<Actions installment={mockInstallment} />);
+  describe('When installmentType is ALL', () => {
+    it('should not trigger download when download button is clicked', async () => {
+      render(<Actions installment={mockInstallment} installmentType={InstallmentType.ALL} />);
 
-      expect(screen.getByText('app.receiptsSearch.actions.toDetail')).toBeInTheDocument();
-      expect(screen.getByText('app.receiptsSearch.actions.download')).toBeInTheDocument();
+      const downloadButton = screen.getByLabelText('download');
+      fireEvent.click(downloadButton);
+
+      await waitFor(() => {
+        expect(mockMutateAsync).not.toHaveBeenCalled();
+        expect(mockDownloadBlob).not.toHaveBeenCalled();
+      });
+    });
+
+    it('should render both buttons but they should be inactive', () => {
+      render(<Actions installment={mockInstallment} installmentType={InstallmentType.ALL} />);
+
+      expect(screen.getByLabelText('download')).toBeInTheDocument();
+      expect(screen.getByText('actions.detail')).toBeInTheDocument();
     });
   });
 });

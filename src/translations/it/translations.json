@@ -13,31 +13,19 @@
       "result_one": "Abbiamo trovato {{count}} ricevuta",
       "result_other": "Abbiamo trovato {{count}} ricevute",
       "tab1": {
-        "label": "Persona Fisica",
         "description": "Inserisci il Codice Avviso (o IUV) e il Codice Fiscale per avviare la ricerca della ricevuta. Se non possiedi il Codice Fiscale, puoi comunque recuperare la ricevuta."
       },
       "tab2": {
-        "label": "Persona Giuridica",
         "description": "Inserisci il Codice Avviso (o IUV) e la P.IVA per avviare la ricerca della ricevuta."
-      },
-      "fields": {
-        "iuv": "Codice Avviso/IUV",
-        "fiscalcode": "Codice Fiscale",
-        "piva": "Codice Fiscale/P.IVA",
-        "anonymous": "Non ho il Codice Fiscale",
-        "orgName": "Ente Creditore",
-        "amount": "Importo",
-        "noticeCode": "Codice Avviso"
       },
       "noData": {
         "title": "Non abbiamo trovato ricevute corrispondenti",
         "text": "Controlla i dati inseriti e riprova."
-      },
-      "actions": {
-        "search": "Cerca",
-        "toDetail": "Vai al dettaglio",
-        "download": "Scarica"
       }
+    },
+    "debtPositionsSearch": {
+      "title": "Cerca un avviso",
+      "description": "Recupera un avviso di pagamento compilando i campi con i dati richiesti."
     },
     "user": {
       "title": "I tuoi dati",
@@ -77,7 +65,7 @@
       "installment": {
         "installmentNumber": "Rata {{installmentNumber}} di {{totalInstallments}}",
         "dueDate": "Entro il <strong>{{date}}</strong>",
-        "expireDate": "il <strong>{{date}}</strong>" 
+        "expireDate": "il <strong>{{date}}</strong>"
       },
       "actions": {
         "add": "Aggiungi al carrello ({{count}})",
@@ -126,8 +114,9 @@
       "noAuth": {
         "title": "Vai di fretta?",
         "description": "Fai un pagamento spontaneo o recupera la ricevuta di un pagamento già fatto, tutto senza fare login.",
-        "CTA1": "Fai un pagamento",
-        "CTA2": "Recupera una ricevuta"
+        "CTA1": "Fai un pagamento spontaneo",
+        "CTA2": "Recupera una ricevuta",
+        "CTA3": "Cerca un avviso"
       }
     },
     "dashboard": {
@@ -177,7 +166,8 @@
       },
       "debtPositionItem": {
         "amount": "Importo",
-        "dueDate": "Da pagare entro il"
+        "dueDate": "Da pagare entro il",
+        "noDueDate": "Più opzioni di pagamento"
       },
       "list": {
         "title": "Importi da pagare"
@@ -199,6 +189,9 @@
       "installment": "rata",
       "installments": "rate",
       "before": "entro il",
+      "receipts": "Ricevute",
+      "paidOptionReceipt": "Ricevuta del {{date}} di {{amount}}",
+      "downloadReceipt": "Scarica la ricevuta",
       "status": {
         "PAID": "Pagato",
         "UNPAID": "Da pagare",
@@ -336,11 +329,42 @@
   },
   "dates": {
     "from": "Dal",
-    "to": "Al"
+    "to": "Al",
+    "validation": "Data non valida"
   },
   "actions": {
     "filter": "Filtra",
-    "resetFilters": "Rimuovi filtri"
+    "resetFilters": "Rimuovi filtri",
+    "search": "Cerca",
+    "detail": "Dettaglio",
+    "download": "Scarica"
+  },
+  "fields": {
+    "iuv": "Codice Avviso/IUV",
+    "fiscalcode": "Codice Fiscale",
+    "piva": "Codice Fiscale/P.IVA",
+    "anonymous": "Non ho il Codice Fiscale",
+    "orgName": "Ente Creditore",
+    "amount": "Importo",
+    "noticeCode": "Codice Avviso",
+    "status": "Stato"
+  },
+  "installment": {
+    "status": {
+      "CANCELLED": "Annullato",
+      "DRAFT": "Bozza",
+      "EXPIRED": "Scaduto",
+      "INVALID": "Non valido",
+      "PAID": "Pagato",
+      "REPORTED": "Pagato",
+      "TO_SYNC": "Da sincronizzare",
+      "UNPAID": "Da pagare",
+      "UNPAYABLE": "Non pagabile"
+    }
+  },
+  "common": {
+    "person": "Persona fisica",
+    "company": "Soggetto giuridico"
   },
   "general": {
     "and": "e",
@@ -376,9 +400,7 @@
       "help": "Aiuto",
       "privacy": "Informativa Privacy",
       "personalData": "Diritto alla protezione dei dati personali",
-      "termsAndConditions": "Termini e Condizioni",
-      "legalHolder": "Regione del Veneto",
-      "legal": " - Giunta Regionale - Palazzo Balbi, Dorsoduto, 3901, 30123, Venezia - P.IVA 02392630279"
+      "termsAndConditions": "Termini e Condizioni"
     }
   },
   "courtesyPage": {
@@ -436,7 +458,7 @@
     "userpage": "I tuoi dati"
   },
   "spontanei": {
-      "drawer": {
+    "drawer": {
         "title": "PAGA UN AVVISO",
         "card1": {
           "title": "Hai ricevuto un avviso di pagamento?",
@@ -448,12 +470,10 @@
           "description": "Vuoi pagare la Pubblica Amministrazione perchè ti va e perchè sei un buono",
           "cta": "Configura il pagamento"
         }
-      },
+    },
     "form": {
-      "title": "Effettua un pagamento spontaneo",
+      "title": "Fai un pagamento spontaneo",
       "description": "Compila i campi richiesti e procedi col pagamento.",
-      "summaryTitle": "Riepilogo",
-      "summaryDescription": "Rivedi qui i dati inseriti per effettuare il tuo pagamento spontaneo.",
       "steps": {
         "step1": {
           "step": "Seleziona l’ente",
@@ -465,17 +485,63 @@
           "step": "Seleziona il servizio",
           "title": "Seleziona il servizio",
           "description": "Inizia a digitare il nome del servizio per il quale vuoi effettuare il pagamento e selezionalo dalla lista.",
-          "search": "Cerca per nome del servizio"
+          "search": "Cerca per nome del servizio",
+          "mostUsedDebtTypes": "In base alla tua ricerca"
         },
         "step3": {
-          "step": "Configura il pagamento",
-          "title": "Configura il pagamento",
-          "description": "Inserisci l’importo da pagare, se necessario, e aggiungi una causale."
+          "step": "Inserisci i dati",
+          "title": "Inserisci i dati",
+          "description": "Compila i campi con i dati richiesti per completare l'operazione.",
+          "requiredField": "* Campo obbligatorio",
+          "debtor": {
+            "title": "Dati del debitore",
+            "useYourData": "Usa i tuoi dati",
+            "F": {
+              "title": "Persona fisica",
+              "name": "Nome e cognome debitore",
+              "code": "Codice Fiscale debitore",
+              "email": "Email debitore"
+            },
+            "G": {
+              "title": "Soggetto giuridico",
+              "name": "Denominazione",
+              "code": "Codice Fiscale/P.IVA",
+              "email": "Email"
+            },
+            "noFiscalCode": "Non ho il Codice Fiscale"
+          },
+          "paymentData": {
+            "title": "Dati dell'avviso di pagamento",
+            "amount": "Importo",
+            "description": "Oggetto del pagamento"
+          }
         },
         "step4": {
-          "step": "Riepilogo",
-          "title": "Riepilogo",
-          "description": "Aggiungi l'avviso nel carrello e procedi con il pagamento."
+          "step": "Controlla i dati",
+          "title": "Ecco i dati che hai inserito.",
+          "description": "Controlla i dati inseriti e conferma per procedere al pagamento.",
+          "org": {
+            "title": "Ente beneficiario",
+            "name": " Nome Ente",
+            "code": "Codice Fiscale ente"
+          },
+          "service": {
+            "title": "Servizio",
+            "name": "Nome servizio"
+          },
+          "debtor": {
+            "title": "Dati del debitore",
+            "F":{
+              "name": "Nome e cognome debitore",
+              "code": "Codice Fiscale debitore",
+              "email": "Email debitore"  
+            },
+            "G":{
+              "name": "Denominazione",
+              "code": "Codice Fiscale/P.IVA",
+              "email": "Email"  
+            }
+          }
         },
         "step5": {
           "step": "Completa il pagamento",
@@ -494,26 +560,34 @@
           }
         }
       },
+      "download": {
+        "title": "Il download dell’avviso è in corso",
+        "help": "Se non parte automaticamente, clicca <link1>qui.</link1>",
+        "info": "Scopri i canali abilitati",
+        "close": "Chiudi"
+      },
       "continue": "Continua",
+      "confirm": "Conferma i dati",
       "abort": "Esci",
-      "back": "Indietro"
+      "back": "Indietro",
+      "errors": {
+        "description": "Causale troppo corta o mancante.",
+        "amount": "Importo non valido.",
+        "fullName": "Nome e cognome non validi.",
+        "fiscalCode": "Codice Fiscale o Partita IVA errato.",
+        "email": "Email non valida."
+      }
     },
-    "download": {
-      "title": "Il download dell’avviso è in corso",
-      "help": "Se non parte automaticamente, clicca <link1>qui.</link1>",
-      "info": "Scopri i canali abilitati",
-      "close": "Chiudi"
-    }
-  },
-  "errors": {
-    "form": {
-      "required": "Questo campo non puoi essere vuoto."
-    },
-    "toast": {
-      "403": "Non hai i permessi per eseguire questa azione.",
-      "404": "Risorsa non trovata.",
-      "500": "Errore del server, riprova più tardi.",
-      "default": "Si è verificato un errore imprevisto. Riprova più tardi."
+    "errors": {
+      "form": {
+        "required": "Questo campo non puoi essere vuoto."
+      },
+      "toast": {
+        "403": "Non hai i permessi per eseguire questa azione.",
+        "404": "Risorsa non trovata.",
+        "500": "Errore del server, riprova più tardi.",
+        "default": "Si è verificato un errore imprevisto. Riprova più tardi."
+      }
     }
   }
 }

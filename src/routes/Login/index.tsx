@@ -32,6 +32,7 @@ const Login = () => {
 
   const handleCTA1 = () => navigate(ArcRoutes.public.PAYMENTS_ON_THE_FLY);
   const handleCTA2 = () => navigate(ArcRoutes.public.RECEIPTS_SEARCH);
+  const handleCTA3 = () => navigate(ArcRoutes.public.DEBT_POSITION_SEARCH);
 
   return (
     <Grid container minHeight={'78vh'}>
@@ -65,25 +66,26 @@ const Login = () => {
       <Grid size={{ xs: 12, md: 4 }} bgcolor={theme.palette.primary.main} pt={16} pb={16}>
         <Container>
           <Stack alignItems="center">
-            <Stack width={336} gap={1}>
-              <Typography variant="h3" color={theme.palette.primary.contrastText}>
-                {t('app.login.noAuth.title')}
-              </Typography>
-              <Typography variant="body1" mb={4} color={theme.palette.primary.contrastText}>
-                {t('app.login.noAuth.description')}
-              </Typography>
-              <Card elevation={16}>
-                <CardContent>
-                  <Stack gap={2}>
-                    <Button variant="contained" size="large" color="primary" onClick={handleCTA1}>
-                      {t('app.login.noAuth.CTA1')}
-                    </Button>
-                    <Button variant="contained" size="large" onClick={handleCTA2}>
-                      {t('app.login.noAuth.CTA2')}
-                    </Button>
-                  </Stack>
-                </CardContent>
-              </Card>
+            <Stack width={336} gap={4}>
+              <Stack gap={2}>
+                <Typography variant="h3" color={theme.palette.primary.contrastText}>
+                  {t('app.login.noAuth.title')}
+                </Typography>
+                <Typography variant="body1" color={theme.palette.primary.contrastText}>
+                  {t('app.login.noAuth.description')}
+                </Typography>
+              </Stack>
+              <Stack gap={2} width={'75%'}>
+                <Button variant="contrast" size="large" onClick={handleCTA1}>
+                  {t('app.login.noAuth.CTA1')}
+                </Button>
+                <Button variant="contrast" size="large" onClick={handleCTA2}>
+                  {t('app.login.noAuth.CTA2')}
+                </Button>
+                <Button variant="contrast" size="large" onClick={handleCTA3}>
+                  {t('app.login.noAuth.CTA3')}
+                </Button>
+              </Stack>
             </Stack>
           </Stack>
         </Container>

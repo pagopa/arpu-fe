@@ -49,7 +49,7 @@ const PaymentOptionWrapper = (props: PaymentOptionWrapperProps) => {
     .map(({ paymentOptionId }) => paymentOptionId);
 
   return (
-    <Card sx={{ padding: 3, gap: 3, display: 'flex', flexDirection: 'column', marginTop: 2 }}>
+    <Card sx={{ padding: 3, gap: 3, display: 'flex', flexDirection: 'column' }}>
       <Typography variant="body1" component="h2" fontWeight="600" fontStyle="semibold">
         {t('app.debtPositionDetail.paymentOptions')}
       </Typography>

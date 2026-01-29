@@ -6,7 +6,7 @@ import { InstallmentDrawerItem } from 'models/InstallmentDrawer';
 import { Trans, useTranslation } from 'react-i18next';
 import utils from 'utils';
 import { InstallmentStatus } from '../../../generated/data-contracts';
-import { InstallmentStatusChip } from '../../routes/DebtPositionDetail/components/PaymentOptionItem';
+import { InstallmentChip } from 'components/StatusChips/InstallmentChip';
 
 interface ExpiredInstallmentItemsProps {
   items: InstallmentDrawerItem[];
@@ -83,12 +83,18 @@ const ExpiredInstallmentItems = ({ items, totalItems }: ExpiredInstallmentItemsP
                   </Grid>
 
                   <Grid size={6}>
-                    <InstallmentStatusChip status={InstallmentStatus.EXPIRED} />
+                    <InstallmentChip
+                      installment={{
+                        status: InstallmentStatus.EXPIRED,
+                        installmentId: item.installmentId
+                      }}
+                    />
                   </Grid>
 
                   <Grid size={6}>
                     {item.dueDate && (
-                      <Typography>
+                      <Typography
+                        data-testid={`installments-drawer-expired-installment-expire-date-${item.installmentId}`}>
                         <Trans
                           i18nKey={t('app.installmentsDrawer.installment.expireDate', {
                             date: utils.datetools.formatDate(item.dueDate)
@@ -96,7 +102,6 @@ const ExpiredInstallmentItems = ({ items, totalItems }: ExpiredInstallmentItemsP
                           components={{
                             strong: (
                               <Typography
-                                data-testid={`installments-drawer-expired-installment-expire-date-${item.installmentId}`}
                                 fontSize={16}
                                 fontWeight={600}
                                 component="span"

@@ -2,20 +2,10 @@ import Card from '@mui/material/Card';
 import {
   DebtorInstallmentsOverviewDTO,
   DebtorPaymentOptionOverviewDTO,
-  InstallmentStatus,
   PaymentOptionType
 } from '../../../../generated/data-contracts';
 import React from 'react';
-import {
-  Box,
-  Chip,
-  Divider,
-  FormControlLabel,
-  Grid,
-  Radio,
-  Stack,
-  Typography
-} from '@mui/material';
+import { Box, Divider, FormControlLabel, Grid, Radio, Stack, Typography } from '@mui/material';
 import Timeline from '@mui/lab/Timeline';
 import TimelineItem, { timelineItemClasses } from '@mui/lab/TimelineItem';
 import TimelineSeparator from '@mui/lab/TimelineSeparator';
@@ -24,6 +14,7 @@ import TimelineConnector from '@mui/lab/TimelineConnector';
 import TimelineContent from '@mui/lab/TimelineContent/TimelineContent';
 import utils from 'utils';
 import { useTranslation } from 'react-i18next';
+import { InstallmentChip } from 'components/StatusChips/InstallmentChip';
 
 export const Accent = (props: { children: string }) => (
   <Box
@@ -33,36 +24,6 @@ export const Accent = (props: { children: string }) => (
     </Typography>
   </Box>
 );
-
-const getInstallmentStatusColor = (status: InstallmentStatus) => {
-  switch (status) {
-    case 'PAID':
-      return 'success';
-    case 'UNPAID':
-      return 'default';
-    case 'EXPIRED':
-      return 'error';
-    default:
-      return 'default';
-  }
-};
-
-export const InstallmentStatusChip = ({
-  dataTestId,
-  status
-}: {
-  dataTestId?: string;
-  status: InstallmentStatus;
-}) => {
-  const { t } = useTranslation();
-  return (
-    <Chip
-      data-testid={dataTestId}
-      label={t(`app.debtPositionDetail.status.${status}`)}
-      color={getInstallmentStatusColor(status)}
-    />
-  );
-};
 
 const ExtraInfo = (props: { installments: DebtorPaymentOptionOverviewDTO['installments'] }) => {
   const { t } = useTranslation();
@@ -81,7 +42,7 @@ const ExtraInfo = (props: { installments: DebtorPaymentOptionOverviewDTO['instal
           paddingLeft: 4
         }}>
         {props.installments.map((installment, index) => (
-          <TimelineItem key={installment.installmentId}>
+          <TimelineItem key={installment.installmentId} data-testId={`installment-item`}>
             <TimelineSeparator>
               <TimelineDot />
               {index < props.installments.length - 1 && <TimelineConnector />}
@@ -106,10 +67,7 @@ const ExtraInfo = (props: { installments: DebtorPaymentOptionOverviewDTO['instal
 
                 <Grid size={6} gap={2}>
                   <Stack direction="row" spacing={2} alignItems="center">
-                    <InstallmentStatusChip
-                      dataTestId={`payment-option-type-installments-installment-${index + 1}-status`}
-                      status={installment.status}
-                    />
+                    <InstallmentChip installment={installment} />
                     {installment.dueDate && (
                       <Typography
                         fontSize={16}

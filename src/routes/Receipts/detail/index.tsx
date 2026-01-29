@@ -24,6 +24,7 @@ import notify from 'utils/notify';
 import loaders from 'utils/loaders';
 import utils from 'utils';
 import { ArrowBack, Download } from '@mui/icons-material';
+import { DateFormat } from 'utils/datetools';
 
 export const ReceiptDetail = () => {
   // TODO: retrieve brokerId from context when available
@@ -124,7 +125,11 @@ export const ReceiptDetail = () => {
           <Divider />
           <CopiableRow
             label={t('app.receiptDetail.paymentDate')}
-            value={formatDateOrMissingValue(data?.paymentDateTime)}
+            value={formatDateOrMissingValue(data?.paymentDateTime, {
+              format: DateFormat.LONG,
+              withTime: true,
+              second: '2-digit'
+            })}
           />
           <Divider />
           <CopiableRow

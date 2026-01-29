@@ -13,7 +13,7 @@ import CustomPagination from 'components/DataGrid/CustomPagination';
 import { ReceiptItem } from '../components/item';
 import { DateRange } from 'components/DateRange';
 import { Search } from '@mui/icons-material';
-import { Dayjs } from 'dayjs';
+import dayjs, { Dayjs } from 'dayjs';
 
 type Filters = {
   noticeNumberOrIuv?: string;
@@ -26,10 +26,22 @@ export const ReceiptsList = () => {
   const brokerId = Number(config.brokerId);
   const mutation = utils.loaders.getPagedDebtorReceipts(brokerId);
 
-  const [searchCode, setSearchCode] = useState('');
-  const [startDate, setStartDate] = useState<Dayjs | null>(null);
-  const [endDate, setEndDate] = useState<Dayjs | null>(null);
-  const [appliedFilters, setAppliedFilters] = useState<Filters>({});
+  const { noticeNumberOrIuv, paymentDateTimeFrom, paymentDateTimeTo } = utils.URI.decode(
+    window.location.hash
+  );
+
+  const initialIuv = noticeNumberOrIuv || '';
+  const initialFrom = paymentDateTimeFrom ? dayjs(paymentDateTimeFrom) : null;
+  const initialTo = paymentDateTimeTo ? dayjs(paymentDateTimeTo) : null;
+
+  const [searchCode, setSearchCode] = useState(initialIuv);
+  const [startDate, setStartDate] = useState<Dayjs | null>(initialFrom);
+  const [endDate, setEndDate] = useState<Dayjs | null>(initialTo);
+  const [appliedFilters, setAppliedFilters] = useState<Filters>({
+    noticeNumberOrIuv: initialIuv,
+    paymentDateTimeFrom: initialFrom?.format(),
+    paymentDateTimeTo: initialTo?.format()
+  });
 
   const {
     query: { isError, isSuccess, data },
@@ -47,10 +59,11 @@ export const ReceiptsList = () => {
     }
 
     if (startDate) {
-      newFilters.paymentDateTimeFrom = startDate.toISOString();
+      newFilters.paymentDateTimeFrom = startDate.format();
     }
+
     if (endDate) {
-      newFilters.paymentDateTimeTo = endDate.toISOString();
+      newFilters.paymentDateTimeTo = endDate.format();
     }
 
     setAppliedFilters(newFilters);
