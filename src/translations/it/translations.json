@@ -170,7 +170,9 @@
         "noDueDate": "Più opzioni di pagamento"
       },
       "list": {
-        "title": "Importi da pagare"
+        "title": "Importi da pagare",
+        "subtitle": "Qui trovi gli avvisi ancora da pagare o già avviati a rate. Se cerchi un avviso intestato a qualcun altro, clicca su",
+        "subtitleLink": "Cerca un avviso."
       }
     },
     "debtPositionDetail": {
@@ -534,12 +536,12 @@
             "F":{
               "name": "Nome e cognome debitore",
               "code": "Codice Fiscale debitore",
-              "email": "Email debitore"  
+              "email": "Email debitore"
             },
             "G":{
               "name": "Denominazione",
               "code": "Codice Fiscale/P.IVA",
-              "email": "Email"  
+              "email": "Email"
             }
           }
         },
