@@ -30,8 +30,10 @@ export const DebtPositionsList = () => {
   return (
     <Stack gap={3}>
       <Stack gap={1}>
-        <Typography variant="h3">{t('app.debtPositions.list.title')}</Typography>
-        <Typography fontSize={16}>
+        <Typography variant="h3" component="h1">
+          {t('app.debtPositions.list.title')}
+        </Typography>
+        <Typography component="h2" fontSize={16}>
           {t('app.debtPositions.list.subtitle')}{' '}
           <Link to={ArcRoutes.public.DEBT_POSITION_SEARCH}>
             {t('app.debtPositions.list.subtitleLink')}

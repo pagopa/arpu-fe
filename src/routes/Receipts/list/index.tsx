@@ -85,8 +85,10 @@ export const ReceiptsList = () => {
       </Helmet>
       <Stack gap={3}>
         <Stack gap={1}>
-          <Typography variant="h3">{t('menu.receipts.pageTitle')}</Typography>
-          <Typography fontSize={16}>
+          <Typography variant="h3" component="h1">
+            {t('menu.receipts.pageTitle')}
+          </Typography>
+          <Typography fontSize={16} component="h2">
             {t('app.receipts.subtitle')}{' '}
             <Link to={ArcRoutes.public.RECEIPTS_SEARCH}>{t('app.receipts.subtitleLink')}</Link>
           </Typography>
