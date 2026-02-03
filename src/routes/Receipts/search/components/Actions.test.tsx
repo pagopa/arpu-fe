@@ -4,7 +4,6 @@ import '@testing-library/jest-dom';
 import { Actions } from './Actions';
 import React from 'react';
 import { InstallmentDebtorExtendedDTO, PersonDTO } from '../../../../../generated/data-contracts';
-import { InstallmentType } from 'utils/loaders';
 
 const mockMutateAsync = vi.fn();
 const mockNotifyEmit = vi.fn();
@@ -67,7 +66,7 @@ describe('Actions', () => {
   });
 
   it('should render download icon button and detail button', () => {
-    render(<Actions installment={mockInstallment} installmentType={InstallmentType.RECEIPTS} />);
+    render(<Actions installment={mockInstallment} />);
 
     expect(screen.getByLabelText('download')).toBeInTheDocument();
     expect(screen.getByText('actions.detail')).toBeInTheDocument();
@@ -75,12 +74,7 @@ describe('Actions', () => {
 
   describe('When installmentType is RECEIPTS', () => {
     it('should show error notification when installment data is incomplete for navigation', async () => {
-      render(
-        <Actions
-          installment={mockIncompleteInstallment}
-          installmentType={InstallmentType.RECEIPTS}
-        />
-      );
+      render(<Actions installment={mockIncompleteInstallment} />);
 
       const detailButton = screen.getByText('actions.detail');
       fireEvent.click(detailButton);
@@ -98,7 +92,7 @@ describe('Actions', () => {
         filename: 'receipt.pdf'
       });
 
-      render(<Actions installment={mockInstallment} installmentType={InstallmentType.RECEIPTS} />);
+      render(<Actions installment={mockInstallment} />);
 
       const downloadButton = screen.getByLabelText('download');
       fireEvent.click(downloadButton);
@@ -120,7 +114,7 @@ describe('Actions', () => {
         filename: null
       });
 
-      render(<Actions installment={mockInstallment} installmentType={InstallmentType.RECEIPTS} />);
+      render(<Actions installment={mockInstallment} />);
 
       const downloadButton = screen.getByLabelText('download');
       fireEvent.click(downloadButton);
@@ -138,7 +132,7 @@ describe('Actions', () => {
         filename: 'receipt.pdf'
       });
 
-      render(<Actions installment={mockInstallment} installmentType={InstallmentType.RECEIPTS} />);
+      render(<Actions installment={mockInstallment} />);
 
       const downloadButton = screen.getByLabelText('download');
       fireEvent.click(downloadButton);
@@ -152,7 +146,7 @@ describe('Actions', () => {
     it('should show error notification when download fails', async () => {
       mockMutateAsync.mockRejectedValue(new Error('Download failed'));
 
-      render(<Actions installment={mockInstallment} installmentType={InstallmentType.RECEIPTS} />);
+      render(<Actions installment={mockInstallment} />);
 
       const downloadButton = screen.getByLabelText('download');
       fireEvent.click(downloadButton);
@@ -164,12 +158,7 @@ describe('Actions', () => {
     });
 
     it('should show error notification when installment data is incomplete for download', async () => {
-      render(
-        <Actions
-          installment={mockIncompleteInstallment}
-          installmentType={InstallmentType.RECEIPTS}
-        />
-      );
+      render(<Actions installment={mockIncompleteInstallment} />);
 
       const downloadButton = screen.getByLabelText('download');
       fireEvent.click(downloadButton);
@@ -186,12 +175,7 @@ describe('Actions', () => {
         receiptId: undefined
       };
 
-      render(
-        <Actions
-          installment={installmentWithoutReceiptId}
-          installmentType={InstallmentType.RECEIPTS}
-        />
-      );
+      render(<Actions installment={installmentWithoutReceiptId} />);
 
       const downloadButton = screen.getByLabelText('download');
       fireEvent.click(downloadButton);
@@ -199,27 +183,6 @@ describe('Actions', () => {
       await waitFor(() => {
         expect(mockNotifyEmit).toHaveBeenCalledWith('errors.toast.default');
       });
-    });
-  });
-
-  describe('When installmentType is ALL', () => {
-    it('should not trigger download when download button is clicked', async () => {
-      render(<Actions installment={mockInstallment} installmentType={InstallmentType.ALL} />);
-
-      const downloadButton = screen.getByLabelText('download');
-      fireEvent.click(downloadButton);
-
-      await waitFor(() => {
-        expect(mockMutateAsync).not.toHaveBeenCalled();
-        expect(mockDownloadBlob).not.toHaveBeenCalled();
-      });
-    });
-
-    it('should render both buttons but they should be inactive', () => {
-      render(<Actions installment={mockInstallment} installmentType={InstallmentType.ALL} />);
-
-      expect(screen.getByLabelText('download')).toBeInTheDocument();
-      expect(screen.getByText('actions.detail')).toBeInTheDocument();
     });
   });
 });

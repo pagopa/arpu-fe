@@ -32,6 +32,7 @@ export const ReceiptDetail = () => {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const mdUp = useMediaQuery((theme: Theme) => theme.breakpoints.up('md'));
+  const { spacing } = utils.style.theme;
   const isAnonymous = utils.storage.user.isAnonymous();
 
   const params = useParams<{ receiptId: string; organizationId: string }>();
@@ -86,7 +87,7 @@ export const ReceiptDetail = () => {
           <Typography variant="h6" fontWeight={700}>
             {data?.debtPositionTypeOrgDescription}
           </Typography>
-          <table style={{ width: mdUp ? '50%' : '100%' }}>
+          <table style={{ width: mdUp ? '50%' : '100%', borderSpacing: spacing(2) }}>
             <tbody>
               <DataRow
                 label={t('app.receiptDetail.amount')}
@@ -100,9 +101,14 @@ export const ReceiptDetail = () => {
                 label={t('app.receiptDetail.iuv')}
                 value={propertyOrMissingValue(data?.iuv)}
               />
-              {/* TODO: add beneficiary and beneficiaryFiscalCode when available*/}
-              {/* <DataRow label={t('app.receiptDetail.beneficiary')} value={'-'} />*/}
-              {/* <DataRow label={t('app.receiptDetail.beneficiaryFiscalCode')} value={'-'} />*/}
+              <DataRow
+                label={t('app.receiptDetail.beneficiary')}
+                value={propertyOrMissingValue(data?.orgName)}
+              />
+              <DataRow
+                label={t('app.receiptDetail.beneficiaryFiscalCode')}
+                value={propertyOrMissingValue(data?.orgFiscalCode)}
+              />
               <DataRow
                 label={t('app.receiptDetail.debtor')}
                 value={propertyOrMissingValue(data?.debtor.fullName)}

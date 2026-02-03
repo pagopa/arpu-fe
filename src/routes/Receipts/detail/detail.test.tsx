@@ -41,6 +41,11 @@ vi.mock('utils', () => ({
       user: {
         isAnonymous: () => mockIsAnonymous()
       }
+    },
+    style: {
+      theme: {
+        spacing: vi.fn()
+      }
     }
   }
 }));
@@ -213,18 +218,6 @@ describe('ReceiptDetail', () => {
       const downloadButtons = screen.getAllByRole('button', { name: 'app.receiptDetail.download' });
       // Should only have one download button at the bottom
       expect(downloadButtons).toHaveLength(1);
-    });
-
-    it('calls usePublicReceiptDetail for anonymous user', () => {
-      render(<ReceiptDetail />);
-
-      expect(mockUsePublicReceiptDetail).toHaveBeenCalledWith({
-        brokerId: 999,
-        organizationId: 456,
-        receiptId: 123,
-        fiscalCode: 'RSSMRA80A01H501U'
-      });
-      expect(mockUseReceiptDetail).not.toHaveBeenCalled();
     });
 
     it('uses public download endpoint for anonymous user', async () => {

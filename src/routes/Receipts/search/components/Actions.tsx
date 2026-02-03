@@ -6,14 +6,12 @@ import { generatePath, useNavigate } from 'react-router-dom';
 import { ArcRoutes } from 'routes/routes';
 import { InstallmentDebtorExtendedDTO } from '../../../../../generated/apiClient';
 import utils from 'utils';
-import { InstallmentType } from 'utils/loaders';
 
 type ActionsProps = {
   installment: InstallmentDebtorExtendedDTO;
-  installmentType: InstallmentType;
 };
 
-export const Actions = ({ installment, installmentType }: ActionsProps) => {
+export const Actions = ({ installment }: ActionsProps) => {
   const navigate = useNavigate();
   const brokerId = utils.storage.app.getBrokerId();
   const isAnonymous = utils.storage.user.isAnonymous();
@@ -64,15 +62,10 @@ export const Actions = ({ installment, installmentType }: ActionsProps) => {
 
   return (
     <Stack key={installment.installmentId} alignItems="center" direction="row" gap={2}>
-      <IconButton
-        aria-label="download"
-        onClick={installmentType === InstallmentType.RECEIPTS ? onDownload : undefined}>
+      <IconButton aria-label="download" onClick={onDownload}>
         <Download />
       </IconButton>
-      <Button
-        size="large"
-        variant="contained"
-        onClick={installmentType === InstallmentType.RECEIPTS ? navigateToDetail : undefined}>
+      <Button size="large" variant="contained" onClick={navigateToDetail}>
         {t('actions.detail')}
       </Button>
     </Stack>
