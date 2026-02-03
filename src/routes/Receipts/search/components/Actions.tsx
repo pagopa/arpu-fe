@@ -5,7 +5,6 @@ import { generatePath, useNavigate } from 'react-router-dom';
 import { ArcRoutes } from 'routes/routes';
 import { InstallmentDebtorExtendedDTO } from '../../../../../generated/apiClient';
 import utils from 'utils';
-import { useTranslation } from 'react-i18next';
 
 type ActionsProps = {
   installment: InstallmentDebtorExtendedDTO;

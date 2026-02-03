@@ -41,7 +41,7 @@ vi.mock('utils', () => ({
     },
     style: {
       theme: {
-        spacing: vi.fn((value: number) => `${value * 8}px`)
+        spacing: vi.fn()
       }
     }
   }
@@ -211,13 +211,7 @@ describe('ReceiptDetail', () => {
       expect(downloadButtons).toHaveLength(1);
     });
 
-    it('does not render download button at top for anonymous user', () => {
-      render(<ReceiptDetail />);
-      const downloadButtons = screen.getAllByRole('button', { name: 'app.receiptDetail.download' });
-      expect(downloadButtons).toHaveLength(1);
-    });
-
-    it('navigates to public download route for anonymous user', () => {
+    it('uses public download endpoint for anonymous user', async () => {
       render(<ReceiptDetail />);
 
       const downloadButton = screen.getByRole('button', { name: 'app.receiptDetail.download' });
