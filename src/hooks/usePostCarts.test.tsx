@@ -2,11 +2,22 @@ import { renderHook, act, waitFor } from '@testing-library/react';
 import { usePostCarts } from './usePostCarts';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import utils from 'utils';
-import { mockCartItems } from 'stories/utils/PaymentNoticeMocks';
 import React, { ReactNode } from 'react';
 
 import { AxiosResponse } from 'axios';
 import { ArcRoutes } from 'routes/routes';
+import { CartItem } from 'models/Cart';
+
+const mockCartItems: CartItem[] = [
+  {
+    paTaxCode: '99999000013',
+    paFullName: 'EC Demo Pagamenti Pull Test',
+    iuv: '7442658002593149',
+    nav: '37442658002593149',
+    amount: 588,
+    description: 'Test Pull - unica opzione'
+  }
+];
 
 export const createWrapper = () => {
   const queryClient = new QueryClient();

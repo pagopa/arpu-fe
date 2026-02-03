@@ -7,6 +7,8 @@ import { useTranslation } from 'react-i18next';
 import utils from 'utils';
 import CustomPagination from 'components/DataGrid/CustomPagination';
 import PaymentButton from 'components/PaymentButton';
+import { ArcRoutes } from 'routes/routes';
+import { Link } from 'react-router-dom';
 
 export const DebtPositionsList = () => {
   const { t } = useTranslation();
@@ -27,9 +29,17 @@ export const DebtPositionsList = () => {
 
   return (
     <Stack gap={3}>
-      <Typography variant="h4" component="h1" marginInlineStart={1}>
-        {t('app.debtPositions.list.title')}
-      </Typography>
+      <Stack gap={1}>
+        <Typography variant="h3" component="h1">
+          {t('app.debtPositions.list.title')}
+        </Typography>
+        <Typography component="h2" fontSize={16}>
+          {t('app.debtPositions.list.subtitle')}{' '}
+          <Link to={ArcRoutes.public.DEBT_POSITION_SEARCH}>
+            {t('app.debtPositions.list.subtitleLink')}
+          </Link>
+        </Typography>
+      </Stack>
       <Content
         showRetry={isError}
         noData={isSuccess && !data?.content?.length}
