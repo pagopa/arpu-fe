@@ -110,7 +110,11 @@ export const CartDrawer = () => {
           {/* Action Button */}
           <Stack justifyContent="center" sx={styles.actionButton} spacing={2}>
             {!isAnonymous && (
-              <Button variant="outlined" size="large" onClick={onEmptyButtonClick}>
+              <Button
+                variant="outlined"
+                size="large"
+                data-testid="cart-back-button"
+                onClick={onEmptyButtonClick}>
                 {t('app.cart.items.back')}
               </Button>
             )}
