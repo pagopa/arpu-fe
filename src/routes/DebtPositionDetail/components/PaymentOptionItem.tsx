@@ -13,7 +13,7 @@ import TimelineDot from '@mui/lab/TimelineDot/TimelineDot';
 import TimelineConnector from '@mui/lab/TimelineConnector';
 import TimelineContent from '@mui/lab/TimelineContent/TimelineContent';
 import utils from 'utils';
-import { useTranslation } from 'react-i18next';
+import { Trans, useTranslation } from 'react-i18next';
 import { InstallmentChip } from 'components/StatusChips/InstallmentChip';
 
 export const Accent = (props: { children: string }) => (
@@ -73,7 +73,15 @@ const ExtraInfo = (props: { installments: DebtorPaymentOptionOverviewDTO['instal
                         fontSize={16}
                         fontStyle="semibold"
                         color="text.secondary"
-                        data-testid={`payment-option-type-installments-installment-${index + 1}-due-date`}>{`${t('app.debtPositionDetail.before')} ${utils.datetools.formatDate(installment.dueDate)}`}</Typography>
+                        data-testid={`payment-option-type-installments-installment-${index + 1}-due-date`}>
+                        <Trans
+                          i18nKey={`app.debtPositionDetail.dueDate.${installment.status}`}
+                          values={{
+                            dueDate: utils.datetools.formatDate(installment.dueDate),
+                            paymentDateTime: utils.datetools.formatDate(installment.paymentDateTime)
+                          }}
+                        />
+                      </Typography>
                     )}
                   </Stack>
                 </Grid>

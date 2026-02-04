@@ -198,6 +198,12 @@
         "PAID": "Pagato",
         "UNPAID": "Da pagare",
         "EXPIRED": "Scaduta"
+      },
+      "dueDate": {
+        "EXPIRED": "il {{dueDate}}",
+        "UNPAID": "entro il <strong>{{dueDate}}</strong>",
+        "PAID": "il {{paymentDateTime}}",
+        "REPORTED": "il {{paymentDateTime}}"
       }
     },
     "paymentNotice": {
