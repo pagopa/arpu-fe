@@ -161,7 +161,7 @@
         "link": "Fai un pagamento"
       },
       "thankYou": {
-        "title": "Il download della ricevuta è in corso",
+        "title": "Grazie per il tuo pagamento",
         "subtitle": "Se non parte automaticamente, <CustomLink>clicca qui</CustomLink>.",
         "link": "Scopri i canali abilitati"
       }

@@ -159,12 +159,7 @@ const router = createBrowserRouter([
           },
           {
             path: ArcRoutes.RECEIPT_DOWNLOAD,
-            element: withGuard(ReceiptDownload),
-            handle: {
-              sidebar: {
-                visibile: false
-              }
-            }
+            element: withGuard(ReceiptDownload)
           },
           {
             path: ArcRoutes.RECEIPTS,
