@@ -155,8 +155,15 @@
       "paid": "Pagato",
       "viewDetail": "Visualizza il dettaglio per la transazione",
       "empty": {
-        "title": "Qui vedrai le tue ricevute",
-        "subtitle": "Le troverai qui dopo aver pagato una posizione debitoria presso un qualsiasi canale abilitato."
+        "title": "Il download dell’avviso è in corso",
+        "subtitle": "Se non parte automaticamente, clicca qui. ",
+        "back": "Torna al tuo profilo",
+        "link": "Fai un pagamento"
+      },
+      "thankYou": {
+        "title": "Il download della ricevuta è in corso",
+        "subtitle": "Se non parte automaticamente, <CustomLink>clicca qui</CustomLink>.",
+        "link": "Scopri i canali abilitati"
       }
     },
     "debtPositions": {
@@ -251,7 +258,7 @@
       "noticesAlert": {
         "info": "Questi sono gli avvisi di pagamento che gli enti hanno comunicato a PagoPA. Se non trovi un avviso, rivolgiti all’Ente Creditore oppure premi su ‘Paga un avviso’ e inserisci i dati.",
         "action": "Paga un avviso"
-        },
+      },
       "optin": {
         "title": "Consenti a PagoPA di ricercare i tuoi avvisi?",
         "body": "Se confermi, consenti a PagoPA di ricercare gli avvisi di pagamento a tuo nome tra gli archivi degli enti aderenti al servizio.",
@@ -345,7 +352,8 @@
     "resetFilters": "Rimuovi filtri",
     "search": "Cerca",
     "detail": "Dettaglio",
-    "download": "Scarica"
+    "download": "Scarica",
+    "close": "Chiudi"
   },
   "fields": {
     "iuv": "Codice Avviso/IUV",
@@ -383,7 +391,7 @@
     "homepage": "Homepage",
     "receipts":{
       "menuTitle":"Ricevute",
-       "pageTitle": "Ricevute"
+      "pageTitle": "Ricevute"
     },
     "navigationMenu": "Menù di navigazione",
     "menu": "Menu",
@@ -392,6 +400,17 @@
   "sidebar": {
     "collapse": "Comprimi il menu",
     "expand": "Espandi il menu"
+  },
+  "errors": {
+    "form": {
+      "required": "Questo campo non puoi essere vuoto."
+    },
+    "toast": {
+      "403": "Non hai i permessi per eseguire questa azione.",
+      "404": "Risorsa non trovata.",
+      "500": "Errore del server, riprova più tardi.",
+      "default": "Si è verificato un errore imprevisto. Riprova più tardi."
+    }
   },
   "ui": {
     "a11y": {
@@ -467,17 +486,17 @@
   },
   "spontanei": {
     "drawer": {
-        "title": "PAGA UN AVVISO",
-        "card1": {
-          "title": "Hai ricevuto un avviso di pagamento?",
-          "description": "Sei già in possesso dei codici o di un QR Code per procedere al pagamento",
-          "cta": "Vai al pagamento"
-        },
-        "card2": {
-          "title": "Vuoi effettuare un pagamento spontaneo?",
-          "description": "Vuoi pagare la Pubblica Amministrazione perchè ti va e perchè sei un buono",
-          "cta": "Configura il pagamento"
-        }
+      "title": "PAGA UN AVVISO",
+      "card1": {
+        "title": "Hai ricevuto un avviso di pagamento?",
+        "description": "Sei già in possesso dei codici o di un QR Code per procedere al pagamento",
+        "cta": "Vai al pagamento"
+      },
+      "card2": {
+        "title": "Vuoi effettuare un pagamento spontaneo?",
+        "description": "Vuoi pagare la Pubblica Amministrazione perchè ti va e perchè sei un buono",
+        "cta": "Configura il pagamento"
+      }
     },
     "form": {
       "title": "Fai un pagamento spontaneo",
@@ -584,17 +603,6 @@
         "fullName": "Nome e cognome non validi.",
         "fiscalCode": "Codice Fiscale o Partita IVA errato.",
         "email": "Email non valida."
-      }
-    },
-    "errors": {
-      "form": {
-        "required": "Questo campo non puoi essere vuoto."
-      },
-      "toast": {
-        "403": "Non hai i permessi per eseguire questa azione.",
-        "404": "Risorsa non trovata.",
-        "500": "Errore del server, riprova più tardi.",
-        "default": "Si è verificato un errore imprevisto. Riprova più tardi."
       }
     }
   }

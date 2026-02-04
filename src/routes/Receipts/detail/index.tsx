@@ -1,5 +1,5 @@
 import React from 'react';
-import { Location, useLocation, useNavigate, useParams } from 'react-router-dom';
+import { generatePath, Location, useLocation, useNavigate, useParams } from 'react-router-dom';
 import config from 'utils/config';
 import {
   Stack,
@@ -19,12 +19,11 @@ import {
   propertyOrMissingValue,
   toEuroOrMissingValue
 } from 'utils/converters';
-import files from 'utils/files';
-import notify from 'utils/notify';
 import loaders from 'utils/loaders';
 import utils from 'utils';
 import { ArrowBack, Download } from '@mui/icons-material';
 import { DateFormat } from 'utils/datetools';
+import { ArcRoutes } from 'routes/routes';
 
 export const ReceiptDetail = () => {
   // TODO: retrieve brokerId from context when available
@@ -32,6 +31,7 @@ export const ReceiptDetail = () => {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const mdUp = useMediaQuery((theme: Theme) => theme.breakpoints.up('md'));
+  const { spacing } = utils.style.theme;
   const isAnonymous = utils.storage.user.isAnonymous();
 
   const params = useParams<{ receiptId: string; organizationId: string }>();
@@ -45,21 +45,10 @@ export const ReceiptDetail = () => {
     ? loaders.public.usePublicReceiptDetail(request)
     : loaders.useReceiptDetail(request);
 
-  const receiptPdf = isAnonymous
-    ? loaders.public.usePublicDownloadReceipt({ brokerId })
-    : loaders.useDownloadReceipt({ brokerId });
+  const onDownload = () => {
+    const path = isAnonymous ? ArcRoutes.public.RECEIPT_DOWNLOAD : ArcRoutes.RECEIPT_DOWNLOAD;
 
-  const onDownload = async () => {
-    try {
-      const { blob, filename } = await receiptPdf.mutateAsync({
-        organizationId,
-        receiptId,
-        fiscalCode
-      });
-      files.downloadBlob(blob, filename || `${data?.iuv}.pdf`);
-    } catch {
-      notify.emit(t('app.receiptDetail.downloadError'));
-    }
+    navigate(generatePath(path, { receiptId, organizationId }), { state: { fiscalCode } });
   };
 
   const onBack = () => {
@@ -86,7 +75,7 @@ export const ReceiptDetail = () => {
           <Typography variant="h6" fontWeight={700}>
             {data?.debtPositionTypeOrgDescription}
           </Typography>
-          <table style={{ width: mdUp ? '50%' : '100%' }}>
+          <table style={{ width: mdUp ? '50%' : '100%', borderSpacing: spacing(2) }}>
             <tbody>
               <DataRow
                 label={t('app.receiptDetail.amount')}
@@ -100,9 +89,14 @@ export const ReceiptDetail = () => {
                 label={t('app.receiptDetail.iuv')}
                 value={propertyOrMissingValue(data?.iuv)}
               />
-              {/* TODO: add beneficiary and beneficiaryFiscalCode when available*/}
-              {/* <DataRow label={t('app.receiptDetail.beneficiary')} value={'-'} />*/}
-              {/* <DataRow label={t('app.receiptDetail.beneficiaryFiscalCode')} value={'-'} />*/}
+              <DataRow
+                label={t('app.receiptDetail.beneficiary')}
+                value={propertyOrMissingValue(data?.orgName)}
+              />
+              <DataRow
+                label={t('app.receiptDetail.beneficiaryFiscalCode')}
+                value={propertyOrMissingValue(data?.orgFiscalCode)}
+              />
               <DataRow
                 label={t('app.receiptDetail.debtor')}
                 value={propertyOrMissingValue(data?.debtor.fullName)}

@@ -53,7 +53,7 @@ export const Results = ({ installments, installmentType }: ResultsProps) => {
               />
             )}
           </Stack>
-          <Actions installment={installment} installmentType={installmentType} />
+          <Actions installment={installment} />
         </Card>
       ))}
     </Stack>

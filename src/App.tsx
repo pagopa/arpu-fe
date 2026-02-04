@@ -30,6 +30,7 @@ import { StorageItems } from 'utils/storage';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { DebtPositionsSearch } from 'routes/DebtPositions/search';
 import { it } from 'date-fns/locale/it';
+import { ReceiptDownload } from 'routes/Receipts/detail/components/Download';
 
 const withGuard = (Component: () => React.JSX.Element) => (
   <RouteGuard itemKeys={[StorageItems.TOKEN]} storage={window.localStorage}>
@@ -76,6 +77,14 @@ const router = createBrowserRouter([
         element: (
           <PreLoginLayout>
             <ReceiptDetail />
+          </PreLoginLayout>
+        )
+      },
+      {
+        path: ArcRoutes.public.RECEIPT_DOWNLOAD,
+        element: (
+          <PreLoginLayout>
+            <ReceiptDownload />
           </PreLoginLayout>
         )
       },
@@ -147,6 +156,15 @@ const router = createBrowserRouter([
           {
             path: ArcRoutes.RECEIPT,
             element: withGuard(ReceiptDetail)
+          },
+          {
+            path: ArcRoutes.RECEIPT_DOWNLOAD,
+            element: withGuard(ReceiptDownload),
+            handle: {
+              sidebar: {
+                visibile: false
+              }
+            }
           },
           {
             path: ArcRoutes.RECEIPTS,
