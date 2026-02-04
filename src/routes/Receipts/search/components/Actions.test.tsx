@@ -1,37 +1,47 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { fireEvent, render, screen, waitFor } from '__tests__/renderers';
+import { fireEvent, render, screen } from '__tests__/renderers';
 import '@testing-library/jest-dom';
 import { Actions } from './Actions';
 import React from 'react';
 import { InstallmentDebtorExtendedDTO, PersonDTO } from '../../../../../generated/data-contracts';
 
-const mockMutateAsync = vi.fn();
+const mockNavigate = vi.fn();
 const mockNotifyEmit = vi.fn();
-const mockGetBrokerId = vi.fn();
 const mockIsAnonymous = vi.fn();
-const mockDownloadBlob = vi.fn();
 
 vi.mock('utils', () => ({
   default: {
     storage: {
-      app: {
-        getBrokerId: () => mockGetBrokerId()
-      },
       user: {
         isAnonymous: () => mockIsAnonymous()
       }
     },
-    loaders: {
-      public: {
-        usePublicDownloadReceipt: () => ({ mutateAsync: mockMutateAsync })
-      },
-      useDownloadReceipt: () => ({ mutateAsync: mockMutateAsync })
-    },
     notify: {
       emit: (msg: string) => mockNotifyEmit(msg)
-    },
-    files: {
-      downloadBlob: (blob: Blob, filename: string) => mockDownloadBlob(blob, filename)
+    }
+  }
+}));
+
+vi.mock('react-router-dom', async () => {
+  const actual = await vi.importActual('react-router-dom');
+  return {
+    ...actual,
+    useNavigate: () => mockNavigate,
+    generatePath: vi.fn((path: string, params: any) => {
+      return path
+        .replace(':receiptId', params.receiptId)
+        .replace(':organizationId', params.organizationId);
+    })
+  };
+});
+
+vi.mock('routes/routes', () => ({
+  ArcRoutes: {
+    RECEIPT: '/receipt/:organizationId/:receiptId',
+    RECEIPT_DOWNLOAD: '/receipt/:organizationId/:receiptId/download',
+    public: {
+      RECEIPT: '/public/receipt/:organizationId/:receiptId',
+      RECEIPT_DOWNLOAD: '/public/receipt/:organizationId/:receiptId/download'
     }
   }
 }));
@@ -58,11 +68,7 @@ const mockIncompleteInstallment = {
 describe('Actions', () => {
   beforeEach(() => {
     vi.clearAllMocks();
-    mockMutateAsync.mockClear();
-    mockNotifyEmit.mockClear();
-    mockGetBrokerId.mockReturnValue('broker123');
     mockIsAnonymous.mockReturnValue(false);
-    mockDownloadBlob.mockClear();
   });
 
   it('should render download icon button and detail button', () => {
@@ -72,104 +78,32 @@ describe('Actions', () => {
     expect(screen.getByText('actions.detail')).toBeInTheDocument();
   });
 
-  describe('When installmentType is RECEIPTS', () => {
-    it('should show error notification when installment data is incomplete for navigation', async () => {
-      render(<Actions installment={mockIncompleteInstallment} />);
-
-      const detailButton = screen.getByText('actions.detail');
-      fireEvent.click(detailButton);
-
-      await waitFor(() => {
-        expect(mockNotifyEmit).toHaveBeenCalledWith('errors.toast.default');
-      });
-    });
-
-    it('should download receipt successfully for authenticated user', async () => {
+  describe('Download functionality', () => {
+    it('should navigate to download route for authenticated user', () => {
       mockIsAnonymous.mockReturnValue(false);
-      const mockBlob = new Blob(['test'], { type: 'application/pdf' });
-      mockMutateAsync.mockResolvedValue({
-        blob: mockBlob,
-        filename: 'receipt.pdf'
-      });
-
       render(<Actions installment={mockInstallment} />);
 
       const downloadButton = screen.getByLabelText('download');
       fireEvent.click(downloadButton);
 
-      await waitFor(() => {
-        expect(mockMutateAsync).toHaveBeenCalledWith({
-          receiptId: 123,
-          organizationId: 456,
-          fiscalCode: 'RSSMRA80A01H501U'
-        });
-        expect(mockDownloadBlob).toHaveBeenCalledWith(mockBlob, 'receipt.pdf');
+      expect(mockNavigate).toHaveBeenCalledWith('/receipt/456/123/download', {
+        state: { fiscalCode: 'RSSMRA80A01H501U' }
       });
     });
 
-    it('should download receipt with IUV fallback filename when filename is not provided', async () => {
-      const mockBlob = new Blob(['test'], { type: 'application/pdf' });
-      mockMutateAsync.mockResolvedValue({
-        blob: mockBlob,
-        filename: null
-      });
-
-      render(<Actions installment={mockInstallment} />);
-
-      const downloadButton = screen.getByLabelText('download');
-      fireEvent.click(downloadButton);
-
-      await waitFor(() => {
-        expect(mockDownloadBlob).toHaveBeenCalledWith(mockBlob, '987654321098765432.pdf');
-      });
-    });
-
-    it('should use public download for anonymous user', async () => {
+    it('should navigate to public download route for anonymous user', () => {
       mockIsAnonymous.mockReturnValue(true);
-      const mockBlob = new Blob(['test'], { type: 'application/pdf' });
-      mockMutateAsync.mockResolvedValue({
-        blob: mockBlob,
-        filename: 'receipt.pdf'
-      });
-
       render(<Actions installment={mockInstallment} />);
 
       const downloadButton = screen.getByLabelText('download');
       fireEvent.click(downloadButton);
 
-      await waitFor(() => {
-        expect(mockMutateAsync).toHaveBeenCalled();
-        expect(mockDownloadBlob).toHaveBeenCalled();
+      expect(mockNavigate).toHaveBeenCalledWith('/public/receipt/456/123/download', {
+        state: { fiscalCode: 'RSSMRA80A01H501U' }
       });
     });
 
-    it('should show error notification when download fails', async () => {
-      mockMutateAsync.mockRejectedValue(new Error('Download failed'));
-
-      render(<Actions installment={mockInstallment} />);
-
-      const downloadButton = screen.getByLabelText('download');
-      fireEvent.click(downloadButton);
-
-      await waitFor(() => {
-        expect(mockNotifyEmit).toHaveBeenCalledWith('errors.toast.default');
-        expect(mockDownloadBlob).not.toHaveBeenCalled();
-      });
-    });
-
-    it('should show error notification when installment data is incomplete for download', async () => {
-      render(<Actions installment={mockIncompleteInstallment} />);
-
-      const downloadButton = screen.getByLabelText('download');
-      fireEvent.click(downloadButton);
-
-      await waitFor(() => {
-        expect(mockNotifyEmit).toHaveBeenCalledWith('errors.toast.default');
-        expect(mockMutateAsync).not.toHaveBeenCalled();
-      });
-    });
-
-    it('should handle missing receiptId', async () => {
+    it('should show error notification when receiptId is missing', () => {
       const installmentWithoutReceiptId = {
         ...mockInstallment,
         receiptId: undefined
@@ -180,9 +114,134 @@ describe('Actions', () => {
       const downloadButton = screen.getByLabelText('download');
       fireEvent.click(downloadButton);
 
-      await waitFor(() => {
-        expect(mockNotifyEmit).toHaveBeenCalledWith('errors.toast.default');
+      expect(mockNotifyEmit).toHaveBeenCalledWith('errors.toast.default');
+      expect(mockNavigate).not.toHaveBeenCalled();
+    });
+
+    it('should show error notification when organizationId is missing', () => {
+      const installmentWithoutOrgId = {
+        ...mockInstallment,
+        organizationId: undefined
+      };
+
+      render(<Actions installment={installmentWithoutOrgId as any} />);
+
+      const downloadButton = screen.getByLabelText('download');
+      fireEvent.click(downloadButton);
+
+      expect(mockNotifyEmit).toHaveBeenCalledWith('errors.toast.default');
+      expect(mockNavigate).not.toHaveBeenCalled();
+    });
+
+    it('should show error notification when fiscalCode is missing', () => {
+      const installmentWithoutFiscalCode = {
+        ...mockInstallment,
+        debtor: {}
+      };
+
+      render(<Actions installment={installmentWithoutFiscalCode as any} />);
+
+      const downloadButton = screen.getByLabelText('download');
+      fireEvent.click(downloadButton);
+
+      expect(mockNotifyEmit).toHaveBeenCalledWith('errors.toast.default');
+      expect(mockNavigate).not.toHaveBeenCalled();
+    });
+  });
+
+  describe('Detail navigation', () => {
+    it('should navigate to detail route for authenticated user', () => {
+      mockIsAnonymous.mockReturnValue(false);
+      render(<Actions installment={mockInstallment} />);
+
+      const detailButton = screen.getByText('actions.detail');
+      fireEvent.click(detailButton);
+
+      expect(mockNavigate).toHaveBeenCalledWith('/receipt/456/123', {
+        state: { fiscalCode: 'RSSMRA80A01H501U' }
       });
+    });
+
+    it('should navigate to public detail route for anonymous user', () => {
+      mockIsAnonymous.mockReturnValue(true);
+      render(<Actions installment={mockInstallment} />);
+
+      const detailButton = screen.getByText('actions.detail');
+      fireEvent.click(detailButton);
+
+      expect(mockNavigate).toHaveBeenCalledWith('/public/receipt/456/123', {
+        state: { fiscalCode: 'RSSMRA80A01H501U' }
+      });
+    });
+
+    it('should show error notification when receiptId is missing', () => {
+      const installmentWithoutReceiptId = {
+        ...mockInstallment,
+        receiptId: undefined
+      };
+
+      render(<Actions installment={installmentWithoutReceiptId} />);
+
+      const detailButton = screen.getByText('actions.detail');
+      fireEvent.click(detailButton);
+
+      expect(mockNotifyEmit).toHaveBeenCalledWith('errors.toast.default');
+      expect(mockNavigate).not.toHaveBeenCalled();
+    });
+
+    it('should show error notification when organizationId is missing', () => {
+      const installmentWithoutOrgId = {
+        ...mockInstallment,
+        organizationId: undefined
+      };
+
+      render(<Actions installment={installmentWithoutOrgId as any} />);
+
+      const detailButton = screen.getByText('actions.detail');
+      fireEvent.click(detailButton);
+
+      expect(mockNotifyEmit).toHaveBeenCalledWith('errors.toast.default');
+      expect(mockNavigate).not.toHaveBeenCalled();
+    });
+
+    it('should show error notification when iuv is missing', () => {
+      const installmentWithoutIuv = {
+        ...mockInstallment,
+        iuv: undefined
+      };
+
+      render(<Actions installment={installmentWithoutIuv} />);
+
+      const detailButton = screen.getByText('actions.detail');
+      fireEvent.click(detailButton);
+
+      expect(mockNotifyEmit).toHaveBeenCalledWith('errors.toast.default');
+      expect(mockNavigate).not.toHaveBeenCalled();
+    });
+
+    it('should show error notification when fiscalCode is missing', () => {
+      const installmentWithoutFiscalCode = {
+        ...mockInstallment,
+        debtor: {}
+      };
+
+      render(<Actions installment={installmentWithoutFiscalCode as any} />);
+
+      const detailButton = screen.getByText('actions.detail');
+      fireEvent.click(detailButton);
+
+      expect(mockNotifyEmit).toHaveBeenCalledWith('errors.toast.default');
+      expect(mockNavigate).not.toHaveBeenCalled();
+    });
+
+    it('should show error notification when installment data is incomplete', () => {
+      render(<Actions installment={mockIncompleteInstallment} />);
+
+      const detailButton = screen.getByText('actions.detail');
+      fireEvent.click(detailButton);
+
+      expect(mockNotifyEmit).toHaveBeenCalledWith('errors.toast.default');
+      expect(mockNavigate).not.toHaveBeenCalled();
     });
   });
 });

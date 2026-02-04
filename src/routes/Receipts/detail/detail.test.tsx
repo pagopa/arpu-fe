@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import React from 'react';
-import { render, screen, fireEvent, waitFor } from '../../../__tests__/renderers';
+import { render, screen, fireEvent } from '../../../__tests__/renderers';
 import { ReceiptDetail } from '.';
 import * as ReactRouterDom from 'react-router-dom';
 
@@ -28,9 +28,6 @@ const mockReceiptData = {
 };
 
 const mockNavigate = vi.fn();
-const mockMutateAsync = vi.fn();
-const mockDownloadBlob = vi.fn();
-const mockNotifyEmit = vi.fn();
 const mockIsAnonymous = vi.fn();
 const mockUseReceiptDetail = vi.fn();
 const mockUsePublicReceiptDetail = vi.fn();
@@ -44,7 +41,7 @@ vi.mock('utils', () => ({
     },
     style: {
       theme: {
-        spacing: vi.fn()
+        spacing: vi.fn((value: number) => `${value * 8}px`)
       }
     }
   }
@@ -53,10 +50,8 @@ vi.mock('utils', () => ({
 vi.mock('utils/loaders', () => ({
   default: {
     useReceiptDetail: (params?: any) => mockUseReceiptDetail(params),
-    useDownloadReceipt: () => ({ mutateAsync: mockMutateAsync }),
     public: {
-      usePublicReceiptDetail: (params?: any) => mockUsePublicReceiptDetail(params),
-      usePublicDownloadReceipt: () => ({ mutateAsync: mockMutateAsync })
+      usePublicReceiptDetail: (params?: any) => mockUsePublicReceiptDetail(params)
     }
   }
 }));
@@ -78,19 +73,21 @@ vi.mock('react-router-dom', async () => {
     useLocation: vi.fn(() => ({
       state: { fiscalCode: 'RSSMRA80A01H501U' }
     })),
-    useNavigate: () => mockNavigate
+    useNavigate: () => mockNavigate,
+    generatePath: vi.fn((path: string, params: any) => {
+      return path
+        .replace(':receiptId', params.receiptId)
+        .replace(':organizationId', params.organizationId);
+    })
   };
 });
 
-vi.mock('utils/files', () => ({
-  default: {
-    downloadBlob: (blob: Blob, filename: string) => mockDownloadBlob(blob, filename)
-  }
-}));
-
-vi.mock('utils/notify', () => ({
-  default: {
-    emit: (msg: string) => mockNotifyEmit(msg)
+vi.mock('routes/routes', () => ({
+  ArcRoutes: {
+    RECEIPT_DOWNLOAD: '/receipt/:organizationId/:receiptId/download',
+    public: {
+      RECEIPT_DOWNLOAD: '/public/receipt/:organizationId/:receiptId/download'
+    }
   }
 }));
 
@@ -128,11 +125,6 @@ describe('ReceiptDetail', () => {
       data: mockReceiptData,
       isLoading: false,
       isError: false
-    });
-
-    mockMutateAsync.mockResolvedValue({
-      blob: new Blob(['test pdf content'], { type: 'application/pdf' }),
-      filename: 'receipt_123.pdf'
     });
   });
 
@@ -178,23 +170,22 @@ describe('ReceiptDetail', () => {
       });
     });
 
-    it('downloads receipt when download button is clicked', async () => {
+    it('navigates to download route when download button is clicked', () => {
       render(<ReceiptDetail />);
 
       const downloadButton = screen.getByRole('button', { name: 'app.receiptDetail.download' });
       fireEvent.click(downloadButton);
 
-      await waitFor(() => {
-        expect(mockMutateAsync).toHaveBeenCalledWith({
-          organizationId: 456,
-          receiptId: 123,
-          fiscalCode: 'RSSMRA80A01H501U'
-        });
+      expect(mockNavigate).toHaveBeenCalledWith('/receipt/456/123/download', {
+        state: { fiscalCode: 'RSSMRA80A01H501U' }
       });
+    });
 
-      await waitFor(() => {
-        expect(mockDownloadBlob).toHaveBeenCalledWith(expect.any(Blob), 'receipt_123.pdf');
-      });
+    it('does not render bottom action buttons for authenticated user', () => {
+      render(<ReceiptDetail />);
+      const downloadButtons = screen.getAllByRole('button', { name: 'app.receiptDetail.download' });
+      // Should only have one download button at the top
+      expect(downloadButtons).toHaveLength(1);
     });
   });
 
@@ -220,18 +211,20 @@ describe('ReceiptDetail', () => {
       expect(downloadButtons).toHaveLength(1);
     });
 
-    it('uses public download endpoint for anonymous user', async () => {
+    it('does not render download button at top for anonymous user', () => {
+      render(<ReceiptDetail />);
+      const downloadButtons = screen.getAllByRole('button', { name: 'app.receiptDetail.download' });
+      expect(downloadButtons).toHaveLength(1);
+    });
+
+    it('navigates to public download route for anonymous user', () => {
       render(<ReceiptDetail />);
 
       const downloadButton = screen.getByRole('button', { name: 'app.receiptDetail.download' });
       fireEvent.click(downloadButton);
 
-      await waitFor(() => {
-        expect(mockMutateAsync).toHaveBeenCalledWith({
-          organizationId: 456,
-          receiptId: 123,
-          fiscalCode: 'RSSMRA80A01H501U'
-        });
+      expect(mockNavigate).toHaveBeenCalledWith('/public/receipt/456/123/download', {
+        state: { fiscalCode: 'RSSMRA80A01H501U' }
       });
     });
 
@@ -242,6 +235,17 @@ describe('ReceiptDetail', () => {
       fireEvent.click(backButton);
 
       expect(mockNavigate).toHaveBeenCalledWith(-1);
+    });
+
+    it('calls usePublicReceiptDetail for anonymous user', () => {
+      render(<ReceiptDetail />);
+
+      expect(mockUsePublicReceiptDetail).toHaveBeenCalledWith({
+        brokerId: 999,
+        organizationId: 456,
+        receiptId: 123,
+        fiscalCode: 'RSSMRA80A01H501U'
+      });
     });
   });
 
@@ -254,7 +258,7 @@ describe('ReceiptDetail', () => {
     it('renders all DataRow components', () => {
       render(<ReceiptDetail />);
       const dataRows = screen.getAllByTestId('data-row');
-      expect(dataRows.length).toBeGreaterThanOrEqual(5);
+      expect(dataRows.length).toBe(7);
     });
 
     it('renders all CopiableRow components', () => {
@@ -269,41 +273,15 @@ describe('ReceiptDetail', () => {
       expect(dividers).toHaveLength(3);
     });
 
-    it('uses IUV as filename when filename is not provided', async () => {
-      mockMutateAsync.mockResolvedValue({
-        blob: new Blob(['test pdf content'], { type: 'application/pdf' }),
-        filename: null
-      });
-
-      render(<ReceiptDetail />);
-
-      const downloadButton = screen.getByRole('button', { name: 'app.receiptDetail.download' });
-      fireEvent.click(downloadButton);
-
-      await waitFor(() => {
-        expect(mockDownloadBlob).toHaveBeenCalledWith(expect.any(Blob), '123456789012345678.pdf');
-      });
-    });
-
-    it('shows error notification when download fails', async () => {
-      mockMutateAsync.mockRejectedValue(new Error('Download failed'));
-
-      render(<ReceiptDetail />);
-
-      const downloadButton = screen.getByRole('button', { name: 'app.receiptDetail.download' });
-      fireEvent.click(downloadButton);
-
-      await waitFor(() => {
-        expect(mockNotifyEmit).toHaveBeenCalledWith('app.receiptDetail.downloadError');
-      });
-
-      expect(mockDownloadBlob).not.toHaveBeenCalled();
-    });
-
     it('renders two Card components', () => {
       const { container } = render(<ReceiptDetail />);
       const cards = container.querySelectorAll('.MuiCard-root');
       expect(cards).toHaveLength(2);
+    });
+
+    it('renders debt position type description as card title', () => {
+      render(<ReceiptDetail />);
+      expect(screen.getByText('Municipal Tax Payment')).toBeInTheDocument();
     });
 
     it('handles undefined params gracefully', () => {
@@ -348,21 +326,64 @@ describe('ReceiptDetail', () => {
       });
     });
 
-    it('passes blob and filename to downloadBlob correctly', async () => {
-      const testBlob = new Blob(['test content'], { type: 'application/pdf' });
-      mockMutateAsync.mockResolvedValue({
-        blob: testBlob,
-        filename: 'custom_receipt.pdf'
-      });
-
+    it('passes fiscalCode in state when navigating to download', () => {
       render(<ReceiptDetail />);
 
       const downloadButton = screen.getByRole('button', { name: 'app.receiptDetail.download' });
       fireEvent.click(downloadButton);
 
-      await waitFor(() => {
-        expect(mockDownloadBlob).toHaveBeenCalledWith(testBlob, 'custom_receipt.pdf');
+      expect(mockNavigate).toHaveBeenCalledWith(expect.any(String), {
+        state: { fiscalCode: 'RSSMRA80A01H501U' }
       });
+    });
+
+    it('renders payment amount correctly', () => {
+      render(<ReceiptDetail />);
+      const dataRows = screen.getAllByTestId('data-row');
+      // First row should be amount
+      expect(dataRows[0]).toBeInTheDocument();
+    });
+
+    it('renders remittance information', () => {
+      render(<ReceiptDetail />);
+      expect(screen.getByText('app.receiptDetail.remittanceInformation')).toBeInTheDocument();
+    });
+
+    it('renders IUV', () => {
+      render(<ReceiptDetail />);
+      expect(screen.getByText('app.receiptDetail.iuv')).toBeInTheDocument();
+    });
+
+    it('renders beneficiary information', () => {
+      render(<ReceiptDetail />);
+      expect(screen.getByText('app.receiptDetail.beneficiary')).toBeInTheDocument();
+      expect(screen.getByText('app.receiptDetail.beneficiaryFiscalCode')).toBeInTheDocument();
+    });
+
+    it('renders debtor information', () => {
+      render(<ReceiptDetail />);
+      expect(screen.getByText('app.receiptDetail.debtor')).toBeInTheDocument();
+      expect(screen.getByText('app.receiptDetail.debtorFiscalCode')).toBeInTheDocument();
+    });
+
+    it('renders PSP information', () => {
+      render(<ReceiptDetail />);
+      expect(screen.getByText('app.receiptDetail.psp')).toBeInTheDocument();
+    });
+
+    it('renders payment date', () => {
+      render(<ReceiptDetail />);
+      expect(screen.getByText('app.receiptDetail.paymentDate')).toBeInTheDocument();
+    });
+
+    it('renders IUR with copy functionality', () => {
+      render(<ReceiptDetail />);
+      expect(screen.getByText('app.receiptDetail.iur')).toBeInTheDocument();
+    });
+
+    it('renders IUD with copy functionality', () => {
+      render(<ReceiptDetail />);
+      expect(screen.getByText('app.receiptDetail.iud')).toBeInTheDocument();
     });
   });
 });
