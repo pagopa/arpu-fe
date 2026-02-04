@@ -62,7 +62,7 @@ export const ReceiptDownload = () => {
         variant="contained"
         size="large"
         component={Link}
-        to={isAnonymous ? ArcRoutes.LOGIN : ArcRoutes.RECEIPTS}>
+        to={isAnonymous ? ArcRoutes.LOGIN : ArcRoutes.DASHBOARD}>
         {t('actions.close')}
       </Button>
       <Link to={ExternalRoutes.PAYMENT_LINKS} target="_blank">
