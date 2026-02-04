@@ -1,11 +1,11 @@
 import { Download } from '@mui/icons-material';
 import { Button, IconButton, Stack } from '@mui/material';
-import { t } from 'i18next';
 import React from 'react';
 import { generatePath, useNavigate } from 'react-router-dom';
 import { ArcRoutes } from 'routes/routes';
 import { InstallmentDebtorExtendedDTO } from '../../../../../generated/apiClient';
 import utils from 'utils';
+import { useTranslation } from 'react-i18next';
 
 type ActionsProps = {
   installment: InstallmentDebtorExtendedDTO;
@@ -13,30 +13,23 @@ type ActionsProps = {
 
 export const Actions = ({ installment }: ActionsProps) => {
   const navigate = useNavigate();
-  const brokerId = utils.storage.app.getBrokerId();
+  const { t } = useTranslation();
+
   const isAnonymous = utils.storage.user.isAnonymous();
+  const downloadRoute = isAnonymous
+    ? ArcRoutes.public.RECEIPT_DOWNLOAD
+    : ArcRoutes.RECEIPT_DOWNLOAD;
 
-  const receiptPdf = isAnonymous
-    ? utils.loaders.public.usePublicDownloadReceipt({ brokerId })
-    : utils.loaders.useDownloadReceipt({ brokerId });
+  const detailRoute = isAnonymous ? ArcRoutes.public.RECEIPT : ArcRoutes.RECEIPT;
 
-  const onDownload = async () => {
-    if (
-      installment?.receiptId &&
-      installment?.organizationId &&
-      installment?.iuv &&
-      installment?.debtor?.fiscalCode
-    ) {
-      try {
-        const { blob, filename } = await receiptPdf.mutateAsync({
-          receiptId: installment?.receiptId,
-          organizationId: installment?.organizationId,
-          fiscalCode: installment?.debtor.fiscalCode
-        });
-        utils.files.downloadBlob(blob, filename || `${installment.iuv}.pdf`);
-      } catch {
-        utils.notify.emit(t('errors.toast.default'));
-      }
+  const onDownload = () => {
+    if (installment?.receiptId && installment?.organizationId && installment?.debtor?.fiscalCode) {
+      const path = generatePath(downloadRoute, {
+        receiptId: installment.receiptId,
+        organizationId: installment.organizationId
+      });
+
+      navigate(path, { state: { fiscalCode: installment.debtor.fiscalCode } });
     } else {
       utils.notify.emit(t('errors.toast.default'));
     }
@@ -49,7 +42,6 @@ export const Actions = ({ installment }: ActionsProps) => {
       installment?.iuv &&
       installment?.debtor?.fiscalCode
     ) {
-      const detailRoute = isAnonymous ? ArcRoutes.public.RECEIPT : ArcRoutes.RECEIPT;
       const path = generatePath(detailRoute, {
         receiptId: installment?.receiptId,
         organizationId: installment.organizationId

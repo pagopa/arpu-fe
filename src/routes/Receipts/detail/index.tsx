@@ -45,7 +45,7 @@ export const ReceiptDetail = () => {
     ? loaders.public.usePublicReceiptDetail(request)
     : loaders.useReceiptDetail(request);
 
-  const onDownload = async () => {
+  const onDownload = () => {
     const path = isAnonymous ? ArcRoutes.public.RECEIPT_DOWNLOAD : ArcRoutes.RECEIPT_DOWNLOAD;
 
     navigate(generatePath(path, { receiptId, organizationId }), { state: { fiscalCode } });
