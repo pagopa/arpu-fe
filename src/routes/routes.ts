@@ -2,11 +2,16 @@ import config from 'utils/config';
 
 const rootPrefix = `${config.deployPath}/${config.brokerId}`;
 
+export const ExternalRoutes = {
+  PAYMENT_LINKS: `https://www.pagopa.gov.it/it/cittadini/dove-pagare/`
+};
+
 export const ArcRoutes = {
   LOGIN: `${rootPrefix}/accesso`,
   AUTH_CALLBACK: `${config.deployPath}/auth-callback`,
   DASHBOARD: rootPrefix,
   RECEIPT: `${rootPrefix}/ricevute/:receiptId/:organizationId`,
+  RECEIPT_DOWNLOAD: `${rootPrefix}/ricevute/download/:receiptId/:organizationId`,
   RECEIPTS: `${rootPrefix}/ricevute`,
   DEBT_POSITION: `${rootPrefix}/posizioni-debitorie/:debtPositionId/:organizationId`,
   DEBT_POSITIONS: `${rootPrefix}/posizioni-debitorie`,
@@ -22,6 +27,7 @@ export const ArcRoutes = {
     PAYMENTS_ON_THE_FLY_DOWNLOAD: `${rootPrefix}/public/spontanei/download/:orgId/:iuv`,
     RECEIPTS_SEARCH: `${rootPrefix}/public/ricevute/ricerca`,
     RECEIPT: `${rootPrefix}/public/ricevute/:receiptId/:organizationId`,
+    RECEIPT_DOWNLOAD: `${rootPrefix}/public/ricevute/download/:receiptId/:organizationId`,
     DEBT_POSITION_SEARCH: `${rootPrefix}/public/posizioni-debitorie/ricerca`
   }
 };

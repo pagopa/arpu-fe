@@ -1,5 +1,5 @@
 import React from 'react';
-import { Location, useLocation, useNavigate, useParams } from 'react-router-dom';
+import { generatePath, Location, useLocation, useNavigate, useParams } from 'react-router-dom';
 import config from 'utils/config';
 import {
   Stack,
@@ -19,12 +19,11 @@ import {
   propertyOrMissingValue,
   toEuroOrMissingValue
 } from 'utils/converters';
-import files from 'utils/files';
-import notify from 'utils/notify';
 import loaders from 'utils/loaders';
 import utils from 'utils';
 import { ArrowBack, Download } from '@mui/icons-material';
 import { DateFormat } from 'utils/datetools';
+import { ArcRoutes } from 'routes/routes';
 
 export const ReceiptDetail = () => {
   // TODO: retrieve brokerId from context when available
@@ -46,21 +45,10 @@ export const ReceiptDetail = () => {
     ? loaders.public.usePublicReceiptDetail(request)
     : loaders.useReceiptDetail(request);
 
-  const receiptPdf = isAnonymous
-    ? loaders.public.usePublicDownloadReceipt({ brokerId })
-    : loaders.useDownloadReceipt({ brokerId });
-
   const onDownload = async () => {
-    try {
-      const { blob, filename } = await receiptPdf.mutateAsync({
-        organizationId,
-        receiptId,
-        fiscalCode
-      });
-      files.downloadBlob(blob, filename || `${data?.iuv}.pdf`);
-    } catch {
-      notify.emit(t('app.receiptDetail.downloadError'));
-    }
+    const path = isAnonymous ? ArcRoutes.public.RECEIPT_DOWNLOAD : ArcRoutes.RECEIPT_DOWNLOAD;
+
+    navigate(generatePath(path, { receiptId, organizationId }), { state: { fiscalCode } });
   };
 
   const onBack = () => {
