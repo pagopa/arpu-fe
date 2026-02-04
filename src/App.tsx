@@ -31,6 +31,8 @@ import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { DebtPositionsSearch } from 'routes/DebtPositions/search';
 import { it } from 'date-fns/locale/it';
 import { ReceiptDownload } from 'routes/Receipts/detail/components/Download';
+import { useStore } from 'store/GlobalStore';
+import { Overlay } from 'components/Overlay';
 
 const withGuard = (Component: () => React.JSX.Element) => (
   <RouteGuard itemKeys={[StorageItems.TOKEN]} storage={window.localStorage}>
@@ -245,13 +247,18 @@ const router = createBrowserRouter([
   }
 ]);
 
-export const App = () => (
-  <>
-    <HealthCheck />
-    <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale={it.code}>
-      <Theme>
-        <RouterProvider router={router} />
-      </Theme>
-    </LocalizationProvider>
-  </>
-);
+export const App = () => {
+  const { state } = useStore();
+
+  return (
+    <>
+      <HealthCheck />
+      <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale={it.code}>
+        <Theme>
+          <Overlay visible={state.appState.loading} />
+          <RouterProvider router={router} />
+        </Theme>
+      </LocalizationProvider>
+    </>
+  );
+};
