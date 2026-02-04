@@ -199,7 +199,7 @@ const router = createBrowserRouter([
       },
       {
         path: ArcRoutes.public.PAYMENTS_ON_THE_FLY,
-        element: <PreLoginLayout />,
+        element: <Layout anonymous={true} />,
         children: [
           {
             index: true,

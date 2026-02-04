@@ -16,6 +16,9 @@ import { useStore } from 'store/GlobalStore';
 import { CartDrawer } from './Cart/CartDrawer';
 import PaymentTypeDrawer from './Spontanei/PaymentTypeDrawer';
 import InstallmentsDrawer from './InstallmentsDrawer';
+import { SubHeader } from './Header/SubHeader';
+import { ProductLogo } from 'components/ProductLogo';
+import { HeaderAccount, RootLinkType } from '@pagopa/mui-italia';
 
 const defaultRouteHandle: RouteHandleObject = {
   sidebar: { visible: true },
@@ -23,7 +26,7 @@ const defaultRouteHandle: RouteHandleObject = {
   backButton: false
 };
 
-export function Layout() {
+export function Layout(props: { anonymous?: boolean }) {
   const matches = useMatches();
   const {
     state: { cart, installmentsDrawer, paymentTypeDrawerVisibilityStatus }
@@ -41,6 +44,21 @@ export function Layout() {
     ...(matches.find((match) => Boolean(match.handle))?.handle || {})
   } as RouteHandleObject;
 
+  const brokerId = utils.storage.app.getBrokerId();
+  const { data: brokerInfo } = utils.loaders.public.useBrokerInfo(brokerId);
+
+  const rootLink: RootLinkType = {
+    label: brokerInfo?.brokerName ?? '',
+    href: ArcRoutes.DASHBOARD,
+    ariaLabel: brokerInfo?.brokerName ?? '',
+    title: brokerInfo?.brokerName ?? ''
+  };
+
+  const ASSISTANCE_MAIL = utils.config.assistanceLink;
+  const onAssistanceClick = () => {
+    window.open(`mailto:${ASSISTANCE_MAIL}`);
+  };
+
   return (
     <>
       <Snackbar
@@ -54,7 +72,18 @@ export function Layout() {
       </Snackbar>
       <ModalSystem />
       <Container maxWidth={false} disableGutters>
-        <Header onAssistanceClick={() => window.open(ArcRoutes.ASSISTANCE, '_blank')} />
+        {!props.anonymous ? (
+          <Header onAssistanceClick={() => window.open(ArcRoutes.ASSISTANCE, '_blank')} />
+        ) : (
+          <>
+            <HeaderAccount
+              rootLink={rootLink}
+              onAssistanceClick={onAssistanceClick}
+              enableLogin={false}
+            />
+            <SubHeader product={<ProductLogo />} />
+          </>
+        )}
         <Stack direction={lg ? 'row' : 'column'} bgcolor={grey['100']}>
           {sidebar?.visible ? <Sidebar /> : null}
 

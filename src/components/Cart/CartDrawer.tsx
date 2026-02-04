@@ -16,6 +16,7 @@ import { toEuroOrMissingValue } from 'utils/converters';
 import { usePostCarts } from 'hooks/usePostCarts';
 import { useUserEmail } from 'hooks/useUserEmail';
 import CartItem from './CartItem';
+import utils from 'utils';
 
 export const CartDrawer = () => {
   const { t } = useTranslation();
@@ -30,7 +31,8 @@ export const CartDrawer = () => {
     onError: (error: string) => navigate(ArcRoutes.COURTESY_PAGE.replace(':error', error))
   });
 
-  const email = useUserEmail();
+  const isAnonymous = utils.storage.user.isAnonymous();
+  const email = isAnonymous ? undefined : useUserEmail();
 
   const {
     state: { cart }
@@ -107,9 +109,12 @@ export const CartDrawer = () => {
 
           {/* Action Button */}
           <Stack justifyContent="center" sx={styles.actionButton} spacing={2}>
-            <Button variant="outlined" size="large" onClick={onEmptyButtonClick}>
-              {t('app.cart.items.back')}
-            </Button>
+            {!isAnonymous && (
+              <Button variant="outlined" size="large" onClick={onEmptyButtonClick}>
+                {t('app.cart.items.back')}
+              </Button>
+            )}
+
             {
               // Show the pay button only if the cart is not empty
               cart.items.length > 0 && (
