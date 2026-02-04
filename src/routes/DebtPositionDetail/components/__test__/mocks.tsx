@@ -44,6 +44,7 @@ export const mockInstallmentsPaymentOption: DebtorPaymentOptionOverviewDTO = {
       nav: '2',
       installmentId: 2,
       dueDate: '2025-08-15',
+      paymentDateTime: '2025-08-14',
       amountCents: 100,
       status: InstallmentStatus.PAID,
       remittanceInformation: 'test'

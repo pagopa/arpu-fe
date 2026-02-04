@@ -6,6 +6,18 @@ import {
   mockSingleUnpaidInstallmentPaymentOption,
   mockInstallmentsPaymentOption
 } from './__test__/mocks';
+import { i18nTestSetup } from '__tests__/i18nTestSetup';
+
+i18nTestSetup({
+  'app.debtPositionDetail': {
+    dueDate: {
+      EXPIRED: 'EXPIRED {{dueDate}}',
+      UNPAID: 'UNPAID {{dueDate}}',
+      PAID: 'PAID {{paymentDateTime}}',
+      REPORTED: 'REPORTED {{paymentDateTime}}'
+    }
+  }
+});
 
 describe('PaymentOptionItem: single installment', () => {
   it('renders elements as expected', () => {
@@ -51,20 +63,20 @@ describe('PaymentOptionItem: multiple installments', () => {
     expect(firstInstallment.getByText('installment.status.EXPIRED')).toBeVisible();
     expect(firstInstallment.getByText('1,00 €')).toBeVisible();
     expect(firstInstallment.getByText('app.debtPositionDetail.installment 1')).toBeVisible();
-    expect(firstInstallment.getByText('app.debtPositionDetail.before 15/07/2025')).toBeVisible();
+    expect(firstInstallment.getByText('EXPIRED 15/07/2025')).toBeVisible();
 
     // SECOND INSTALLMENT
     const secondInstallment = within(installments[1]);
     expect(secondInstallment.getByText('installment.status.PAID')).toBeVisible();
     expect(secondInstallment.getByText('1,00 €')).toBeVisible();
     expect(secondInstallment.getByText('app.debtPositionDetail.installment 2')).toBeVisible();
-    expect(secondInstallment.getByText('app.debtPositionDetail.before 15/08/2025')).toBeVisible();
+    expect(secondInstallment.getByText('PAID 14/08/2025')).toBeVisible();
 
     // THIRD INSTALLMENT
     const thirdInstallment = within(installments[2]);
     expect(thirdInstallment.getByText('installment.status.UNPAID')).toBeVisible();
     expect(thirdInstallment.getByText('1,50 €')).toBeVisible();
     expect(thirdInstallment.getByText('app.debtPositionDetail.installment 3')).toBeVisible();
-    expect(thirdInstallment.getByText('app.debtPositionDetail.before 15/09/2025')).toBeVisible();
+    expect(thirdInstallment.getByText('UNPAID 15/09/2025')).toBeVisible();
   });
 });
