@@ -48,6 +48,12 @@ const PaymentOptionWrapper = (props: PaymentOptionWrapperProps) => {
     .filter((item) => item.debtPositionId === props.debtPositionId)
     .map(({ paymentOptionId }) => paymentOptionId);
 
+  useEffect(() => {
+    if (props.paymentOptions?.length === 1) {
+      setpaymentOptionId(props.paymentOptions[0].paymentOptionId);
+    }
+  }, [props.paymentOptions]);
+
   return (
     <Card sx={{ padding: 3, gap: 3, display: 'flex', flexDirection: 'column' }}>
       <Typography variant="body1" component="h2" fontWeight="600" fontStyle="semibold">

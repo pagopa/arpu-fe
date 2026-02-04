@@ -149,6 +149,7 @@ const PaymentOption = (props: PaymentOptionProps) => {
             disabled={props.selectionStatus === 'disabled'}
             data-testid="payment-option-item-type"
             value={props.paymentOptionId}
+            checked={isSelected}
             control={<Radio />}
             label={label}
           />
