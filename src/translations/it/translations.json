@@ -78,7 +78,7 @@
       "download": "Scarica ricevuta",
       "amount": "Importo",
       "remittanceInformation": "Oggetto del pagamento",
-      "iuv": "Codice Avviso",
+      "noticeCode": "Codice Avviso",
       "beneficiary": "Ente beneficiario",
       "beneficiaryFiscalCode": "Codice Fiscale Ente",
       "debtor": "Intestatario",
