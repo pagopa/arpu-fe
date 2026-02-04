@@ -178,8 +178,8 @@ const cartItemsToCartsRequest = (cartItems: CartItem[]) => {
     })),
     returnUrls: {
       returnOkUrl: `${ORIGIN}${isAnonymous ? ArcRoutes.LOGIN : ArcRoutes.DASHBOARD}?fromAction=payment-success`,
-      returnCancelUrl: `${ORIGIN}${isAnonymous ? ArcRoutes.LOGIN : ArcRoutes.DASHBOARD}?fromAction=payment-cancel`,
-      returnErrorUrl: `${ORIGIN}${isAnonymous ? ArcRoutes.LOGIN : ArcRoutes.DASHBOARD}?fromAction=payment-error`
+      returnCancelUrl: `${ORIGIN}${isAnonymous ? ArcRoutes.LOGIN : ArcRoutes.DEBT_POSITIONS}?fromAction=payment-cancel`,
+      returnErrorUrl: `${ORIGIN}${isAnonymous ? ArcRoutes.LOGIN : ArcRoutes.DEBT_POSITIONS}?fromAction=payment-error`
     }
   };
 };
