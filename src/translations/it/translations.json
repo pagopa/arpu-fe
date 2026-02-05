@@ -590,12 +590,6 @@
           }
         }
       },
-      "download": {
-        "title": "Il download dell’avviso è in corso",
-        "help": "Se non parte automaticamente, clicca <link1>qui.</link1>",
-        "info": "Scopri i canali abilitati",
-        "close": "Chiudi"
-      },
       "continue": "Continua",
       "confirm": "Conferma i dati",
       "abort": "Esci",
@@ -607,6 +601,12 @@
         "fiscalCode": "Codice Fiscale o Partita IVA errato.",
         "email": "Email non valida."
       }
-    }
+    },
+    "download": {
+        "title": "Il download dell’avviso è in corso",
+        "help": "Se non parte automaticamente, clicca <link1>qui.</link1>",
+        "info": "Scopri i canali abilitati",
+        "close": "Chiudi"
+      }
   }
 }
