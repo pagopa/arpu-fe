@@ -18,7 +18,7 @@ import ExpiredInstallmentItems from './ExpiredInstallmentItems';
 import { closeInstallmentsDrawer } from 'store/installmentsDrawer';
 import { InstallmentDrawerItem } from 'models/InstallmentDrawer';
 import { InstallmentStatus } from '../../../generated/data-contracts';
-import { addItem, toggleCartDrawer } from 'store/CartStore';
+import { addItem, toggleCartDrawer, setCartEmail } from 'store/CartStore';
 import utils from 'utils';
 import { CartItem } from 'models/Cart';
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
@@ -82,6 +82,7 @@ const InstallmentsDrawer = () => {
 
   const addToCart = () => {
     try {
+      setCartEmail(email);
       addedInstallments.forEach((installment) => {
         const {
           paFullName,

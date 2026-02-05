@@ -166,6 +166,8 @@ const normalizePaymentNotice = (paymentNotice: PaymentNoticeDTO): PaymentNoticeT
 
 const cartItemsToCartsRequest = (cartItems: CartItem[]) => {
   const ORIGIN = window.location.origin;
+  const isAnonymous = utils.storage.user.isAnonymous();
+
   return {
     paymentNotices: cartItems.map((item) => ({
       amount: item.amount,
@@ -175,9 +177,9 @@ const cartItemsToCartsRequest = (cartItems: CartItem[]) => {
       noticeNumber: item.nav
     })),
     returnUrls: {
-      returnOkUrl: `${ORIGIN}${ArcRoutes.DASHBOARD}?fromAction=payment-success`,
-      returnCancelUrl: `${ORIGIN}${ArcRoutes.DEBT_POSITIONS}?fromAction=payment-cancel`,
-      returnErrorUrl: `${ORIGIN}${ArcRoutes.DEBT_POSITIONS}?fromAction=payment-error`
+      returnOkUrl: `${ORIGIN}${isAnonymous ? ArcRoutes.LOGIN : ArcRoutes.DASHBOARD}?fromAction=payment-success`,
+      returnCancelUrl: `${ORIGIN}${isAnonymous ? ArcRoutes.LOGIN : ArcRoutes.DEBT_POSITIONS}?fromAction=payment-cancel`,
+      returnErrorUrl: `${ORIGIN}${isAnonymous ? ArcRoutes.LOGIN : ArcRoutes.DEBT_POSITIONS}?fromAction=payment-error`
     }
   };
 };
