@@ -72,6 +72,14 @@ const DebtTypeSelect = () => {
         context?.org?.organizationId || 0
       );
 
+  const getKeyFromOption = (option: debtTypeOptions | string | null) => {
+    if (!option || typeof option === 'string') {
+      return option || '';
+    } else {
+      return option.value;
+    }
+  };
+
   const onChange = async (debtType: DebtPositionTypeOrgsWithSpontaneousDTO) => {
     await formik.validateForm();
     context?.setDebtType(debtType);
@@ -96,6 +104,7 @@ const DebtTypeSelect = () => {
             onChange={handleDebtTypeChange}
             freeSolo
             options={debtTypeOptions}
+            getOptionKey={getKeyFromOption}
             renderInput={(params) => (
               <TextField {...params} label="Cerca per nome del servizio" error={!!errorMessage} />
             )}
