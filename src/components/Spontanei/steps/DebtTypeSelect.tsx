@@ -15,6 +15,8 @@ import utils from 'utils';
 import { DebtPositionTypeOrgsWithSpontaneousDTO } from '../../../../generated/data-contracts';
 import FormContext, { FormContextType } from '../FormContext';
 import Controls from '../Controls';
+import { useFormikContext } from 'formik';
+import { PaymentNoticeInfo } from '..';
 
 interface debtTypeOptions {
   label: DebtPositionTypeOrgsWithSpontaneousDTO['description'];
@@ -22,10 +24,12 @@ interface debtTypeOptions {
 }
 
 const DebtTypeSelect = () => {
-  const context = useContext<FormContextType | null>(FormContext);
+  const { t } = useTranslation();
   const brokerId = utils.storage.app.getBrokerId();
   const isAnonymous = utils.storage.user.isAnonymous();
-  const { t } = useTranslation();
+
+  const context = useContext<FormContextType | null>(FormContext);
+  const formik = useFormikContext<PaymentNoticeInfo>();
 
   const { data: DebtPositionTypeOrgsWithSpontaneous } = isAnonymous
     ? utils.loaders.public.getPublicDebtPositionTypeOrgsWithSpontaneous(
@@ -66,6 +70,20 @@ const DebtTypeSelect = () => {
         context?.org?.organizationId || 0
       );
 
+  const onChange = async (debtType: DebtPositionTypeOrgsWithSpontaneousDTO) => {
+    await formik.validateForm();
+    context?.setDebtType(debtType);
+    formik.setFieldValue('debtTypeCode', debtType.code);
+  };
+
+  const shouldContinue = async () => {
+    formik.setTouched({ debtTypeCode: true });
+    const errors = await formik.validateForm();
+    return !errors.orgName && !!context?.debtType;
+  };
+
+  const errorMessage = formik.touched.debtTypeCode ? formik.errors.debtTypeCode : '';
+
   return (
     <>
       <Card variant="outlined">
@@ -76,7 +94,9 @@ const DebtTypeSelect = () => {
             onChange={handleDebtTypeChange}
             freeSolo
             options={debtTypeOptions}
-            renderInput={(params) => <TextField {...params} label="Cerca per nome del servizio" />}
+            renderInput={(params) => (
+              <TextField {...params} label="Cerca per nome del servizio" error={!!errorMessage} />
+            )}
           />
           {mostUsedDebtTypesQuery.data && mostUsedDebtTypesQuery.data.length > 0 && (
             <>
@@ -84,16 +104,22 @@ const DebtTypeSelect = () => {
                 {t('spontanei.form.steps.step2.mostUsedDebtTypes')}
               </Typography>
               <Stack
-                sx={{ borderRadius: 1, border: '1px solid', borderColor: 'grey.300', px: 4, py: 2 }}
+                sx={{
+                  borderRadius: 1,
+                  border: '1px solid',
+                  borderColor: errorMessage ? 'error.main' : 'grey.300',
+                  px: 4,
+                  py: 2
+                }}
                 spacing={2}>
-                <RadioGroup aria-label="debt-type" name="debt-type-group">
+                <RadioGroup aria-label="debt-type" name="debtTypeCode">
                   {mostUsedDebtTypesQuery.data.map((debtType) => (
                     <FormControl key={debtType.debtPositionTypeOrgId}>
                       <FormControlLabel
                         value={debtType.debtPositionTypeOrgId}
                         control={
                           <Radio
-                            onChange={() => context?.setDebtType(debtType)}
+                            onChange={() => onChange(debtType)}
                             checked={
                               context?.debtType?.debtPositionTypeOrgId ===
                               debtType.debtPositionTypeOrgId
@@ -106,11 +132,12 @@ const DebtTypeSelect = () => {
                   ))}
                 </RadioGroup>
               </Stack>
+              {errorMessage && <Typography color="error">{errorMessage}</Typography>}
             </>
           )}
         </Stack>
       </Card>
-      <Controls shouldContinue={async () => context?.debtType !== null} />
+      <Controls shouldContinue={shouldContinue} />
     </>
   );
 };

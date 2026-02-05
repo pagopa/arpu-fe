@@ -42,9 +42,9 @@ const OrgSelect = () => {
   };
 
   const shouldContinue = async () => {
-    formik.handleSubmit();
+    formik.setTouched({ orgName: true });
     const errors = await formik.validateForm();
-    return !errors.orgName && context?.org;
+    return !errors.orgName && !!context?.org;
   };
 
   const onReset = () => {
@@ -54,6 +54,8 @@ const OrgSelect = () => {
 
   useEffect(() => {
     formik.resetForm();
+    context?.setOrg(null);
+    context?.setDebtType(null);
   }, []);
 
   return (

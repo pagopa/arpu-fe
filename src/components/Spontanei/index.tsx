@@ -26,6 +26,7 @@ export type PaymentNoticeInfo = {
   amount: number;
   description: string;
   orgName: string;
+  debtTypeCode: string;
 };
 
 const Spontanei = () => {
@@ -51,11 +52,15 @@ const Spontanei = () => {
     fiscalCode: '',
     amount: 0,
     description: '',
-    orgName: ''
+    orgName: '',
+    debtTypeCode: ''
   };
 
   const PaymentNoticeInfoSchema = z.object({
     orgName: z.string().min(2, t('spontanei.form.errors.description')),
+    debtTypeCode: z
+      .string()
+      .min(2, "*Seleziona un servizio nella lista superiore o nell'elenco dei più utilizzati"),
     description: z.string().min(2, t('spontanei.form.errors.description')),
     amount: z.number().min(1, t('spontanei.form.errors.amount')),
     fullName: z.string().min(2, t('spontanei.form.errors.fullName')),
