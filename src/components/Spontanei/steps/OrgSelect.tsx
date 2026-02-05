@@ -1,10 +1,12 @@
-import React, { useContext } from 'react';
+import React, { useContext, useEffect } from 'react';
 import { Autocomplete, Card, Stack, TextField, Typography } from '@mui/material';
 import utils from 'utils';
 import { useTranslation } from 'react-i18next';
 import { OrganizationsWithSpontaneousDTO } from '../../../../generated/data-contracts';
 import FormContext, { FormContextType } from '../FormContext';
 import Controls from '../Controls';
+import { useFormikContext } from 'formik';
+import { PaymentNoticeInfo } from '..';
 
 interface OrgOptions {
   label: OrganizationsWithSpontaneousDTO['orgName'];
@@ -15,6 +17,7 @@ const OrgSelect = () => {
   const { t } = useTranslation();
   const brokerId = utils.storage.app.getBrokerId();
   const isAnonymous = utils.storage.user.isAnonymous();
+  const formik = useFormikContext<PaymentNoticeInfo>();
 
   const { data: orgs } = isAnonymous
     ? utils.loaders.public.getPublicOrganizationsWithSpontaneous(brokerId)
@@ -27,16 +30,31 @@ const OrgSelect = () => {
 
   const handleOrgChange = (
     _event: React.SyntheticEvent<Element, Event>,
-    value: string | OrgOptions | null
+    organization: OrgOptions | string | null
   ) => {
-    if (value && typeof value !== 'string' && context) {
-      const selectedOrg =
-        orgs?.find((o) => o.organizationId === (value as OrgOptions).value) || null;
-      return context.setOrg(selectedOrg);
+    if (!organization || typeof organization === 'string') {
+      formik.setFieldValue('orgName', organization || '');
+    } else {
+      const selectedOrg = orgs?.find((o) => o.organizationId === organization?.value) || null;
+      formik.setFieldValue('orgName', selectedOrg?.orgName || '');
+      context?.setOrg(selectedOrg);
     }
   };
 
-  const shouldContinue = async () => context?.org !== null;
+  const shouldContinue = async () => {
+    formik.handleSubmit();
+    const errors = await formik.validateForm();
+    return !errors.orgName && context?.org;
+  };
+
+  const onReset = () => {
+    formik.setFieldValue('orgName', '');
+    context?.setOrg(null);
+  };
+
+  useEffect(() => {
+    formik.resetForm();
+  }, []);
 
   return (
     <>
@@ -48,8 +66,19 @@ const OrgSelect = () => {
             onChange={handleOrgChange}
             id="free-solo-demo"
             freeSolo
+            onOpen={formik.handleBlur}
             options={orgOptions}
-            renderInput={(params) => <TextField {...params} label="Cerca per nome dell'ente" />}
+            onReset={onReset}
+            renderInput={(params) => (
+              <TextField
+                {...params}
+                label="Cerca per nome dell'ente"
+                name="orgName"
+                required
+                error={formik.touched.orgName && Boolean(formik.errors.orgName)}
+                helperText={formik.touched.orgName && formik.errors.orgName}
+              />
+            )}
           />
         </Stack>
       </Card>
