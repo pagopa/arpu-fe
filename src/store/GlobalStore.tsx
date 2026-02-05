@@ -4,13 +4,11 @@ import { userInfoState } from './UserInfoStore';
 import { cartState } from './CartStore';
 import { paymentTypeDrawerVisibilityStore } from './PaymentTypeDrawerVisibilityStore';
 import { installmentsDrawerState } from './installmentsDrawer';
-import { appState } from './AppStateStore';
 
 const StoreContext = createContext<StoreContextProps | undefined>(undefined);
 
 export const StoreProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const combinedState: State = {
-    [STATE.APP_STATE]: appState?.value,
     [STATE.USER_INFO]: userInfoState.state?.value,
     [STATE.CART]: cartState?.value,
     [STATE.INSTALLMENTS_DRAWER]: installmentsDrawerState?.value,
