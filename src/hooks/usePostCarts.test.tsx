@@ -37,6 +37,7 @@ describe('usePostCarts', () => {
     const mockData = 'Response with URL=https://redirect.com';
 
     vi.spyOn(utils.cartsClient, 'postCarts').mockResolvedValue({ data: mockData } as AxiosResponse);
+    vi.spyOn(utils.storage.user, 'isAnonymous').mockReturnValue(false);
 
     const { result } = renderHook(
       () => usePostCarts({ onSuccess: mockOnSuccess, onError: mockOnError }),

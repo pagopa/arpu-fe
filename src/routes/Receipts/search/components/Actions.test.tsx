@@ -46,23 +46,44 @@ vi.mock('routes/routes', () => ({
   }
 }));
 
-const mockInstallment = {
+const mockPaidInstallment = {
   installmentId: 1,
   iuv: '987654321098765432',
   orgName: 'org',
   amountCents: 25000,
   receiptId: 123,
   organizationId: 456,
+  status: 'PAID',
+  debtor: {
+    fiscalCode: 'RSSMRA80A01H501U'
+  } as PersonDTO
+} as InstallmentDebtorExtendedDTO;
+
+const mockReportedInstallment = {
+  ...mockPaidInstallment,
+  installmentId: 2,
+  status: 'REPORTED'
+} as InstallmentDebtorExtendedDTO;
+
+const mockExpiredInstallment = {
+  installmentId: 3,
+  iuv: '111111111111111111',
+  orgName: 'org3',
+  amountCents: 15000,
+  receiptId: 789,
+  organizationId: 321,
+  status: 'EXPIRED',
   debtor: {
     fiscalCode: 'RSSMRA80A01H501U'
   } as PersonDTO
 } as InstallmentDebtorExtendedDTO;
 
 const mockIncompleteInstallment = {
-  installmentId: 2,
+  installmentId: 4,
   iuv: '123456789012345678',
   orgName: 'org2',
-  amountCents: 10000
+  amountCents: 10000,
+  status: 'PAID'
 } as InstallmentDebtorExtendedDTO;
 
 describe('Actions', () => {
@@ -71,17 +92,45 @@ describe('Actions', () => {
     mockIsAnonymous.mockReturnValue(false);
   });
 
-  it('should render download icon button and detail button', () => {
-    render(<Actions installment={mockInstallment} />);
+  describe('Rendering based on status', () => {
+    it('should render download icon button and detail button for PAID status', () => {
+      render(<Actions installment={mockPaidInstallment} />);
 
-    expect(screen.getByLabelText('download')).toBeInTheDocument();
-    expect(screen.getByText('actions.detail')).toBeInTheDocument();
+      expect(screen.getByLabelText('download')).toBeInTheDocument();
+      expect(screen.getByText('actions.detail')).toBeInTheDocument();
+    });
+
+    it('should render download icon button and detail button for REPORTED status', () => {
+      render(<Actions installment={mockReportedInstallment} />);
+
+      expect(screen.getByLabelText('download')).toBeInTheDocument();
+      expect(screen.getByText('actions.detail')).toBeInTheDocument();
+    });
+
+    it('should render only download button for EXPIRED status', () => {
+      render(<Actions installment={mockExpiredInstallment} />);
+
+      expect(screen.getByLabelText('download')).toBeInTheDocument();
+      expect(screen.getByText('app.debtPositionsSearch.actions.download')).toBeInTheDocument();
+      expect(screen.queryByText('actions.detail')).not.toBeInTheDocument();
+    });
+
+    it('should render nothing for other statuses', () => {
+      const installmentWithOtherStatus = {
+        ...mockPaidInstallment,
+        status: 'DRAFT'
+      } as InstallmentDebtorExtendedDTO;
+
+      const { container } = render(<Actions installment={installmentWithOtherStatus} />);
+
+      expect(container.firstChild).toBeNull();
+    });
   });
 
   describe('Download functionality', () => {
-    it('should navigate to download route for authenticated user', () => {
+    it('should navigate to download route for authenticated user with PAID status', () => {
       mockIsAnonymous.mockReturnValue(false);
-      render(<Actions installment={mockInstallment} />);
+      render(<Actions installment={mockPaidInstallment} />);
 
       const downloadButton = screen.getByLabelText('download');
       fireEvent.click(downloadButton);
@@ -91,9 +140,9 @@ describe('Actions', () => {
       });
     });
 
-    it('should navigate to public download route for anonymous user', () => {
+    it('should navigate to public download route for anonymous user with PAID status', () => {
       mockIsAnonymous.mockReturnValue(true);
-      render(<Actions installment={mockInstallment} />);
+      render(<Actions installment={mockPaidInstallment} />);
 
       const downloadButton = screen.getByLabelText('download');
       fireEvent.click(downloadButton);
@@ -103,9 +152,21 @@ describe('Actions', () => {
       });
     });
 
+    it('should navigate to download route for EXPIRED status', () => {
+      mockIsAnonymous.mockReturnValue(false);
+      render(<Actions installment={mockExpiredInstallment} />);
+
+      const downloadButton = screen.getByLabelText('download');
+      fireEvent.click(downloadButton);
+
+      expect(mockNavigate).toHaveBeenCalledWith('/receipt/321/789/download', {
+        state: { fiscalCode: 'RSSMRA80A01H501U' }
+      });
+    });
+
     it('should show error notification when receiptId is missing', () => {
       const installmentWithoutReceiptId = {
-        ...mockInstallment,
+        ...mockPaidInstallment,
         receiptId: undefined
       };
 
@@ -120,7 +181,7 @@ describe('Actions', () => {
 
     it('should show error notification when organizationId is missing', () => {
       const installmentWithoutOrgId = {
-        ...mockInstallment,
+        ...mockPaidInstallment,
         organizationId: undefined
       };
 
@@ -135,7 +196,7 @@ describe('Actions', () => {
 
     it('should show error notification when fiscalCode is missing', () => {
       const installmentWithoutFiscalCode = {
-        ...mockInstallment,
+        ...mockPaidInstallment,
         debtor: {}
       };
 
@@ -152,7 +213,7 @@ describe('Actions', () => {
   describe('Detail navigation', () => {
     it('should navigate to detail route for authenticated user', () => {
       mockIsAnonymous.mockReturnValue(false);
-      render(<Actions installment={mockInstallment} />);
+      render(<Actions installment={mockPaidInstallment} />);
 
       const detailButton = screen.getByText('actions.detail');
       fireEvent.click(detailButton);
@@ -164,7 +225,7 @@ describe('Actions', () => {
 
     it('should navigate to public detail route for anonymous user', () => {
       mockIsAnonymous.mockReturnValue(true);
-      render(<Actions installment={mockInstallment} />);
+      render(<Actions installment={mockPaidInstallment} />);
 
       const detailButton = screen.getByText('actions.detail');
       fireEvent.click(detailButton);
@@ -176,7 +237,7 @@ describe('Actions', () => {
 
     it('should show error notification when receiptId is missing', () => {
       const installmentWithoutReceiptId = {
-        ...mockInstallment,
+        ...mockPaidInstallment,
         receiptId: undefined
       };
 
@@ -191,7 +252,7 @@ describe('Actions', () => {
 
     it('should show error notification when organizationId is missing', () => {
       const installmentWithoutOrgId = {
-        ...mockInstallment,
+        ...mockPaidInstallment,
         organizationId: undefined
       };
 
@@ -206,7 +267,7 @@ describe('Actions', () => {
 
     it('should show error notification when iuv is missing', () => {
       const installmentWithoutIuv = {
-        ...mockInstallment,
+        ...mockPaidInstallment,
         iuv: undefined
       };
 
@@ -221,7 +282,7 @@ describe('Actions', () => {
 
     it('should show error notification when fiscalCode is missing', () => {
       const installmentWithoutFiscalCode = {
-        ...mockInstallment,
+        ...mockPaidInstallment,
         debtor: {}
       };
 

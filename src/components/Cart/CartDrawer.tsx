@@ -14,8 +14,8 @@ import { cartDrawerStyles } from './CartDrawer.styles';
 import { useStore } from 'store/GlobalStore';
 import { toEuroOrMissingValue } from 'utils/converters';
 import { usePostCarts } from 'hooks/usePostCarts';
-import { useUserEmail } from 'hooks/useUserEmail';
 import CartItem from './CartItem';
+import utils from 'utils';
 
 export const CartDrawer = () => {
   const { t } = useTranslation();
@@ -30,11 +30,14 @@ export const CartDrawer = () => {
     onError: (error: string) => navigate(ArcRoutes.COURTESY_PAGE.replace(':error', error))
   });
 
-  const email = useUserEmail();
-
   const {
     state: { cart }
   } = useStore();
+
+  // retieving the last saved email from the cart store
+  const { email } = cart;
+
+  const isAnonymous = utils.storage.user.isAnonymous();
 
   const onEmptyButtonClick = () => {
     toggleCartDrawer();
@@ -42,7 +45,7 @@ export const CartDrawer = () => {
   };
 
   const onPayButton = () => {
-    carts.mutate({ notices: cart.items, email });
+    carts.mutate({ notices: cart.items, email: email || undefined });
     toggleCartDrawer();
   };
 
@@ -107,9 +110,16 @@ export const CartDrawer = () => {
 
           {/* Action Button */}
           <Stack justifyContent="center" sx={styles.actionButton} spacing={2}>
-            <Button variant="outlined" size="large" onClick={onEmptyButtonClick}>
-              {t('app.cart.items.back')}
-            </Button>
+            {!isAnonymous && (
+              <Button
+                variant="outlined"
+                size="large"
+                data-testid="cart-back-button"
+                onClick={onEmptyButtonClick}>
+                {t('app.cart.items.back')}
+              </Button>
+            )}
+
             {
               // Show the pay button only if the cart is not empty
               cart.items.length > 0 && (

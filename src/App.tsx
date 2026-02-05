@@ -31,6 +31,7 @@ import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { DebtPositionsSearch } from 'routes/DebtPositions/search';
 import { it } from 'date-fns/locale/it';
 import { ReceiptDownload } from 'routes/Receipts/detail/components/Download';
+import { Overlay } from 'components/Overlay';
 
 const withGuard = (Component: () => React.JSX.Element) => (
   <RouteGuard itemKeys={[StorageItems.TOKEN]} storage={window.localStorage}>
@@ -217,7 +218,7 @@ const router = createBrowserRouter([
       },
       {
         path: ArcRoutes.public.PAYMENTS_ON_THE_FLY,
-        element: <PreLoginLayout />,
+        element: <Layout anonymous={true} />,
         children: [
           {
             index: true,
@@ -250,6 +251,7 @@ export const App = () => (
     <HealthCheck />
     <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale={it.code}>
       <Theme>
+        <Overlay />
         <RouterProvider router={router} />
       </Theme>
     </LocalizationProvider>

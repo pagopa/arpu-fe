@@ -18,6 +18,7 @@ const mockReceiptData = {
   debtPositionTypeDescription: 'Tax',
   serviceType: 'Standard',
   iuv: '123456789012345678',
+  nav: '30123456789012345678',
   iur: 'IUR123456789',
   iud: 'IUD987654321',
   pspCompanyName: 'Test Payment Provider',
@@ -349,9 +350,9 @@ describe('ReceiptDetail', () => {
       expect(screen.getByText('app.receiptDetail.remittanceInformation')).toBeInTheDocument();
     });
 
-    it('renders IUV', () => {
+    it('renders Notice Code', () => {
       render(<ReceiptDetail />);
-      expect(screen.getByText('app.receiptDetail.iuv')).toBeInTheDocument();
+      expect(screen.getByText('app.receiptDetail.noticeCode')).toBeInTheDocument();
     });
 
     it('renders beneficiary information', () => {

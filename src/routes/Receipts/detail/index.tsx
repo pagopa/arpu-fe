@@ -86,8 +86,8 @@ export const ReceiptDetail = () => {
                 value={propertyOrMissingValue(data?.remittanceInformation)}
               />
               <DataRow
-                label={t('app.receiptDetail.iuv')}
-                value={propertyOrMissingValue(data?.iuv)}
+                label={t('app.receiptDetail.noticeCode')}
+                value={propertyOrMissingValue(data?.nav)}
               />
               <DataRow
                 label={t('app.receiptDetail.beneficiary')}

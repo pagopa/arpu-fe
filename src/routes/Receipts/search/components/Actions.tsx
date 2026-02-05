@@ -3,7 +3,10 @@ import { Button, IconButton, Stack } from '@mui/material';
 import React from 'react';
 import { generatePath, useNavigate } from 'react-router-dom';
 import { ArcRoutes } from 'routes/routes';
-import { InstallmentDebtorExtendedDTO } from '../../../../../generated/apiClient';
+import {
+  InstallmentDebtorExtendedDTO,
+  InstallmentStatus
+} from '../../../../../generated/apiClient';
 import utils from 'utils';
 import { useTranslation } from 'react-i18next';
 
@@ -52,7 +55,7 @@ export const Actions = ({ installment }: ActionsProps) => {
     }
   };
 
-  return (
+  const PaidActions = () => (
     <Stack key={installment.installmentId} alignItems="center" direction="row" gap={2}>
       <IconButton aria-label="download" onClick={onDownload}>
         <Download />
@@ -62,4 +65,26 @@ export const Actions = ({ installment }: ActionsProps) => {
       </Button>
     </Stack>
   );
+
+  const ExpiredActions = () => (
+    <Button
+      startIcon={<Download />}
+      key={installment.installmentId}
+      aria-label="download"
+      size="large"
+      variant="contained"
+      onClick={onDownload}>
+      {t('app.debtPositionsSearch.actions.download')}
+    </Button>
+  );
+
+  switch (installment.status) {
+    case InstallmentStatus.PAID:
+    case InstallmentStatus.REPORTED:
+      return <PaidActions />;
+    case InstallmentStatus.EXPIRED:
+      return <ExpiredActions />;
+    default:
+      return null;
+  }
 };
