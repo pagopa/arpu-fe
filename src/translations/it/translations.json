@@ -599,7 +599,9 @@
         "amount": "Importo non valido.",
         "fullName": "Nome e cognome non validi.",
         "fiscalCode": "Codice Fiscale o Partita IVA errato.",
-        "email": "Email non valida."
+        "email": "Email non valida.",
+        "orgName": "La selezione dell'ente è obbligatoria.",
+        "debtTypeCode": "*Seleziona un servizio nella lista superiore o nell'elenco dei più utilizzati"
       }
     },
     "download": {

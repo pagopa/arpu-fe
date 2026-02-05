@@ -57,10 +57,8 @@ const Spontanei = () => {
   };
 
   const PaymentNoticeInfoSchema = z.object({
-    orgName: z.string().min(2, t('spontanei.form.errors.description')),
-    debtTypeCode: z
-      .string()
-      .min(2, "*Seleziona un servizio nella lista superiore o nell'elenco dei più utilizzati"),
+    orgName: z.string().min(2, t('spontanei.form.errors.orgName')),
+    debtTypeCode: z.string().min(2, t('spontanei.form.errors.debtTypeCode')),
     description: z.string().min(2, t('spontanei.form.errors.description')),
     amount: z.number().min(1, t('spontanei.form.errors.amount')),
     fullName: z.string().min(2, t('spontanei.form.errors.fullName')),

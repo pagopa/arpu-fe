@@ -56,6 +56,8 @@ const DebtTypeSelect = () => {
         DebtPositionTypeOrgsWithSpontaneous?.find(
           (debtType) => debtType.debtPositionTypeOrgId === (value as debtTypeOptions).value
         ) || null;
+
+      formik.setFieldValue('debtTypeCode', selectedDebtType?.code);
       return context.setDebtType(selectedDebtType);
     }
   };
