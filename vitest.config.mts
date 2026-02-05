@@ -10,8 +10,10 @@ export default defineConfig({
     clearMocks: true,
     watch: false,
     silent: true,
-    deps: {
-      inline: ['@mui/x-data-grid', '@pagopa/mui-italia']
+    server: {
+      deps: {
+        inline: ['@mui/x-data-grid', '@pagopa/mui-italia']
+      }
     },
     coverage: {
       provider: 'v8',
