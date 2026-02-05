@@ -81,7 +81,7 @@ const Payment = () => {
     if (!iuv || !nav) return;
     if (isItemInCart(iuv)) return;
     if (cart.items.length >= 5) return notify.emit(t('app.cart.items.full'), 'error');
-    setCartEmail(email.value);
+    setCartEmail(email.value || undefined);
     addItem({
       amount,
       paTaxCode: orgFiscalCode,
@@ -113,7 +113,7 @@ const Payment = () => {
       paFullName: orgName,
       description: remittanceInformation
     };
-    carts.mutate({ notices: [item], email: email.value });
+    carts.mutate({ notices: [item], email: email.value || undefined });
   };
 
   const goToDownloadPaymentNoticePage = () => {

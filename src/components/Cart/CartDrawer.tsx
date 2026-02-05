@@ -45,7 +45,7 @@ export const CartDrawer = () => {
   };
 
   const onPayButton = () => {
-    carts.mutate({ notices: cart.items, email });
+    carts.mutate({ notices: cart.items, email: email || undefined });
     toggleCartDrawer();
   };
 
