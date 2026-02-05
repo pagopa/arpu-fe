@@ -37,9 +37,10 @@ export const Results = ({ installments, installmentType }: ResultsProps) => {
             alignItems: 'center',
             justifyContent: 'space-between',
             p: 3,
-            borderRadius: 1
+            borderRadius: 1,
+            gap: 3
           }}>
-          <Stack direction="row" justifyContent="space-between" width="80%">
+          <Stack direction="row" justifyContent="space-between" width="100%">
             <Item label={t('fields.noticeCode')} value={propertyOrMissingValue(installment.iuv)} />
             <Item label={t('fields.orgName')} value={propertyOrMissingValue(installment.orgName)} />
             <Item

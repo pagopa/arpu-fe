@@ -1,5 +1,3 @@
-import { Download } from '@mui/icons-material';
-import { Button, IconButton, Stack } from '@mui/material';
 import React from 'react';
 import { generatePath, useNavigate } from 'react-router-dom';
 import { ArcRoutes } from 'routes/routes';
@@ -9,6 +7,12 @@ import {
 } from '../../../../../generated/apiClient';
 import utils from 'utils';
 import { useTranslation } from 'react-i18next';
+import Stack from '@mui/material/Stack';
+import IconButton from '@mui/material/IconButton';
+import Button from '@mui/material/Button';
+import ShoppingCart from '@mui/icons-material/ShoppingCart';
+import Download from '@mui/icons-material/Download';
+import { addItem } from 'store/CartStore';
 
 type ActionsProps = {
   installment: InstallmentDebtorExtendedDTO;
@@ -78,12 +82,46 @@ export const Actions = ({ installment }: ActionsProps) => {
     </Button>
   );
 
+  const UnpaidActions = () => (
+    <Stack
+      key={installment.installmentId}
+      alignItems="center"
+      direction="row"
+      gap={0.5}
+      justifyContent="space-between"
+      width="30%">
+      <IconButton aria-label="download" onClick={onDownload}>
+        <Download />
+      </IconButton>
+      <IconButton
+        aria-label="download"
+        onClick={() =>
+          addItem({
+            installmentId: installment.installmentId,
+            amount: installment.amountCents,
+            description: installment.debtPositionTypeOrgDescription,
+            iuv: installment?.iuv || '',
+            nav: installment?.nav || '',
+            paFullName: installment.orgName || '',
+            paTaxCode: installment.orgFiscalCode || ''
+          })
+        }>
+        <ShoppingCart />
+      </IconButton>
+      <Button size="large" variant="contained" onClick={navigateToDetail}>
+        {t('actions.payNow')}
+      </Button>
+    </Stack>
+  );
+
   switch (installment.status) {
     case InstallmentStatus.PAID:
     case InstallmentStatus.REPORTED:
       return <PaidActions />;
     case InstallmentStatus.EXPIRED:
       return <ExpiredActions />;
+    case InstallmentStatus.UNPAID:
+      return <UnpaidActions />;
     default:
       return null;
   }

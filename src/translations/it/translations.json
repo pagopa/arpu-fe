@@ -356,7 +356,8 @@
     "search": "Cerca",
     "detail": "Dettaglio",
     "download": "Scarica",
-    "close": "Chiudi"
+    "close": "Chiudi",
+    "payNow": "Paga ora"
   },
   "fields": {
     "iuv": "Codice Avviso/IUV",
