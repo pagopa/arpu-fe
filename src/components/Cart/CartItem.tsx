@@ -4,7 +4,7 @@ import { Grid, Stack, Typography } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import { cartDrawerStyles } from './CartDrawer.styles';
 import { toEuroOrMissingValue } from 'utils/converters';
-import { ButtonNaked } from '@pagopa/mui-italia/dist/components/ButtonNaked';
+import { ButtonNaked } from '@pagopa/mui-italia';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { deleteItem } from 'store/CartStore';
 import { CartItem } from 'models/Cart';

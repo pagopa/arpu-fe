@@ -9,9 +9,9 @@ import { Box, Divider, FormControlLabel, Grid, Radio, Stack, Typography } from '
 import Timeline from '@mui/lab/Timeline';
 import TimelineItem, { timelineItemClasses } from '@mui/lab/TimelineItem';
 import TimelineSeparator from '@mui/lab/TimelineSeparator';
-import TimelineDot from '@mui/lab/TimelineDot/TimelineDot';
+import TimelineDot from '@mui/lab/TimelineDot';
 import TimelineConnector from '@mui/lab/TimelineConnector';
-import TimelineContent from '@mui/lab/TimelineContent/TimelineContent';
+import TimelineContent from '@mui/lab/TimelineContent';
 import utils from 'utils';
 import { Trans, useTranslation } from 'react-i18next';
 import { InstallmentChip } from 'components/StatusChips/InstallmentChip';

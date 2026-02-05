@@ -5,7 +5,7 @@ import Typography from '@mui/material/Typography';
 import Button from '@mui/material/Button';
 import CloseIcon from '@mui/icons-material/Close';
 import { useTheme } from '@mui/material';
-import { ButtonNaked } from '@pagopa/mui-italia/dist/components/ButtonNaked';
+import { ButtonNaked } from '@pagopa/mui-italia';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { ArcRoutes } from 'routes/routes';

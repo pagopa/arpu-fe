@@ -5,7 +5,7 @@ import { alpha } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import { Close } from '@mui/icons-material';
 
-const AssistanceBackModal = (props: { open: boolean }) => {
+const DetailNoticeInfoModal = (props: { open: boolean }) => {
   const theme = useTheme();
   const { t } = useTranslation();
   return (
@@ -51,4 +51,4 @@ const AssistanceBackModal = (props: { open: boolean }) => {
   );
 };
 
-export default AssistanceBackModal;
+export default DetailNoticeInfoModal;
