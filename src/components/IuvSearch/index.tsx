@@ -19,6 +19,7 @@ import utils from 'utils';
 import { Results } from 'routes/Receipts/search/components/Results';
 import { InstallmentType } from 'utils/loaders';
 import { useFormik } from 'formik';
+import { InstallmentStatus } from '../../../generated/data-contracts';
 
 enum TabIndex {
   PERSONA_FISICA = 0,
@@ -95,7 +96,9 @@ export const IuvSearch = ({
       try {
         await installmentsMutation.mutateAsync({
           iuvOrNav: values.iuvOrNav,
-          fiscalCode
+          fiscalCode,
+          statuses:
+            installmentType === InstallmentType.RECEIPTS ? [InstallmentStatus.PAID] : undefined
         });
 
         const params = {
