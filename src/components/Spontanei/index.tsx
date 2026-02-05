@@ -29,7 +29,7 @@ export type PaymentNoticeInfo = {
 
 const Spontanei = () => {
   // Step state
-  const [step, setStep] = React.useState(1);
+  const [step, setStep] = React.useState(0);
   // Step 1: selected organization
   const [org, setOrg] = React.useState<OrganizationsWithSpontaneousDTO | null>(null);
   // Step 2: selected debt type
@@ -103,12 +103,12 @@ const Spontanei = () => {
               </Typography>
               <Typography>{t('spontanei.form.description')}</Typography>
               <Stack spacing={4} mt={4}>
-                <Steps activeStep={step - 1} />
-                {step === 1 && <OrgSelect />}
-                {step === 2 && <DebtTypeSelect />}
-                {step === 3 && <DebtTypeConfig />}
-                {step === 4 && <Summary />}
-                {step === 5 && <Payment />}
+                <Steps activeStep={step} />
+                {step === 0 && <OrgSelect />}
+                {step === 1 && <DebtTypeSelect />}
+                {step === 2 && <DebtTypeConfig />}
+                {step === 3 && <Summary />}
+                {step === 4 && <Payment />}
               </Stack>
             </Stack>
           </FormContext.Provider>
