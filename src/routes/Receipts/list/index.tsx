@@ -143,7 +143,7 @@ export const ReceiptsList = () => {
           noData={isSuccess && !data?.content?.length}
           onRetry={() => applyFilters(appliedFilters)}
           noDataCta={<PaymentButton />}
-          queryKey="pagedUnpaidDebtPositions"
+          queryKey="pagedDebtorReceipts"
           noDataTitle={t('app.receipts.empty.title')}
           noDataText={t('app.receipts.empty.subtitle')}>
           <Stack gap={2}>
