@@ -25,7 +25,10 @@
     },
     "debtPositionsSearch": {
       "title": "Cerca un avviso",
-      "description": "Recupera un avviso di pagamento compilando i campi con i dati richiesti."
+      "description": "Recupera un avviso di pagamento compilando i campi con i dati richiesti.",
+      "actions": {
+        "download": "Scarica avviso"
+      }
     },
     "user": {
       "title": "I tuoi dati",
