@@ -5,19 +5,31 @@ import IllusHourGlass from './IllusHourGlass';
 import utils from 'utils';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import { ArcRoutes } from 'routes/routes';
+import storage from 'utils/storage';
 
 const Download = () => {
   const { t } = useTranslation();
   const { orgId, iuv } = useParams();
+  const brokerId = storage.app.getBrokerId();
+
   const navigate = useNavigate();
   const location = useLocation();
-  const mutation = utils.loaders.getPaymentNotice(1, parseInt(orgId || '0', 10), { iuv });
+
+  if (!orgId || !iuv || !brokerId) {
+    throw new Error('Missing required parameters');
+  }
+
+  const parsedOrgId = parseInt(orgId, 10);
+
+  const mutation = utils.loaders.getPaymentNotice(brokerId, parsedOrgId, { iuv });
+
   const anonymousMutation = utils.loaders.public.getPublicPaymentNotice(
-    1,
-    parseInt(orgId || '0', 10),
+    brokerId,
+    parsedOrgId,
     { iuv },
     location.state?.debtorFiscalCode || ''
   );
+
   const isAnonymous = utils.storage.user.isAnonymous();
 
   const download = async () => {
@@ -31,6 +43,14 @@ const Download = () => {
       utils.files.downloadBlob(data, filename || `${iuv}.pdf`);
     } catch {
       utils.notify.emit('qualcosa è andato storto');
+    }
+  };
+
+  const close = () => {
+    if (isAnonymous) {
+      navigate(ArcRoutes.LOGIN);
+    } else {
+      navigate(ArcRoutes.DASHBOARD);
     }
   };
 
@@ -53,7 +73,7 @@ const Download = () => {
             />
           </Typography>
         </Stack>
-        <Button variant="contained" size="large" onClick={() => navigate(ArcRoutes.DASHBOARD)}>
+        <Button variant="contained" size="large" onClick={close}>
           {t('spontanei.download.close')}
         </Button>
         <Button href="https://www.pagopa.gov.it/it/cittadini/dove-pagare/" target="_blank">
