@@ -2,7 +2,7 @@ import { Button, Card, Stack, Typography } from '@mui/material';
 import React, { useContext } from 'react';
 import Controls from '../Controls';
 import { useTranslation } from 'react-i18next';
-import { addItem, isItemInCart, toggleCartDrawer } from 'store/CartStore';
+import { addItem, isItemInCart, setCartEmail, toggleCartDrawer } from 'store/CartStore';
 import notify from 'utils/notify';
 import { useStore } from 'store/GlobalStore';
 import utils from 'utils';
@@ -81,6 +81,7 @@ const Payment = () => {
     if (!iuv || !nav) return;
     if (isItemInCart(iuv)) return;
     if (cart.items.length >= 5) return notify.emit(t('app.cart.items.full'), 'error');
+    setCartEmail(email.value);
     addItem({
       amount,
       paTaxCode: orgFiscalCode,

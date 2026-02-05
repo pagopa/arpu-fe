@@ -14,7 +14,6 @@ import { cartDrawerStyles } from './CartDrawer.styles';
 import { useStore } from 'store/GlobalStore';
 import { toEuroOrMissingValue } from 'utils/converters';
 import { usePostCarts } from 'hooks/usePostCarts';
-import { useUserEmail } from 'hooks/useUserEmail';
 import CartItem from './CartItem';
 import utils from 'utils';
 
@@ -31,12 +30,14 @@ export const CartDrawer = () => {
     onError: (error: string) => navigate(ArcRoutes.COURTESY_PAGE.replace(':error', error))
   });
 
-  const isAnonymous = utils.storage.user.isAnonymous();
-  const email = isAnonymous ? undefined : useUserEmail();
-
   const {
     state: { cart }
   } = useStore();
+
+  // retieving the last saved email from the cart store
+  const { email } = cart;
+
+  const isAnonymous = utils.storage.user.isAnonymous();
 
   const onEmptyButtonClick = () => {
     toggleCartDrawer();

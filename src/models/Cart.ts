@@ -8,13 +8,14 @@ export type CartItem = {
 };
 
 export type ExtendedCartItem = CartItem & {
-  installmentId: number;
-  paymentOptionId: number;
-  debtPositionId: number;
+  installmentId?: number;
+  paymentOptionId?: number;
+  debtPositionId?: number;
 };
 
 export type CartState = {
   isOpen: boolean;
   amount: number;
   items: ExtendedCartItem[];
+  email?: string;
 };
