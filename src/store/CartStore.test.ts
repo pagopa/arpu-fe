@@ -7,7 +7,9 @@ import {
   resetCart,
   getCartItems,
   getTotalAmout,
-  isItemInCart
+  isItemInCart,
+  setCartEmail,
+  getCartEmail
 } from './CartStore';
 import { CartItem } from 'models/Cart';
 
@@ -172,5 +174,11 @@ describe('cartStore', () => {
 
     expect(isItemInCart('00001')).toBeFalsy();
     expect(isItemInCart('00002')).toBeFalsy();
+  });
+
+  it('set cart email correctly', () => {
+    expect(cartState.value.email).toBeUndefined();
+    setCartEmail('test@example.com');
+    expect(getCartEmail()).toBe('test@example.com');
   });
 });
