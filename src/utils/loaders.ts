@@ -2,7 +2,7 @@ import { useQuery, useMutation } from '@tanstack/react-query';
 import utils from 'utils';
 import { ZodSchema } from 'zod';
 import * as zodSchema from '../../generated/zod-schema';
-import { DebtPositionRequestDTO } from '../../generated/data-contracts';
+import { DebtPositionRequestDTO, InstallmentStatus } from '../../generated/data-contracts';
 import { FilteredRequest } from 'models/Filters';
 import { STATE } from 'store/types';
 
@@ -343,10 +343,9 @@ const usePagedUnpaidDebtPositions = (brokerId: number) =>
 type InstallmentsByIuvOrNavArgs = {
   iuvOrNav: string;
   fiscalCode: string;
+  statuses?: InstallmentStatus[];
 };
 
-// TODO: remove when below API has its
-// own filter definition
 export enum InstallmentType {
   RECEIPTS = 'receipts',
   ALL = 'all'
@@ -358,7 +357,7 @@ const usePublicInstallmentsByIuvOrNav = (brokerId: number) =>
     mutationFn: async (args: InstallmentsByIuvOrNavArgs) => {
       const { data } = await utils.apiClient.public.getPublicInstallmentsByIuvOrNav(
         brokerId,
-        { iuvOrNav: args.iuvOrNav },
+        { iuvOrNav: args.iuvOrNav, statuses: args.statuses },
         { headers: { 'X-fiscal-code': args.fiscalCode } }
       );
       return data;
