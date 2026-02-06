@@ -25,19 +25,13 @@ export type PaymentNoticeInfo = {
   fiscalCode: string;
   amount: number;
   description: string;
-  orgName: string;
-  debtTypeCode: string;
+  org: OrganizationsWithSpontaneousDTO | null;
+  debtType: DebtPositionTypeOrgsWithSpontaneousDTO | null;
 };
 
 const Spontanei = () => {
   // Step state
   const [step, setStep] = React.useState(0);
-  // Step 1: selected organization
-  const [org, setOrg] = React.useState<OrganizationsWithSpontaneousDTO | null>(null);
-  // Step 2: selected debt type
-  const [debtType, setDebtType] = React.useState<DebtPositionTypeOrgsWithSpontaneousDTO | null>(
-    null
-  );
   // form type state
   const [formType, setFormType] = React.useState<FormTypeEnum | null>(null);
   // user description state
@@ -52,13 +46,28 @@ const Spontanei = () => {
     fiscalCode: '',
     amount: 0,
     description: '',
-    orgName: '',
-    debtTypeCode: ''
+    org: null,
+    debtType: null
   };
 
   const PaymentNoticeInfoSchema = z.object({
-    orgName: z.string().min(1, t('spontanei.form.errors.orgName')),
-    debtTypeCode: z.string().min(1, t('spontanei.form.errors.debtTypeCode')),
+    org: z
+      .object({
+        organizationId: z.number(),
+        orgName: z.string(),
+        orgFiscalCode: z.string()
+      })
+      .nullable()
+      .refine((org) => org !== null, t('spontanei.form.errors.org')),
+    debtType: z
+      .object({
+        debtPositionTypeOrgId: z.number(),
+        organizationId: z.number(),
+        code: z.string(),
+        description: z.string()
+      })
+      .nullable()
+      .refine((debtType) => debtType !== null, t('spontanei.form.errors.debtType')),
     description: z.string().min(2, t('spontanei.form.errors.description')),
     amount: z.number().min(1, t('spontanei.form.errors.amount')),
     fullName: z.string().min(2, t('spontanei.form.errors.fullName')),
@@ -86,10 +95,6 @@ const Spontanei = () => {
         <Formik initialValues={defaultPaymentNoticeInfo} validate={validate} onSubmit={console.log}>
           <FormContext.Provider
             value={{
-              org,
-              setOrg,
-              debtType,
-              setDebtType,
               step,
               setStep,
               formType,

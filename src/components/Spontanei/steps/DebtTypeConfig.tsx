@@ -4,17 +4,28 @@ import utils from 'utils';
 import StandardForm from '../StandarForm/StandardForm';
 import CustomForm from '../DinamicForm/CustomForm';
 import ExternalUrlForm from '../ExternalUrlForm/ExternalUrlForm';
+import { useField } from 'formik';
+import { PaymentNoticeInfo } from '..';
 
 const DebtTypeConfig = () => {
   const context = useContext<FormContextType | null>(FormContext);
-  const organizationId = context?.org?.organizationId || 0;
-  const debtPositionTypeOrgId = context?.debtType?.debtPositionTypeOrgId || 0;
+  const [org] = useField<PaymentNoticeInfo['org']>('org');
+  const [debtType] = useField<PaymentNoticeInfo['debtType']>('debtType');
+  const organizationId = org.value?.organizationId;
+  const debtPositionTypeOrgId = debtType.value?.debtPositionTypeOrgId;
+
   const isAnonymous = utils.storage.user.isAnonymous();
   const brokerId = utils.storage.app.getBrokerId();
 
+  if (!organizationId || !debtPositionTypeOrgId || !brokerId) {
+    throw new Error(
+      'Missing required parameters: organizationId, debtPositionTypeOrgId, or brokerId'
+    );
+  }
+
   const { data } = isAnonymous
     ? utils.loaders.public.getPublicDebtPositionTypeOrgsWithSpontaneousDetail(
-        parseInt(brokerId, 10),
+        brokerId,
         organizationId,
         debtPositionTypeOrgId
       )

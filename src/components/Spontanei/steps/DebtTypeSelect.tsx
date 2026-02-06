@@ -12,16 +12,14 @@ import {
 } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import utils from 'utils';
-import { DebtPositionTypeOrgsWithSpontaneousDTO } from '../../../../generated/data-contracts';
+import {
+  DebtPositionTypeOrgsWithSpontaneousDTO,
+  OrganizationsWithSpontaneousDTO
+} from '../../../../generated/data-contracts';
 import FormContext, { FormContextType } from '../FormContext';
 import Controls from '../Controls';
-import { useFormikContext } from 'formik';
+import { useField, useFormikContext } from 'formik';
 import { PaymentNoticeInfo } from '..';
-
-interface debtTypeOptions {
-  label: DebtPositionTypeOrgsWithSpontaneousDTO['description'];
-  value: DebtPositionTypeOrgsWithSpontaneousDTO['organizationId'];
-}
 
 const DebtTypeSelect = () => {
   const { t } = useTranslation();
@@ -31,68 +29,56 @@ const DebtTypeSelect = () => {
   const context = useContext<FormContextType | null>(FormContext);
   const formik = useFormikContext<PaymentNoticeInfo>();
 
-  const { data: DebtPositionTypeOrgsWithSpontaneous } = isAnonymous
-    ? utils.loaders.public.getPublicDebtPositionTypeOrgsWithSpontaneous(
-        brokerId,
-        context?.org?.organizationId || 0
-      )
-    : utils.loaders.getDebtPositionTypeOrgsWithSpontaneous(
-        brokerId,
-        context?.org?.organizationId || 0
-      );
+  const [org] = useField<OrganizationsWithSpontaneousDTO | null>('org');
+  const [debtType, debtTypeMeta, debtTypeHelpers] =
+    useField<DebtPositionTypeOrgsWithSpontaneousDTO | null>('debtType');
 
-  const debtTypeOptions: debtTypeOptions[] =
-    DebtPositionTypeOrgsWithSpontaneous?.map((debtType) => ({
-      label: debtType.description,
-      value: debtType.debtPositionTypeOrgId
-    })) || [];
+  const organizationId = org.value?.organizationId || 0;
+
+  const { data: DebtPositionTypeOrgsWithSpontaneous } = isAnonymous
+    ? utils.loaders.public.getPublicDebtPositionTypeOrgsWithSpontaneous(brokerId, organizationId)
+    : utils.loaders.getDebtPositionTypeOrgsWithSpontaneous(brokerId, organizationId);
+
+  const debtTypeOptions: DebtPositionTypeOrgsWithSpontaneousDTO[] =
+    DebtPositionTypeOrgsWithSpontaneous || [];
 
   const handleDebtTypeChange = (
     _event: React.SyntheticEvent<Element, Event> | null,
-    value: string | debtTypeOptions | null
+    value: string | DebtPositionTypeOrgsWithSpontaneousDTO | null
   ) => {
     if (value && typeof value !== 'string' && context) {
       const selectedDebtType =
         DebtPositionTypeOrgsWithSpontaneous?.find(
-          (debtType) => debtType.debtPositionTypeOrgId === (value as debtTypeOptions).value
+          (debtType) =>
+            debtType.debtPositionTypeOrgId ===
+            (value as DebtPositionTypeOrgsWithSpontaneousDTO).debtPositionTypeOrgId
         ) || null;
-
-      formik.setFieldValue('debtTypeCode', selectedDebtType?.code);
-      return context.setDebtType(selectedDebtType);
+      debtTypeHelpers.setValue(selectedDebtType);
     }
   };
 
   const mostUsedDebtTypesQuery = isAnonymous
     ? utils.loaders.public.getPublicMostUsedSpontaneousDebtPositionTypeOrgsForCurrentYear(
         brokerId,
-        context?.org?.organizationId || 0
+        organizationId
       )
     : utils.loaders.getMostUsedSpontaneousDebtPositionTypeOrgsForCurrentYear(
         brokerId,
-        context?.org?.organizationId || 0
+        organizationId
       );
-
-  const getKeyFromOption = (option: debtTypeOptions | string | null) => {
-    if (!option || typeof option === 'string') {
-      return option || '';
-    } else {
-      return option.value;
-    }
-  };
 
   const onChange = async (debtType: DebtPositionTypeOrgsWithSpontaneousDTO) => {
     await formik.validateForm();
-    context?.setDebtType(debtType);
-    formik.setFieldValue('debtTypeCode', debtType.code);
+    debtTypeHelpers.setValue(debtType);
   };
 
   const shouldContinue = async () => {
-    formik.setTouched({ debtTypeCode: true });
+    formik.setTouched({ debtType: true });
     const errors = await formik.validateForm();
-    return !errors.orgName && !!context?.debtType;
+    return !errors.org && !errors.debtType;
   };
 
-  const errorMessage = formik.touched.debtTypeCode ? formik.errors.debtTypeCode : '';
+  const errorMessage = formik.touched.debtType ? formik.errors.debtType : '';
 
   return (
     <>
@@ -104,9 +90,19 @@ const DebtTypeSelect = () => {
             onChange={handleDebtTypeChange}
             freeSolo
             options={debtTypeOptions}
-            getOptionKey={getKeyFromOption}
+            value={debtType.value}
+            getOptionKey={(option) =>
+              (option as DebtPositionTypeOrgsWithSpontaneousDTO).debtPositionTypeOrgId
+            }
+            getOptionLabel={(option) =>
+              (option as DebtPositionTypeOrgsWithSpontaneousDTO).description
+            }
             renderInput={(params) => (
-              <TextField {...params} label="Cerca per nome del servizio" error={!!errorMessage} />
+              <TextField
+                {...params}
+                label={t('spontanei.form.steps.step2.search')}
+                error={!!errorMessage}
+              />
             )}
           />
           {mostUsedDebtTypesQuery.data && mostUsedDebtTypesQuery.data.length > 0 && (
@@ -124,26 +120,28 @@ const DebtTypeSelect = () => {
                 }}
                 spacing={2}>
                 <RadioGroup aria-label="debt-type" name="debtTypeCode">
-                  {mostUsedDebtTypesQuery.data.map((debtType) => (
-                    <FormControl key={debtType.debtPositionTypeOrgId}>
+                  {mostUsedDebtTypesQuery.data.map((MostUsedDebtType) => (
+                    <FormControl key={MostUsedDebtType.debtPositionTypeOrgId}>
                       <FormControlLabel
-                        value={debtType.debtPositionTypeOrgId}
+                        value={MostUsedDebtType.debtPositionTypeOrgId}
                         control={
                           <Radio
-                            onChange={() => onChange(debtType)}
+                            onChange={() => onChange(MostUsedDebtType)}
                             checked={
-                              context?.debtType?.debtPositionTypeOrgId ===
-                              debtType.debtPositionTypeOrgId
+                              debtType?.value?.debtPositionTypeOrgId ===
+                              MostUsedDebtType.debtPositionTypeOrgId
                             }
                           />
                         }
-                        label={debtType.description}
+                        label={MostUsedDebtType.description}
                       />
                     </FormControl>
                   ))}
                 </RadioGroup>
               </Stack>
-              {errorMessage && <Typography color="error">{errorMessage}</Typography>}
+              {debtTypeMeta.error && (
+                <Typography color="error">{debtTypeMeta.error}</Typography>
+              )}
             </>
           )}
         </Stack>

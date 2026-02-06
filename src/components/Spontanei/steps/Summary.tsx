@@ -31,10 +31,12 @@ const SummaryItem = (props: { label: string; value: string }) => (
 
 const OrgAndServiceSummary = () => {
   const { t } = useTranslation();
-  const context = useContext<FormContextType | null>(FormContext);
-  const orgName = context?.org?.orgName as string;
-  const orgCode = context?.org?.orgFiscalCode as string;
-  const debtTypeName = context?.debtType?.description as string;
+  const [org] = useField<PaymentNoticeInfo['org']>('org');
+  const [debtType] = useField<PaymentNoticeInfo['debtType']>('debtType');
+
+  const orgName = org.value?.orgName || '';
+  const orgCode = org.value?.orgFiscalCode || '';
+  const debtTypeName = debtType.value?.description || '';
 
   return (
     <Card sx={{ marginBottom: 2 }} variant="outlined">
@@ -95,11 +97,11 @@ const PaymentSummary = () => {
   const { t } = useTranslation();
   const [amount] = useField<PaymentNoticeInfo['amount']>('amount');
   const [description] = useField<PaymentNoticeInfo['description']>('description');
+  const [debtType] = useField<PaymentNoticeInfo['debtType']>('debtType');
   const context = useContext<FormContextType | null>(FormContext);
   const formType = context?.formType;
-  const debtTypeName = context?.debtType?.description as string;
 
-  const descriptionLabel = `Pagamento on-the-fly ${formType === 'CUSTOM' ? debtTypeName : description.value}`;
+  const descriptionLabel = `Pagamento on-the-fly ${formType === 'CUSTOM' ? debtType.value?.description : description.value}`;
 
   useEffect(() => {
     if (formType === 'CUSTOM') {
@@ -109,9 +111,9 @@ const PaymentSummary = () => {
 
   return (
     <Card sx={{ marginBottom: 2 }} variant="outlined">
-      <SummaryStructure title={t("Dati dell'avviso di pagamento")}>
-        <SummaryItem label="Oggetto del pagamento" value={descriptionLabel} />
-        <SummaryItem label="Importo" value={utils.converters.toEuro(amount.value * 100)} />
+      <SummaryStructure title={t("spontanei.form.steps.step4.payment.title")}>
+        <SummaryItem label={t('spontanei.form.steps.step4.payment.description')} value={descriptionLabel} />
+        <SummaryItem label={t('spontanei.form.steps.step4.payment.amount')} value={utils.converters.toEuro(amount.value * 100)} />
       </SummaryStructure>
     </Card>
   );
