@@ -1,33 +1,17 @@
-import React, { useRef } from 'react';
+import React from 'react';
 import { Card, InputAdornment, Stack, TextField, Typography } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import DebtorSection from '../DebtorSection';
-import { Formik, useField, useFormik, useFormikContext } from 'formik';
+import { useField, useFormikContext } from 'formik';
 import { useEffect } from 'react';
 import { PaymentNoticeInfo } from '..';
 import Controls from '../Controls';
 
-const initialValues = {
-  description: ''
-};
-
-function isEmpty(obj) {
-  for (const prop in obj) {
-    if (Object.hasOwn(obj, prop)) {
-      return false;
-    }
-  }
-
-  return true;
-}
-
 const StandardForm = (props: { fixedAmount?: number; hasFlagAnonymousFiscalCode?: boolean }) => {
   const { t } = useTranslation();
-  const { validateForm, submitForm } = useFormikContext();
+  const formik = useFormikContext<PaymentNoticeInfo>();
   const [amount, amountMeta, amountHelpers] = useField<PaymentNoticeInfo['amount']>('amount');
-  const [description, descriptionMeta, descriptionHelpers] =
-    useField<PaymentNoticeInfo['description']>('description');
-  const formikRef = useRef<ReturnType<typeof useFormik<typeof initialValues>>>(null);
+  const [description, descriptionMeta] = useField<PaymentNoticeInfo['description']>('description');
 
   useEffect(() => {
     if (props.fixedAmount !== undefined) {
@@ -37,20 +21,11 @@ const StandardForm = (props: { fixedAmount?: number; hasFlagAnonymousFiscalCode?
     }
   }, [props.fixedAmount]);
 
-  const validate = (values: typeof initialValues) => {
-    descriptionHelpers.setValue(`${values.description}`);
-    const errors: Partial<typeof initialValues> = {};
-    if (!values.description) {
-      errors.description = t('spontanei.form.validation.required');
-    }
-    return errors;
-  };
 
   const shouldContinue = async () => {
-    await submitForm();
-    const globalFormErrors = await validateForm();
-    const localFormErrors = await formikRef.current?.validateForm();
-    return isEmpty(globalFormErrors || {}) && isEmpty(localFormErrors || {});
+    formik.handleSubmit();
+    const errors = await formik.validateForm();
+    return !errors.amount && !errors.description && !errors.fullName && !errors.fiscalCode;
   };
 
   return (
@@ -66,12 +41,6 @@ const StandardForm = (props: { fixedAmount?: number; hasFlagAnonymousFiscalCode?
 
         <Stack gap={2}>
           <DebtorSection hasFlagAnonymousFiscalCode={props.hasFlagAnonymousFiscalCode || false} />
-          <Formik
-            initialValues={initialValues}
-            validate={validate}
-            onSubmit={console.log}
-            innerRef={formikRef}>
-            {({ values, handleChange, handleBlur }) => (
               <Card variant="outlined" sx={{ padding: 3 }}>
                 <Stack gap={2}>
                   <Typography variant="h6">
@@ -99,10 +68,7 @@ const StandardForm = (props: { fixedAmount?: number; hasFlagAnonymousFiscalCode?
                       label={t('spontanei.form.steps.step3.paymentData.description')}
                       variant="outlined"
                       required
-                      name="description"
-                      value={description.value}
-                      onChange={handleChange}
-                      onBlur={handleBlur}
+                      {...description}
                       error={descriptionMeta.touched && Boolean(descriptionMeta.error)}
                       helperText={descriptionMeta.touched && descriptionMeta.error}
                       sx={{ width: '-webkit-fill-available' }}
@@ -110,8 +76,6 @@ const StandardForm = (props: { fixedAmount?: number; hasFlagAnonymousFiscalCode?
                   </Stack>
                 </Stack>
               </Card>
-            )}
-          </Formik>
         </Stack>
       </Card>
       <Controls shouldContinue={shouldContinue} />

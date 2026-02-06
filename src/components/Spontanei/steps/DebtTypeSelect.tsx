@@ -1,4 +1,4 @@
-import React, { useContext } from 'react';
+import React from 'react';
 import {
   Autocomplete,
   Card,
@@ -14,9 +14,7 @@ import { useTranslation } from 'react-i18next';
 import utils from 'utils';
 import {
   DebtPositionTypeOrgsWithSpontaneousDTO,
-  OrganizationsWithSpontaneousDTO
 } from '../../../../generated/data-contracts';
-import FormContext, { FormContextType } from '../FormContext';
 import Controls from '../Controls';
 import { useField, useFormikContext } from 'formik';
 import { PaymentNoticeInfo } from '..';
@@ -26,12 +24,11 @@ const DebtTypeSelect = () => {
   const brokerId = utils.storage.app.getBrokerId();
   const isAnonymous = utils.storage.user.isAnonymous();
 
-  const context = useContext<FormContextType | null>(FormContext);
   const formik = useFormikContext<PaymentNoticeInfo>();
 
-  const [org] = useField<OrganizationsWithSpontaneousDTO | null>('org');
+  const [org] = useField<PaymentNoticeInfo['org']>('org');
   const [debtType, debtTypeMeta, debtTypeHelpers] =
-    useField<DebtPositionTypeOrgsWithSpontaneousDTO | null>('debtType');
+    useField<PaymentNoticeInfo['debtType']>('debtType');
 
   const organizationId = org.value?.organizationId || 0;
 
@@ -46,14 +43,10 @@ const DebtTypeSelect = () => {
     _event: React.SyntheticEvent<Element, Event> | null,
     value: string | DebtPositionTypeOrgsWithSpontaneousDTO | null
   ) => {
-    if (value && typeof value !== 'string' && context) {
-      const selectedDebtType =
-        DebtPositionTypeOrgsWithSpontaneous?.find(
-          (debtType) =>
-            debtType.debtPositionTypeOrgId ===
-            (value as DebtPositionTypeOrgsWithSpontaneousDTO).debtPositionTypeOrgId
-        ) || null;
-      debtTypeHelpers.setValue(selectedDebtType);
+    if (value && typeof value !== 'string') {
+      debtTypeHelpers.setValue(value);
+    } else {
+      debtTypeHelpers.setValue(null);
     }
   };
 
