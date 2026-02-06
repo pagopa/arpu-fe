@@ -9,6 +9,7 @@ import { useUserInfo } from 'hooks/useUserInfo';
 import { SubHeader } from './SubHeader';
 import { useTranslation } from 'react-i18next';
 import { ProductLogo } from 'components/ProductLogo';
+import { Box } from '@mui/system';
 
 export interface HeaderProps {
   onAssistanceClick?: () => void;
@@ -70,15 +71,17 @@ export const Header = (props: HeaderProps) => {
 
   return (
     <>
-      <HeaderAccount
-        rootLink={rootLink}
-        enableDropdown
-        onAssistanceClick={onAssistanceClick}
-        loggedUser={jwtUser}
-        userActions={userActions}
-        translationsMap={{ assistance: t('ui.header.help') }}
-      />
-      <SubHeader product={<ProductLogo />} />
+      <Box component="header">
+        <HeaderAccount
+          rootLink={rootLink}
+          enableDropdown
+          onAssistanceClick={onAssistanceClick}
+          loggedUser={jwtUser}
+          userActions={userActions}
+          translationsMap={{ assistance: t('ui.header.help') }}
+        />
+        <SubHeader product={<ProductLogo />} />
+      </Box>
     </>
   );
 };
