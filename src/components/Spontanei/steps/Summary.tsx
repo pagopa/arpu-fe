@@ -111,9 +111,15 @@ const PaymentSummary = () => {
 
   return (
     <Card sx={{ marginBottom: 2 }} variant="outlined">
-      <SummaryStructure title={t("spontanei.form.steps.step4.payment.title")}>
-        <SummaryItem label={t('spontanei.form.steps.step4.payment.description')} value={descriptionLabel} />
-        <SummaryItem label={t('spontanei.form.steps.step4.payment.amount')} value={utils.converters.toEuro(amount.value * 100)} />
+      <SummaryStructure title={t('spontanei.form.steps.step4.payment.title')}>
+        <SummaryItem
+          label={t('spontanei.form.steps.step4.payment.description')}
+          value={descriptionLabel}
+        />
+        <SummaryItem
+          label={t('spontanei.form.steps.step4.payment.amount')}
+          value={utils.converters.toEuro(amount.value * 100)}
+        />
       </SummaryStructure>
     </Card>
   );

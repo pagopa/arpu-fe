@@ -12,9 +12,7 @@ import {
 } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import utils from 'utils';
-import {
-  DebtPositionTypeOrgsWithSpontaneousDTO,
-} from '../../../../generated/data-contracts';
+import { DebtPositionTypeOrgsWithSpontaneousDTO } from '../../../../generated/data-contracts';
 import Controls from '../Controls';
 import { useField, useFormikContext } from 'formik';
 import { PaymentNoticeInfo } from '..';
@@ -132,9 +130,7 @@ const DebtTypeSelect = () => {
                   ))}
                 </RadioGroup>
               </Stack>
-              {debtTypeMeta.touched && (
-                <Typography color="error">{debtTypeMeta.error}</Typography>
-              )}
+              {debtTypeMeta.touched && <Typography color="error">{debtTypeMeta.error}</Typography>}
             </>
           )}
         </Stack>

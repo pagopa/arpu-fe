@@ -21,7 +21,6 @@ const StandardForm = (props: { fixedAmount?: number; hasFlagAnonymousFiscalCode?
     }
   }, [props.fixedAmount]);
 
-
   const shouldContinue = async () => {
     formik.handleSubmit();
     const errors = await formik.validateForm();
@@ -41,41 +40,41 @@ const StandardForm = (props: { fixedAmount?: number; hasFlagAnonymousFiscalCode?
 
         <Stack gap={2}>
           <DebtorSection hasFlagAnonymousFiscalCode={props.hasFlagAnonymousFiscalCode || false} />
-              <Card variant="outlined" sx={{ padding: 3 }}>
-                <Stack gap={2}>
-                  <Typography variant="h6">
-                    {t('spontanei.form.steps.step3.paymentData.title')}
-                  </Typography>
-                  <Stack direction="row" justifyContent={'space-between'} spacing={2}>
-                    <TextField
-                      size="small"
-                      label={t('spontanei.form.steps.step3.paymentData.amount')}
-                      variant="outlined"
-                      required
-                      slotProps={{
-                        input: {
-                          startAdornment: <InputAdornment position="start">€</InputAdornment>
-                        }
-                      }}
-                      type="number"
-                      disabled={props.fixedAmount !== undefined}
-                      {...amount}
-                      error={amountMeta.touched && Boolean(amountMeta.error)}
-                      helperText={amountMeta.touched && amountMeta.error}
-                    />
-                    <TextField
-                      size="small"
-                      label={t('spontanei.form.steps.step3.paymentData.description')}
-                      variant="outlined"
-                      required
-                      {...description}
-                      error={descriptionMeta.touched && Boolean(descriptionMeta.error)}
-                      helperText={descriptionMeta.touched && descriptionMeta.error}
-                      sx={{ width: '-webkit-fill-available' }}
-                    />
-                  </Stack>
-                </Stack>
-              </Card>
+          <Card variant="outlined" sx={{ padding: 3 }}>
+            <Stack gap={2}>
+              <Typography variant="h6">
+                {t('spontanei.form.steps.step3.paymentData.title')}
+              </Typography>
+              <Stack direction="row" justifyContent={'space-between'} spacing={2}>
+                <TextField
+                  size="small"
+                  label={t('spontanei.form.steps.step3.paymentData.amount')}
+                  variant="outlined"
+                  required
+                  slotProps={{
+                    input: {
+                      startAdornment: <InputAdornment position="start">€</InputAdornment>
+                    }
+                  }}
+                  type="number"
+                  disabled={props.fixedAmount !== undefined}
+                  {...amount}
+                  error={amountMeta.touched && Boolean(amountMeta.error)}
+                  helperText={amountMeta.touched && amountMeta.error}
+                />
+                <TextField
+                  size="small"
+                  label={t('spontanei.form.steps.step3.paymentData.description')}
+                  variant="outlined"
+                  required
+                  {...description}
+                  error={descriptionMeta.touched && Boolean(descriptionMeta.error)}
+                  helperText={descriptionMeta.touched && descriptionMeta.error}
+                  sx={{ width: '-webkit-fill-available' }}
+                />
+              </Stack>
+            </Stack>
+          </Card>
         </Stack>
       </Card>
       <Controls shouldContinue={shouldContinue} />
