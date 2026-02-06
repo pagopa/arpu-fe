@@ -139,7 +139,7 @@ const DebtTypeSelect = () => {
                   ))}
                 </RadioGroup>
               </Stack>
-              {debtTypeMeta.error && (
+              {debtTypeMeta.touched && (
                 <Typography color="error">{debtTypeMeta.error}</Typography>
               )}
             </>

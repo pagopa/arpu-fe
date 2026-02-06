@@ -25,7 +25,7 @@ const StandardForm = (props: { fixedAmount?: number; hasFlagAnonymousFiscalCode?
   const { t } = useTranslation();
   const { validateForm, submitForm } = useFormikContext();
   const [amount, amountMeta, amountHelpers] = useField<PaymentNoticeInfo['amount']>('amount');
-  const [, descriptionMeta, descriptionHelpers] =
+  const [description, descriptionMeta, descriptionHelpers] =
     useField<PaymentNoticeInfo['description']>('description');
   const formikRef = useRef<ReturnType<typeof useFormik<typeof initialValues>>>(null);
 
@@ -100,7 +100,7 @@ const StandardForm = (props: { fixedAmount?: number; hasFlagAnonymousFiscalCode?
                       variant="outlined"
                       required
                       name="description"
-                      value={values.description}
+                      value={description.value}
                       onChange={handleChange}
                       onBlur={handleBlur}
                       error={descriptionMeta.touched && Boolean(descriptionMeta.error)}
