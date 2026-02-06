@@ -6,7 +6,7 @@ import Button from '@mui/material/Button';
 import CloseIcon from '@mui/icons-material/Close';
 import { Alert, Divider, useTheme, Link } from '@mui/material';
 import { toggleCartDrawer } from 'store/CartStore';
-import { ButtonNaked } from '@pagopa/mui-italia/dist/components/ButtonNaked';
+import { ButtonNaked } from '@pagopa/mui-italia';
 import { Trans, useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { ArcRoutes } from 'routes/routes';

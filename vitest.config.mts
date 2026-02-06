@@ -10,8 +10,10 @@ export default defineConfig({
     clearMocks: true,
     watch: false,
     silent: true,
-    deps: {
-      inline: ['@mui/x-data-grid']
+    server: {
+      deps: {
+        inline: ['@mui/x-data-grid', '@pagopa/mui-italia']
+      }
     },
     coverage: {
       provider: 'v8',
@@ -44,6 +46,7 @@ export default defineConfig({
   },
   resolve: {
     alias: {
+      '@mui/icons-material/esm': path.resolve(__dirname, './node_modules/@mui/icons-material'),
       // Add all your absolute paths here
       components: path.resolve(__dirname, './src/components'),
       hooks: path.resolve(__dirname, './src/hooks'),
