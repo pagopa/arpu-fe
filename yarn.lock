@@ -2457,9 +2457,9 @@ __metadata:
   linkType: hard
 
 "@nyariv/sandboxjs@npm:^0.8.25":
-  version: 0.8.28
-  resolution: "@nyariv/sandboxjs@npm:0.8.28"
-  checksum: 10c0/fa78c5cd2e288405aaf876d087a170996c1b27f964548d18dc6707bf52e0e7e1cf96afaa67a1ef21fab4c249234e48c7f27baaac1d4387d243b2f533c1f963d8
+  version: 0.8.29
+  resolution: "@nyariv/sandboxjs@npm:0.8.29"
+  checksum: 10c0/e614c8dfc7943e9ae826e0821a16339dba36b05b4a74f863f8fbcf143396e713737058b74dcbbbd011f7a4727a349cf9318770c21ecec71a7d1c0966b4d8282d
   languageName: node
   linkType: hard
 
