@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import React from 'react';
 import { Box, Container, Stack, Typography } from '@mui/material';
 
 import Steps from './steps';
@@ -9,7 +9,7 @@ import DebtTypeConfig from './steps/DebtTypeConfig';
 import Summary from './steps/Summary';
 import { useTranslation } from 'react-i18next';
 import * as z from 'zod';
-import { Formik, useFormik } from 'formik';
+import { Formik } from 'formik';
 import {
   DebtPositionTypeOrgsWithSpontaneousDTO,
   FormTypeEnum,
@@ -25,17 +25,13 @@ export type PaymentNoticeInfo = {
   fiscalCode: string;
   amount: number;
   description: string;
+  org: OrganizationsWithSpontaneousDTO | null;
+  debtType: DebtPositionTypeOrgsWithSpontaneousDTO | null;
 };
 
 const Spontanei = () => {
   // Step state
   const [step, setStep] = React.useState(0);
-  // Step 1: selected organization
-  const [org, setOrg] = React.useState<OrganizationsWithSpontaneousDTO | null>(null);
-  // Step 2: selected debt type
-  const [debtType, setDebtType] = React.useState<DebtPositionTypeOrgsWithSpontaneousDTO | null>(
-    null
-  );
   // form type state
   const [formType, setFormType] = React.useState<FormTypeEnum | null>(null);
   // user description state
@@ -43,18 +39,35 @@ const Spontanei = () => {
 
   const { t } = useTranslation();
 
-  const formikRef = useRef<ReturnType<typeof useFormik<PaymentNoticeInfo>>>(null);
-
   const defaultPaymentNoticeInfo: PaymentNoticeInfo = {
     fullName: '',
     entityType: PersonEntityType.F,
     email: '',
     fiscalCode: '',
     amount: 0,
-    description: ''
+    description: '',
+    org: null,
+    debtType: null
   };
 
   const PaymentNoticeInfoSchema = z.object({
+    org: z
+      .object({
+        organizationId: z.number(),
+        orgName: z.string(),
+        orgFiscalCode: z.string()
+      })
+      .nullable()
+      .refine((org) => org !== null, t('spontanei.form.errors.org')),
+    debtType: z
+      .object({
+        debtPositionTypeOrgId: z.number(),
+        organizationId: z.number(),
+        code: z.string(),
+        description: z.string()
+      })
+      .nullable()
+      .refine((debtType) => debtType !== null, t('spontanei.form.errors.debtType')),
     description: z.string().min(2, t('spontanei.form.errors.description')),
     amount: z.number().min(1, t('spontanei.form.errors.amount')),
     fullName: z.string().min(2, t('spontanei.form.errors.fullName')),
@@ -76,20 +89,12 @@ const Spontanei = () => {
     return errors;
   };
 
-  useEffect(() => {
-    if (step == 1) formikRef.current?.resetForm();
-  }, [step]);
-
   return (
     <Container>
       <Box padding={3} width={'100%'} component="main">
         <Formik initialValues={defaultPaymentNoticeInfo} validate={validate} onSubmit={console.log}>
           <FormContext.Provider
             value={{
-              org,
-              setOrg,
-              debtType,
-              setDebtType,
               step,
               setStep,
               formType,

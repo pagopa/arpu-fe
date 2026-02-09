@@ -25,11 +25,13 @@ const Payment = () => {
   const [description] = useField<PaymentNoticeInfo['description']>('description');
   const [fiscalCode] = useField<PaymentNoticeInfo['fiscalCode']>('fiscalCode');
   const [entityType] = useField<PaymentNoticeInfo['entityType']>('entityType');
+  const [org] = useField<PaymentNoticeInfo['org']>('org');
+  const [debtType] = useField<PaymentNoticeInfo['debtType']>('debtType');
   const [email] = useField<PaymentNoticeInfo['email']>('email');
   const isAnonymous = utils.storage.user.isAnonymous();
 
-  const organizationId = context?.org?.organizationId;
-  const debtPositionTypeOrgId = context?.debtType?.debtPositionTypeOrgId;
+  const organizationId = org.value?.organizationId;
+  const debtPositionTypeOrgId = debtType.value?.debtPositionTypeOrgId;
   const userDescription = context?.userDescription || undefined;
 
   const navigate = useNavigate();
