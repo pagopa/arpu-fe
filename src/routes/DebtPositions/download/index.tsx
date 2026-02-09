@@ -8,7 +8,7 @@ import storage from 'utils/storage';
 import files from 'utils/files';
 import notify from 'utils/notify';
 
-export const ReceiptDownload = () => {
+export const DebtPositionDownload = () => {
   const { t } = useTranslation();
 
   const brokerId = storage.app.getBrokerId();
@@ -17,22 +17,24 @@ export const ReceiptDownload = () => {
   const location = useLocation() as Location<{ fiscalCode: string }>;
   const fiscalCode = location?.state?.fiscalCode;
 
-  const params = useParams<{ receiptId: string; organizationId: string }>();
-  const receiptId = Number(params?.receiptId);
+  const params = useParams<{ iuv: string; organizationId: string }>();
+  const iuv = params?.iuv;
   const organizationId = Number(params?.organizationId);
 
-  const receiptPdf = isAnonymous
-    ? loaders.public.usePublicDownloadReceipt({ brokerId })
-    : loaders.useDownloadReceipt({ brokerId });
+  if (!organizationId || !iuv || !brokerId || !fiscalCode) {
+    throw new Error('Missing required parameters');
+  }
+
+  const noticeLoader = isAnonymous
+    ? loaders.public.getPublicPaymentNotice
+    : loaders.getPaymentNotice;
+
+  const paymentNotice = noticeLoader(brokerId, organizationId, { iuv }, fiscalCode);
 
   const onDownload = async () => {
     try {
-      const { blob, filename } = await receiptPdf.mutateAsync({
-        organizationId,
-        receiptId,
-        fiscalCode
-      });
-      files.downloadBlob(blob, filename || `${receiptId}.pdf`);
+      const { data, filename } = await paymentNotice.mutateAsync();
+      files.downloadBlob(data, filename || `${iuv}.pdf`);
     } catch {
       notify.emit(t('app.receiptDetail.downloadError'));
     }
@@ -47,11 +49,11 @@ export const ReceiptDownload = () => {
       <img src="/cittadini/pictograms/hourglass.svg" aria-hidden="true" height={60} width={60} />
       <Stack gap={1} alignItems="center">
         <Typography variant="h4" component="h1" fontWeight={600}>
-          {t('app.receipts.thankYou.title')}
+          {t('app.debtPositions.download.title')}
         </Typography>
         <Typography variant="body1" component="h2">
           <Trans
-            i18nKey="app.receipts.thankYou.subtitle"
+            i18nKey="app.debtPositions.download.subtitle"
             components={{
               CustomLink: <MuiLink onClick={onDownload} sx={{ cursor: 'pointer' }} />
             }}
@@ -66,7 +68,7 @@ export const ReceiptDownload = () => {
         {t('actions.close')}
       </Button>
       <Link to={ExternalRoutes.PAYMENT_LINKS} target="_blank">
-        {t('app.receipts.thankYou.link')}
+        {t('app.debtPositions.download.link')}
       </Link>
     </Stack>
   );

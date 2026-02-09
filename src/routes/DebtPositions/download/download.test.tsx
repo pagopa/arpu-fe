@@ -2,7 +2,7 @@
 import React from 'react';
 import { render, screen, waitFor } from '__tests__/renderers';
 import * as ReactRouterDom from 'react-router-dom';
-import { ReceiptDownload } from './Download';
+import { DebtPositionDownload } from '../download';
 
 const mockMutateAsync = vi.fn();
 const mockDownloadBlob = vi.fn();
@@ -76,7 +76,7 @@ vi.mock('routes/routes', () => ({
   }
 }));
 
-describe('ReceiptDownload', () => {
+describe('DebtPositionDownload', () => {
   beforeEach(() => {
     vi.clearAllMocks();
     mockIsAnonymous.mockReturnValue(false);
@@ -98,7 +98,7 @@ describe('ReceiptDownload', () => {
 
   describe('Rendering', () => {
     it('renders all main elements', () => {
-      render(<ReceiptDownload />);
+      render(<DebtPositionDownload />);
 
       expect(screen.getByText('app.receipts.thankYou.title')).toBeInTheDocument();
       expect(screen.getByText('app.receipts.thankYou.subtitle')).toBeInTheDocument();
@@ -112,7 +112,7 @@ describe('ReceiptDownload', () => {
 
     it('renders close button with dashboard link for authenticated user', () => {
       mockIsAnonymous.mockReturnValue(false);
-      render(<ReceiptDownload />);
+      render(<DebtPositionDownload />);
 
       const closeButton = screen.getByRole('link', { name: 'actions.close' });
       expect(closeButton).toHaveAttribute('href', '/dashboard');
@@ -120,7 +120,7 @@ describe('ReceiptDownload', () => {
 
     it('renders close button with login link for anonymous user', () => {
       mockIsAnonymous.mockReturnValue(true);
-      render(<ReceiptDownload />);
+      render(<DebtPositionDownload />);
 
       const closeButton = screen.getByRole('link', { name: 'actions.close' });
       expect(closeButton).toHaveAttribute('href', '/login');
@@ -130,7 +130,7 @@ describe('ReceiptDownload', () => {
   describe('Download functionality', () => {
     it('automatically downloads receipt on mount for authenticated user', async () => {
       mockIsAnonymous.mockReturnValue(false);
-      render(<ReceiptDownload />);
+      render(<DebtPositionDownload />);
 
       await waitFor(() => {
         expect(mockUseDownloadReceipt).toHaveBeenCalledWith({ brokerId: 999 });
@@ -145,7 +145,7 @@ describe('ReceiptDownload', () => {
 
     it('automatically downloads receipt on mount for anonymous user', async () => {
       mockIsAnonymous.mockReturnValue(true);
-      render(<ReceiptDownload />);
+      render(<DebtPositionDownload />);
 
       await waitFor(() => {
         expect(mockUsePublicDownloadReceipt).toHaveBeenCalledWith({ brokerId: 999 });
@@ -163,7 +163,7 @@ describe('ReceiptDownload', () => {
         filename: null
       });
 
-      render(<ReceiptDownload />);
+      render(<DebtPositionDownload />);
 
       await waitFor(() => {
         expect(mockDownloadBlob).toHaveBeenCalledWith(expect.any(Blob), '123.pdf');
@@ -173,7 +173,7 @@ describe('ReceiptDownload', () => {
     it('shows error notification when download fails', async () => {
       mockMutateAsync.mockRejectedValue(new Error('Download failed'));
 
-      render(<ReceiptDownload />);
+      render(<DebtPositionDownload />);
 
       await waitFor(() => {
         expect(mockNotifyEmit).toHaveBeenCalledWith('app.receiptDetail.downloadError');
@@ -188,7 +188,7 @@ describe('ReceiptDownload', () => {
         state: null
       } as any);
 
-      render(<ReceiptDownload />);
+      render(<DebtPositionDownload />);
 
       await waitFor(() => {
         expect(mockMutateAsync).toHaveBeenCalledWith({
@@ -205,7 +205,7 @@ describe('ReceiptDownload', () => {
         organizationId: '321'
       });
 
-      render(<ReceiptDownload />);
+      render(<DebtPositionDownload />);
 
       await waitFor(() => {
         expect(mockMutateAsync).toHaveBeenCalledWith({

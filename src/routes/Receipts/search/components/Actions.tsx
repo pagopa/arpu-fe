@@ -13,6 +13,9 @@ import Button from '@mui/material/Button';
 import ShoppingCart from '@mui/icons-material/ShoppingCart';
 import Download from '@mui/icons-material/Download';
 import { addItem } from 'store/CartStore';
+import loaders from 'utils/loaders';
+import files from 'utils/files';
+import notify from 'utils/notify';
 
 type ActionsProps = {
   installment: InstallmentDebtorExtendedDTO;
@@ -21,24 +24,50 @@ type ActionsProps = {
 export const Actions = ({ installment }: ActionsProps) => {
   const navigate = useNavigate();
   const { t } = useTranslation();
+  const brokerId = utils.storage.app.getBrokerId();
 
   const isAnonymous = utils.storage.user.isAnonymous();
+
+  const receiptPdf = isAnonymous
+    ? loaders.public.usePublicDownloadReceipt({ brokerId })
+    : loaders.useDownloadReceipt({ brokerId });
+
   const downloadRoute = isAnonymous
-    ? ArcRoutes.public.RECEIPT_DOWNLOAD
-    : ArcRoutes.RECEIPT_DOWNLOAD;
+    ? ArcRoutes.public.DEBT_POSITION_DOWNLOAD
+    : ArcRoutes.DEBT_POSITION_DOWNLOAD;
 
   const detailRoute = isAnonymous ? ArcRoutes.public.RECEIPT : ArcRoutes.RECEIPT;
 
-  const onDownload = () => {
-    if (installment?.receiptId && installment?.organizationId && installment?.debtor?.fiscalCode) {
+  const onDownloadPaymentNotice = () => {
+    if (installment?.iuv && installment?.organizationId && installment?.debtor?.fiscalCode) {
       const path = generatePath(downloadRoute, {
-        receiptId: installment.receiptId,
+        iuv: installment.iuv,
         organizationId: installment.organizationId
       });
 
       navigate(path, { state: { fiscalCode: installment.debtor.fiscalCode } });
     } else {
       utils.notify.emit(t('errors.toast.default'));
+    }
+  };
+
+  const onDownloadReceipt = async () => {
+    try {
+      if (
+        installment?.receiptId &&
+        installment?.organizationId &&
+        installment?.debtor?.fiscalCode
+      ) {
+        const { blob, filename } = await receiptPdf.mutateAsync({
+          organizationId: installment.organizationId,
+          receiptId: installment.receiptId,
+          fiscalCode: installment.debtor.fiscalCode
+        });
+        files.downloadBlob(blob, filename || `${installment?.receiptId}.pdf`);
+      }
+      throw new Error('Missing required parameters');
+    } catch {
+      notify.emit(t('app.receiptDetail.downloadError'));
     }
   };
 
@@ -61,7 +90,7 @@ export const Actions = ({ installment }: ActionsProps) => {
 
   const PaidActions = () => (
     <Stack key={installment.installmentId} alignItems="center" direction="row" gap={2}>
-      <IconButton aria-label="download" onClick={onDownload}>
+      <IconButton aria-label="download" onClick={onDownloadReceipt}>
         <Download />
       </IconButton>
       <Button size="large" variant="contained" onClick={navigateToDetail}>
@@ -77,7 +106,7 @@ export const Actions = ({ installment }: ActionsProps) => {
       aria-label="download"
       size="large"
       variant="contained"
-      onClick={onDownload}>
+      onClick={onDownloadPaymentNotice}>
       {t('app.debtPositionsSearch.actions.download')}
     </Button>
   );
@@ -90,7 +119,7 @@ export const Actions = ({ installment }: ActionsProps) => {
       gap={0.5}
       justifyContent="space-between"
       width="30%">
-      <IconButton aria-label="download" onClick={onDownload}>
+      <IconButton aria-label="download" onClick={onDownloadPaymentNotice}>
         <Download />
       </IconButton>
       <IconButton

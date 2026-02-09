@@ -85,9 +85,9 @@ vi.mock('react-router-dom', async () => {
 
 vi.mock('routes/routes', () => ({
   ArcRoutes: {
-    RECEIPT_DOWNLOAD: '/receipt/:organizationId/:receiptId/download',
+    DEBT_POSITION_DOWNLOAD: '/receipt/:organizationId/:receiptId/download',
     public: {
-      RECEIPT_DOWNLOAD: '/public/receipt/:organizationId/:receiptId/download'
+      DEBT_POSITION_DOWNLOAD: '/public/receipt/:organizationId/:receiptId/download'
     }
   }
 }));

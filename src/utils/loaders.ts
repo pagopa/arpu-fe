@@ -191,7 +191,8 @@ type GetPaymentNoticeQueryParam = {
 export const getPaymentNotice = (
   brokerId: number,
   organizationId: number,
-  query: GetPaymentNoticeQueryParam
+  query: GetPaymentNoticeQueryParam,
+  debtorFiscalCode?: string
 ) =>
   useMutation({
     mutationKey: ['getPaymentNotice'],
@@ -200,7 +201,7 @@ export const getPaymentNotice = (
         brokerId,
         organizationId,
         query,
-        { format: 'blob' }
+        { format: 'blob', headers: { 'X-fiscal-code': debtorFiscalCode } }
       );
 
       const contentDisposition = response.headers['content-disposition'] || '';
