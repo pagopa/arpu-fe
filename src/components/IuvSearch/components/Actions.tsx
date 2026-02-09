@@ -16,6 +16,7 @@ import {
   InstallmentDebtorExtendedDTO,
   InstallmentStatus
 } from '../../../../generated/data-contracts';
+import { usePostCarts } from 'hooks/usePostCarts';
 
 type ActionsProps = {
   installment: InstallmentDebtorExtendedDTO;
@@ -27,6 +28,13 @@ export const Actions = ({ installment }: ActionsProps) => {
   const brokerId = utils.storage.app.getBrokerId();
 
   const isAnonymous = utils.storage.user.isAnonymous();
+
+  const carts = usePostCarts({
+    onSuccess: (url) => {
+      window.location.replace(url);
+    },
+    onError: (error: string) => navigate(ArcRoutes.COURTESY_PAGE.replace(':error', error))
+  });
 
   const receiptPdf = isAnonymous
     ? loaders.public.usePublicDownloadReceipt({ brokerId })
@@ -88,6 +96,55 @@ export const Actions = ({ installment }: ActionsProps) => {
     }
   };
 
+  const addToCart = () => {
+    if (
+      !installment?.iuv ||
+      !installment?.nav ||
+      !installment?.amountCents ||
+      !installment?.orgName ||
+      !installment?.orgFiscalCode
+    ) {
+      utils.notify.emit(t('errors.toast.drawer'));
+    } else {
+      addItem({
+        installmentId: installment.installmentId,
+        amount: installment.amountCents,
+        description: installment.debtPositionTypeOrgDescription,
+        iuv: installment.iuv,
+        nav: installment.nav,
+        paFullName: installment.orgName,
+        paTaxCode: installment.orgFiscalCode
+      });
+    }
+  };
+
+  const goToPayment = () => {
+    try {
+      if (
+        !installment?.iuv ||
+        !installment?.nav ||
+        !installment?.amountCents ||
+        !installment?.orgName ||
+        !installment?.orgFiscalCode
+      ) {
+        utils.notify.emit(t('errors.toast.payment'));
+      } else {
+        const cartItem = {
+          installmentId: installment.installmentId,
+          amount: installment.amountCents,
+          description: installment.debtPositionTypeOrgDescription,
+          iuv: installment.iuv,
+          nav: installment.nav,
+          paFullName: installment.orgName,
+          paTaxCode: installment.orgFiscalCode
+        };
+        carts.mutate({ notices: [cartItem], email: installment?.debtor?.email || '' });
+      }
+    } catch (e) {
+      utils.notify.emit(t('errors.toast.payment'));
+    }
+  };
+
   const PaidActions = () => (
     <Stack key={installment.installmentId} alignItems="center" direction="row" gap={2}>
       <IconButton aria-label="download" onClick={onDownloadReceipt}>
@@ -122,22 +179,10 @@ export const Actions = ({ installment }: ActionsProps) => {
       <IconButton aria-label="download" onClick={onDownloadPaymentNotice}>
         <Download />
       </IconButton>
-      <IconButton
-        aria-label="download"
-        onClick={() =>
-          addItem({
-            installmentId: installment.installmentId,
-            amount: installment.amountCents,
-            description: installment.debtPositionTypeOrgDescription,
-            iuv: installment?.iuv || '',
-            nav: installment?.nav || '',
-            paFullName: installment.orgName || '',
-            paTaxCode: installment.orgFiscalCode || ''
-          })
-        }>
+      <IconButton aria-label="download" onClick={addToCart}>
         <ShoppingCart />
       </IconButton>
-      <Button size="large" variant="contained" onClick={navigateToDetail}>
+      <Button size="large" variant="contained" onClick={goToPayment}>
         {t('actions.payNow')}
       </Button>
     </Stack>

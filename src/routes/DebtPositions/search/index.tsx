@@ -12,8 +12,6 @@ export const DebtPositionsSearch = () => {
       resultKey="app.debtPositionsSearch.result"
       searchErrorKey="app.debtPositionsSearch.searchError"
       subtitleKey="app.debtPositionsSearch.sub"
-      tab1DescriptionKey="app.debtPositionsSearch.tab1.description"
-      tab2DescriptionKey="app.debtPositionsSearch.tab2.description"
       titleKey="app.debtPositionsSearch.title"
     />
   );

@@ -421,7 +421,9 @@
       "403": "Non hai i permessi per eseguire questa azione.",
       "404": "Risorsa non trovata.",
       "500": "Errore del server, riprova più tardi.",
-      "default": "Si è verificato un errore imprevisto. Riprova più tardi."
+      "default": "Si è verificato un errore imprevisto. Riprova più tardi.",
+      "drawer": "Errore durante l'aggiunta all'carrello dei pagamenti. Riprova più tardi.",
+      "payment": "Errore durante il pagamento. Riprova più tardi."
     }
   },
   "ui": {

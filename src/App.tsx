@@ -90,14 +90,6 @@ const router = createBrowserRouter([
         )
       },
       {
-        path: ArcRoutes.public.DEBT_POSITION_SEARCH,
-        element: (
-          <PreLoginLayout>
-            <DebtPositionsSearch />
-          </PreLoginLayout>
-        )
-      },
-      {
         path: ArcRoutes.AUTH_CALLBACK,
         element: <AuthCallback />,
         loader: ({ request }) => getTokenOneidentity(request)
@@ -235,6 +227,21 @@ const router = createBrowserRouter([
             element: <Download />,
             handle: {
               backButton: false,
+              sidebar: {
+                visibile: false
+              }
+            }
+          }
+        ]
+      },
+      {
+        path: ArcRoutes.public.DEBT_POSITION_SEARCH,
+        element: <Layout anonymous={true} />,
+        children: [
+          {
+            index: true,
+            element: <DebtPositionsSearch />,
+            handle: {
               sidebar: {
                 visibile: false
               }

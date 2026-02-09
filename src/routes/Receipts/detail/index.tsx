@@ -46,7 +46,9 @@ export const ReceiptDetail = () => {
     : loaders.useReceiptDetail(request);
 
   const onDownload = () => {
-    const path = isAnonymous ? ArcRoutes.public.DEBT_POSITION_DOWNLOAD : ArcRoutes.DEBT_POSITION_DOWNLOAD;
+    const path = isAnonymous
+      ? ArcRoutes.public.DEBT_POSITION_DOWNLOAD
+      : ArcRoutes.DEBT_POSITION_DOWNLOAD;
 
     navigate(generatePath(path, { receiptId, organizationId }), { state: { fiscalCode } });
   };
