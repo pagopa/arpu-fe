@@ -25,7 +25,15 @@
     },
     "debtPositionsSearch": {
       "title": "Cerca un avviso",
+      "sub": "Cerca un avviso",
+      "result_zero": "Nessun riultato",
+      "result_one": "Abbiamo trovato {{count}} avviso",
+      "result_other": "Abbiamo trovato {{count}} avvisi",
       "description": "Recupera un avviso di pagamento compilando i campi con i dati richiesti.",
+      "noData": {
+        "title": "Non abbiamo trovato avvisi corrispondenti",
+        "text": "Controlla i dati inseriti e riprova."
+      },
       "actions": {
         "download": "Scarica avviso"
       }
