@@ -1,11 +1,11 @@
 import { useTranslation } from 'react-i18next';
-import { InstallmentDebtorExtendedDTO } from '../../../../../generated/data-contracts';
 import React from 'react';
 import { Card, Stack, Typography } from '@mui/material';
 import { propertyOrMissingValue, toEuroOrMissingValue } from 'utils/converters';
 import { Actions } from './Actions';
 import { InstallmentType } from 'utils/loaders';
 import { InstallmentChip } from 'components/StatusChips/InstallmentChip';
+import { InstallmentDebtorExtendedDTO } from '../../../../generated/data-contracts';
 
 type ResultsProps = {
   installments: InstallmentDebtorExtendedDTO[];

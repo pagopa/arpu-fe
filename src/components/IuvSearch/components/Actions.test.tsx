@@ -3,7 +3,7 @@ import { fireEvent, render, screen } from '__tests__/renderers';
 import '@testing-library/jest-dom';
 import { Actions } from './Actions';
 import React from 'react';
-import { InstallmentDebtorExtendedDTO, PersonDTO } from '../../../../../generated/data-contracts';
+import { InstallmentDebtorExtendedDTO, PersonDTO } from '../../../../generated/data-contracts';
 
 const mockNavigate = vi.fn();
 const mockNotifyEmit = vi.fn();

@@ -1,10 +1,6 @@
 import React from 'react';
 import { generatePath, useNavigate } from 'react-router-dom';
 import { ArcRoutes } from 'routes/routes';
-import {
-  InstallmentDebtorExtendedDTO,
-  InstallmentStatus
-} from '../../../../../generated/apiClient';
 import utils from 'utils';
 import { useTranslation } from 'react-i18next';
 import Stack from '@mui/material/Stack';
@@ -16,6 +12,10 @@ import { addItem } from 'store/CartStore';
 import loaders from 'utils/loaders';
 import files from 'utils/files';
 import notify from 'utils/notify';
+import {
+  InstallmentDebtorExtendedDTO,
+  InstallmentStatus
+} from '../../../../generated/data-contracts';
 
 type ActionsProps = {
   installment: InstallmentDebtorExtendedDTO;

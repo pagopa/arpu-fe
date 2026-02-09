@@ -16,10 +16,10 @@ import { useTranslation } from 'react-i18next';
 import { BackButton } from 'components/BackButton';
 import { Content } from 'components/Content';
 import utils from 'utils';
-import { Results } from 'routes/Receipts/search/components/Results';
 import { InstallmentType } from 'utils/loaders';
 import { useFormik } from 'formik';
 import { InstallmentStatus } from '../../../generated/data-contracts';
+import { Results } from './components/Results';
 
 enum TabIndex {
   PERSONA_FISICA = 0,
