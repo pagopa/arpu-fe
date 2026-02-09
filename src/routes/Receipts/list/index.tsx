@@ -48,7 +48,8 @@ export const ReceiptsList = () => {
     applyFilters
   } = useSearch({
     query: mutation,
-    filters: appliedFilters
+    filters: appliedFilters,
+    initialSort: ['paymentDateTime,desc']
   });
 
   const handleApplyFilters = () => {
@@ -118,10 +119,10 @@ export const ReceiptsList = () => {
           <Stack direction="row" gap={3} alignItems="center" flex={2}>
             <DateRange
               from={{
-                onChange: (dateFrom) => setStartDate(dateFrom),
+                onChange: setStartDate,
                 value: startDate
               }}
-              to={{ onChange: (dateTo) => setEndDate(dateTo), value: endDate }}
+              to={{ onChange: setEndDate, value: endDate }}
             />
 
             <Button
