@@ -6,7 +6,7 @@ import { setAppReady } from 'store/appStore';
 
 /** Initial setup function to prepare the application state and necessary config */
 const stateSetup = async () => {
-  const brokerId = Number(config.brokerId)
+  const brokerId = Number(config.brokerId);
   const { data } = await utils.apiClient.public.getPublicBrokerInfo(brokerId);
   setBrokerInfo(data);
   setAppReady();
@@ -14,7 +14,7 @@ const stateSetup = async () => {
 
 const setupOrError = async () => {
   try {
-    if( !window.location.href.includes(ArcErrors[410])){
+    if (!window.location.href.includes(ArcErrors[410])) {
       await stateSetup();
     }
   } catch {

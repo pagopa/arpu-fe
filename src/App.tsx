@@ -41,201 +41,188 @@ const withGuard = (Component: () => React.JSX.Element) => (
   </RouteGuard>
 );
 
-const router = createBrowserRouter([
-  {
-    path: '*',
-    element: <Navigate replace to={ArcRoutes.COURTESY_PAGE.replace(':error', ArcErrors['404'])} />
-  },
-  {
-    path: ArcRoutes.AUTH_CALLBACK,
-    element: <AuthCallback />,
-    loader: ({ request }) => getTokenOneidentity(request)
-  },
-  {
-    loader: appSetup,
-    element: <ApiClient client={[utils.apiClient]} />,
-    errorElement: <ErrorFallback />,
-    children: [
-      {
-        path: '/',
-        element: <Navigate to={ArcRoutes.DASHBOARD} />
-      },
-      {
-        element: <PreLoginLayout />,
-        children: [
-          {
-            path: ArcRoutes.LOGIN,
-            element: <Login />
-          },
-          {
-            path: ArcRoutes.public.RECEIPTS_SEARCH,
-            element: <ReceiptsSearch />
-          },
-          {
-            path: ArcRoutes.public.RECEIPT,
-            element: <ReceiptDetail />
-          },
-          {
-            path: ArcRoutes.public.DEBT_POSITION_DOWNLOAD,
-            element: <DebtPositionDownload />
-          },
-          {
-            path: ArcRoutes.public.DEBT_POSITION_SEARCH,
-            element: <DebtPositionsSearch />
-          },
-          {
-            path: ArcRoutes.TOS,
-            element: <Resources resource="tos" />
-          },
-          {
-            path: ArcRoutes.PRIVACY_POLICY,
-            element: <Resources resource="pp" />
-          },
-          {
-            path: ArcRoutes.COURTESY_PAGE,
-            loader: ({ params }) => Promise.resolve(params.error),
-            element: <CourtesyPage />,
-          },
-        ]
-      },
-      {
-        path: ArcRoutes.DASHBOARD,
-        element: withGuard(() => <Layout />),
-        children: [
-          {
-            path: ArcRoutes.ASSISTANCE,
-            element: <Assistance />,
-            handle: {
-              backButton: false,
-              sidebar: {
-                visibile: false
-              }
-            } as RouteHandleObject
-          },
-          {
-            path: ArcRoutes.USER,
-            element: <UserRoute />,
-            handle: {
-              backButton: true,
-              sidebar: {
-                visibile: false
-              }
-            } as RouteHandleObject
-          },
-          {
-            index: true,
-            element: <DashboardRoute />
-          },
-          {
-            path: ArcRoutes.RECEIPT,
-            element: <ReceiptDetail />
-          },
-          {
-            path: ArcRoutes.DEBT_POSITION_DOWNLOAD,
-            element: <DebtPositionDownload />,
-            handle: {
-              sidebar: {
-                visibile: false
-              }
+const router = createBrowserRouter(
+  [
+    {
+      path: '*',
+      element: <Navigate replace to={ArcRoutes.COURTESY_PAGE.replace(':error', ArcErrors['404'])} />
+    },
+    {
+      path: ArcRoutes.AUTH_CALLBACK,
+      element: <AuthCallback />,
+      loader: ({ request }) => getTokenOneidentity(request)
+    },
+    {
+      loader: appSetup,
+      element: <ApiClient client={[utils.apiClient]} />,
+      errorElement: <ErrorFallback />,
+      children: [
+        {
+          path: '/',
+          element: <Navigate to={ArcRoutes.DASHBOARD} />
+        },
+        {
+          element: <PreLoginLayout />,
+          children: [
+            {
+              path: ArcRoutes.LOGIN,
+              element: <Login />
+            },
+            {
+              path: ArcRoutes.public.RECEIPTS_SEARCH,
+              element: <ReceiptsSearch />
+            },
+            {
+              path: ArcRoutes.public.RECEIPT,
+              element: <ReceiptDetail />
+            },
+            {
+              path: ArcRoutes.public.DEBT_POSITION_DOWNLOAD,
+              element: <DebtPositionDownload />
+            },
+            {
+              path: ArcRoutes.public.DEBT_POSITION_SEARCH,
+              element: <DebtPositionsSearch />
+            },
+            {
+              path: ArcRoutes.TOS,
+              element: <Resources resource="tos" />
+            },
+            {
+              path: ArcRoutes.PRIVACY_POLICY,
+              element: <Resources resource="pp" />
+            },
+            {
+              path: ArcRoutes.COURTESY_PAGE,
+              loader: ({ params }) => Promise.resolve(params.error),
+              element: <CourtesyPage />
             }
-          },
-          {
-            path: ArcRoutes.RECEIPTS,
-            element: <ReceiptsList />
-          },
-          {
-            path: ArcRoutes.DEBT_POSITION,
-            element: <DebtPositionDetail />
-          },
-          {
-            path: ArcRoutes.DEBT_POSITIONS,
-            element: <DebtPositionsList />
-          },
-          {
-            path: ArcRoutes.PAYMENTS_ON_THE_FLY,
-            children: [
-              {
-                index: true,
-                element: <Spontanei />,
-                handle: {
-                  backButton: true,
-                  sidebar: {
-                    visibile: false
-                  }
+          ]
+        },
+        {
+          path: ArcRoutes.DASHBOARD,
+          element: withGuard(() => <Layout />),
+          children: [
+            {
+              path: ArcRoutes.ASSISTANCE,
+              element: <Assistance />,
+              handle: {
+                backButton: false,
+                sidebar: {
+                  visibile: false
                 }
-              },
-              {
-                path: 'download/:orgId/:iuv',
-                element: <Download />,
-                handle: {
-                  backButton: false,
-                  sidebar: {
-                    visibile: false
-                  }
+              } as RouteHandleObject
+            },
+            {
+              path: ArcRoutes.USER,
+              element: <UserRoute />,
+              handle: {
+                backButton: true,
+                sidebar: {
+                  visibile: false
+                }
+              } as RouteHandleObject
+            },
+            {
+              index: true,
+              element: <DashboardRoute />
+            },
+            {
+              path: ArcRoutes.RECEIPT,
+              element: <ReceiptDetail />
+            },
+            {
+              path: ArcRoutes.DEBT_POSITION_DOWNLOAD,
+              element: <DebtPositionDownload />,
+              handle: {
+                sidebar: {
+                  visibile: false
                 }
               }
-            ]
-          }
-        ]
-      },
-      {
-        path: ArcRoutes.public.PAYMENTS_ON_THE_FLY,
-        element: <Layout anonymous={true} />,
-        children: [
-          {
-            index: true,
-            element: <Spontanei />,
-            handle: {
-              backButton: true,
-              sidebar: {
-                visibile: false
+            },
+            {
+              path: ArcRoutes.RECEIPTS,
+              element: <ReceiptsList />
+            },
+            {
+              path: ArcRoutes.DEBT_POSITION,
+              element: <DebtPositionDetail />
+            },
+            {
+              path: ArcRoutes.DEBT_POSITIONS,
+              element: <DebtPositionsList />
+            },
+            {
+              path: ArcRoutes.PAYMENTS_ON_THE_FLY,
+              children: [
+                {
+                  index: true,
+                  element: <Spontanei />,
+                  handle: {
+                    backButton: true,
+                    sidebar: {
+                      visibile: false
+                    }
+                  }
+                },
+                {
+                  path: 'download/:orgId/:iuv',
+                  element: <Download />,
+                  handle: {
+                    backButton: false,
+                    sidebar: {
+                      visibile: false
+                    }
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        {
+          path: ArcRoutes.public.PAYMENTS_ON_THE_FLY,
+          element: <Layout anonymous={true} />,
+          children: [
+            {
+              index: true,
+              element: <Spontanei />,
+              handle: {
+                backButton: true,
+                sidebar: {
+                  visibile: false
+                }
+              }
+            },
+            {
+              path: 'download/:orgId/:iuv',
+              element: <Download />,
+              handle: {
+                backButton: false,
+                sidebar: {
+                  visibile: false
+                }
               }
             }
-          },
-          {
-            path: 'download/:orgId/:iuv',
-            element: <Download />,
-            handle: {
-              backButton: false,
-              sidebar: {
-                visibile: false
-              }
-            }
-          }
-        ]
-      },
-      {
-        path: ArcRoutes.public.DEBT_POSITION_SEARCH,
-        element: <Layout anonymous={true} />,
-        children: [
-          {
-            index: true,
-            element: <DebtPositionsSearch />,
-            handle: {
-              sidebar: {
-                visibile: false
-              }
-            }
-          }
-        ]
-      }
-    ]
-  }
-], { basename: rootPrefix });
+          ]
+        }
+      ]
+    }
+  ],
+  { basename: rootPrefix }
+);
 
 export const App = () => {
-  const isReady = appReady.value
+  const isReady = appReady.value;
   return (
-  <>
-    <HealthCheck />
-    <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale={it.code}>
-      <Overlay visible={!isReady}/> 
-      <Theme>
-        <Overlay />
-        <RouterProvider router={router} />
-      </Theme>
-    </LocalizationProvider>
-  </>
-); 
-}
-
+    <>
+      <HealthCheck />
+      <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale={it.code}>
+        <Overlay visible={!isReady} />
+        <Theme>
+          <Overlay />
+          <RouterProvider router={router} />
+        </Theme>
+      </LocalizationProvider>
+    </>
+  );
+};

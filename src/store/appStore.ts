@@ -7,5 +7,5 @@ export function setAppReady() {
 }
 
 export function resetBrokerInfo() {
-  appReady.value = false
+  appReady.value = false;
 }
