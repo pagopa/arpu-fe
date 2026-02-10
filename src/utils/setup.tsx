@@ -1,19 +1,27 @@
 import utils from '.';
 import config from './config';
-import { ArcErrors, ArcRoutes } from 'routes/routes';
-import { setBrokerInfo, brokerInfoState } from 'store/BrokerStore';
+import { ArcErrors, ArcRoutes, rootPrefix } from 'routes/routes';
+import { setBrokerInfo } from 'store/BrokerStore';
+import { setAppReady } from 'store/appStore';
 
 /** Initial setup function to prepare the application state and necessary config */
 const stateSetup = async () => {
-  const { data } = await utils.apiClient.public.getPublicBrokerInfo(config.brokerId);
+  const brokerId = Number(config.brokerId)
+  const { data } = await utils.apiClient.public.getPublicBrokerInfo(brokerId);
   setBrokerInfo(data);
+  setAppReady();
 };
 
 const setupOrError = async () => {
   try {
-    await stateSetup();
+    if( !window.location.href.includes(ArcErrors[410])){
+      await stateSetup();
+    }
   } catch {
-    window.location.replace(`${ArcRoutes.COURTESY_PAGE.replace(':error', ArcErrors['404'])}`);
+    const toUrl = `${rootPrefix}${ArcRoutes.COURTESY_PAGE.replace(':error', ArcErrors[410])}`;
+    window.location.replace(toUrl);
+  } finally {
+    setAppReady();
   }
 };
 
@@ -22,7 +30,4 @@ const appSetup = async () => {
   return true;
 };
 
-const isAppReady = () =>
-  Boolean(brokerInfoState.value.brokerName) && Boolean(brokerInfoState.value.brokerFiscalCode);
-
-export { setupOrError, isAppReady, appSetup };
+export { setupOrError, appSetup };

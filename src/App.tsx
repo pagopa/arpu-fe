@@ -32,7 +32,8 @@ import { DebtPositionsSearch } from 'routes/DebtPositions/search';
 import { it } from 'date-fns/locale/it';
 import { Overlay } from 'components/Overlay';
 import { DebtPositionDownload } from 'routes/DebtPositions/download';
-import { appSetup, isAppReady } from 'utils/setup';
+import { appSetup } from 'utils/setup';
+import { appReady } from 'store/appStore';
 
 const withGuard = (Component: () => React.JSX.Element) => (
   <RouteGuard itemKeys={[StorageItems.TOKEN]} storage={window.localStorage}>
@@ -51,80 +52,59 @@ const router = createBrowserRouter([
     loader: ({ request }) => getTokenOneidentity(request)
   },
   {
-    path: ArcRoutes.COURTESY_PAGE,
-    element: (
-      <PreLoginLayout>
-        <CourtesyPage />
-      </PreLoginLayout>
-    )
-  },
-  {
     loader: appSetup,
     element: <ApiClient client={[utils.apiClient]} />,
     errorElement: <ErrorFallback />,
     children: [
-      // {
-      //   path: '/',
-      //   element: <Navigate to={ArcRoutes.DASHBOARD} />
-      // },
       {
-        path: ArcRoutes.LOGIN,
-        element: (
-          <PreLoginLayout>
-            <Login />
-          </PreLoginLayout>
-        ),
-        handle: {
-          backButton: false
-        } as RouteHandleObject
+        path: '/',
+        element: <Navigate to={ArcRoutes.DASHBOARD} />
       },
       {
-        path: ArcRoutes.public.RECEIPTS_SEARCH,
-        element: (
-          <PreLoginLayout>
-            <ReceiptsSearch />
-          </PreLoginLayout>
-        )
-      },
-      {
-        path: ArcRoutes.public.RECEIPT,
-        element: (
-          <PreLoginLayout>
-            <ReceiptDetail />
-          </PreLoginLayout>
-        )
-      },
-      {
-        path: ArcRoutes.public.DEBT_POSITION_DOWNLOAD,
-        element: (
-          <PreLoginLayout>
-            <DebtPositionDownload />
-          </PreLoginLayout>
-        )
-      },
-      {
-        path: ArcRoutes.TOS,
-        element: (
-          <PreLoginLayout>
-            <Resources resource="tos" />
-          </PreLoginLayout>
-        )
-      },
-      {
-        path: ArcRoutes.PRIVACY_POLICY,
-        element: (
-          <PreLoginLayout>
-            <Resources resource="pp" />
-          </PreLoginLayout>
-        )
+        element: <PreLoginLayout />,
+        children: [
+          {
+            path: ArcRoutes.LOGIN,
+            element: <Login />
+          },
+          {
+            path: ArcRoutes.public.RECEIPTS_SEARCH,
+            element: <ReceiptsSearch />
+          },
+          {
+            path: ArcRoutes.public.RECEIPT,
+            element: <ReceiptDetail />
+          },
+          {
+            path: ArcRoutes.public.DEBT_POSITION_DOWNLOAD,
+            element: <DebtPositionDownload />
+          },
+          {
+            path: ArcRoutes.public.DEBT_POSITION_SEARCH,
+            element: <DebtPositionsSearch />
+          },
+          {
+            path: ArcRoutes.TOS,
+            element: <Resources resource="tos" />
+          },
+          {
+            path: ArcRoutes.PRIVACY_POLICY,
+            element: <Resources resource="pp" />
+          },
+          {
+            path: ArcRoutes.COURTESY_PAGE,
+            loader: ({ params }) => Promise.resolve(params.error),
+            element: <CourtesyPage />,
+          },
+        ]
       },
       {
         path: ArcRoutes.DASHBOARD,
-        element: <Layout />,
+        element: withGuard(() => <Layout />),
         children: [
           {
             path: ArcRoutes.ASSISTANCE,
-            element: withGuard(Assistance),
+            element: <Assistance />,
             handle: {
               backButton: false,
               sidebar: {
@@ -134,7 +114,7 @@ const router = createBrowserRouter([
           },
           {
             path: ArcRoutes.USER,
-            element: withGuard(UserRoute),
+            element: <UserRoute />,
             handle: {
               backButton: true,
               sidebar: {
@@ -144,15 +124,15 @@ const router = createBrowserRouter([
           },
           {
             index: true,
-            element: withGuard(DashboardRoute)
+            element: <DashboardRoute />
           },
           {
             path: ArcRoutes.RECEIPT,
-            element: withGuard(ReceiptDetail)
+            element: <ReceiptDetail />
           },
           {
             path: ArcRoutes.DEBT_POSITION_DOWNLOAD,
-            element: withGuard(DebtPositionDownload),
+            element: <DebtPositionDownload />,
             handle: {
               sidebar: {
                 visibile: false
@@ -161,25 +141,15 @@ const router = createBrowserRouter([
           },
           {
             path: ArcRoutes.RECEIPTS,
-            element: withGuard(ReceiptsList)
+            element: <ReceiptsList />
           },
           {
             path: ArcRoutes.DEBT_POSITION,
-            element: withGuard(DebtPositionDetail)
+            element: <DebtPositionDetail />
           },
           {
             path: ArcRoutes.DEBT_POSITIONS,
-            element: withGuard(DebtPositionsList)
-          },
-          {
-            path: ArcRoutes.COURTESY_PAGE,
-            loader: ({ params }) => Promise.resolve(params.error),
-            element: <CourtesyPage />,
-            handle: {
-              sidebar: {
-                visibile: false
-              }
-            }
+            element: <DebtPositionsList />
           },
           {
             path: ArcRoutes.PAYMENTS_ON_THE_FLY,
@@ -253,15 +223,19 @@ const router = createBrowserRouter([
   }
 ], { basename: rootPrefix });
 
-export const App = () => (
+export const App = () => {
+  const isReady = appReady.value
+  return (
   <>
     <HealthCheck />
     <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale={it.code}>
-      <Overlay visible={!isAppReady()}/>
+      <Overlay visible={!isReady}/> 
       <Theme>
         <Overlay />
         <RouterProvider router={router} />
       </Theme>
     </LocalizationProvider>
   </>
-);
+); 
+}
+
