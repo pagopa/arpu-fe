@@ -3,7 +3,7 @@ import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { Navigate, RouterProvider, createBrowserRouter } from 'react-router-dom';
 import { Theme } from './utils/style';
 import { Layout } from './components/Layout';
-import { ArcErrors, ArcRoutes } from './routes/routes';
+import { ArcErrors, ArcRoutes, rootPrefix } from './routes/routes';
 import DashboardRoute from './routes/Dashboard';
 import UserRoute from 'routes/User';
 import { RouteHandleObject } from 'models/Breadcrumbs';
@@ -32,7 +32,7 @@ import { DebtPositionsSearch } from 'routes/DebtPositions/search';
 import { it } from 'date-fns/locale/it';
 import { Overlay } from 'components/Overlay';
 import { DebtPositionDownload } from 'routes/DebtPositions/download';
-import { appSetup, setupFallback } from 'utils/setup';
+import { appSetup, isAppReady } from 'utils/setup';
 
 const withGuard = (Component: () => React.JSX.Element) => (
   <RouteGuard itemKeys={[StorageItems.TOKEN]} storage={window.localStorage}>
@@ -46,6 +46,11 @@ const router = createBrowserRouter([
     element: <Navigate replace to={ArcRoutes.COURTESY_PAGE.replace(':error', ArcErrors['404'])} />
   },
   {
+    path: ArcRoutes.AUTH_CALLBACK,
+    element: <AuthCallback />,
+    loader: ({ request }) => getTokenOneidentity(request)
+  },
+  {
     path: ArcRoutes.COURTESY_PAGE,
     element: (
       <PreLoginLayout>
@@ -55,15 +60,13 @@ const router = createBrowserRouter([
   },
   {
     loader: appSetup,
-    shouldRevalidate: () => false,
-    hydrateFallbackElement: setupFallback(),
     element: <ApiClient client={[utils.apiClient]} />,
     errorElement: <ErrorFallback />,
     children: [
-      {
-        path: '/',
-        element: <Navigate to={ArcRoutes.DASHBOARD} />
-      },
+      // {
+      //   path: '/',
+      //   element: <Navigate to={ArcRoutes.DASHBOARD} />
+      // },
       {
         path: ArcRoutes.LOGIN,
         element: (
@@ -98,11 +101,6 @@ const router = createBrowserRouter([
             <DebtPositionDownload />
           </PreLoginLayout>
         )
-      },
-      {
-        path: ArcRoutes.AUTH_CALLBACK,
-        element: <AuthCallback />,
-        loader: ({ request }) => getTokenOneidentity(request)
       },
       {
         path: ArcRoutes.TOS,
@@ -145,7 +143,7 @@ const router = createBrowserRouter([
             } as RouteHandleObject
           },
           {
-            path: ArcRoutes.DASHBOARD,
+            index: true,
             element: withGuard(DashboardRoute)
           },
           {
@@ -253,13 +251,13 @@ const router = createBrowserRouter([
       }
     ]
   }
-]);
+], { basename: rootPrefix });
 
-console.log(ArcRoutes.DASHBOARD);
 export const App = () => (
   <>
     <HealthCheck />
     <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale={it.code}>
+      <Overlay visible={!isAppReady()}/>
       <Theme>
         <Overlay />
         <RouterProvider router={router} />

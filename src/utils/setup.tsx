@@ -1,9 +1,7 @@
-import React from 'react';
 import utils from '.';
 import config from './config';
-import { CircularProgress, Stack } from '@mui/material';
 import { ArcErrors, ArcRoutes } from 'routes/routes';
-import { setBrokerInfo } from 'store/BrokerStore';
+import { setBrokerInfo, brokerInfoState } from 'store/BrokerStore';
 
 /** Initial setup function to prepare the application state and necessary config */
 const stateSetup = async () => {
@@ -24,11 +22,7 @@ const appSetup = async () => {
   return true;
 };
 
-/** Fallback component to show while stateSetup is in progress */
-const setupFallback = () => (
-  <Stack justifyContent={'center'} alignItems={'center'} height={'100vh'}>
-    <CircularProgress size={40} />
-  </Stack>
-);
+const isAppReady = () =>
+  Boolean(brokerInfoState.value.brokerName) && Boolean(brokerInfoState.value.brokerFiscalCode);
 
-export { setupOrError, setupFallback, appSetup };
+export { setupOrError, isAppReady, appSetup };

@@ -1,13 +1,13 @@
 import config from 'utils/config';
 
-const rootPrefix = `${config.deployPath}/${config.brokerId}`;
+export const rootPrefix = `${config.deployPath}/${config.brokerId}`;
 
 export const ExternalRoutes = {
-  PAYMENT_LINKS: `https://www.pagopa.gov.it/it/cittadini/dove-pagare/`
+  PAYMENT_LINKS: 'https://www.pagopa.gov.it/it/cittadini/dove-pagare/'
 };
 
 export const ArcRoutes = {
-  LOGIN: `${rootPrefix}/accesso`,
+  LOGIN: '/accesso',
   AUTH_CALLBACK: `${config.deployPath}/auth-callback`,
   DASHBOARD: rootPrefix,
   RECEIPT: `${rootPrefix}/ricevute/:receiptId/:organizationId`,
