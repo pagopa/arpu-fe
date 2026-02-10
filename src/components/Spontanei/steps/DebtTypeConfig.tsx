@@ -29,15 +29,15 @@ const DebtTypeConfig = () => {
 
   const { data } = isAnonymous
     ? utils.loaders.public.getPublicDebtPositionTypeOrgsWithSpontaneousDetail(
-      brokerId,
-      organizationId,
-      debtPositionTypeOrgId
-    )
+        brokerId,
+        organizationId,
+        debtPositionTypeOrgId
+      )
     : utils.loaders.getDebtPositionTypeOrgsWithSpontaneousDetail(
-      brokerId,
-      organizationId,
-      debtPositionTypeOrgId
-    );
+        brokerId,
+        organizationId,
+        debtPositionTypeOrgId
+      );
 
   const type = data?.formType;
 
