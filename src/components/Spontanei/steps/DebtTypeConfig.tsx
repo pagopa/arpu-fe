@@ -1,4 +1,4 @@
-import React, { useContext } from 'react';
+import React, { useContext, useEffect } from 'react';
 import FormContext, { FormContextType } from '../FormContext';
 import utils from 'utils';
 import StandardForm from '../StandarForm/StandardForm';
@@ -36,11 +36,17 @@ const DebtTypeConfig = () => {
       );
 
   const type = data?.formType;
-  context?.setFormType(type || null);
+
+  useEffect(() => {
+    if (type) {
+      context?.setFormType(type);
+    }
+    return () => context?.setFormType(null);
+  }, [type, context]);
 
   const hasFlagAnonymousFiscalCode = data?.flagAnonymousFiscalCode || false;
 
-  const renderFormByType = () => {
+  const renderedForm = React.useMemo(() => {
     switch (type) {
       case 'STANDARD':
         return <StandardForm hasFlagAnonymousFiscalCode={hasFlagAnonymousFiscalCode} />;
@@ -63,9 +69,9 @@ const DebtTypeConfig = () => {
       default:
         return null;
     }
-  };
+  }, [type, data, hasFlagAnonymousFiscalCode]);
 
-  return renderFormByType();
+  return renderedForm;
 };
 
 export default DebtTypeConfig;

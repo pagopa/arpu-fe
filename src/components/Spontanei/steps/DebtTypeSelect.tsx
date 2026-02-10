@@ -60,7 +60,8 @@ const DebtTypeSelect = () => {
 
   const onChange = async (debtType: DebtPositionTypeOrgsWithSpontaneousDTO) => {
     await formik.validateForm();
-    debtTypeHelpers.setValue(debtType);
+    await debtTypeHelpers.setValue(debtType);
+    await formik.setFieldValue('description', '', true);
   };
 
   const shouldContinue = async () => {

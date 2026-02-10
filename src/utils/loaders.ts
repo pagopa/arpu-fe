@@ -112,7 +112,7 @@ export const getOrganizationsWithSpontaneous = (brokerId: number) =>
 
 export const getPublicOrganizationsWithSpontaneous = (brokerId: number) =>
   useQuery({
-    queryKey: ['getPublicOrganizationsWithSpontaneous'],
+    queryKey: ['getPublicOrganizationsWithSpontaneous', brokerId],
     queryFn: async () => {
       const { data } = await utils.apiClient.public.getPublicOrganizationsWithSpontaneous(brokerId);
       return data;
@@ -121,14 +121,16 @@ export const getPublicOrganizationsWithSpontaneous = (brokerId: number) =>
 
 export const getDebtPositionTypeOrgsWithSpontaneous = (brokerId: number, organizationId: number) =>
   useQuery({
-    queryKey: ['getDebtPositionTypeOrgsWithSpontaneous'],
+    queryKey: ['getDebtPositionTypeOrgsWithSpontaneous', brokerId, organizationId],
     queryFn: async () => {
       const { data } = await utils.apiClient.brokers.getDebtPositionTypeOrgsWithSpontaneous(
         brokerId,
         organizationId
       );
       return data;
-    }
+    },
+    enabled: brokerId != null && organizationId != null,
+    staleTime: Infinity
   });
 
 export const getPublicDebtPositionTypeOrgsWithSpontaneous = (
@@ -136,14 +138,16 @@ export const getPublicDebtPositionTypeOrgsWithSpontaneous = (
   organizationId: number
 ) =>
   useQuery({
-    queryKey: ['getPublicDebtPositionTypeOrgsWithSpontaneous'],
+    queryKey: ['getPublicDebtPositionTypeOrgsWithSpontaneous', brokerId, organizationId],
     queryFn: async () => {
       const { data } = await utils.apiClient.public.getPublicDebtPositionTypeOrgsWithSpontaneous(
         brokerId,
         organizationId
       );
       return data;
-    }
+    },
+    enabled: brokerId != null && organizationId != null,
+    staleTime: Infinity
   });
 
 export const getDebtPositionTypeOrgsWithSpontaneousDetail = (
@@ -152,7 +156,12 @@ export const getDebtPositionTypeOrgsWithSpontaneousDetail = (
   debtPositionTypeOrgId: number
 ) =>
   useQuery({
-    queryKey: ['getDebtPositionTypeOrgsWithSpontaneousDetail'],
+    queryKey: [
+      'getDebtPositionTypeOrgsWithSpontaneousDetail',
+      brokerId,
+      organizationId,
+      debtPositionTypeOrgId
+    ],
     queryFn: async () => {
       const { data } = await utils.apiClient.brokers.getDebtPositionTypeOrgsWithSpontaneousDetail(
         brokerId,
@@ -169,7 +178,12 @@ export const getPublicDebtPositionTypeOrgsWithSpontaneousDetail = (
   debtPositionTypeOrgId: number
 ) =>
   useQuery({
-    queryKey: ['getPublicDebtPositionTypeOrgsWithSpontaneousDetail'],
+    queryKey: [
+      'getPublicDebtPositionTypeOrgsWithSpontaneousDetail',
+      brokerId,
+      organizationId,
+      debtPositionTypeOrgId
+    ],
     queryFn: async () => {
       const { data } =
         await utils.apiClient.public.getPublicDebtPositionTypeOrgsWithSpontaneousDetail(
@@ -413,7 +427,9 @@ const getMostUsedSpontaneousDebtPositionTypeOrgsForCurrentYear = (
           organizationId
         );
       return data;
-    }
+    },
+    enabled: brokerId != null && organizationId != null,
+    staleTime: Infinity
   });
 
 const getPublicMostUsedSpontaneousDebtPositionTypeOrgsForCurrentYear = (
@@ -433,7 +449,9 @@ const getPublicMostUsedSpontaneousDebtPositionTypeOrgsForCurrentYear = (
           organizationId
         );
       return data;
-    }
+    },
+    enabled: brokerId != null && organizationId != null,
+    staleTime: Infinity
   });
 
 export default {
