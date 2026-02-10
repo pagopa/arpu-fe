@@ -4,8 +4,7 @@ import { useLanguage } from 'hooks/useLanguage';
 import { Divider, Link, Stack, Typography } from '@mui/material';
 import { ArcRoutes } from 'routes/routes';
 import { ProductLogo } from './ProductLogo';
-import storage from 'utils/storage';
-import loaders from 'utils/loaders';
+import { brokerInfoState } from 'store/BrokerStore';
 
 const LINK_PERSONAL_DATA_PROTECTION =
   'https://privacyportal-de.onetrust.com/webform/77f17844-04c3-4969-a11d-462ee77acbe1/9ab6533d-be4a-482e-929a-0d8d2ab29df8';
@@ -28,9 +27,6 @@ const FooterLink = ({ href, children }: { href: string; children: string }) => {
 export const Footer = () => {
   const { t } = useTranslation();
   useLanguage();
-
-  const brokerId = storage.app.getBrokerId();
-  const { data: brokerInfo } = loaders.public.useBrokerInfo(brokerId);
 
   return (
     <Stack
@@ -59,7 +55,7 @@ export const Footer = () => {
         <Divider />
         <Stack alignItems="center" justifyContent="center" height={60}>
           <Typography component="span" fontWeight={600} fontSize={14}>
-            {brokerInfo?.brokerName}
+            {brokerInfoState.value.brokerName}
           </Typography>
         </Stack>
       </Stack>

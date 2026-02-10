@@ -32,6 +32,7 @@ import { DebtPositionsSearch } from 'routes/DebtPositions/search';
 import { it } from 'date-fns/locale/it';
 import { Overlay } from 'components/Overlay';
 import { DebtPositionDownload } from 'routes/DebtPositions/download';
+import { appSetup, setupFallback } from 'utils/setup';
 
 const withGuard = (Component: () => React.JSX.Element) => (
   <RouteGuard itemKeys={[StorageItems.TOKEN]} storage={window.localStorage}>
@@ -41,18 +42,27 @@ const withGuard = (Component: () => React.JSX.Element) => (
 
 const router = createBrowserRouter([
   {
+    path: '*',
+    element: <Navigate replace to={ArcRoutes.COURTESY_PAGE.replace(':error', ArcErrors['404'])} />
+  },
+  {
+    path: ArcRoutes.COURTESY_PAGE,
+    element: (
+      <PreLoginLayout>
+        <CourtesyPage />
+      </PreLoginLayout>
+    )
+  },
+  {
+    loader: appSetup,
+    shouldRevalidate: () => false,
+    hydrateFallbackElement: setupFallback(),
     element: <ApiClient client={[utils.apiClient]} />,
     errorElement: <ErrorFallback />,
     children: [
       {
-        path: '*',
-        element: (
-          <Navigate replace to={ArcRoutes.COURTESY_PAGE.replace(':error', ArcErrors['404'])} />
-        )
-      },
-      {
         path: '/',
-        element: <Navigate replace to={ArcRoutes.DASHBOARD} />
+        element: <Navigate to={ArcRoutes.DASHBOARD} />
       },
       {
         path: ArcRoutes.LOGIN,
@@ -107,14 +117,6 @@ const router = createBrowserRouter([
         element: (
           <PreLoginLayout>
             <Resources resource="pp" />
-          </PreLoginLayout>
-        )
-      },
-      {
-        path: ArcRoutes.COURTESY_PAGE,
-        element: (
-          <PreLoginLayout>
-            <CourtesyPage />
           </PreLoginLayout>
         )
       },
@@ -253,6 +255,7 @@ const router = createBrowserRouter([
   }
 ]);
 
+console.log(ArcRoutes.DASHBOARD);
 export const App = () => (
   <>
     <HealthCheck />

@@ -1,14 +1,16 @@
 import { Box } from '@mui/material';
 import React from 'react';
-import utils from 'utils';
+import { brokerInfoState } from 'store/BrokerStore';
 
 export const ProductLogo = () => {
-  const brokerId = utils.storage.app.getBrokerId();
-  const { data: brokerInfo } = utils.loaders.public.useBrokerInfo(brokerId);
   return (
     <Box>
-      {brokerInfo?.brokerLogo ? (
-        <img src={brokerInfo?.brokerLogo ?? ''} alt={`${brokerInfo?.brokerName} logo`} width="56" />
+      {brokerInfoState.value.brokerLogo ? (
+        <img
+          src={brokerInfoState.value.brokerLogo ?? ''}
+          alt={`${brokerInfoState.value.brokerName} logo`}
+          width="56"
+        />
       ) : null}
     </Box>
   );

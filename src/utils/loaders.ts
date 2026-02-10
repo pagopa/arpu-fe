@@ -360,18 +360,6 @@ const usePublicDownloadReceipt = ({ brokerId }: Pick<ReceiptDetailArgs, 'brokerI
     }
   });
 
-const useBrokerInfo = (brokerId: number) =>
-  useQuery({
-    queryKey: ['brokerInfo', brokerId],
-    queryFn: async () => {
-      const { data } = await utils.apiClient.public.getPublicBrokerInfo(brokerId);
-      return data;
-    },
-    enabled: brokerId >= 0,
-    throwOnError: true,
-    gcTime: Infinity
-  });
-
 const usePagedUnpaidDebtPositions = (brokerId: number) =>
   useMutation({
     mutationKey: ['pagedUnpaidDebtPositions', brokerId],
@@ -508,7 +496,6 @@ export default {
     getPublicDebtPositionTypeOrgsWithSpontaneousDetail,
     getPublicOrganizationsWithSpontaneous,
     getPublicPaymentNotice,
-    useBrokerInfo,
     usePublicInstallmentsByIuvOrNav,
     usePublicDownloadReceipt,
     usePublicReceiptDetail,

@@ -10,6 +10,7 @@ import { SubHeader } from './SubHeader';
 import { useTranslation } from 'react-i18next';
 import { ProductLogo } from 'components/ProductLogo';
 import { Box } from '@mui/system';
+import { brokerInfoState } from 'store/BrokerStore';
 
 export interface HeaderProps {
   onAssistanceClick?: () => void;
@@ -20,7 +21,6 @@ export const Header = (props: HeaderProps) => {
   const { onAssistanceClick = () => null } = props;
   const navigate = useNavigate();
   const { t } = useTranslation();
-  const brokerId = utils.storage.app.getBrokerId();
 
   async function logoutUser() {
     try {
@@ -34,13 +34,12 @@ export const Header = (props: HeaderProps) => {
   }
 
   const { userInfo } = useUserInfo();
-  const { data: brokerInfo } = utils.loaders.public.useBrokerInfo(brokerId);
 
   const rootLink: RootLinkType = {
-    label: brokerInfo?.brokerName ?? '',
+    label: brokerInfoState.value.brokerName,
     href: ArcRoutes.DASHBOARD,
-    ariaLabel: brokerInfo?.brokerName ?? '',
-    title: brokerInfo?.brokerName ?? ''
+    ariaLabel: brokerInfoState.value.brokerName,
+    title: brokerInfoState.value.brokerName
   };
 
   const jwtUser: JwtUser | undefined = userInfo
