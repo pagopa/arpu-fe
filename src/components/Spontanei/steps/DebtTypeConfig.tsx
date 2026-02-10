@@ -7,6 +7,10 @@ import ExternalUrlForm from '../ExternalUrlForm/ExternalUrlForm';
 import { useField } from 'formik';
 import { PaymentNoticeInfo } from '..';
 
+/**
+ * This component is responsible for rendering the form based on the debt type.
+ * @returns JSX.Element
+ */
 const DebtTypeConfig = () => {
   const context = useContext<FormContextType | null>(FormContext);
   const [org] = useField<PaymentNoticeInfo['org']>('org');
@@ -25,18 +29,21 @@ const DebtTypeConfig = () => {
 
   const { data } = isAnonymous
     ? utils.loaders.public.getPublicDebtPositionTypeOrgsWithSpontaneousDetail(
-        brokerId,
-        organizationId,
-        debtPositionTypeOrgId
-      )
+      brokerId,
+      organizationId,
+      debtPositionTypeOrgId
+    )
     : utils.loaders.getDebtPositionTypeOrgsWithSpontaneousDetail(
-        brokerId,
-        organizationId,
-        debtPositionTypeOrgId
-      );
+      brokerId,
+      organizationId,
+      debtPositionTypeOrgId
+    );
 
   const type = data?.formType;
 
+  /**
+   * Sets the form type in the context.
+   */
   useEffect(() => {
     if (type) {
       context?.setFormType(type);
@@ -46,6 +53,9 @@ const DebtTypeConfig = () => {
 
   const hasFlagAnonymousFiscalCode = data?.flagAnonymousFiscalCode || false;
 
+  /**
+   * Renders the form based on the debt type (memoizing).
+   */
   const renderedForm = React.useMemo(() => {
     switch (type) {
       case 'STANDARD':

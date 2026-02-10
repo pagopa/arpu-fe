@@ -17,6 +17,10 @@ import { CartItem } from 'models/Cart';
 import FileDownloadIcon from '@mui/icons-material/FileDownload';
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 
+/**
+ * This component is responsible for rendering the payment step of the form.
+ * @returns JSX.Element
+ */
 const Payment = () => {
   const context = useContext<FormContextType | null>(FormContext);
 
@@ -125,8 +129,8 @@ const Payment = () => {
     if (!iuv) return;
     isAnonymous
       ? navigate(generatePath(ArcRoutes.public.PAYMENTS_ON_THE_FLY_DOWNLOAD, { orgId, iuv }), {
-          state: { debtorFiscalCode: fiscalCode.value }
-        })
+        state: { debtorFiscalCode: fiscalCode.value }
+      })
       : navigate(generatePath(ArcRoutes.PAYMENTS_ON_THE_FLY_DOWNLOAD, { orgId, iuv }));
   };
 

@@ -110,6 +110,11 @@ export const getOrganizationsWithSpontaneous = (brokerId: number) =>
     }
   });
 
+/**
+ * Returns the organizations with spontaneous debt positions for the given broker [Public].
+ * @param brokerId 
+ * @returns The organizations with spontaneous debt positions for the given broker.
+ */
 export const getPublicOrganizationsWithSpontaneous = (brokerId: number) =>
   useQuery({
     queryKey: ['getPublicOrganizationsWithSpontaneous', brokerId],
@@ -119,6 +124,12 @@ export const getPublicOrganizationsWithSpontaneous = (brokerId: number) =>
     }
   });
 
+/**
+ * Returns the debt position type organizations with spontaneous debt positions for the given broker and organization.
+ * @param brokerId 
+ * @param organizationId 
+ * @returns The debt position type organizations with spontaneous debt positions for the given broker and organization.
+ */
 export const getDebtPositionTypeOrgsWithSpontaneous = (brokerId: number, organizationId: number) =>
   useQuery({
     queryKey: ['getDebtPositionTypeOrgsWithSpontaneous', brokerId, organizationId],
@@ -133,6 +144,12 @@ export const getDebtPositionTypeOrgsWithSpontaneous = (brokerId: number, organiz
     staleTime: Infinity
   });
 
+/**
+ * Returns the debt position type organizations with spontaneous debt positions for the given broker and organization [Public].
+ * @param brokerId 
+ * @param organizationId 
+ * @returns The debt position type organizations with spontaneous debt positions for the given broker and organization.
+ */
 export const getPublicDebtPositionTypeOrgsWithSpontaneous = (
   brokerId: number,
   organizationId: number
@@ -150,6 +167,13 @@ export const getPublicDebtPositionTypeOrgsWithSpontaneous = (
     staleTime: Infinity
   });
 
+/**
+ * Returns the debt position type organizations with spontaneous debt positions for the given broker and organization [Detail].
+ * @param brokerId 
+ * @param organizationId 
+ * @param debtPositionTypeOrgId 
+ * @returns The debt position type organizations with spontaneous debt positions for the given broker and organization [Detail].
+ */
 export const getDebtPositionTypeOrgsWithSpontaneousDetail = (
   brokerId: number,
   organizationId: number,
@@ -172,6 +196,13 @@ export const getDebtPositionTypeOrgsWithSpontaneousDetail = (
     }
   });
 
+/**
+ * Returns the debt position type organizations with spontaneous debt positions for the given broker and organization [Detail] [Public].
+ * @param brokerId 
+ * @param organizationId 
+ * @param debtPositionTypeOrgId 
+ * @returns The debt position type organizations with spontaneous debt positions for the given broker and organization [Detail] [Public].
+ */
 export const getPublicDebtPositionTypeOrgsWithSpontaneousDetail = (
   brokerId: number,
   organizationId: number,
