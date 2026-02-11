@@ -1,13 +1,13 @@
 import config from 'utils/config';
 
-export const rootPrefix = `${config.deployPath}/${config.brokerId}`;
+const rootPrefix = `${config.deployPath}/${config.brokerId}`;
 
 export const ExternalRoutes = {
-  PAYMENT_LINKS: 'https://www.pagopa.gov.it/it/cittadini/dove-pagare/'
+  PAYMENT_LINKS: `https://www.pagopa.gov.it/it/cittadini/dove-pagare/`
 };
 
 export const ArcRoutes = {
-  LOGIN: '/accesso',
+  LOGIN: `${rootPrefix}/accesso`,
   AUTH_CALLBACK: `${config.deployPath}/auth-callback`,
   DASHBOARD: rootPrefix,
   RECEIPT: `${rootPrefix}/ricevute/:receiptId/:organizationId`,
@@ -42,7 +42,6 @@ export enum ArcErrors {
   'risorsa-non-trovata' = 404,
   /** something went wrong with the login */
   'accesso-non-riuscito' = 408,
-  'broker-not-found' = 410,
   'avviso-non-pagabile' = 422,
   'avvio-pagamento' = 423,
   'errore-server' = 500

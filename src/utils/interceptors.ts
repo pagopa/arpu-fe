@@ -1,6 +1,6 @@
 import utils from 'utils';
 import { Client } from 'models/Client';
-import { ArcErrors, ArcRoutes, rootPrefix } from 'routes/routes';
+import { ArcErrors, ArcRoutes } from 'routes/routes';
 import { AxiosError, InternalAxiosRequestConfig } from 'axios';
 import { t } from 'i18next';
 import { StorageItems } from './storage';
@@ -24,7 +24,7 @@ export const setupInterceptors = (client: Client) => {
     (response) => response,
     (error) => {
       if (error.response.status === 401) {
-        const toUrl = `${rootPrefix}${ArcRoutes.COURTESY_PAGE.replace(':error', ArcErrors[401])}`;
+        const toUrl = ArcRoutes.COURTESY_PAGE.replace(':error', ArcErrors[401]);
         utils.storage.user.logOut();
         window.location.replace(toUrl);
       } else if (error.response.status === 403) {
