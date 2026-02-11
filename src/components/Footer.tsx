@@ -4,7 +4,7 @@ import { useLanguage } from 'hooks/useLanguage';
 import { Divider, Link, Stack, Typography } from '@mui/material';
 import { ArcRoutes } from 'routes/routes';
 import { ProductLogo } from './ProductLogo';
-import { brokerInfoState } from 'store/BrokerStore';
+import appStore from 'store/appStore';
 
 const LINK_PERSONAL_DATA_PROTECTION =
   'https://privacyportal-de.onetrust.com/webform/77f17844-04c3-4969-a11d-462ee77acbe1/9ab6533d-be4a-482e-929a-0d8d2ab29df8';
@@ -55,7 +55,7 @@ export const Footer = () => {
         <Divider />
         <Stack alignItems="center" justifyContent="center" height={60}>
           <Typography component="span" fontWeight={600} fontSize={14}>
-            {brokerInfoState.value.brokerName}
+            {appStore.value.brokerInfo?.brokerName}
           </Typography>
         </Stack>
       </Stack>

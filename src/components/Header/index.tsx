@@ -10,7 +10,7 @@ import { SubHeader } from './SubHeader';
 import { useTranslation } from 'react-i18next';
 import { ProductLogo } from 'components/ProductLogo';
 import { Box } from '@mui/system';
-import { brokerInfoState } from 'store/BrokerStore';
+import appStore from 'store/appStore';
 
 export interface HeaderProps {
   onAssistanceClick?: () => void;
@@ -36,10 +36,10 @@ export const Header = (props: HeaderProps) => {
   const { userInfo } = useUserInfo();
 
   const rootLink: RootLinkType = {
-    label: brokerInfoState.value.brokerName,
+    label: appStore.value.brokerInfo?.brokerName || '',
     href: ArcRoutes.DASHBOARD,
-    ariaLabel: brokerInfoState.value.brokerName,
-    title: brokerInfoState.value.brokerName
+    ariaLabel: appStore.value.brokerInfo?.brokerName || '',
+    title: appStore.value.brokerInfo?.brokerName || ''
   };
 
   const jwtUser: JwtUser | undefined = userInfo

@@ -21,7 +21,7 @@ describe('LoginRoute', () => {
 
   beforeAll(() => {
     (useNavigate as Mock).mockReturnValue(mockNavigate);
-  })
+  });
 
   beforeEach(() => {
     vi.spyOn(utils.storage.app, 'getBrokerId').mockImplementation(() => 1);

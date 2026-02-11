@@ -1,14 +1,14 @@
 import { Box } from '@mui/material';
 import React from 'react';
-import { brokerInfoState } from 'store/BrokerStore';
+import appStore from 'store/appStore';
 
 export const ProductLogo = () => {
   return (
     <Box>
-      {brokerInfoState.value.brokerLogo ? (
+      {appStore.value.brokerInfo?.brokerLogo ? (
         <img
-          src={brokerInfoState.value.brokerLogo ?? ''}
-          alt={`${brokerInfoState.value.brokerName} logo`}
+          src={appStore.value.brokerInfo?.brokerLogo ?? ''}
+          alt={`${appStore.value.brokerInfo?.brokerName} logo`}
           width="56"
         />
       ) : null}

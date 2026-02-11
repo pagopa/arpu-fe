@@ -8,14 +8,12 @@ vi.mock('hooks/useLanguage', () => ({
   useLanguage: vi.fn()
 }));
 
-
 vi.mock('./ProductLogo', () => ({
   ProductLogo: () => <div data-testid="product-logo">Logo</div>
 }));
 
-
 import { ArcRoutes } from 'routes/routes';
-import { resetBrokerInfo, setBrokerInfo } from 'store/BrokerStore';
+import { resetAppStore, setBrokerInfo } from 'store/appStore';
 
 describe('Footer', () => {
   beforeEach(() => {
@@ -75,14 +73,14 @@ describe('Footer', () => {
   });
 
   it('renders broker name', () => {
-    setBrokerInfo({ brokerName: 'Test Broker S.p.A.', brokerFiscalCode: "ABC"})
+    setBrokerInfo({ brokerName: 'Test Broker S.p.A.', brokerFiscalCode: 'ABC' });
     render(<Footer />);
 
     expect(screen.getByText('Test Broker S.p.A.')).toBeInTheDocument();
   });
 
   it('handles missing broker name gracefully', () => {
-    resetBrokerInfo();
+    resetAppStore();
     render(<Footer />);
 
     expect(screen.queryByText('Test Broker S.p.A.')).not.toBeInTheDocument();

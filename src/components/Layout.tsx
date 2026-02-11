@@ -30,7 +30,7 @@ import { ProductLogo } from 'components/ProductLogo';
 import { HeaderAccount, RootLinkType } from '@pagopa/mui-italia';
 import { t } from 'i18next';
 import '../styles.css';
-import { brokerInfoState } from 'store/BrokerStore';
+import appStore from 'store/appStore';
 
 const defaultRouteHandle: RouteHandleObject = {
   sidebar: { visible: true },
@@ -57,10 +57,10 @@ export function Layout(props: { anonymous?: boolean }) {
   } as RouteHandleObject;
 
   const rootLink: RootLinkType = {
-    label: brokerInfoState.value.brokerName,
+    label: appStore.value.brokerInfo?.brokerName || '',
     href: ArcRoutes.DASHBOARD,
-    ariaLabel: brokerInfoState.value.brokerName,
-    title: brokerInfoState.value.brokerName
+    ariaLabel: appStore.value.brokerInfo?.brokerName || '',
+    title: appStore.value.brokerInfo?.brokerName || ''
   };
 
   const ASSISTANCE_MAIL = utils.config.assistanceLink;

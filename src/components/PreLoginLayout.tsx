@@ -7,7 +7,7 @@ import { Outlet, useMatches } from 'react-router-dom';
 import { BackButton } from './BackButton';
 import { RouteHandleObject } from 'models/Breadcrumbs';
 import { ArcRoutes } from 'routes/routes';
-import { brokerInfoState } from 'store/BrokerStore';
+import appStore from 'store/appStore';
 
 const defaultRouteHandle: RouteHandleObject = {
   sidebar: { visible: true },
@@ -29,10 +29,10 @@ export function PreLoginLayout({ children }: { children?: ReactNode }) {
   } as RouteHandleObject;
 
   const rootLink: RootLinkType = {
-    label: brokerInfoState.value.brokerName,
+    label: appStore.value.brokerInfo?.brokerName || '',
     href: ArcRoutes.DASHBOARD,
-    ariaLabel: brokerInfoState.value.brokerName,
-    title: brokerInfoState.value.brokerName
+    ariaLabel: appStore.value.brokerInfo?.brokerName || '',
+    title: appStore.value.brokerInfo?.brokerName || ''
   };
 
   return (
