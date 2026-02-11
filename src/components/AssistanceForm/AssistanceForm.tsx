@@ -13,6 +13,7 @@ import {
 import { Trans, useTranslation } from 'react-i18next';
 import utils from 'utils';
 import { zendeskAssistanceTokenResponseSchema } from '../../../generated/zod-schema';
+import { Helmet } from 'react-helmet';
 
 const emailRegExp = new RegExp('^[\\w-\\.]+@([\\w-]+\\.)+[\\w-]{2,4}$');
 
@@ -85,6 +86,9 @@ export const AssistanceForm = () => {
 
   return (
     <>
+      <Helmet>
+        <title>{`${t('pageTitles.assistance')} - ${t('app.title')}`}</title>
+      </Helmet>
       <form>
         <Stack spacing={3}>
           <Stack

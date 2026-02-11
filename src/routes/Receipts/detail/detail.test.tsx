@@ -111,6 +111,10 @@ vi.mock('components/CopiableRow', () => ({
   )
 }));
 
+vi.mock('react-helmet', () => ({
+  Helmet: ({ children }: any) => <div data-testid="helmet">{children}</div>
+}));
+
 describe('ReceiptDetail', () => {
   beforeEach(() => {
     vi.clearAllMocks();
@@ -385,6 +389,23 @@ describe('ReceiptDetail', () => {
     it('renders IUD with copy functionality', () => {
       render(<ReceiptDetail />);
       expect(screen.getByText('app.receiptDetail.iud')).toBeInTheDocument();
+    });
+
+    it('renders dynamic page title with debt position description', () => {
+      render(<ReceiptDetail />);
+      const title = screen.getByTestId('helmet').querySelector('title');
+      expect(title?.textContent).toContain('Municipal Tax Payment');
+    });
+
+    it('renders fallback page title when description is missing', () => {
+      mockUseReceiptDetail.mockReturnValue({
+        data: { ...mockReceiptData, debtPositionTypeOrgDescription: undefined },
+        isLoading: false,
+        isError: false
+      });
+      render(<ReceiptDetail />);
+      const title = screen.getByTestId('helmet').querySelector('title');
+      expect(title?.textContent).toContain('pageTitles.receiptDetail');
     });
   });
 });

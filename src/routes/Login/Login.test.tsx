@@ -1,9 +1,14 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import React from 'react';
 import { fireEvent, render, screen } from '@testing-library/react';
 import Login from '.';
 import '@testing-library/jest-dom';
 import utils from 'utils';
 import { ArcRoutes } from 'routes/routes';
+
+vi.mock('react-helmet', () => ({
+  Helmet: ({ children }: any) => <div data-testid="helmet">{children}</div>
+}));
 
 describe('LoginRoute', () => {
   const replaceSpy = vi.fn();
