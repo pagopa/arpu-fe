@@ -7,6 +7,7 @@ export const ProductLogo = () => {
     <Box>
       {appStore.value.brokerInfo?.brokerLogo ? (
         <img
+          data-testid="header-product-logo"
           src={appStore.value.brokerInfo?.brokerLogo ?? ''}
           alt={`${appStore.value.brokerInfo?.brokerName} logo`}
           width="56"
