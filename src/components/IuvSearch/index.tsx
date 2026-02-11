@@ -15,11 +15,13 @@ import {
 import { useTranslation } from 'react-i18next';
 import { BackButton } from 'components/BackButton';
 import { Content } from 'components/Content';
-import utils from 'utils';
-import { InstallmentType } from 'utils/loaders';
+import loaders, { InstallmentType } from 'utils/loaders';
 import { useFormik } from 'formik';
 import { InstallmentStatus } from '../../../generated/data-contracts';
 import { Results } from './components/Results';
+import notify from 'utils/notify';
+import storage from 'utils/storage';
+import URI from 'utils/URI';
 
 enum TabIndex {
   PERSONA_FISICA = 0,
@@ -57,13 +59,13 @@ export const IuvSearch = ({
   resultKey
 }: IuvSearchProps) => {
   const { t } = useTranslation();
-  const brokerId = utils.storage.app.getBrokerId();
+  const brokerId = storage.app.getBrokerId();
   // get initial values from hash params
-  const { iuvOrNav, fiscalCode, anonymous, initialTab } = utils.URI.decode(window.location.hash);
+  const { iuvOrNav, fiscalCode, anonymous, initialTab } = URI.decode(window.location.hash);
   const initialValues: FormValues = { iuvOrNav, fiscalCode, anonymous: anonymous === 'true' };
 
   const [currentTab, setCurrentTab] = useState(Number(initialTab) || TabIndex.PERSONA_FISICA);
-  const installmentsMutation = utils.loaders.public.usePublicInstallmentsByIuvOrNav(brokerId);
+  const installmentsMutation = loaders.public.usePublicInstallmentsByIuvOrNav(brokerId);
 
   const handleTabChange = (_: React.SyntheticEvent, newValue: TabIndex) => {
     // only keep iuvOrNav when changing tabs
@@ -108,10 +110,10 @@ export const IuvSearch = ({
           // don't encode fiscalCode to URI when anonymous is checked
           fiscalCode: isTab1 && values.anonymous ? '' : values.fiscalCode
         };
-        const encodedParams = utils.URI.encode(params);
-        utils.URI.set(encodedParams, { replace: true });
+        const encodedParams = URI.encode(params);
+        URI.set(encodedParams, { replace: true });
       } catch {
-        utils.notify.emit(t('errors.toast.default'));
+        notify.emit(t('errors.toast.default'));
       }
     }
   };

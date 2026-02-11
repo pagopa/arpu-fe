@@ -1,21 +1,22 @@
-import React from 'react';
-import { generatePath, useNavigate } from 'react-router-dom';
 import { ArcRoutes } from 'routes/routes';
-import utils from 'utils';
-import { useTranslation } from 'react-i18next';
-import Stack from '@mui/material/Stack';
-import IconButton from '@mui/material/IconButton';
 import Button from '@mui/material/Button';
-import ShoppingCart from '@mui/icons-material/ShoppingCart';
 import Download from '@mui/icons-material/Download';
+import { generatePath, useNavigate } from 'react-router-dom';
+import IconButton from '@mui/material/IconButton';
+import React from 'react';
+import ShoppingCart from '@mui/icons-material/ShoppingCart';
+import Stack from '@mui/material/Stack';
+import { useTranslation } from 'react-i18next';
+
 import { addItem } from 'store/CartStore';
-import loaders from 'utils/loaders';
 import files from 'utils/files';
-import notify from 'utils/notify';
 import {
   InstallmentDebtorExtendedDTO,
   InstallmentStatus
 } from '../../../../generated/data-contracts';
+import loaders from 'utils/loaders';
+import notify from 'utils/notify';
+import storage from 'utils/storage';
 import { usePostCarts } from 'hooks/usePostCarts';
 
 type ActionsProps = {
@@ -25,9 +26,9 @@ type ActionsProps = {
 export const Actions = ({ installment }: ActionsProps) => {
   const navigate = useNavigate();
   const { t } = useTranslation();
-  const brokerId = utils.storage.app.getBrokerId();
+  const brokerId = storage.app.getBrokerId();
 
-  const isAnonymous = utils.storage.user.isAnonymous();
+  const isAnonymous = storage.user.isAnonymous();
 
   const carts = usePostCarts({
     onSuccess: (url) => {
@@ -55,7 +56,7 @@ export const Actions = ({ installment }: ActionsProps) => {
 
       navigate(path, { state: { fiscalCode: installment.debtor.fiscalCode } });
     } else {
-      utils.notify.emit(t('errors.toast.default'));
+      notify.emit(t('errors.toast.default'));
     }
   };
 
@@ -72,8 +73,9 @@ export const Actions = ({ installment }: ActionsProps) => {
           fiscalCode: installment.debtor.fiscalCode
         });
         files.downloadBlob(blob, filename || `${installment?.receiptId}.pdf`);
+      } else {
+        throw new Error('Missing required parameters');
       }
-      throw new Error('Missing required parameters');
     } catch {
       notify.emit(t('app.receiptDetail.downloadError'));
     }
@@ -92,7 +94,7 @@ export const Actions = ({ installment }: ActionsProps) => {
       });
       navigate(path, { state: { fiscalCode: installment.debtor.fiscalCode } });
     } else {
-      utils.notify.emit(t('errors.toast.default'));
+      notify.emit(t('errors.toast.default'));
     }
   };
 
@@ -104,7 +106,7 @@ export const Actions = ({ installment }: ActionsProps) => {
       !installment?.orgName ||
       !installment?.orgFiscalCode
     ) {
-      utils.notify.emit(t('errors.toast.drawer'));
+      notify.emit(t('errors.toast.drawer'));
     } else {
       addItem({
         installmentId: installment.installmentId,
@@ -127,7 +129,7 @@ export const Actions = ({ installment }: ActionsProps) => {
         !installment?.orgName ||
         !installment?.orgFiscalCode
       ) {
-        utils.notify.emit(t('errors.toast.payment'));
+        notify.emit(t('errors.toast.payment'));
       } else {
         const cartItem = {
           installmentId: installment.installmentId,
@@ -141,13 +143,13 @@ export const Actions = ({ installment }: ActionsProps) => {
         carts.mutate({ notices: [cartItem], email: installment?.debtor?.email || '' });
       }
     } catch (e) {
-      utils.notify.emit(t('errors.toast.payment'));
+      notify.emit(t('errors.toast.payment'));
     }
   };
 
   const PaidActions = () => (
     <Stack key={installment.installmentId} alignItems="center" direction="row" gap={2}>
-      <IconButton aria-label="download" onClick={onDownloadReceipt}>
+      <IconButton aria-label={t('actions.download')} onClick={onDownloadReceipt}>
         <Download />
       </IconButton>
       <Button size="large" variant="contained" onClick={navigateToDetail}>
@@ -160,7 +162,7 @@ export const Actions = ({ installment }: ActionsProps) => {
     <Button
       startIcon={<Download />}
       key={installment.installmentId}
-      aria-label="download"
+      aria-label={t('actions.download')}
       size="large"
       variant="contained"
       onClick={onDownloadPaymentNotice}>
@@ -176,10 +178,10 @@ export const Actions = ({ installment }: ActionsProps) => {
       gap={0.5}
       justifyContent="space-between"
       width="30%">
-      <IconButton aria-label="download" onClick={onDownloadPaymentNotice}>
+      <IconButton aria-label={t('actions.download')} onClick={onDownloadPaymentNotice}>
         <Download />
       </IconButton>
-      <IconButton aria-label="download" onClick={addToCart}>
+      <IconButton aria-label={t('actions.addToCart')} onClick={addToCart}>
         <ShoppingCart />
       </IconButton>
       <Button size="large" variant="contained" onClick={goToPayment}>

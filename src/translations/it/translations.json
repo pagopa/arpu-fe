@@ -365,7 +365,8 @@
     "detail": "Dettaglio",
     "download": "Scarica",
     "close": "Chiudi",
-    "payNow": "Paga ora"
+    "payNow": "Paga ora",
+    "addItemToCart": "Aggiungi al carrello"
   },
   "fields": {
     "iuv": "Codice Avviso/IUV",

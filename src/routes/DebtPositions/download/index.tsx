@@ -21,7 +21,7 @@ export const DebtPositionDownload = () => {
   const iuv = params?.iuv;
   const organizationId = Number(params?.organizationId);
 
-  if (!organizationId || !iuv || !brokerId || !fiscalCode) {
+  if (isNaN(organizationId) || !iuv || !brokerId || !fiscalCode) {
     throw new Error('Missing required parameters');
   }
 
