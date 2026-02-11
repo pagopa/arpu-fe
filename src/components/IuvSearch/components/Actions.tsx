@@ -140,7 +140,7 @@ export const Actions = ({ installment }: ActionsProps) => {
           paFullName: installment.orgName,
           paTaxCode: installment.orgFiscalCode
         };
-        carts.mutate({ notices: [cartItem], email: installment?.debtor?.email || '' });
+        carts.mutate({ notices: [cartItem], email: installment?.debtor?.email });
       }
     } catch (e) {
       notify.emit(t('errors.toast.payment'));

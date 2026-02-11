@@ -464,7 +464,7 @@ describe('Actions', () => {
         );
         fireEvent.click(screen.getByText('actions.payNow'));
 
-        expect(mockCartsMutate).toHaveBeenCalledWith(expect.objectContaining({ email: '' }));
+        expect(mockCartsMutate).toHaveBeenCalledWith(expect.objectContaining({ email: undefined }));
       });
 
       it('emits payment error when nav is missing', () => {
