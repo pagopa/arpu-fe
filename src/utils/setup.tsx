@@ -14,18 +14,18 @@ const setupOrError = async () => {
   try {
     if (!window.location.href.includes(ArcErrors[410])) {
       await stateSetup();
+      return true;
     }
+    return false;
   } catch {
     const toUrl = ArcRoutes.COURTESY_PAGE.replace(':error', ArcErrors[410]);
     window.location.replace(toUrl);
+    return false;
   } finally {
     setAppReady();
   }
 };
 
-const appSetup = async () => {
-  await setupOrError();
-  return true;
-};
+const appSetup = async () => await setupOrError();
 
-export { setupOrError, appSetup };
+export { appSetup };
