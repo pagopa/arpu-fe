@@ -1,6 +1,6 @@
 import utils from '.';
 import config from './config';
-import { ArcErrors, ArcRoutes, rootPrefix } from 'routes/routes';
+import { ArcErrors, ArcRoutes } from 'routes/routes';
 import { setBrokerInfo } from 'store/BrokerStore';
 import { setAppReady } from 'store/appStore';
 
@@ -18,7 +18,7 @@ const setupOrError = async () => {
       await stateSetup();
     }
   } catch {
-    const toUrl = `${rootPrefix}${ArcRoutes.COURTESY_PAGE.replace(':error', ArcErrors[410])}`;
+    const toUrl = ArcRoutes.COURTESY_PAGE.replace(':error', ArcErrors[410]);
     window.location.replace(toUrl);
   } finally {
     setAppReady();

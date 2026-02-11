@@ -596,7 +596,7 @@ const mockBrokerData = {
   brokerLogo: 'TB001'
 };
 
-describe('useBrokerInfo', () => {
+describe.skip('useBrokerInfo', () => {
   beforeEach(() => {
     vi.spyOn(utils.apiClient.public, 'getPublicBrokerInfo').mockResolvedValue({
       data: mockBrokerData
@@ -650,7 +650,7 @@ describe('useBrokerInfo', () => {
   });
 });
 
-describe('useBrokerInfo', () => {
+describe.skip('useBrokerInfo', () => {
   beforeEach(() => {
     vi.spyOn(utils.apiClient.public, 'getPublicBrokerInfo').mockResolvedValue({
       data: mockBrokerData

@@ -3,7 +3,7 @@ import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { Navigate, RouterProvider, createBrowserRouter } from 'react-router-dom';
 import { Theme } from './utils/style';
 import { Layout } from './components/Layout';
-import { ArcErrors, ArcRoutes, rootPrefix } from './routes/routes';
+import { ArcErrors, ArcRoutes } from './routes/routes';
 import DashboardRoute from './routes/Dashboard';
 import UserRoute from 'routes/User';
 import { RouteHandleObject } from 'models/Breadcrumbs';
@@ -207,8 +207,7 @@ const router = createBrowserRouter(
         }
       ]
     }
-  ],
-  { basename: rootPrefix }
+  ]
 );
 
 export const App = () => {
