@@ -121,7 +121,7 @@
       "noticesAlert": {
         "info": "These are the notices that institutions have communicated to PagoPA. If you do not find a notice, contact the payee or click on ‘Pay a notice’ and enter the data.",
         "action": "Pay a notice"
-        },
+      },
       "optin": {
         "title": "Do you allow PagoPA to search your notices?",
         "body": "If you confirm, you allow PagoPA to search for payment notices in your name among the archives of the institutions participating in the service."
@@ -149,7 +149,7 @@
         "title": "Transaction Information"
       },
       "downloadReceipt": "Download receipt",
-      "downloadReceiptError":"Receipt could not be retrieved",
+      "downloadReceiptError": "Receipt could not be retrieved",
       "noReceipt": "The pagoPA receipt is not available. Contact the Payee if you need the payment receipt, i.e. the document certifying that a debt has been settled.",
       "downloadQuiettance": "Download receipt",
       "paidBy": "Executed by",
@@ -204,9 +204,9 @@
   "menu": {
     "description": "Browse the website",
     "homepage": "Homepage",
-    "receipts":{
-      "menuTitle":"Receipts",
-       "pageTitle": "Your receipts"
+    "receipts": {
+      "menuTitle": "Receipts",
+      "pageTitle": "Your receipts"
     },
     "navigationMenu": "Navigation menu",
     "menu": "Menu",
@@ -224,7 +224,8 @@
     "header": {
       "profile": "Your data",
       "logout": "Logout",
-      "help": "Support"
+      "help": "Support",
+      "skipToContent": "Skip to main content"
     },
     "footer": {
       "a11y": "Accessibility",
@@ -255,7 +256,7 @@
     "404": {
       "title": "The page you are looking for does not exist",
       "body": "You can return to the homepage or visit a new page",
-      "cta":  "Return to home"
+      "cta": "Return to home"
     },
     "408": {
       "title": "It was not possible to access",
@@ -273,7 +274,7 @@
       "cta": "Close"
     }
   },
-  "pageTitles" : {
+  "pageTitles": {
     "dashboard": "Your Dashboard",
     "paymentnotices": "Your notices",
     "paymentnotice": "Notice detail",
