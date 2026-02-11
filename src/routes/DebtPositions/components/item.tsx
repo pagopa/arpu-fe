@@ -23,7 +23,14 @@ export const DebtPositionItem = ({
   }
 }: DebtPositionItemProps) => {
   const { t } = useTranslation();
-  const { label, value } = useDueDateField(paymentOptions);
+  const dateField = useDueDateField(paymentOptions);
+  const amount = paymentOptions[0]?.totalAmountCents;
+  const amountField = {
+    label: t('app.debtPositions.debtPositionItem.amount'),
+    value: toEuroOrMissingValue(amount)
+  };
+
+  const fields = amount ? [amountField, dateField] : [dateField];
 
   const detailPath = generatePath(ArcRoutes.DEBT_POSITION, { debtPositionId, organizationId });
 
@@ -37,16 +44,7 @@ export const DebtPositionItem = ({
       detailPath={detailPath}
       detailAriaLabel={t('commons.detail')}
       detailTestId="receipt-details-button"
-      fields={[
-        {
-          label: t('app.debtPositions.debtPositionItem.amount'),
-          value: toEuroOrMissingValue(paymentOptions[0]?.totalAmountCents)
-        },
-        {
-          label,
-          value
-        }
-      ]}
+      fields={fields}
     />
   );
 };

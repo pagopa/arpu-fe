@@ -110,49 +110,82 @@ export const getOrganizationsWithSpontaneous = (brokerId: number) =>
     }
   });
 
+/**
+ * Returns the organizations with spontaneous debt positions for the given broker [Public].
+ * @param brokerId
+ * @returns The organizations with spontaneous debt positions for the given broker.
+ */
 export const getPublicOrganizationsWithSpontaneous = (brokerId: number) =>
   useQuery({
-    queryKey: ['getPublicOrganizationsWithSpontaneous'],
+    queryKey: ['getPublicOrganizationsWithSpontaneous', brokerId],
     queryFn: async () => {
       const { data } = await utils.apiClient.public.getPublicOrganizationsWithSpontaneous(brokerId);
       return data;
     }
   });
 
+/**
+ * Returns the debt position type organizations with spontaneous debt positions for the given broker and organization.
+ * @param brokerId
+ * @param organizationId
+ * @returns The debt position type organizations with spontaneous debt positions for the given broker and organization.
+ */
 export const getDebtPositionTypeOrgsWithSpontaneous = (brokerId: number, organizationId: number) =>
   useQuery({
-    queryKey: ['getDebtPositionTypeOrgsWithSpontaneous'],
+    queryKey: ['getDebtPositionTypeOrgsWithSpontaneous', brokerId, organizationId],
     queryFn: async () => {
       const { data } = await utils.apiClient.brokers.getDebtPositionTypeOrgsWithSpontaneous(
         brokerId,
         organizationId
       );
       return data;
-    }
+    },
+    enabled: brokerId != null && organizationId != null,
+    staleTime: Infinity
   });
 
+/**
+ * Returns the debt position type organizations with spontaneous debt positions for the given broker and organization [Public].
+ * @param brokerId
+ * @param organizationId
+ * @returns The debt position type organizations with spontaneous debt positions for the given broker and organization.
+ */
 export const getPublicDebtPositionTypeOrgsWithSpontaneous = (
   brokerId: number,
   organizationId: number
 ) =>
   useQuery({
-    queryKey: ['getPublicDebtPositionTypeOrgsWithSpontaneous'],
+    queryKey: ['getPublicDebtPositionTypeOrgsWithSpontaneous', brokerId, organizationId],
     queryFn: async () => {
       const { data } = await utils.apiClient.public.getPublicDebtPositionTypeOrgsWithSpontaneous(
         brokerId,
         organizationId
       );
       return data;
-    }
+    },
+    enabled: brokerId != null && organizationId != null,
+    staleTime: Infinity
   });
 
+/**
+ * Returns the debt position type organizations with spontaneous debt positions for the given broker and organization [Detail].
+ * @param brokerId
+ * @param organizationId
+ * @param debtPositionTypeOrgId
+ * @returns The debt position type organizations with spontaneous debt positions for the given broker and organization [Detail].
+ */
 export const getDebtPositionTypeOrgsWithSpontaneousDetail = (
   brokerId: number,
   organizationId: number,
   debtPositionTypeOrgId: number
 ) =>
   useQuery({
-    queryKey: ['getDebtPositionTypeOrgsWithSpontaneousDetail'],
+    queryKey: [
+      'getDebtPositionTypeOrgsWithSpontaneousDetail',
+      brokerId,
+      organizationId,
+      debtPositionTypeOrgId
+    ],
     queryFn: async () => {
       const { data } = await utils.apiClient.brokers.getDebtPositionTypeOrgsWithSpontaneousDetail(
         brokerId,
@@ -163,13 +196,25 @@ export const getDebtPositionTypeOrgsWithSpontaneousDetail = (
     }
   });
 
+/**
+ * Returns the debt position type organizations with spontaneous debt positions for the given broker and organization [Detail] [Public].
+ * @param brokerId
+ * @param organizationId
+ * @param debtPositionTypeOrgId
+ * @returns The debt position type organizations with spontaneous debt positions for the given broker and organization [Detail] [Public].
+ */
 export const getPublicDebtPositionTypeOrgsWithSpontaneousDetail = (
   brokerId: number,
   organizationId: number,
   debtPositionTypeOrgId: number
 ) =>
   useQuery({
-    queryKey: ['getPublicDebtPositionTypeOrgsWithSpontaneousDetail'],
+    queryKey: [
+      'getPublicDebtPositionTypeOrgsWithSpontaneousDetail',
+      brokerId,
+      organizationId,
+      debtPositionTypeOrgId
+    ],
     queryFn: async () => {
       const { data } =
         await utils.apiClient.public.getPublicDebtPositionTypeOrgsWithSpontaneousDetail(
@@ -413,7 +458,9 @@ const getMostUsedSpontaneousDebtPositionTypeOrgsForCurrentYear = (
           organizationId
         );
       return data;
-    }
+    },
+    enabled: brokerId != null && organizationId != null,
+    staleTime: Infinity
   });
 
 const getPublicMostUsedSpontaneousDebtPositionTypeOrgsForCurrentYear = (
@@ -433,7 +480,9 @@ const getPublicMostUsedSpontaneousDebtPositionTypeOrgsForCurrentYear = (
           organizationId
         );
       return data;
-    }
+    },
+    enabled: brokerId != null && organizationId != null,
+    staleTime: Infinity
   });
 
 export default {

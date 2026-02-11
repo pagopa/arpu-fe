@@ -28,87 +28,177 @@ describe('useSearch', () => {
     mutateAsyncMock.mockResolvedValue(undefined);
   });
 
-  const setup = (hashParams = { page: 1, size: 5, sortDirection: '', sortField: '' }) => {
+  const setup = (
+    hashParams: { page?: number; size?: number; sort?: string[] } = { page: 1, size: 5, sort: [] },
+    hookProps: Record<string, any> = {}
+  ) => {
     mockUseHashParamsListener.mockReturnValue({
       page: hashParams.page,
       size: hashParams.size,
-      sortDirection: hashParams.sortDirection,
-      sortField: hashParams.sortField
+      sort: hashParams.sort
     });
 
     return renderHook(() =>
       useSearch({
         filters: { foo: 'bar' },
-        query: { mutateAsync: mutateAsyncMock } as any
+        query: { mutateAsync: mutateAsyncMock } as any,
+        ...hookProps
       })
     );
   };
 
-  it('calls mutateAsync on mount with correct initial params', () => {
-    setup();
+  it('calls mutateAsync on mount with hash params', () => {
+    setup({ page: 1, size: 5, sort: [] });
 
     expect(mutateAsyncMock).toHaveBeenCalledWith({
       filters: { foo: 'bar' },
-      pagination: { size: 5, page: 0 }, // page=hashPage -1 = 1-1=0
+      pagination: { size: 5, page: 1 },
       sort: []
     });
   });
 
-  it('calls mutateAsync with sorted params from hash', () => {
-    setup({
-      page: 2,
-      size: 20,
-      sortDirection: 'asc',
-      sortField: 'name'
-    });
+  it('falls back to initialPagination and initialSort when hash params are absent', () => {
+    // Return empty object from hash listener so defaults kick in
+    mockUseHashParamsListener.mockReturnValue({});
+
+    renderHook(() =>
+      useSearch({
+        filters: { foo: 'bar' },
+        initialPagination: { page: 2, size: 10 },
+        initialSort: ['createdAt,desc'],
+        query: { mutateAsync: mutateAsyncMock } as any
+      })
+    );
 
     expect(mutateAsyncMock).toHaveBeenCalledWith({
       filters: { foo: 'bar' },
-      pagination: { size: 20, page: 1 }, // 2-1=1
+      pagination: { size: 10, page: 2 },
+      sort: ['createdAt,desc']
+    });
+  });
+
+  it('falls back to default pagination (page=0, size=5) and empty sort when nothing is provided', () => {
+    mockUseHashParamsListener.mockReturnValue({});
+
+    renderHook(() =>
+      useSearch({
+        filters: { foo: 'bar' },
+        query: { mutateAsync: mutateAsyncMock } as any
+      })
+    );
+
+    expect(mutateAsyncMock).toHaveBeenCalledWith({
+      filters: { foo: 'bar' },
+      pagination: { size: 5, page: 0 },
+      sort: []
+    });
+  });
+
+  it('calls mutateAsync with sort array from hash params', () => {
+    setup({ page: 2, size: 20, sort: ['name,asc'] });
+
+    expect(mutateAsyncMock).toHaveBeenCalledWith({
+      filters: { foo: 'bar' },
+      pagination: { size: 20, page: 2 },
       sort: ['name,asc']
     });
   });
 
-  it('calls mutateAsync again on hash param change', () => {
-    const { rerender } = setup({ page: 1 } as any);
+  it('calls mutateAsync again when page changes in hash params', () => {
+    const { rerender } = setup({ page: 1, size: 5, sort: [] });
 
     expect(mutateAsyncMock).toHaveBeenCalledTimes(1);
 
-    mockUseHashParamsListener.mockReturnValue({
-      page: 3,
-      size: 5,
-      sortDirection: '',
-      sortField: ''
-    });
-
+    mockUseHashParamsListener.mockReturnValue({ page: 3, size: 5, sort: [] });
     rerender();
 
     expect(mutateAsyncMock).toHaveBeenCalledTimes(2);
     expect(mutateAsyncMock).toHaveBeenLastCalledWith({
       filters: { foo: 'bar' },
-      pagination: { size: 5, page: 2 },
+      pagination: { size: 5, page: 3 },
       sort: []
     });
   });
 
-  it('applyFilters resets pagination and sort and calls URI encode/set and mutateAsync', () => {
-    const { result } = setup();
+  it('calls mutateAsync again when size changes in hash params', () => {
+    const { rerender } = setup({ page: 1, size: 5, sort: [] });
+
+    expect(mutateAsyncMock).toHaveBeenCalledTimes(1);
+
+    mockUseHashParamsListener.mockReturnValue({ page: 1, size: 25, sort: [] });
+    rerender();
+
+    expect(mutateAsyncMock).toHaveBeenCalledTimes(2);
+    expect(mutateAsyncMock).toHaveBeenLastCalledWith({
+      filters: { foo: 'bar' },
+      pagination: { size: 25, page: 1 },
+      sort: []
+    });
+  });
+
+  it('applyFilters encodes current sort, nullifies page/size, updates URI and calls mutateAsync', () => {
+    const { result } = setup({ page: 1, size: 5, sort: ['name,asc'] });
 
     act(() => {
       result.current.applyFilters({ foo: 'baz' });
     });
 
+    // sort is preserved from current state; page and size are nulled out
     expect(utils.URI.encode).toHaveBeenCalledWith({
-      foo: 'baz',
       page: null,
       size: null,
-      sort: null
+      sort: ['name,asc'],
+      foo: 'baz'
     });
     expect(utils.URI.set).toHaveBeenCalledWith('encodedParams', { replace: true });
-    expect(mutateAsyncMock).toHaveBeenCalledWith({
+    expect(mutateAsyncMock).toHaveBeenLastCalledWith({
       filters: { foo: 'baz' },
+      pagination: { size: 5, page: 0 },
+      sort: ['name,asc']
+    });
+  });
+
+  it('applyFilters uses initialPagination as reset target when provided', () => {
+    mockUseHashParamsListener.mockReturnValue({ page: 3, size: 20, sort: [] });
+
+    const { result } = renderHook(() =>
+      useSearch({
+        filters: { foo: 'bar' },
+        initialPagination: { page: 0, size: 10 },
+        query: { mutateAsync: mutateAsyncMock } as any
+      })
+    );
+
+    act(() => {
+      result.current.applyFilters({ foo: 'baz' });
+    });
+
+    expect(mutateAsyncMock).toHaveBeenLastCalledWith({
+      filters: { foo: 'baz' },
+      pagination: { size: 10, page: 0 },
+      sort: []
+    });
+  });
+
+  it('applyFilters with no argument passes undefined filters', () => {
+    const { result } = setup();
+
+    act(() => {
+      result.current.applyFilters();
+    });
+
+    expect(mutateAsyncMock).toHaveBeenLastCalledWith({
+      filters: undefined,
       pagination: { size: 5, page: 0 },
       sort: []
     });
+  });
+
+  it('returns applyFilters and query from the hook', () => {
+    const { result } = setup();
+
+    expect(result.current).toHaveProperty('applyFilters');
+    expect(result.current).toHaveProperty('query');
+    expect(typeof result.current.applyFilters).toBe('function');
   });
 });

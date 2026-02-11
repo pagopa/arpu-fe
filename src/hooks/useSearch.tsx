@@ -11,8 +11,8 @@ export type SearchVariables<T> = {
 
 export type UseSearchProps<T, TData = unknown, TError = unknown> = {
   filters?: T;
-  initialPage?: number;
-  initialSize?: number;
+  initialPagination?: { page: number; size: number };
+  initialSort?: Array<string>;
   query: UseMutationResult<TData, TError, SearchVariables<T>>;
 };
 
@@ -22,23 +22,19 @@ export type UseSearchProps<T, TData = unknown, TError = unknown> = {
  */
 export function useSearch<T, TData = unknown, TError = unknown>({
   filters,
+  initialPagination,
+  initialSort,
   query
 }: UseSearchProps<T, TData, TError>) {
   const {
-    page: hashPage = 1,
-    size = 5,
-    sortDirection,
-    sortField
+    page = initialPagination?.page ?? 0,
+    size = initialPagination?.size ?? 5,
+    sort = initialSort ?? []
   } = useHashParamsListener() as {
     page: number;
     size: number;
-    sortDirection: string;
-    sortField: string;
+    sort: string[];
   };
-
-  const page = hashPage > 0 ? hashPage - 1 : 0;
-
-  const sort = sortDirection && sortField ? [`${sortField},${sortDirection}`] : [];
 
   useEffect(() => {
     query.mutateAsync({
@@ -46,21 +42,23 @@ export function useSearch<T, TData = unknown, TError = unknown>({
       pagination: { size, page },
       sort
     });
-  }, [page, size, sortDirection, sortField]);
+  }, [page, size]);
 
   // Handle filter application: resetting pagination and sort model
   const applyFilters = (appliedFilters?: T) => {
+    console.debug(sort);
     const params = utils.URI.encode({
-      ...appliedFilters,
       page: null,
       size: null,
-      sort: null
+      sort,
+      ...appliedFilters
     });
+    console.debug(sort, initialSort);
     utils.URI.set(params, { replace: true });
     query.mutateAsync({
       filters: appliedFilters,
-      pagination: { size: 5, page: 0 },
-      sort: []
+      pagination: initialPagination ?? { size: 5, page: 0 },
+      sort
     });
   };
 

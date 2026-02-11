@@ -90,6 +90,18 @@ const Spontanei = () => {
     return errors;
   };
 
+  const contextValue = React.useMemo(
+    () => ({
+      step,
+      setStep,
+      formType,
+      setFormType,
+      userDescription,
+      setUserDescription
+    }),
+    [step, formType, userDescription]
+  );
+
   return (
     <Container>
       <Helmet>
@@ -97,15 +109,7 @@ const Spontanei = () => {
       </Helmet>
       <Box padding={3} width={'100%'} component="main">
         <Formik initialValues={defaultPaymentNoticeInfo} validate={validate} onSubmit={console.log}>
-          <FormContext.Provider
-            value={{
-              step,
-              setStep,
-              formType,
-              setFormType,
-              userDescription,
-              setUserDescription
-            }}>
+          <FormContext.Provider value={contextValue}>
             <Stack>
               <Typography variant="h6" mb={1}>
                 {t('spontanei.form.title')}
