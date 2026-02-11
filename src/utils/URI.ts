@@ -4,7 +4,7 @@ import queryString from 'query-string';
 
 function sanitizeChars(input: string): string {
   // Allows letters, digits and literal dot and _
-  return input.replace(/[^a-zA-Z0-9._]/g, '');
+  return input.replace(/[^a-zA-Z0-9._,]/g, '');
 }
 
 function encodeValue(value: unknown): string {
