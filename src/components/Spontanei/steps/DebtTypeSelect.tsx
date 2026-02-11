@@ -17,6 +17,10 @@ import Controls from '../Controls';
 import { useField, useFormikContext } from 'formik';
 import { PaymentNoticeInfo } from '..';
 
+/**
+ * This component is responsible for selecting the debt type. As second step of Spontanei form.
+ * @returns JSX.Element
+ */
 const DebtTypeSelect = () => {
   const { t } = useTranslation();
   const brokerId = utils.storage.app.getBrokerId();
@@ -60,7 +64,8 @@ const DebtTypeSelect = () => {
 
   const onChange = async (debtType: DebtPositionTypeOrgsWithSpontaneousDTO) => {
     await formik.validateForm();
-    debtTypeHelpers.setValue(debtType);
+    await debtTypeHelpers.setValue(debtType);
+    await formik.setFieldValue('description', '', true);
   };
 
   const shouldContinue = async () => {

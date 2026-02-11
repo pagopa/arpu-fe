@@ -51,6 +51,10 @@ const OrgAndServiceSummary = () => {
   );
 };
 
+/**
+ * This component is responsible for rendering the summary of the debt type.
+ * @returns JSX.Element
+ */
 const DebtTypeSummary = () => {
   const { t } = useTranslation();
   const [entityType] = useField<PaymentNoticeInfo['entityType']>('entityType');

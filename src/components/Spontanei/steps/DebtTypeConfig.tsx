@@ -1,4 +1,4 @@
-import React, { useContext } from 'react';
+import React, { useContext, useEffect } from 'react';
 import FormContext, { FormContextType } from '../FormContext';
 import utils from 'utils';
 import StandardForm from '../StandarForm/StandardForm';
@@ -7,6 +7,10 @@ import ExternalUrlForm from '../ExternalUrlForm/ExternalUrlForm';
 import { useField } from 'formik';
 import { PaymentNoticeInfo } from '..';
 
+/**
+ * This component is responsible for rendering the form based on the debt type.
+ * @returns JSX.Element
+ */
 const DebtTypeConfig = () => {
   const context = useContext<FormContextType | null>(FormContext);
   const [org] = useField<PaymentNoticeInfo['org']>('org');
@@ -36,11 +40,23 @@ const DebtTypeConfig = () => {
       );
 
   const type = data?.formType;
-  context?.setFormType(type || null);
+
+  /**
+   * Sets the form type in the context.
+   */
+  useEffect(() => {
+    if (type) {
+      context?.setFormType(type);
+    }
+    return () => context?.setFormType(null);
+  }, [type, context]);
 
   const hasFlagAnonymousFiscalCode = data?.flagAnonymousFiscalCode || false;
 
-  const renderFormByType = () => {
+  /**
+   * Renders the form based on the debt type (memoizing).
+   */
+  const renderedForm = React.useMemo(() => {
     switch (type) {
       case 'STANDARD':
         return <StandardForm hasFlagAnonymousFiscalCode={hasFlagAnonymousFiscalCode} />;
@@ -63,9 +79,9 @@ const DebtTypeConfig = () => {
       default:
         return null;
     }
-  };
+  }, [type, data, hasFlagAnonymousFiscalCode]);
 
-  return renderFormByType();
+  return renderedForm;
 };
 
 export default DebtTypeConfig;

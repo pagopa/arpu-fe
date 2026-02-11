@@ -7,6 +7,10 @@ import Controls from '../Controls';
 import { useField, useFormikContext } from 'formik';
 import { PaymentNoticeInfo } from '..';
 
+/**
+ * This component is responsible for selecting the organization. As first step of Spontanei form.
+ * @returns JSX.Element
+ */
 const OrgSelect = () => {
   const { t } = useTranslation();
   const brokerId = utils.storage.app.getBrokerId();
