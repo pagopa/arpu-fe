@@ -85,7 +85,8 @@ vi.mock('components/Content', () => ({
 describe('IuvSearch', () => {
   const defaultProps = {
     titleKey: 'app.search.title',
-    descriptionKey: 'app.search.description'
+    descriptionKey: 'app.search.description',
+    resultKey: 'app.search.result'
   };
 
   beforeEach(() => {

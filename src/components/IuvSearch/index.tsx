@@ -43,7 +43,7 @@ interface IuvSearchProps {
   noDataTitleKey?: string;
   noDataTextKey?: string;
   searchErrorKey?: string;
-  resultKey?: string;
+  resultKey: string;
   installmentType?: InstallmentType;
 }
 
