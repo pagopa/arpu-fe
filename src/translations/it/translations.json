@@ -100,7 +100,7 @@
       "authorizationCode": "Codice autorizzativo",
       "iur": "IUR",
       "iud": "IUD",
-      "downloadError":"Non è stato possibile recuperare la ricevuta."
+      "downloadError": "Non è stato possibile recuperare la ricevuta."
     },
     "assistance": {
       "title": "Come possiamo aiutarti?",
@@ -203,7 +203,7 @@
       "payNow": "Paga ora",
       "payLater": "Paga a rate",
       "addItemToCart": "Aggiungi al carrello",
-      "removeItemFromCart":"Rimuovi dal carrello",
+      "removeItemFromCart": "Rimuovi dal carrello",
       "paymentOptionSingleInstallment": "Soluzione unica",
       "paymentOptionInstallments": "Soluzione a rate",
       "installment": "rata",
@@ -298,7 +298,7 @@
         "title": "Informazioni sulla transazione"
       },
       "downloadReceipt": "Scarica ricevuta",
-      "downloadReceiptError":"Non è stato possibile recuperare la ricevuta.",
+      "downloadReceiptError": "Non è stato possibile recuperare la ricevuta.",
       "noReceipt": "La ricevuta pagoPA non è disponibile. Rivolgiti all’Ente Creditore se hai bisogno della quietanza di pagamento, cioè il documento che attesta di aver saldato un debito.",
       "downloadQuiettance": "Scarica quietanza",
       "createdOn": "Creato il",
@@ -402,8 +402,8 @@
   "menu": {
     "description": "Naviga il portale",
     "homepage": "Homepage",
-    "receipts":{
-      "menuTitle":"Ricevute",
+    "receipts": {
+      "menuTitle": "Ricevute",
       "pageTitle": "Ricevute"
     },
     "navigationMenu": "Menù di navigazione",
@@ -435,7 +435,8 @@
     "header": {
       "profile": "I tuoi dati",
       "logout": "Esci",
-      "help": "Assistenza"
+      "help": "Assistenza",
+      "skipToContent": "Vai al contenuto principale"
     },
     "footer": {
       "a11y": "Accessibilità",
@@ -467,7 +468,7 @@
     "404": {
       "title": "La Pagina che stai cercando non esiste",
       "body": "Puoi ritornare alla homepage o visitare una nuova pagina",
-      "cta":  "Ritorna alla homepage"
+      "cta": "Ritorna alla homepage"
     },
     "408": {
       "title": "Non è stato possibile accedere",
@@ -490,7 +491,7 @@
       "cta": "Ritorna alla homepage"
     }
   },
-  "pageTitles" : {
+  "pageTitles": {
     "dashboard": "La tua Dashboard",
     "paymentnotices": "I tuoi avvisi di pagamento",
     "paymentnotice": "Dettaglio avviso",
@@ -573,12 +574,12 @@
           },
           "debtor": {
             "title": "Dati del debitore",
-            "F":{
+            "F": {
               "name": "Nome e cognome debitore",
               "code": "Codice Fiscale debitore",
               "email": "Email debitore"
             },
-            "G":{
+            "G": {
               "name": "Denominazione",
               "code": "Codice Fiscale/P.IVA",
               "email": "Email"
@@ -622,10 +623,10 @@
       }
     },
     "download": {
-        "title": "Il download dell’avviso è in corso",
-        "help": "Se non parte automaticamente, clicca <link1>qui.</link1>",
-        "info": "Scopri i canali abilitati",
-        "close": "Chiudi"
-      }
+      "title": "Il download dell’avviso è in corso",
+      "help": "Se non parte automaticamente, clicca <link1>qui.</link1>",
+      "info": "Scopri i canali abilitati",
+      "close": "Chiudi"
+    }
   }
 }

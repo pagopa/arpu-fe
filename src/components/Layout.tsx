@@ -1,5 +1,14 @@
 import React from 'react';
-import { Alert, Box, Container, Snackbar, Stack, Theme, useMediaQuery } from '@mui/material';
+import {
+  Alert,
+  Box,
+  Button,
+  Container,
+  Snackbar,
+  Stack,
+  Theme,
+  useMediaQuery
+} from '@mui/material';
 import { grey } from '@mui/material/colors';
 import { Footer } from './Footer';
 import { Sidebar } from './Sidebar/Sidebar';
@@ -19,6 +28,8 @@ import InstallmentsDrawer from './InstallmentsDrawer';
 import { SubHeader } from './Header/SubHeader';
 import { ProductLogo } from 'components/ProductLogo';
 import { HeaderAccount, RootLinkType } from '@pagopa/mui-italia';
+import { t } from 'i18next';
+import '../styles.css';
 
 const defaultRouteHandle: RouteHandleObject = {
   sidebar: { visible: true },
@@ -59,6 +70,11 @@ export function Layout(props: { anonymous?: boolean }) {
     window.open(`mailto:${ASSISTANCE_MAIL}`);
   };
 
+  const skipToContent = () => {
+    const mainContent = document.getElementById('main-content');
+    mainContent?.focus();
+  };
+
   return (
     <>
       <Snackbar
@@ -72,6 +88,14 @@ export function Layout(props: { anonymous?: boolean }) {
       </Snackbar>
       <ModalSystem />
       <Container maxWidth={false} disableGutters>
+        <Button
+          id="skip-to-content"
+          color="primary"
+          variant="contained"
+          onClick={skipToContent}
+          size="large">
+          {t('ui.header.skipToContent')}
+        </Button>
         {!props.anonymous ? (
           <Header onAssistanceClick={() => window.open(ArcRoutes.ASSISTANCE, '_blank')} />
         ) : (
@@ -87,7 +111,7 @@ export function Layout(props: { anonymous?: boolean }) {
         <Stack direction={lg ? 'row' : 'column'} bgcolor={grey['100']}>
           {sidebar?.visible ? <Sidebar /> : null}
 
-          <Box padding={3} width={'100%'} component="main">
+          <Box padding={3} width={'100%'} component="main" id="main-content" tabIndex={-1}>
             {backButton && <BackButton onClick={backButtonFunction} text={backButtonText} />}
             {crumbs && (
               <Breadcrumbs crumbs={crumbs} separator={<NavigateNext fontSize="small" />} />
