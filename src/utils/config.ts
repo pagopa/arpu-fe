@@ -65,7 +65,7 @@ type Config = {
   pagopaLink: RootLinkType;
   tokenHeaderExcludePaths: string[];
   version: string;
-  brokerId: number;
+  brokerId: string | null;
   showNotices: boolean;
   paramsSerializer: CustomParamsSerializer;
 };

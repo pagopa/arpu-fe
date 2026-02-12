@@ -42,6 +42,7 @@ export enum ArcErrors {
   'risorsa-non-trovata' = 404,
   /** something went wrong with the login */
   'accesso-non-riuscito' = 408,
+  'broker-non-trovato' = 410,
   'avviso-non-pagabile' = 422,
   'avvio-pagamento' = 423,
   'errore-server' = 500
