@@ -17,7 +17,6 @@ import {
   PersonEntityType
 } from '../../../generated/data-contracts';
 import Payment from './steps/Payment';
-import { Helmet } from 'react-helmet';
 
 export type PaymentNoticeInfo = {
   fullName: string;
@@ -104,9 +103,6 @@ const Spontanei = () => {
 
   return (
     <Container>
-      <Helmet>
-        <title>{`${t('pageTitles.spontanei')} - ${t('app.title')}`}</title>
-      </Helmet>
       <Box padding={3} width={'100%'} component="main">
         <Formik initialValues={defaultPaymentNoticeInfo} validate={validate} onSubmit={console.log}>
           <FormContext.Provider value={contextValue}>

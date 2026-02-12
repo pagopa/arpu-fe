@@ -24,7 +24,7 @@ import utils from 'utils';
 import { ArrowBack, Download } from '@mui/icons-material';
 import { DateFormat } from 'utils/datetools';
 import { ArcRoutes } from 'routes/routes';
-import { Helmet } from 'react-helmet';
+import { usePageTitle } from 'hooks/usePageTitle';
 
 export const ReceiptDetail = () => {
   // TODO: retrieve brokerId from context when available
@@ -56,11 +56,13 @@ export const ReceiptDetail = () => {
     navigate(-1);
   };
 
+  const baseTitle = t('pageTitles.paymentReceipt');
+  const dynamicTitle = data ? `${baseTitle} ${data.debtPositionTypeOrgDescription}` : baseTitle;
+
+  usePageTitle(dynamicTitle);
+
   return (
     <>
-      <Helmet>
-        <title>{`${t('pageTitles.receiptDetail')} ${data?.debtPositionTypeOrgDescription} - ${t('app.title')}`}</title>
-      </Helmet>
       <Stack alignItems="center" p={3} bgcolor={colors.grey['100']}>
         <Stack gap={3} width={{ xs: '100%', md: isAnonymous ? '70%' : '100%' }}>
           <Stack justifyContent="space-between" alignItems="center" direction="row">

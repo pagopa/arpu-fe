@@ -62,7 +62,8 @@ const router = createBrowserRouter([
           </PreLoginLayout>
         ),
         handle: {
-          backButton: false
+          backButton: false,
+          titleKey: 'pageTitles.login'
         } as RouteHandleObject
       },
       {
@@ -71,7 +72,10 @@ const router = createBrowserRouter([
           <PreLoginLayout>
             <ReceiptsSearch />
           </PreLoginLayout>
-        )
+        ),
+        handle: {
+          titleKey: 'pageTitles.receiptsSearch'
+        } as RouteHandleObject
       },
       {
         path: ArcRoutes.public.RECEIPT,
@@ -79,7 +83,10 @@ const router = createBrowserRouter([
           <PreLoginLayout>
             <ReceiptDetail />
           </PreLoginLayout>
-        )
+        ),
+        handle: {
+          titleKey: 'pageTitles.receiptDetail'
+        } as RouteHandleObject
       },
       {
         path: ArcRoutes.public.RECEIPT_DOWNLOAD,
@@ -87,7 +94,10 @@ const router = createBrowserRouter([
           <PreLoginLayout>
             <ReceiptDownload />
           </PreLoginLayout>
-        )
+        ),
+        handle: {
+          titleKey: 'pageTitles.receiptDetail'
+        } as RouteHandleObject
       },
       {
         path: ArcRoutes.public.DEBT_POSITION_SEARCH,
@@ -95,7 +105,10 @@ const router = createBrowserRouter([
           <PreLoginLayout>
             <DebtPositionsSearch />
           </PreLoginLayout>
-        )
+        ),
+        handle: {
+          titleKey: 'pageTitles.debtPositionsSearch'
+        } as RouteHandleObject
       },
       {
         path: ArcRoutes.AUTH_CALLBACK,
@@ -124,7 +137,10 @@ const router = createBrowserRouter([
           <PreLoginLayout>
             <CourtesyPage />
           </PreLoginLayout>
-        )
+        ),
+        handle: {
+          titleKey: 'pageTitles.courtesy'
+        } as RouteHandleObject
       },
       {
         path: ArcRoutes.DASHBOARD,
@@ -135,9 +151,8 @@ const router = createBrowserRouter([
             element: withGuard(Assistance),
             handle: {
               backButton: false,
-              sidebar: {
-                visibile: false
-              }
+              sidebar: { visibile: false },
+              titleKey: 'pageTitles.assistance'
             } as RouteHandleObject
           },
           {
@@ -145,49 +160,61 @@ const router = createBrowserRouter([
             element: withGuard(UserRoute),
             handle: {
               backButton: true,
-              sidebar: {
-                visibile: false
-              }
+              sidebar: { visibile: false },
+              titleKey: 'pageTitles.userpage'
             } as RouteHandleObject
           },
           {
             path: ArcRoutes.DASHBOARD,
-            element: withGuard(DashboardRoute)
+            element: withGuard(DashboardRoute),
+            handle: {
+              titleKey: 'pageTitles.dashboard'
+            } as RouteHandleObject
           },
           {
             path: ArcRoutes.RECEIPT,
-            element: withGuard(ReceiptDetail)
+            element: withGuard(ReceiptDetail),
+            handle: {
+              titleKey: 'pageTitles.receiptDetail'
+            } as RouteHandleObject
           },
           {
             path: ArcRoutes.RECEIPT_DOWNLOAD,
             element: withGuard(ReceiptDownload),
             handle: {
-              sidebar: {
-                visibile: false
-              }
-            }
+              sidebar: { visibile: false },
+              titleKey: 'pageTitles.receiptDetail'
+            } as RouteHandleObject
           },
           {
             path: ArcRoutes.RECEIPTS,
-            element: withGuard(ReceiptsList)
+            element: withGuard(ReceiptsList),
+            handle: {
+              titleKey: 'pageTitles.notices'
+            } as RouteHandleObject
           },
           {
             path: ArcRoutes.DEBT_POSITION,
-            element: withGuard(DebtPositionDetail)
+            element: withGuard(DebtPositionDetail),
+            handle: {
+              titleKey: 'pageTitles.debtPositionDetail'
+            } as RouteHandleObject
           },
           {
             path: ArcRoutes.DEBT_POSITIONS,
-            element: withGuard(DebtPositionsList)
+            element: withGuard(DebtPositionsList),
+            handle: {
+              titleKey: 'pageTitles.debtPositions'
+            } as RouteHandleObject
           },
           {
             path: ArcRoutes.COURTESY_PAGE,
             loader: ({ params }) => Promise.resolve(params.error),
             element: <CourtesyPage />,
             handle: {
-              sidebar: {
-                visibile: false
-              }
-            }
+              sidebar: { visibile: false },
+              titleKey: 'pageTitles.courtesy'
+            } as RouteHandleObject
           },
           {
             path: ArcRoutes.PAYMENTS_ON_THE_FLY,
@@ -197,20 +224,18 @@ const router = createBrowserRouter([
                 element: <Spontanei />,
                 handle: {
                   backButton: true,
-                  sidebar: {
-                    visibile: false
-                  }
-                }
+                  sidebar: { visibile: false },
+                  titleKey: 'pageTitles.spontanei'
+                } as RouteHandleObject
               },
               {
                 path: 'download/:orgId/:iuv',
                 element: <Download />,
                 handle: {
                   backButton: false,
-                  sidebar: {
-                    visibile: false
-                  }
-                }
+                  sidebar: { visibile: false },
+                  titleKey: 'pageTitles.spontanei'
+                } as RouteHandleObject
               }
             ]
           }
@@ -225,20 +250,18 @@ const router = createBrowserRouter([
             element: <Spontanei />,
             handle: {
               backButton: true,
-              sidebar: {
-                visibile: false
-              }
-            }
+              sidebar: { visibile: false },
+              titleKey: 'pageTitles.spontanei'
+            } as RouteHandleObject
           },
           {
             path: 'download/:orgId/:iuv',
             element: <Download />,
             handle: {
               backButton: false,
-              sidebar: {
-                visibile: false
-              }
-            }
+              sidebar: { visibile: false },
+              titleKey: 'pageTitles.spontanei'
+            } as RouteHandleObject
           }
         ]
       }

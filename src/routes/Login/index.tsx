@@ -15,7 +15,6 @@ import React from 'react';
 import PermIdentityOutlinedIcon from '@mui/icons-material/PermIdentityOutlined';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
-import { Helmet } from 'react-helmet';
 
 const Login = () => {
   const theme = useTheme();
@@ -37,9 +36,6 @@ const Login = () => {
 
   return (
     <>
-      <Helmet>
-        <title>{`${t('pageTitles.login')} - ${t('app.title')}`}</title>
-      </Helmet>
       <Grid container minHeight={'78vh'}>
         <Grid size={{ xs: 12, md: 8 }} bgcolor={theme.palette.background.default} pt={16} pb={16}>
           <Container>

@@ -13,7 +13,7 @@ import {
   PaymentOptionType
 } from '../../../generated/data-contracts';
 import { PaidOptionReceipt } from './components/PaidOptionReceipt';
-import { Helmet } from 'react-helmet';
+import { usePageTitle } from 'hooks/usePageTitle';
 
 const DebtPositionDetail = () => {
   const brokerId = utils.storage.app.getBrokerId();
@@ -33,6 +33,11 @@ const DebtPositionDetail = () => {
   if (!organizationId || isNaN(Number(organizationId))) {
     throw new Error('organizationId is required and must be a number');
   }
+
+  const baseTitle = t('pageTitles.debtPositionDetail');
+  const dynamicTitle = data ? `${baseTitle} ${data.debtPositionTypeOrgDescription}` : baseTitle;
+
+  usePageTitle(dynamicTitle);
 
   if (!data) {
     return <div>Loading...</div>; // Maybe we should subsitite this with a spinner or a skeleton
@@ -59,9 +64,6 @@ const DebtPositionDetail = () => {
 
   return (
     <>
-      <Helmet>
-        <title>{`${t('pageTitles.debtPositionDetail')} ${data.debtPositionTypeOrgDescription} - ${t('app.title')}`}</title>
-      </Helmet>
       <Stack gap={3}>
         <Typography
           variant="h4"

@@ -16,4 +16,5 @@ export interface RouteHandleObject {
   backButton?: boolean;
   backButtonText?: string;
   backButtonFunction?: () => void;
+  titleKey?: string;
 }

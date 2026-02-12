@@ -9,7 +9,6 @@ import CustomPagination from 'components/DataGrid/CustomPagination';
 import PaymentButton from 'components/PaymentButton';
 import { ArcRoutes } from 'routes/routes';
 import { Link } from 'react-router-dom';
-import { Helmet } from 'react-helmet';
 
 export const DebtPositionsList = () => {
   const { t } = useTranslation();
@@ -30,9 +29,6 @@ export const DebtPositionsList = () => {
 
   return (
     <>
-      <Helmet>
-        <title>{`${t('pageTitles.debtPositions')} - ${t('app.title')}`}</title>
-      </Helmet>
       <Stack gap={3}>
         <Stack gap={1}>
           <Typography variant="h3" component="h1">

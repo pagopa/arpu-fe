@@ -19,6 +19,7 @@ import InstallmentsDrawer from './InstallmentsDrawer';
 import { SubHeader } from './Header/SubHeader';
 import { ProductLogo } from 'components/ProductLogo';
 import { HeaderAccount, RootLinkType } from '@pagopa/mui-italia';
+import { PageTitleProvider } from './PageTitleProvider';
 
 const defaultRouteHandle: RouteHandleObject = {
   sidebar: { visible: true },
@@ -61,6 +62,7 @@ export function Layout(props: { anonymous?: boolean }) {
 
   return (
     <>
+      <PageTitleProvider />
       <Snackbar
         autoHideDuration={6000}
         anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}

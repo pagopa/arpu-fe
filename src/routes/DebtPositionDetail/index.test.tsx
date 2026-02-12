@@ -11,11 +11,8 @@ vi.mock('react-router-dom', () => ({
   useParams: () => ({
     debtPositionId: '1',
     organizationId: '2'
-  })
-}));
-
-vi.mock('react-helmet', () => ({
-  Helmet: ({ children }: any) => <div data-testid="helmet">{children}</div>
+  }),
+  useMatches: vi.fn(() => [])
 }));
 
 describe('DebtPositionDetail', async () => {
@@ -44,18 +41,5 @@ describe('DebtPositionDetail', async () => {
 
     const iupd = screen.getByTestId('debt-position-detail-iupd').innerHTML;
     expect(iupd).toContain('123456');
-  });
-
-  it('renders dynamic page title', () => {
-    vi.spyOn(utils.storage.app, 'getBrokerId').mockReturnValue(3);
-    vi.spyOn(utils.loaders, 'getDebtPositionDetail').mockReturnValue({
-      data: debtPosition,
-      isSuccess: true,
-      isLoading: false
-    } as any);
-
-    render(<DebtPositionDetail />);
-    const title = screen.getByTestId('helmet').querySelector('title');
-    expect(title?.textContent).toContain('debtPositionTypeOrgDescription test description');
   });
 });

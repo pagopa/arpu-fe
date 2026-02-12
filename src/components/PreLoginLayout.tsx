@@ -7,6 +7,7 @@ import { Outlet, useMatches } from 'react-router-dom';
 import { BackButton } from './BackButton';
 import { RouteHandleObject } from 'models/Breadcrumbs';
 import { ArcRoutes } from 'routes/routes';
+import { PageTitleProvider } from './PageTitleProvider';
 
 const defaultRouteHandle: RouteHandleObject = {
   sidebar: { visible: true },
@@ -39,6 +40,7 @@ export function PreLoginLayout({ children }: { children?: ReactNode }) {
 
   return (
     <Stack>
+      <PageTitleProvider />
       <HeaderAccount
         rootLink={rootLink}
         onAssistanceClick={onAssistanceClick}
