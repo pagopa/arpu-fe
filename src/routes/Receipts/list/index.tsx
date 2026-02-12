@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import { Stack, Typography, TextField, Button, InputAdornment } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import utils from 'utils';
-import { Helmet } from 'react-helmet';
 import config from 'utils/config';
 import { useSearch } from 'hooks/useSearch';
 import { ArcRoutes } from 'routes/routes';
@@ -81,9 +80,6 @@ export const ReceiptsList = () => {
 
   return (
     <>
-      <Helmet>
-        <title>{`${t('pageTitles.notices')} - ${t('app.title')}`}</title>
-      </Helmet>
       <Stack gap={3}>
         <Stack gap={1}>
           <Typography variant="h3" component="h1">

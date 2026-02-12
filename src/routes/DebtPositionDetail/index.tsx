@@ -13,6 +13,7 @@ import {
   PaymentOptionType
 } from '../../../generated/data-contracts';
 import { PaidOptionReceipt } from './components/PaidOptionReceipt';
+import { usePageTitle } from 'hooks/usePageTitle';
 
 const DebtPositionDetail = () => {
   const brokerId = utils.storage.app.getBrokerId();
@@ -32,6 +33,11 @@ const DebtPositionDetail = () => {
   if (!organizationId || isNaN(Number(organizationId))) {
     throw new Error('organizationId is required and must be a number');
   }
+
+  const baseTitle = t('pageTitles.debtPositionDetail');
+  const dynamicTitle = data ? `${baseTitle} ${data.debtPositionTypeOrgDescription}` : baseTitle;
+
+  usePageTitle(dynamicTitle);
 
   if (!data) {
     return <div>Loading...</div>; // Maybe we should subsitite this with a spinner or a skeleton
@@ -57,58 +63,60 @@ const DebtPositionDetail = () => {
   );
 
   return (
-    <Stack gap={3}>
-      <Typography
-        variant="h4"
-        component="h1"
-        marginInlineStart={1}
-        data-testid="debt-position-detail-title">
-        {data.debtPositionTypeOrgDescription || t('debtPositionDetail.title')}
-      </Typography>
-      <Card sx={{ padding: 3, gap: 3, display: 'flex', flexDirection: 'column' }}>
-        <Typography variant="body1" component="h2" fontWeight="600" fontStyle="semibold">
-          {t('app.debtPositionDetail.paymentData')}
+    <>
+      <Stack gap={3}>
+        <Typography
+          variant="h4"
+          component="h1"
+          marginInlineStart={1}
+          data-testid="debt-position-detail-title">
+          {data.debtPositionTypeOrgDescription || t('debtPositionDetail.title')}
         </Typography>
-        <Stack direction="row" gap={2} data-testid="debt-position-detail-org-name">
-          <PayeeIcon src={fromTaxCodeToSrcImage(data.orgFiscalCode)} alt={data.orgName} visible />
-          <CopiableRow
-            label={t('app.debtPositionDetail.org')}
-            value={propertyOrMissingValue(data.orgName)}
-          />
-        </Stack>
-        <Divider />
-        <Box data-testid="debt-position-detail-org-code">
-          <CopiableRow
-            label={t('app.debtPositionDetail.cf')}
-            value={propertyOrMissingValue(data.orgFiscalCode)}
-            copiable
-          />
-        </Box>
-        <Divider />
-        <Box data-testid="debt-position-detail-iupd">
-          <CopiableRow
-            label={t('app.debtPositionDetail.iupd')}
-            value={propertyOrMissingValue(data.iupd)}
-            copiable
-          />
-        </Box>
-      </Card>
-      <PaymentOptionWrapper
-        paymentOptions={data.paymentOptions}
-        orgInfo={orgInfo}
-        debtPositionId={Number(debtPositionId)}
-      />
-      {!!paidOptions?.length && (
         <Card sx={{ padding: 3, gap: 3, display: 'flex', flexDirection: 'column' }}>
           <Typography variant="body1" component="h2" fontWeight="600" fontStyle="semibold">
-            {t('app.debtPositionDetail.receipts')}
+            {t('app.debtPositionDetail.paymentData')}
           </Typography>
-          {paidOptions.map((option) => (
-            <PaidOptionReceipt key={option.paymentOptionId} paymentOption={option} />
-          ))}
+          <Stack direction="row" gap={2} data-testid="debt-position-detail-org-name">
+            <PayeeIcon src={fromTaxCodeToSrcImage(data.orgFiscalCode)} alt={data.orgName} visible />
+            <CopiableRow
+              label={t('app.debtPositionDetail.org')}
+              value={propertyOrMissingValue(data.orgName)}
+            />
+          </Stack>
+          <Divider />
+          <Box data-testid="debt-position-detail-org-code">
+            <CopiableRow
+              label={t('app.debtPositionDetail.cf')}
+              value={propertyOrMissingValue(data.orgFiscalCode)}
+              copiable
+            />
+          </Box>
+          <Divider />
+          <Box data-testid="debt-position-detail-iupd">
+            <CopiableRow
+              label={t('app.debtPositionDetail.iupd')}
+              value={propertyOrMissingValue(data.iupd)}
+              copiable
+            />
+          </Box>
         </Card>
-      )}
-    </Stack>
+        <PaymentOptionWrapper
+          paymentOptions={data.paymentOptions}
+          orgInfo={orgInfo}
+          debtPositionId={Number(debtPositionId)}
+        />
+        {!!paidOptions?.length && (
+          <Card sx={{ padding: 3, gap: 3, display: 'flex', flexDirection: 'column' }}>
+            <Typography variant="body1" component="h2" fontWeight="600" fontStyle="semibold">
+              {t('app.debtPositionDetail.receipts')}
+            </Typography>
+            {paidOptions.map((option) => (
+              <PaidOptionReceipt key={option.paymentOptionId} paymentOption={option} />
+            ))}
+          </Card>
+        )}
+      </Stack>
+    </>
   );
 };
 

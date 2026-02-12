@@ -2,7 +2,6 @@ import React from 'react';
 import { Button, Typography, Container, Box } from '@mui/material';
 import { Link, useParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { Helmet } from 'react-helmet';
 import { ArcErrors, ArcRoutes } from '../../routes/routes';
 import i18next from 'i18next';
 
@@ -44,9 +43,6 @@ export const CourtesyPage = () => {
 
   return (
     <>
-      <Helmet>
-        <title>{`${t('pageTitles.courtesy')} - ${t('app.title')} `}</title>
-      </Helmet>
       <Container maxWidth="sm">
         <Box textAlign="center" mt={10} mb={10}>
           <Box my={3}>

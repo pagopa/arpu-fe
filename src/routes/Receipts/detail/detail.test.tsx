@@ -79,7 +79,8 @@ vi.mock('react-router-dom', async () => {
       return path
         .replace(':receiptId', params.receiptId)
         .replace(':organizationId', params.organizationId);
-    })
+    }),
+    useMatches: vi.fn(() => [])
   };
 });
 

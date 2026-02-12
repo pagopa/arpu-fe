@@ -493,12 +493,20 @@
   },
   "pageTitles": {
     "dashboard": "La tua Dashboard",
-    "paymentnotices": "I tuoi avvisi di pagamento",
-    "paymentnotice": "Dettaglio avviso",
     "notices": "Le tue ricevute di pagamento",
-    "notice": "Dettaglio operazione",
     "courtesy": "Pagina di cortesia",
-    "userpage": "I tuoi dati"
+    "userpage": "I tuoi dati",
+    "login": "Accedi",
+    "debtPositions": "Importi da pagare",
+    "debtPositionDetail": "Posizione debitoria",
+    "debtPositionsSearch": "Cerca un avviso",
+    "debtPositionsList": "Importi da pagare",
+    "paymentReceipt": "Ricevuta Pagamento",
+    "receiptDetail": "Dettaglio ricevuta",
+    "receiptsSearch": "Recupera una ricevuta",
+    "receiptsList": "Lista ricevute",
+    "spontanei": "Pagamenti spontanei",
+    "assistance": "Assistenza"
   },
   "spontanei": {
     "drawer": {

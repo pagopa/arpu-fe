@@ -3,7 +3,6 @@ import { Stack, Typography } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import PaymentButton from 'components/PaymentButton';
 import { useUserInfo } from 'hooks/useUserInfo';
-import { Helmet } from 'react-helmet';
 import { Receipts } from './components/Receipts';
 import { DebtPositions } from './components/DebtPositions';
 
@@ -13,9 +12,6 @@ const Dashboard = () => {
 
   return (
     <>
-      <Helmet>
-        <title>{`${t('pageTitles.dashboard')} - ${t('app.title')} `}</title>
-      </Helmet>
       <Stack
         flex={1}
         direction={{ xs: 'column', sm: 'row' }}
