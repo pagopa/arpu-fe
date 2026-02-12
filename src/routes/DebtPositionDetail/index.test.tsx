@@ -17,7 +17,7 @@ vi.mock('react-router-dom', () => ({
 
 describe('DebtPositionDetail', async () => {
   it('renders as expected without crashing', () => {
-    vi.spyOn(utils.storage.app, 'getBrokerId').mockReturnValue(3);
+    vi.spyOn(utils.storage.app, 'getBrokerId').mockReturnValue('3');
 
     const spyGetDebtPositionDetail = vi
       .spyOn(utils.loaders, 'getDebtPositionDetail')

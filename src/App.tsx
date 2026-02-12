@@ -30,8 +30,10 @@ import { StorageItems } from 'utils/storage';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { DebtPositionsSearch } from 'routes/DebtPositions/search';
 import { it } from 'date-fns/locale/it';
-import { ReceiptDownload } from 'routes/Receipts/detail/components/Download';
 import { Overlay } from 'components/Overlay';
+import { DebtPositionDownload } from 'routes/DebtPositions/download';
+import { appSetup } from 'utils/setup';
+import appStore from 'store/appStore';
 
 const withGuard = (Component: () => React.JSX.Element) => (
   <RouteGuard itemKeys={[StorageItems.TOKEN]} storage={window.localStorage}>
@@ -41,123 +43,87 @@ const withGuard = (Component: () => React.JSX.Element) => (
 
 const router = createBrowserRouter([
   {
+    path: '*',
+    element: <Navigate replace to={ArcRoutes.COURTESY_PAGE.replace(':error', ArcErrors['404'])} />
+  },
+  {
+    path: ArcRoutes.AUTH_CALLBACK,
+    element: <AuthCallback />,
+    loader: ({ request }) => getTokenOneidentity(request)
+  },
+  {
+    loader: appSetup,
     element: <ApiClient client={[utils.apiClient]} />,
     errorElement: <ErrorFallback />,
     children: [
       {
-        path: '*',
-        element: (
-          <Navigate replace to={ArcRoutes.COURTESY_PAGE.replace(':error', ArcErrors['404'])} />
-        )
-      },
-      {
         path: '/',
-        element: <Navigate replace to={ArcRoutes.DASHBOARD} />
+        element: <Navigate to={ArcRoutes.DASHBOARD} />
       },
       {
-        path: ArcRoutes.LOGIN,
-        element: (
-          <PreLoginLayout>
-            <Login />
-          </PreLoginLayout>
-        ),
-        handle: {
-          backButton: false,
-          titleKey: 'pageTitles.login'
-        } as RouteHandleObject
-      },
-      {
-        path: ArcRoutes.public.RECEIPTS_SEARCH,
-        element: (
-          <PreLoginLayout>
-            <ReceiptsSearch />
-          </PreLoginLayout>
-        ),
-        handle: {
-          titleKey: 'pageTitles.receiptsSearch'
-        } as RouteHandleObject
-      },
-      {
-        path: ArcRoutes.public.RECEIPT,
-        element: (
-          <PreLoginLayout>
-            <ReceiptDetail />
-          </PreLoginLayout>
-        ),
-        handle: {
-          titleKey: 'pageTitles.receiptDetail'
-        } as RouteHandleObject
-      },
-      {
-        path: ArcRoutes.public.RECEIPT_DOWNLOAD,
-        element: (
-          <PreLoginLayout>
-            <ReceiptDownload />
-          </PreLoginLayout>
-        ),
-        handle: {
-          titleKey: 'pageTitles.receiptDetail'
-        } as RouteHandleObject
-      },
-      {
-        path: ArcRoutes.public.DEBT_POSITION_SEARCH,
-        element: (
-          <PreLoginLayout>
-            <DebtPositionsSearch />
-          </PreLoginLayout>
-        ),
-        handle: {
-          titleKey: 'pageTitles.debtPositionsSearch'
-        } as RouteHandleObject
-      },
-      {
-        path: ArcRoutes.AUTH_CALLBACK,
-        element: <AuthCallback />,
-        loader: ({ request }) => getTokenOneidentity(request)
-      },
-      {
-        path: ArcRoutes.TOS,
-        element: (
-          <PreLoginLayout>
-            <Resources resource="tos" />
-          </PreLoginLayout>
-        )
-      },
-      {
-        path: ArcRoutes.PRIVACY_POLICY,
-        element: (
-          <PreLoginLayout>
-            <Resources resource="pp" />
-          </PreLoginLayout>
-        )
-      },
-      {
-        path: ArcRoutes.COURTESY_PAGE,
-        element: (
-          <PreLoginLayout>
-            <CourtesyPage />
-          </PreLoginLayout>
-        ),
-        handle: {
-          titleKey: 'pageTitles.courtesy'
-        } as RouteHandleObject
-      },
-      {
-        path: ArcRoutes.DASHBOARD,
-        element: <Layout />,
+        element: <PreLoginLayout />,
         children: [
           {
-            path: ArcRoutes.ASSISTANCE,
-            element: withGuard(Assistance),
+            path: ArcRoutes.LOGIN,
+            element: <Login />,
             handle: {
-              backButton: false,
-              sidebar: { visibile: false },
-              titleKey: 'pageTitles.assistance'
+              titleKey: 'pageTitles.login'
             } as RouteHandleObject
           },
           {
+            path: ArcRoutes.public.RECEIPTS_SEARCH,
+            element: <ReceiptsSearch />,
+            handle: {
+              titleKey: 'pageTitles.receiptsSearch'
+            } as RouteHandleObject
+          },
+          {
+            path: ArcRoutes.public.RECEIPT,
+            element: <ReceiptDetail />,
+            handle: {
+              titleKey: 'pageTitles.receiptDetail'
+            } as RouteHandleObject
+          },
+          {
+            path: ArcRoutes.public.DEBT_POSITION_DOWNLOAD,
+            element: <DebtPositionDownload />
+          },
+          {
+            path: ArcRoutes.public.DEBT_POSITION_SEARCH,
+            element: <DebtPositionsSearch />,
+            handle: {
+              titleKey: 'pageTitles.debtPositionsSearch'
+            } as RouteHandleObject
+          },
+          {
+            path: ArcRoutes.TOS,
+            element: <Resources resource="tos" />
+          },
+          {
+            path: ArcRoutes.PRIVACY_POLICY,
+            element: <Resources resource="pp" />
+          },
+          {
+            path: ArcRoutes.COURTESY_PAGE,
+            loader: ({ params }) => Promise.resolve(params.error),
+            element: <CourtesyPage />,
+            handle: {
+              titleKey: 'pageTitles.courtesy'
+            } as RouteHandleObject
+          }
+        ]
+      },
+      {
+        path: ArcRoutes.DASHBOARD,
+        element: withGuard(() => <Layout />),
+        children: [
+          {
+            index: true,
+            element: <DashboardRoute />
+          },
+          {
             path: ArcRoutes.USER,
-            element: withGuard(UserRoute),
+            element: <UserRoute />,
             handle: {
               backButton: true,
               sidebar: { visibile: false },
@@ -165,55 +131,35 @@ const router = createBrowserRouter([
             } as RouteHandleObject
           },
           {
-            path: ArcRoutes.DASHBOARD,
-            element: withGuard(DashboardRoute),
-            handle: {
-              titleKey: 'pageTitles.dashboard'
-            } as RouteHandleObject
-          },
-          {
             path: ArcRoutes.RECEIPT,
-            element: withGuard(ReceiptDetail),
+            element: <ReceiptDetail />,
             handle: {
               titleKey: 'pageTitles.receiptDetail'
             } as RouteHandleObject
           },
           {
-            path: ArcRoutes.RECEIPT_DOWNLOAD,
-            element: withGuard(ReceiptDownload),
-            handle: {
-              sidebar: { visibile: false },
-              titleKey: 'pageTitles.receiptDetail'
-            } as RouteHandleObject
+            path: ArcRoutes.DEBT_POSITION_DOWNLOAD,
+            element: <DebtPositionDownload />
           },
           {
             path: ArcRoutes.RECEIPTS,
-            element: withGuard(ReceiptsList),
+            element: <ReceiptsList />,
             handle: {
-              titleKey: 'pageTitles.notices'
+              titleKey: 'pageTitles.receiptsList'
             } as RouteHandleObject
           },
           {
             path: ArcRoutes.DEBT_POSITION,
-            element: withGuard(DebtPositionDetail),
+            element: <DebtPositionDetail />,
             handle: {
               titleKey: 'pageTitles.debtPositionDetail'
             } as RouteHandleObject
           },
           {
             path: ArcRoutes.DEBT_POSITIONS,
-            element: withGuard(DebtPositionsList),
+            element: <DebtPositionsList />,
             handle: {
-              titleKey: 'pageTitles.debtPositions'
-            } as RouteHandleObject
-          },
-          {
-            path: ArcRoutes.COURTESY_PAGE,
-            loader: ({ params }) => Promise.resolve(params.error),
-            element: <CourtesyPage />,
-            handle: {
-              sidebar: { visibile: false },
-              titleKey: 'pageTitles.courtesy'
+              titleKey: 'pageTitles.debtPositionsList'
             } as RouteHandleObject
           },
           {
@@ -238,6 +184,17 @@ const router = createBrowserRouter([
                 } as RouteHandleObject
               }
             ]
+          },
+          {
+            path: ArcRoutes.ASSISTANCE,
+            element: <Assistance />,
+            handle: {
+              backButton: false,
+              sidebar: {
+                visibile: false
+              },
+              titleKey: 'pageTitles.assistance'
+            } as RouteHandleObject
           }
         ]
       },
@@ -269,14 +226,18 @@ const router = createBrowserRouter([
   }
 ]);
 
-export const App = () => (
-  <>
-    <HealthCheck />
-    <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale={it.code}>
-      <Theme>
-        <Overlay />
-        <RouterProvider router={router} />
-      </Theme>
-    </LocalizationProvider>
-  </>
-);
+export const App = () => {
+  const isReady = appStore.value.isReady;
+  return (
+    <>
+      <HealthCheck />
+      <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale={it.code}>
+        <Overlay visible={!isReady} />
+        <Theme>
+          <Overlay />
+          <RouterProvider router={router} />
+        </Theme>
+      </LocalizationProvider>
+    </>
+  );
+};

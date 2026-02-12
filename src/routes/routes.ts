@@ -11,7 +11,7 @@ export const ArcRoutes = {
   AUTH_CALLBACK: `${config.deployPath}/auth-callback`,
   DASHBOARD: rootPrefix,
   RECEIPT: `${rootPrefix}/ricevute/:receiptId/:organizationId`,
-  RECEIPT_DOWNLOAD: `${rootPrefix}/ricevute/download/:receiptId/:organizationId`,
+  DEBT_POSITION_DOWNLOAD: `${rootPrefix}/posizioni-debitorie/download/:iuv/:organizationId`,
   RECEIPTS: `${rootPrefix}/ricevute`,
   DEBT_POSITION: `${rootPrefix}/posizioni-debitorie/:debtPositionId/:organizationId`,
   DEBT_POSITIONS: `${rootPrefix}/posizioni-debitorie`,
@@ -27,7 +27,7 @@ export const ArcRoutes = {
     PAYMENTS_ON_THE_FLY_DOWNLOAD: `${rootPrefix}/public/spontanei/download/:orgId/:iuv`,
     RECEIPTS_SEARCH: `${rootPrefix}/public/ricevute/ricerca`,
     RECEIPT: `${rootPrefix}/public/ricevute/:receiptId/:organizationId`,
-    RECEIPT_DOWNLOAD: `${rootPrefix}/public/ricevute/download/:receiptId/:organizationId`,
+    DEBT_POSITION_DOWNLOAD: `${rootPrefix}/public/posizioni-debitorie/download/:iuv/:organizationId`,
     DEBT_POSITION_SEARCH: `${rootPrefix}/public/posizioni-debitorie/ricerca`
   }
 };
@@ -42,6 +42,7 @@ export enum ArcErrors {
   'risorsa-non-trovata' = 404,
   /** something went wrong with the login */
   'accesso-non-riuscito' = 408,
+  'broker-non-trovato' = 410,
   'avviso-non-pagabile' = 422,
   'avvio-pagamento' = 423,
   'errore-server' = 500

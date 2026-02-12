@@ -22,13 +22,13 @@ const Login = () => {
   const brokerId = utils.storage.app.getBrokerId();
   utils.storage.app.setBrokerId(brokerId);
 
+  const navigate = useNavigate();
+
   const logIn = () => window.location.replace(utils.config.loginUrl);
 
   useEffect(() => {
-    if (utils.storage.user.hasToken()) window.location.replace(ArcRoutes.DASHBOARD);
+    if (utils.storage.user.hasToken()) navigate(ArcRoutes.DASHBOARD);
   }, []);
-
-  const navigate = useNavigate();
 
   const handleCTA1 = () => navigate(ArcRoutes.public.PAYMENTS_ON_THE_FLY);
   const handleCTA2 = () => navigate(ArcRoutes.public.RECEIPTS_SEARCH);

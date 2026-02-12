@@ -236,7 +236,8 @@ type GetPaymentNoticeQueryParam = {
 export const getPaymentNotice = (
   brokerId: number,
   organizationId: number,
-  query: GetPaymentNoticeQueryParam
+  query: GetPaymentNoticeQueryParam,
+  debtorFiscalCode?: string
 ) =>
   useMutation({
     mutationKey: ['getPaymentNotice'],
@@ -245,7 +246,7 @@ export const getPaymentNotice = (
         brokerId,
         organizationId,
         query,
-        { format: 'blob' }
+        { format: 'blob', headers: { 'X-fiscal-code': debtorFiscalCode } }
       );
 
       const contentDisposition = response.headers['content-disposition'] || '';
@@ -357,18 +358,6 @@ const usePublicDownloadReceipt = ({ brokerId }: Pick<ReceiptDetailArgs, 'brokerI
       const filename = utils.converters.extractFilename(contentDisposition);
       return { blob: response.data, filename };
     }
-  });
-
-const useBrokerInfo = (brokerId: number) =>
-  useQuery({
-    queryKey: ['brokerInfo', brokerId],
-    queryFn: async () => {
-      const { data } = await utils.apiClient.public.getPublicBrokerInfo(brokerId);
-      return data;
-    },
-    enabled: brokerId >= 0,
-    throwOnError: true,
-    gcTime: Infinity
   });
 
 const usePagedUnpaidDebtPositions = (brokerId: number) =>
@@ -507,7 +496,6 @@ export default {
     getPublicDebtPositionTypeOrgsWithSpontaneousDetail,
     getPublicOrganizationsWithSpontaneous,
     getPublicPaymentNotice,
-    useBrokerInfo,
     usePublicInstallmentsByIuvOrNav,
     usePublicDownloadReceipt,
     usePublicReceiptDetail,

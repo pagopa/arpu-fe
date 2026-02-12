@@ -210,14 +210,19 @@ describe('Payment Notices API', () => {
       headers: { 'content-disposition': "attachment; filename='test.pdf'" }
     } as unknown as AxiosResponse);
 
-    const mutation = renderHook(() => loaders.getPaymentNotice(1, 3, { iuv: '1' }), {
+    const mutation = renderHook(() => loaders.getPaymentNotice(1, 3, { iuv: '1' }, 'FISCALCODE'), {
       wrapper
     });
 
     await mutation.result.current.mutateAsync();
 
     await waitFor(() => {
-      expect(apiMock).toHaveBeenCalledWith(1, 3, { iuv: '1' }, { format: 'blob' });
+      expect(apiMock).toHaveBeenCalledWith(
+        1,
+        3,
+        { iuv: '1' },
+        { format: 'blob', headers: { 'X-fiscal-code': 'FISCALCODE' } }
+      );
       expect(mutation.result.current.isSuccess).toBeTruthy();
       expect(mutation.result.current.data).toEqual({ data: 'Test', filename: 'test.pdf' });
     });
@@ -582,120 +587,6 @@ describe('usePublicDownloadReceipt', () => {
 
     expect(error).toBeInstanceOf(Error);
     expect((error as Error).message).toBe(errorMessage);
-  });
-});
-
-const mockBrokerData = {
-  brokerFiscalCode: 999,
-  brokerName: 'Test Broker',
-  brokerLogo: 'TB001'
-};
-
-describe('useBrokerInfo', () => {
-  beforeEach(() => {
-    vi.spyOn(utils.apiClient.public, 'getPublicBrokerInfo').mockResolvedValue({
-      data: mockBrokerData
-    } as any);
-  });
-
-  afterEach(() => {
-    vi.clearAllMocks();
-  });
-
-  it('fetches broker info successfully', async () => {
-    const { result } = renderHook(() => loaders.public.useBrokerInfo(999));
-
-    expect(result.current.isLoading).toBe(true);
-
-    await waitFor(() => {
-      expect(result.current.isSuccess).toBe(true);
-    });
-
-    expect(result.current.data).toEqual(mockBrokerData);
-    expect(utils.apiClient.public.getPublicBrokerInfo).toHaveBeenCalledWith(999);
-  });
-
-  it('handles API errors correctly', async () => {
-    const errorMessage = 'Failed to fetch broker info';
-
-    vi.spyOn(utils.apiClient.public, 'getPublicBrokerInfo').mockRejectedValue(
-      new Error(errorMessage)
-    );
-
-    try {
-      renderHook(() => loaders.public.useBrokerInfo(999));
-    } catch (e) {
-      expect(e).toBeInstanceOf(Error);
-      expect((e as Error).message).toBe(errorMessage);
-    }
-  });
-
-  it('caches results with infinite gcTime', async () => {
-    const { result, rerender } = renderHook(() => loaders.public.useBrokerInfo(999));
-
-    await waitFor(() => {
-      expect(result.current.isSuccess).toBe(true);
-    });
-
-    // Rerender the same hook instance
-    rerender();
-
-    expect(result.current.data).toEqual(mockBrokerData);
-    expect(utils.apiClient.public.getPublicBrokerInfo).toHaveBeenCalledTimes(1);
-  });
-});
-
-describe('useBrokerInfo', () => {
-  beforeEach(() => {
-    vi.spyOn(utils.apiClient.public, 'getPublicBrokerInfo').mockResolvedValue({
-      data: mockBrokerData
-    } as any);
-  });
-
-  afterEach(() => {
-    vi.clearAllMocks();
-  });
-
-  it('fetches broker info successfully', async () => {
-    const { result } = renderHook(() => loaders.public.useBrokerInfo(999));
-
-    expect(result.current.isLoading).toBe(true);
-
-    await waitFor(() => {
-      expect(result.current.isSuccess).toBe(true);
-    });
-
-    expect(result.current.data).toEqual(mockBrokerData);
-    expect(utils.apiClient.public.getPublicBrokerInfo).toHaveBeenCalledWith(999);
-  });
-
-  it('handles API errors correctly', async () => {
-    const errorMessage = 'Failed to fetch broker info';
-
-    vi.spyOn(utils.apiClient.public, 'getPublicBrokerInfo').mockRejectedValue(
-      new Error(errorMessage)
-    );
-
-    try {
-      renderHook(() => loaders.public.useBrokerInfo(999));
-    } catch (e) {
-      expect(e).toBeInstanceOf(Error);
-      expect((e as Error).message).toBe(errorMessage);
-    }
-  });
-
-  it('caches results with infinite gcTime', async () => {
-    const { result, rerender } = renderHook(() => loaders.public.useBrokerInfo(999));
-
-    await waitFor(() => {
-      expect(result.current.isSuccess).toBe(true);
-    });
-
-    // Rerender the same hook instance
-    rerender();
-
-    expect(result.current.data).toEqual(mockBrokerData);
-    expect(utils.apiClient.public.getPublicBrokerInfo).toHaveBeenCalledTimes(1);
   });
 });
 

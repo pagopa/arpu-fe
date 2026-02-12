@@ -2,15 +2,15 @@
 import React from 'react';
 import { render, screen, waitFor } from '__tests__/renderers';
 import * as ReactRouterDom from 'react-router-dom';
-import { ReceiptDownload } from './Download';
+import { DebtPositionDownload } from '../download';
 
 const mockMutateAsync = vi.fn();
 const mockDownloadBlob = vi.fn();
 const mockNotifyEmit = vi.fn();
 const mockIsAnonymous = vi.fn();
 const mockGetBrokerId = vi.fn();
-const mockUseDownloadReceipt = vi.fn();
-const mockUsePublicDownloadReceipt = vi.fn();
+const mockGetPaymentNotice = vi.fn();
+const mockGetPublicPaymentNotice = vi.fn();
 
 vi.mock('utils/storage', () => ({
   default: {
@@ -33,9 +33,9 @@ vi.mock('utils/storage', () => ({
 
 vi.mock('utils/loaders', () => ({
   default: {
-    useDownloadReceipt: (params?: any) => mockUseDownloadReceipt(params),
+    getPaymentNotice: (...args: any[]) => mockGetPaymentNotice(...args),
     public: {
-      usePublicDownloadReceipt: (params?: any) => mockUsePublicDownloadReceipt(params)
+      getPublicPaymentNotice: (...args: any[]) => mockGetPublicPaymentNotice(...args)
     }
   }
 }));
@@ -57,7 +57,7 @@ vi.mock('react-router-dom', async () => {
   return {
     ...actual,
     useParams: vi.fn(() => ({
-      receiptId: '123',
+      iuv: 'IUV123',
       organizationId: '456'
     })),
     useLocation: vi.fn(() => ({
@@ -76,43 +76,44 @@ vi.mock('routes/routes', () => ({
   }
 }));
 
-describe('ReceiptDownload', () => {
+describe('DebtPositionDownload', () => {
   beforeEach(() => {
     vi.clearAllMocks();
     mockIsAnonymous.mockReturnValue(false);
     mockGetBrokerId.mockReturnValue(999);
 
-    mockUseDownloadReceipt.mockReturnValue({
+    mockGetPaymentNotice.mockReturnValue({
       mutateAsync: mockMutateAsync
     });
 
-    mockUsePublicDownloadReceipt.mockReturnValue({
+    mockGetPublicPaymentNotice.mockReturnValue({
       mutateAsync: mockMutateAsync
     });
 
     mockMutateAsync.mockResolvedValue({
-      blob: new Blob(['test pdf content'], { type: 'application/pdf' }),
-      filename: 'receipt_123.pdf'
+      data: new Blob(['test pdf content'], { type: 'application/pdf' }),
+      filename: 'receipt_IUV123.pdf'
     });
   });
 
   describe('Rendering', () => {
     it('renders all main elements', () => {
-      render(<ReceiptDownload />);
+      render(<DebtPositionDownload />);
 
-      expect(screen.getByText('app.receipts.thankYou.title')).toBeInTheDocument();
-      expect(screen.getByText('app.receipts.thankYou.subtitle')).toBeInTheDocument();
+      expect(screen.getByText('app.debtPositions.download.title')).toBeInTheDocument();
       expect(screen.getByRole('img', { hidden: true })).toHaveAttribute(
         'src',
         '/cittadini/pictograms/hourglass.svg'
       );
       expect(screen.getByRole('link', { name: 'actions.close' })).toBeInTheDocument();
-      expect(screen.getByRole('link', { name: 'app.receipts.thankYou.link' })).toBeInTheDocument();
+      expect(
+        screen.getByRole('link', { name: 'app.debtPositions.download.link' })
+      ).toBeInTheDocument();
     });
 
     it('renders close button with dashboard link for authenticated user', () => {
       mockIsAnonymous.mockReturnValue(false);
-      render(<ReceiptDownload />);
+      render(<DebtPositionDownload />);
 
       const closeButton = screen.getByRole('link', { name: 'actions.close' });
       expect(closeButton).toHaveAttribute('href', '/dashboard');
@@ -120,7 +121,7 @@ describe('ReceiptDownload', () => {
 
     it('renders close button with login link for anonymous user', () => {
       mockIsAnonymous.mockReturnValue(true);
-      render(<ReceiptDownload />);
+      render(<DebtPositionDownload />);
 
       const closeButton = screen.getByRole('link', { name: 'actions.close' });
       expect(closeButton).toHaveAttribute('href', '/login');
@@ -130,50 +131,53 @@ describe('ReceiptDownload', () => {
   describe('Download functionality', () => {
     it('automatically downloads receipt on mount for authenticated user', async () => {
       mockIsAnonymous.mockReturnValue(false);
-      render(<ReceiptDownload />);
+      render(<DebtPositionDownload />);
 
       await waitFor(() => {
-        expect(mockUseDownloadReceipt).toHaveBeenCalledWith({ brokerId: 999 });
-        expect(mockMutateAsync).toHaveBeenCalledWith({
-          organizationId: 456,
-          receiptId: 123,
-          fiscalCode: 'RSSMRA80A01H501U'
-        });
-        expect(mockDownloadBlob).toHaveBeenCalledWith(expect.any(Blob), 'receipt_123.pdf');
+        expect(mockGetPaymentNotice).toHaveBeenCalledWith(
+          999,
+          456,
+          { iuv: 'IUV123' },
+          'RSSMRA80A01H501U'
+        );
+        expect(mockMutateAsync).toHaveBeenCalledWith();
+        expect(mockDownloadBlob).toHaveBeenCalledWith(expect.any(Blob), 'receipt_IUV123.pdf');
       });
     });
 
     it('automatically downloads receipt on mount for anonymous user', async () => {
       mockIsAnonymous.mockReturnValue(true);
-      render(<ReceiptDownload />);
+      render(<DebtPositionDownload />);
 
       await waitFor(() => {
-        expect(mockUsePublicDownloadReceipt).toHaveBeenCalledWith({ brokerId: 999 });
-        expect(mockMutateAsync).toHaveBeenCalledWith({
-          organizationId: 456,
-          receiptId: 123,
-          fiscalCode: 'RSSMRA80A01H501U'
-        });
+        expect(mockGetPublicPaymentNotice).toHaveBeenCalledWith(
+          999,
+          456,
+          { iuv: 'IUV123' },
+          'RSSMRA80A01H501U'
+        );
+        expect(mockMutateAsync).toHaveBeenCalledWith();
+        expect(mockDownloadBlob).toHaveBeenCalledWith(expect.any(Blob), 'receipt_IUV123.pdf');
       });
     });
 
-    it('uses receiptId as filename when filename is not provided', async () => {
+    it('uses iuv as filename when filename is not provided', async () => {
       mockMutateAsync.mockResolvedValue({
-        blob: new Blob(['test content'], { type: 'application/pdf' }),
+        data: new Blob(['test content'], { type: 'application/pdf' }),
         filename: null
       });
 
-      render(<ReceiptDownload />);
+      render(<DebtPositionDownload />);
 
       await waitFor(() => {
-        expect(mockDownloadBlob).toHaveBeenCalledWith(expect.any(Blob), '123.pdf');
+        expect(mockDownloadBlob).toHaveBeenCalledWith(expect.any(Blob), 'IUV123.pdf');
       });
     });
 
     it('shows error notification when download fails', async () => {
       mockMutateAsync.mockRejectedValue(new Error('Download failed'));
 
-      render(<ReceiptDownload />);
+      render(<DebtPositionDownload />);
 
       await waitFor(() => {
         expect(mockNotifyEmit).toHaveBeenCalledWith('app.receiptDetail.downloadError');
@@ -182,38 +186,38 @@ describe('ReceiptDownload', () => {
     });
   });
 
-  describe('Parameter handling', () => {
-    it('handles missing fiscalCode in location state', async () => {
-      vi.spyOn(ReactRouterDom, 'useLocation').mockReturnValueOnce({
+  describe('Required parameters guard', () => {
+    it('throws when organizationId is missing', () => {
+      vi.spyOn(ReactRouterDom, 'useParams').mockReturnValue({
+        iuv: 'IUV123',
+        organizationId: undefined
+      });
+
+      expect(() => render(<DebtPositionDownload />)).toThrow('Missing required parameters');
+    });
+
+    it('throws when iuv is missing', () => {
+      vi.spyOn(ReactRouterDom, 'useParams').mockReturnValue({
+        iuv: undefined,
+        organizationId: '456'
+      });
+
+      expect(() => render(<DebtPositionDownload />)).toThrow('Missing required parameters');
+    });
+
+    it('throws when fiscalCode is missing from location state', () => {
+      vi.spyOn(ReactRouterDom, 'useLocation').mockReturnValue({
         state: null
       } as any);
 
-      render(<ReceiptDownload />);
-
-      await waitFor(() => {
-        expect(mockMutateAsync).toHaveBeenCalledWith({
-          organizationId: 456,
-          receiptId: 123,
-          fiscalCode: undefined
-        });
-      });
+      expect(() => render(<DebtPositionDownload />)).toThrow('Missing required parameters');
     });
 
-    it('converts string params to numbers', async () => {
-      vi.spyOn(ReactRouterDom, 'useParams').mockReturnValueOnce({
-        receiptId: '789',
-        organizationId: '321'
-      });
+    it('throws when brokerId is missing', () => {
+      mockGetBrokerId.mockReset();
+      mockGetBrokerId.mockReturnValue(undefined);
 
-      render(<ReceiptDownload />);
-
-      await waitFor(() => {
-        expect(mockMutateAsync).toHaveBeenCalledWith({
-          organizationId: 321,
-          receiptId: 789,
-          fiscalCode: 'RSSMRA80A01H501U'
-        });
-      });
+      expect(() => render(<DebtPositionDownload />)).toThrow('Missing required parameters');
     });
   });
 });

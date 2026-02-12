@@ -7,6 +7,7 @@ import { Outlet, useMatches } from 'react-router-dom';
 import { BackButton } from './BackButton';
 import { RouteHandleObject } from 'models/Breadcrumbs';
 import { ArcRoutes } from 'routes/routes';
+import appStore from 'store/appStore';
 import { PageTitleProvider } from './PageTitleProvider';
 
 const defaultRouteHandle: RouteHandleObject = {
@@ -28,14 +29,11 @@ export function PreLoginLayout({ children }: { children?: ReactNode }) {
     ...(matches.find((match) => Boolean(match.handle))?.handle || {})
   } as RouteHandleObject;
 
-  const brokerId = utils.storage.app.getBrokerId();
-  const { data: brokerInfo } = utils.loaders.public.useBrokerInfo(brokerId);
-
   const rootLink: RootLinkType = {
-    label: brokerInfo?.brokerName ?? '',
+    label: appStore.value.brokerInfo?.brokerName || '',
     href: ArcRoutes.DASHBOARD,
-    ariaLabel: brokerInfo?.brokerName ?? '',
-    title: brokerInfo?.brokerName ?? ''
+    ariaLabel: appStore.value.brokerInfo?.brokerName || '',
+    title: appStore.value.brokerInfo?.brokerName || ''
   };
 
   return (

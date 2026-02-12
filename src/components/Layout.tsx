@@ -1,5 +1,14 @@
 import React from 'react';
-import { Alert, Box, Container, Snackbar, Stack, Theme, useMediaQuery } from '@mui/material';
+import {
+  Alert,
+  Box,
+  Button,
+  Container,
+  Snackbar,
+  Stack,
+  Theme,
+  useMediaQuery
+} from '@mui/material';
 import { grey } from '@mui/material/colors';
 import { Footer } from './Footer';
 import { Sidebar } from './Sidebar/Sidebar';
@@ -20,6 +29,9 @@ import { SubHeader } from './Header/SubHeader';
 import { ProductLogo } from 'components/ProductLogo';
 import { HeaderAccount, RootLinkType } from '@pagopa/mui-italia';
 import { PageTitleProvider } from './PageTitleProvider';
+import { t } from 'i18next';
+import '../styles.css';
+import appStore from 'store/appStore';
 
 const defaultRouteHandle: RouteHandleObject = {
   sidebar: { visible: true },
@@ -45,19 +57,21 @@ export function Layout(props: { anonymous?: boolean }) {
     ...(matches.find((match) => Boolean(match.handle))?.handle || {})
   } as RouteHandleObject;
 
-  const brokerId = utils.storage.app.getBrokerId();
-  const { data: brokerInfo } = utils.loaders.public.useBrokerInfo(brokerId);
-
   const rootLink: RootLinkType = {
-    label: brokerInfo?.brokerName ?? '',
+    label: appStore.value.brokerInfo?.brokerName || '',
     href: ArcRoutes.DASHBOARD,
-    ariaLabel: brokerInfo?.brokerName ?? '',
-    title: brokerInfo?.brokerName ?? ''
+    ariaLabel: appStore.value.brokerInfo?.brokerName || '',
+    title: appStore.value.brokerInfo?.brokerName || ''
   };
 
   const ASSISTANCE_MAIL = utils.config.assistanceLink;
   const onAssistanceClick = () => {
     window.open(`mailto:${ASSISTANCE_MAIL}`);
+  };
+
+  const skipToContent = () => {
+    const mainContent = document.getElementById('main-content');
+    mainContent?.focus();
   };
 
   return (
@@ -74,6 +88,14 @@ export function Layout(props: { anonymous?: boolean }) {
       </Snackbar>
       <ModalSystem />
       <Container maxWidth={false} disableGutters>
+        <Button
+          id="skip-to-content"
+          color="primary"
+          variant="contained"
+          onClick={skipToContent}
+          size="large">
+          {t('ui.header.skipToContent')}
+        </Button>
         {!props.anonymous ? (
           <Header onAssistanceClick={() => window.open(ArcRoutes.ASSISTANCE, '_blank')} />
         ) : (
@@ -89,7 +111,7 @@ export function Layout(props: { anonymous?: boolean }) {
         <Stack direction={lg ? 'row' : 'column'} bgcolor={grey['100']}>
           {sidebar?.visible ? <Sidebar /> : null}
 
-          <Box padding={3} width={'100%'} component="main">
+          <Box padding={3} width={'100%'} component="main" id="main-content" tabIndex={-1}>
             {backButton && <BackButton onClick={backButtonFunction} text={backButtonText} />}
             {crumbs && (
               <Breadcrumbs crumbs={crumbs} separator={<NavigateNext fontSize="small" />} />
