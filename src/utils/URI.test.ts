@@ -251,7 +251,7 @@ describe('Integration: encode -> set -> decode', () => {
     expect(decoded).toEqual({
       user: {
         name: 'Jane',
-        email: 'janeexample.com' // Note: @ gets sanitized
+        email: 'janeexample.com' // NOTE: @ gets sanitized
       }
     });
   });

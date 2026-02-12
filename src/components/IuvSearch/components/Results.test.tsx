@@ -2,9 +2,9 @@
 import React from 'react';
 import { render, screen } from '__tests__/renderers';
 import '@testing-library/jest-dom';
-import { InstallmentDebtorExtendedDTO } from '../../../../../generated/data-contracts';
 import { Results } from './Results';
 import { InstallmentType } from 'utils/loaders';
+import { InstallmentDebtorExtendedDTO } from '../../../../generated/data-contracts';
 
 // Mock Actions component
 vi.mock('./Actions', () => ({

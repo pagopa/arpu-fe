@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { render, screen } from '__tests__/renderers';
 import React from 'react';
 import DebtPositionDetail from './';
@@ -10,7 +11,8 @@ vi.mock('react-router-dom', () => ({
   useParams: () => ({
     debtPositionId: '1',
     organizationId: '2'
-  })
+  }),
+  useMatches: vi.fn(() => [])
 }));
 
 describe('DebtPositionDetail', async () => {

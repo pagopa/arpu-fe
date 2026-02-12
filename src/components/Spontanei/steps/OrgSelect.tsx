@@ -1,42 +1,48 @@
-import React, { useContext } from 'react';
+import React from 'react';
 import { Autocomplete, Card, Stack, TextField, Typography } from '@mui/material';
 import utils from 'utils';
 import { useTranslation } from 'react-i18next';
 import { OrganizationsWithSpontaneousDTO } from '../../../../generated/data-contracts';
-import FormContext, { FormContextType } from '../FormContext';
 import Controls from '../Controls';
+import { useField, useFormikContext } from 'formik';
+import { PaymentNoticeInfo } from '..';
 
-interface OrgOptions {
-  label: OrganizationsWithSpontaneousDTO['orgName'];
-  value: OrganizationsWithSpontaneousDTO['organizationId'];
-}
-
+/**
+ * This component is responsible for selecting the organization. As first step of Spontanei form.
+ * @returns JSX.Element
+ */
 const OrgSelect = () => {
   const { t } = useTranslation();
   const brokerId = utils.storage.app.getBrokerId();
   const isAnonymous = utils.storage.user.isAnonymous();
 
+  const formik = useFormikContext<PaymentNoticeInfo>();
+  const [, meta, helpers] = useField<PaymentNoticeInfo['org']>('org');
+
   const { data: orgs } = isAnonymous
     ? utils.loaders.public.getPublicOrganizationsWithSpontaneous(brokerId)
     : utils.loaders.getOrganizationsWithSpontaneous(brokerId);
 
-  const orgOptions: OrgOptions[] =
-    orgs?.map((org) => ({ label: org.orgName, value: org.organizationId })) || [];
-
-  const context = useContext<FormContextType | null>(FormContext);
+  const orgOptions = orgs || [];
 
   const handleOrgChange = (
     _event: React.SyntheticEvent<Element, Event>,
-    value: string | OrgOptions | null
+    organization: OrganizationsWithSpontaneousDTO | string | null
   ) => {
-    if (value && typeof value !== 'string' && context) {
+    if (!organization || typeof organization === 'string') {
+      helpers.setValue(null);
+    } else {
       const selectedOrg =
-        orgs?.find((o) => o.organizationId === (value as OrgOptions).value) || null;
-      return context.setOrg(selectedOrg);
+        orgs?.find((o) => o.organizationId === organization?.organizationId) || null;
+      helpers.setValue(selectedOrg);
     }
   };
 
-  const shouldContinue = async () => context?.org !== null;
+  const shouldContinue = async () => {
+    formik.setTouched({ org: true });
+    const errors = await formik.validateForm();
+    return !errors.org;
+  };
 
   return (
     <>
@@ -46,10 +52,22 @@ const OrgSelect = () => {
           <Typography>{t('spontanei.form.steps.step1.description')}</Typography>
           <Autocomplete
             onChange={handleOrgChange}
-            id="free-solo-demo"
+            id="spontanei.form.steps.step1.orgSelectLabel"
             freeSolo
             options={orgOptions}
-            renderInput={(params) => <TextField {...params} label="Cerca per nome dell'ente" />}
+            value={meta.value}
+            getOptionKey={(org) => (org as OrganizationsWithSpontaneousDTO).organizationId}
+            getOptionLabel={(org) => (org as OrganizationsWithSpontaneousDTO).orgName}
+            renderInput={(params) => (
+              <TextField
+                {...params}
+                label={t('spontanei.form.steps.step1.search')}
+                name="org"
+                required
+                error={meta.touched && Boolean(meta.error)}
+                helperText={meta.touched && t(meta.error as string)}
+              />
+            )}
           />
         </Stack>
       </Card>

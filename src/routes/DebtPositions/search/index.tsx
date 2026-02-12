@@ -5,9 +5,14 @@ import { InstallmentType } from 'utils/loaders';
 export const DebtPositionsSearch = () => {
   return (
     <IuvSearch
-      titleKey="app.debtPositionsSearch.title"
       descriptionKey="app.debtPositionsSearch.description"
       installmentType={InstallmentType.ALL}
+      noDataTextKey="app.debtPositionsSearch.noData.text"
+      noDataTitleKey="app.debtPositionsSearch.noData.title"
+      resultKey="app.debtPositionsSearch.result"
+      searchErrorKey="app.debtPositionsSearch.searchError"
+      subtitleKey="app.debtPositionsSearch.sub"
+      titleKey="app.debtPositionsSearch.title"
     />
   );
 };

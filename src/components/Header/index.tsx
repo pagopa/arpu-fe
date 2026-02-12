@@ -9,6 +9,8 @@ import { useUserInfo } from 'hooks/useUserInfo';
 import { SubHeader } from './SubHeader';
 import { useTranslation } from 'react-i18next';
 import { ProductLogo } from 'components/ProductLogo';
+import { Box } from '@mui/system';
+import appStore from 'store/appStore';
 
 export interface HeaderProps {
   onAssistanceClick?: () => void;
@@ -19,7 +21,6 @@ export const Header = (props: HeaderProps) => {
   const { onAssistanceClick = () => null } = props;
   const navigate = useNavigate();
   const { t } = useTranslation();
-  const brokerId = utils.storage.app.getBrokerId();
 
   async function logoutUser() {
     try {
@@ -33,13 +34,12 @@ export const Header = (props: HeaderProps) => {
   }
 
   const { userInfo } = useUserInfo();
-  const { data: brokerInfo } = utils.loaders.public.useBrokerInfo(brokerId);
 
   const rootLink: RootLinkType = {
-    label: brokerInfo?.brokerName ?? '',
+    label: appStore.value.brokerInfo?.brokerName || '',
     href: ArcRoutes.DASHBOARD,
-    ariaLabel: brokerInfo?.brokerName ?? '',
-    title: brokerInfo?.brokerName ?? ''
+    ariaLabel: appStore.value.brokerInfo?.brokerName || '',
+    title: appStore.value.brokerInfo?.brokerName || ''
   };
 
   const jwtUser: JwtUser | undefined = userInfo
@@ -70,15 +70,17 @@ export const Header = (props: HeaderProps) => {
 
   return (
     <>
-      <HeaderAccount
-        rootLink={rootLink}
-        enableDropdown
-        onAssistanceClick={onAssistanceClick}
-        loggedUser={jwtUser}
-        userActions={userActions}
-        translationsMap={{ assistance: t('ui.header.help') }}
-      />
-      <SubHeader product={<ProductLogo />} />
+      <Box component="header">
+        <HeaderAccount
+          rootLink={rootLink}
+          enableDropdown
+          onAssistanceClick={onAssistanceClick}
+          loggedUser={jwtUser}
+          userActions={userActions}
+          translationsMap={{ assistance: t('ui.header.help') }}
+        />
+        <SubHeader product={<ProductLogo />} />
+      </Box>
     </>
   );
 };

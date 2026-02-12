@@ -5,7 +5,7 @@ import Typography from '@mui/material/Typography';
 import Button from '@mui/material/Button';
 import CloseIcon from '@mui/icons-material/Close';
 import { useTheme } from '@mui/material';
-import { ButtonNaked } from '@pagopa/mui-italia/dist/components/ButtonNaked';
+import { ButtonNaked } from '@pagopa/mui-italia';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { ArcRoutes } from 'routes/routes';
@@ -18,7 +18,7 @@ import ExpiredInstallmentItems from './ExpiredInstallmentItems';
 import { closeInstallmentsDrawer } from 'store/installmentsDrawer';
 import { InstallmentDrawerItem } from 'models/InstallmentDrawer';
 import { InstallmentStatus } from '../../../generated/data-contracts';
-import { addItem, toggleCartDrawer } from 'store/CartStore';
+import { addItem, toggleCartDrawer, setCartEmail } from 'store/CartStore';
 import utils from 'utils';
 import { CartItem } from 'models/Cart';
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
@@ -82,6 +82,7 @@ const InstallmentsDrawer = () => {
 
   const addToCart = () => {
     try {
+      setCartEmail(email);
       addedInstallments.forEach((installment) => {
         const {
           paFullName,

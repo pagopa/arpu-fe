@@ -8,29 +8,17 @@ vi.mock('hooks/useLanguage', () => ({
   useLanguage: vi.fn()
 }));
 
-vi.mock('utils/loaders', () => ({
-  default: {
-    public: {
-      useBrokerInfo: vi.fn()
-    }
-  }
-}));
-
 vi.mock('./ProductLogo', () => ({
   ProductLogo: () => <div data-testid="product-logo">Logo</div>
 }));
 
-import loaders from 'utils/loaders';
 import { ArcRoutes } from 'routes/routes';
+import { resetAppStore, setBrokerInfo } from 'store/appStore';
 
 describe('Footer', () => {
   beforeEach(() => {
     vi.clearAllMocks();
     localStorage.setItem('ARPU-brokerId', '123');
-
-    vi.mocked(loaders.public.useBrokerInfo).mockReturnValue({
-      data: { brokerName: 'Test Broker S.p.A.' }
-    } as any);
   });
 
   afterEach(() => {
@@ -85,16 +73,14 @@ describe('Footer', () => {
   });
 
   it('renders broker name', () => {
+    setBrokerInfo({ brokerName: 'Test Broker S.p.A.', brokerFiscalCode: 'ABC' });
     render(<Footer />);
 
     expect(screen.getByText('Test Broker S.p.A.')).toBeInTheDocument();
   });
 
   it('handles missing broker name gracefully', () => {
-    vi.mocked(loaders.public.useBrokerInfo).mockReturnValue({
-      data: undefined
-    } as any);
-
+    resetAppStore();
     render(<Footer />);
 
     expect(screen.queryByText('Test Broker S.p.A.')).not.toBeInTheDocument();

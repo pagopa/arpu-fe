@@ -1,11 +1,11 @@
 import { useTranslation } from 'react-i18next';
-import { InstallmentDebtorExtendedDTO } from '../../../../../generated/data-contracts';
 import React from 'react';
 import { Card, Stack, Typography } from '@mui/material';
 import { propertyOrMissingValue, toEuroOrMissingValue } from 'utils/converters';
 import { Actions } from './Actions';
 import { InstallmentType } from 'utils/loaders';
 import { InstallmentChip } from 'components/StatusChips/InstallmentChip';
+import { InstallmentDebtorExtendedDTO } from '../../../../generated/data-contracts';
 
 type ResultsProps = {
   installments: InstallmentDebtorExtendedDTO[];
@@ -37,9 +37,10 @@ export const Results = ({ installments, installmentType }: ResultsProps) => {
             alignItems: 'center',
             justifyContent: 'space-between',
             p: 3,
-            borderRadius: 1
+            borderRadius: 1,
+            gap: 3
           }}>
-          <Stack direction="row" justifyContent="space-between" width="80%">
+          <Stack direction="row" justifyContent="space-between" width="100%">
             <Item label={t('fields.noticeCode')} value={propertyOrMissingValue(installment.iuv)} />
             <Item label={t('fields.orgName')} value={propertyOrMissingValue(installment.orgName)} />
             <Item
@@ -53,7 +54,7 @@ export const Results = ({ installments, installmentType }: ResultsProps) => {
               />
             )}
           </Stack>
-          <Actions installment={installment} installmentType={installmentType} />
+          <Actions installment={installment} />
         </Card>
       ))}
     </Stack>

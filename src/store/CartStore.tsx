@@ -8,7 +8,8 @@ const ITEMID = 'iuv';
 const defaultCart: CartState = {
   amount: 0,
   isOpen: false,
-  items: []
+  items: [],
+  email: undefined
 };
 
 export const { state: cartState } = usePersistentSignal<CartState>(SessionItems.CART, {
@@ -72,4 +73,12 @@ export function getTotalAmout() {
 
 export function isItemInCart(itemId: string) {
   return cartState.value.items.some((item) => item[ITEMID] === itemId);
+}
+
+export function setCartEmail(email?: string) {
+  cartState.value = { ...cartState.value, email };
+}
+
+export function getCartEmail() {
+  return cartState.value.email;
 }

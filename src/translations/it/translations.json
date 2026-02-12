@@ -25,7 +25,18 @@
     },
     "debtPositionsSearch": {
       "title": "Cerca un avviso",
-      "description": "Recupera un avviso di pagamento compilando i campi con i dati richiesti."
+      "sub": "Cerca un avviso",
+      "result_zero": "Nessun riultato",
+      "result_one": "Abbiamo trovato {{count}} avviso",
+      "result_other": "Abbiamo trovato {{count}} avvisi",
+      "description": "Recupera un avviso di pagamento compilando i campi con i dati richiesti.",
+      "noData": {
+        "title": "Non abbiamo trovato avvisi corrispondenti",
+        "text": "Controlla i dati inseriti e riprova."
+      },
+      "actions": {
+        "download": "Scarica avviso"
+      }
     },
     "user": {
       "title": "I tuoi dati",
@@ -78,7 +89,7 @@
       "download": "Scarica ricevuta",
       "amount": "Importo",
       "remittanceInformation": "Oggetto del pagamento",
-      "iuv": "Codice Avviso",
+      "noticeCode": "Codice Avviso",
       "beneficiary": "Ente beneficiario",
       "beneficiaryFiscalCode": "Codice Fiscale Ente",
       "debtor": "Intestatario",
@@ -89,7 +100,7 @@
       "authorizationCode": "Codice autorizzativo",
       "iur": "IUR",
       "iud": "IUD",
-      "downloadError":"Non è stato possibile recuperare la ricevuta."
+      "downloadError": "Non è stato possibile recuperare la ricevuta."
     },
     "assistance": {
       "title": "Come possiamo aiutarti?",
@@ -155,8 +166,10 @@
       "paid": "Pagato",
       "viewDetail": "Visualizza il dettaglio per la transazione",
       "empty": {
-        "title": "Qui vedrai le tue ricevute",
-        "subtitle": "Le troverai qui dopo aver pagato una posizione debitoria presso un qualsiasi canale abilitato."
+        "title": "Il download dell’avviso è in corso",
+        "subtitle": "Se non parte automaticamente, clicca qui. ",
+        "back": "Torna al tuo profilo",
+        "link": "Fai un pagamento"
       }
     },
     "debtPositions": {
@@ -170,7 +183,14 @@
         "noDueDate": "Più opzioni di pagamento"
       },
       "list": {
-        "title": "Importi da pagare"
+        "title": "Importi da pagare",
+        "subtitle": "Qui trovi gli avvisi ancora da pagare o già avviati a rate. Se cerchi un avviso intestato a qualcun altro, clicca su",
+        "subtitleLink": "Cerca un avviso."
+      },
+      "download": {
+        "title": "Il download dell’avviso è in corso",
+        "subtitle": "Se non parte automaticamente, <CustomLink>clicca qui</CustomLink>.",
+        "link": "Scopri i canali abilitati"
       }
     },
     "debtPositionDetail": {
@@ -183,7 +203,7 @@
       "payNow": "Paga ora",
       "payLater": "Paga a rate",
       "addItemToCart": "Aggiungi al carrello",
-      "removeItemFromCart":"Rimuovi dal carrello",
+      "removeItemFromCart": "Rimuovi dal carrello",
       "paymentOptionSingleInstallment": "Soluzione unica",
       "paymentOptionInstallments": "Soluzione a rate",
       "installment": "rata",
@@ -196,6 +216,12 @@
         "PAID": "Pagato",
         "UNPAID": "Da pagare",
         "EXPIRED": "Scaduta"
+      },
+      "dueDate": {
+        "EXPIRED": "il {{dueDate}}",
+        "UNPAID": "entro il <strong>{{dueDate}}</strong>",
+        "PAID": "il {{paymentDateTime}}",
+        "REPORTED": "il {{paymentDateTime}}"
       }
     },
     "paymentNotice": {
@@ -243,7 +269,7 @@
       "noticesAlert": {
         "info": "Questi sono gli avvisi di pagamento che gli enti hanno comunicato a PagoPA. Se non trovi un avviso, rivolgiti all’Ente Creditore oppure premi su ‘Paga un avviso’ e inserisci i dati.",
         "action": "Paga un avviso"
-        },
+      },
       "optin": {
         "title": "Consenti a PagoPA di ricercare i tuoi avvisi?",
         "body": "Se confermi, consenti a PagoPA di ricercare gli avvisi di pagamento a tuo nome tra gli archivi degli enti aderenti al servizio.",
@@ -272,7 +298,7 @@
         "title": "Informazioni sulla transazione"
       },
       "downloadReceipt": "Scarica ricevuta",
-      "downloadReceiptError":"Non è stato possibile recuperare la ricevuta.",
+      "downloadReceiptError": "Non è stato possibile recuperare la ricevuta.",
       "noReceipt": "La ricevuta pagoPA non è disponibile. Rivolgiti all’Ente Creditore se hai bisogno della quietanza di pagamento, cioè il documento che attesta di aver saldato un debito.",
       "downloadQuiettance": "Scarica quietanza",
       "createdOn": "Creato il",
@@ -337,7 +363,10 @@
     "resetFilters": "Rimuovi filtri",
     "search": "Cerca",
     "detail": "Dettaglio",
-    "download": "Scarica"
+    "download": "Scarica",
+    "close": "Chiudi",
+    "payNow": "Paga ora",
+    "addItemToCart": "Aggiungi al carrello"
   },
   "fields": {
     "iuv": "Codice Avviso/IUV",
@@ -373,9 +402,9 @@
   "menu": {
     "description": "Naviga il portale",
     "homepage": "Homepage",
-    "receipts":{
-      "menuTitle":"Ricevute",
-       "pageTitle": "Ricevute"
+    "receipts": {
+      "menuTitle": "Ricevute",
+      "pageTitle": "Ricevute"
     },
     "navigationMenu": "Menù di navigazione",
     "menu": "Menu",
@@ -385,6 +414,19 @@
     "collapse": "Comprimi il menu",
     "expand": "Espandi il menu"
   },
+  "errors": {
+    "form": {
+      "required": "Questo campo non puoi essere vuoto."
+    },
+    "toast": {
+      "403": "Non hai i permessi per eseguire questa azione.",
+      "404": "Risorsa non trovata.",
+      "500": "Errore del server, riprova più tardi.",
+      "default": "Si è verificato un errore imprevisto. Riprova più tardi.",
+      "drawer": "Errore durante l'aggiunta all'carrello dei pagamenti. Riprova più tardi.",
+      "payment": "Errore durante il pagamento. Riprova più tardi."
+    }
+  },
   "ui": {
     "a11y": {
       "cart": "Visualizza il carrello dei pagamenti",
@@ -393,7 +435,8 @@
     "header": {
       "profile": "I tuoi dati",
       "logout": "Esci",
-      "help": "Assistenza"
+      "help": "Assistenza",
+      "skipToContent": "Vai al contenuto principale"
     },
     "footer": {
       "a11y": "Accessibilità",
@@ -425,7 +468,7 @@
     "404": {
       "title": "La Pagina che stai cercando non esiste",
       "body": "Puoi ritornare alla homepage o visitare una nuova pagina",
-      "cta":  "Ritorna alla homepage"
+      "cta": "Ritorna alla homepage"
     },
     "408": {
       "title": "Non è stato possibile accedere",
@@ -448,28 +491,36 @@
       "cta": "Ritorna alla homepage"
     }
   },
-  "pageTitles" : {
+  "pageTitles": {
     "dashboard": "La tua Dashboard",
-    "paymentnotices": "I tuoi avvisi di pagamento",
-    "paymentnotice": "Dettaglio avviso",
     "notices": "Le tue ricevute di pagamento",
-    "notice": "Dettaglio operazione",
     "courtesy": "Pagina di cortesia",
-    "userpage": "I tuoi dati"
+    "userpage": "I tuoi dati",
+    "login": "Accedi",
+    "debtPositions": "Importi da pagare",
+    "debtPositionDetail": "Posizione debitoria",
+    "debtPositionsSearch": "Cerca un avviso",
+    "debtPositionsList": "Importi da pagare",
+    "paymentReceipt": "Ricevuta Pagamento",
+    "receiptDetail": "Dettaglio ricevuta",
+    "receiptsSearch": "Recupera una ricevuta",
+    "receiptsList": "Lista ricevute",
+    "spontanei": "Pagamenti spontanei",
+    "assistance": "Assistenza"
   },
   "spontanei": {
     "drawer": {
-        "title": "PAGA UN AVVISO",
-        "card1": {
-          "title": "Hai ricevuto un avviso di pagamento?",
-          "description": "Sei già in possesso dei codici o di un QR Code per procedere al pagamento",
-          "cta": "Vai al pagamento"
-        },
-        "card2": {
-          "title": "Vuoi effettuare un pagamento spontaneo?",
-          "description": "Vuoi pagare la Pubblica Amministrazione perchè ti va e perchè sei un buono",
-          "cta": "Configura il pagamento"
-        }
+      "title": "PAGA UN AVVISO",
+      "card1": {
+        "title": "Hai ricevuto un avviso di pagamento?",
+        "description": "Sei già in possesso dei codici o di un QR Code per procedere al pagamento",
+        "cta": "Vai al pagamento"
+      },
+      "card2": {
+        "title": "Vuoi effettuare un pagamento spontaneo?",
+        "description": "Vuoi pagare la Pubblica Amministrazione perchè ti va e perchè sei un buono",
+        "cta": "Configura il pagamento"
+      }
     },
     "form": {
       "title": "Fai un pagamento spontaneo",
@@ -531,16 +582,21 @@
           },
           "debtor": {
             "title": "Dati del debitore",
-            "F":{
+            "F": {
               "name": "Nome e cognome debitore",
               "code": "Codice Fiscale debitore",
-              "email": "Email debitore"  
+              "email": "Email debitore"
             },
-            "G":{
+            "G": {
               "name": "Denominazione",
               "code": "Codice Fiscale/P.IVA",
-              "email": "Email"  
+              "email": "Email"
             }
+          },
+          "payment": {
+            "title": "Dati dell'avviso di pagamento",
+            "description": "Oggetto del pagamento",
+            "amount": "Importo"
           }
         },
         "step5": {
@@ -560,12 +616,6 @@
           }
         }
       },
-      "download": {
-        "title": "Il download dell’avviso è in corso",
-        "help": "Se non parte automaticamente, clicca <link1>qui.</link1>",
-        "info": "Scopri i canali abilitati",
-        "close": "Chiudi"
-      },
       "continue": "Continua",
       "confirm": "Conferma i dati",
       "abort": "Esci",
@@ -575,19 +625,16 @@
         "amount": "Importo non valido.",
         "fullName": "Nome e cognome non validi.",
         "fiscalCode": "Codice Fiscale o Partita IVA errato.",
-        "email": "Email non valida."
+        "email": "Email non valida.",
+        "org": "La selezione dell'ente è obbligatoria.",
+        "debtType": "*Seleziona un servizio nella lista superiore o nell'elenco dei più utilizzati"
       }
     },
-    "errors": {
-      "form": {
-        "required": "Questo campo non puoi essere vuoto."
-      },
-      "toast": {
-        "403": "Non hai i permessi per eseguire questa azione.",
-        "404": "Risorsa non trovata.",
-        "500": "Errore del server, riprova più tardi.",
-        "default": "Si è verificato un errore imprevisto. Riprova più tardi."
-      }
+    "download": {
+      "title": "Il download dell’avviso è in corso",
+      "help": "Se non parte automaticamente, clicca <link1>qui.</link1>",
+      "info": "Scopri i canali abilitati",
+      "close": "Chiudi"
     }
   }
 }

@@ -1,20 +1,35 @@
-import React, { useContext } from 'react';
+import React, { useContext, useEffect } from 'react';
 import FormContext, { FormContextType } from '../FormContext';
 import utils from 'utils';
 import StandardForm from '../StandarForm/StandardForm';
 import CustomForm from '../DinamicForm/CustomForm';
 import ExternalUrlForm from '../ExternalUrlForm/ExternalUrlForm';
+import { useField } from 'formik';
+import { PaymentNoticeInfo } from '..';
 
+/**
+ * This component is responsible for rendering the form based on the debt type.
+ * @returns JSX.Element
+ */
 const DebtTypeConfig = () => {
   const context = useContext<FormContextType | null>(FormContext);
-  const organizationId = context?.org?.organizationId || 0;
-  const debtPositionTypeOrgId = context?.debtType?.debtPositionTypeOrgId || 0;
+  const [org] = useField<PaymentNoticeInfo['org']>('org');
+  const [debtType] = useField<PaymentNoticeInfo['debtType']>('debtType');
+  const organizationId = org.value?.organizationId;
+  const debtPositionTypeOrgId = debtType.value?.debtPositionTypeOrgId;
+
   const isAnonymous = utils.storage.user.isAnonymous();
   const brokerId = utils.storage.app.getBrokerId();
 
+  if (!organizationId || !debtPositionTypeOrgId || !brokerId) {
+    throw new Error(
+      'Missing required parameters: organizationId, debtPositionTypeOrgId, or brokerId'
+    );
+  }
+
   const { data } = isAnonymous
     ? utils.loaders.public.getPublicDebtPositionTypeOrgsWithSpontaneousDetail(
-        parseInt(brokerId, 10),
+        brokerId,
         organizationId,
         debtPositionTypeOrgId
       )
@@ -25,11 +40,23 @@ const DebtTypeConfig = () => {
       );
 
   const type = data?.formType;
-  context?.setFormType(type || null);
+
+  /**
+   * Sets the form type in the context.
+   */
+  useEffect(() => {
+    if (type) {
+      context?.setFormType(type);
+    }
+    return () => context?.setFormType(null);
+  }, [type, context]);
 
   const hasFlagAnonymousFiscalCode = data?.flagAnonymousFiscalCode || false;
 
-  const renderFormByType = () => {
+  /**
+   * Renders the form based on the debt type (memoizing).
+   */
+  const renderedForm = React.useMemo(() => {
     switch (type) {
       case 'STANDARD':
         return <StandardForm hasFlagAnonymousFiscalCode={hasFlagAnonymousFiscalCode} />;
@@ -52,9 +79,9 @@ const DebtTypeConfig = () => {
       default:
         return null;
     }
-  };
+  }, [type, data, hasFlagAnonymousFiscalCode]);
 
-  return renderFormByType();
+  return renderedForm;
 };
 
 export default DebtTypeConfig;

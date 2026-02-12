@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import { Stack, Typography, TextField, Button, InputAdornment } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import utils from 'utils';
-import { Helmet } from 'react-helmet';
 import config from 'utils/config';
 import { useSearch } from 'hooks/useSearch';
 import { ArcRoutes } from 'routes/routes';
@@ -48,7 +47,8 @@ export const ReceiptsList = () => {
     applyFilters
   } = useSearch({
     query: mutation,
-    filters: appliedFilters
+    filters: appliedFilters,
+    initialSort: ['paymentDateTime,desc']
   });
 
   const handleApplyFilters = () => {
@@ -80,13 +80,12 @@ export const ReceiptsList = () => {
 
   return (
     <>
-      <Helmet>
-        <title>{`${t('pageTitles.notices')} - ${t('app.title')}`}</title>
-      </Helmet>
       <Stack gap={3}>
         <Stack gap={1}>
-          <Typography variant="h3">{t('menu.receipts.pageTitle')}</Typography>
-          <Typography fontSize={16}>
+          <Typography variant="h3" component="h1">
+            {t('menu.receipts.pageTitle')}
+          </Typography>
+          <Typography fontSize={16} component="h2">
             {t('app.receipts.subtitle')}{' '}
             <Link to={ArcRoutes.public.RECEIPTS_SEARCH}>{t('app.receipts.subtitleLink')}</Link>
           </Typography>
@@ -116,10 +115,10 @@ export const ReceiptsList = () => {
           <Stack direction="row" gap={3} alignItems="center" flex={2}>
             <DateRange
               from={{
-                onChange: (dateFrom) => setStartDate(dateFrom),
+                onChange: setStartDate,
                 value: startDate
               }}
-              to={{ onChange: (dateTo) => setEndDate(dateTo), value: endDate }}
+              to={{ onChange: setEndDate, value: endDate }}
             />
 
             <Button
@@ -141,7 +140,7 @@ export const ReceiptsList = () => {
           noData={isSuccess && !data?.content?.length}
           onRetry={() => applyFilters(appliedFilters)}
           noDataCta={<PaymentButton />}
-          queryKey="pagedUnpaidDebtPositions"
+          queryKey="pagedDebtorReceipts"
           noDataTitle={t('app.receipts.empty.title')}
           noDataText={t('app.receipts.empty.subtitle')}>
           <Stack gap={2}>

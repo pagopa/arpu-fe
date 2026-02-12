@@ -2,7 +2,7 @@ import { Button, Card, Stack, Typography } from '@mui/material';
 import React, { useContext } from 'react';
 import Controls from '../Controls';
 import { useTranslation } from 'react-i18next';
-import { addItem, isItemInCart, toggleCartDrawer } from 'store/CartStore';
+import { addItem, isItemInCart, setCartEmail, toggleCartDrawer } from 'store/CartStore';
 import notify from 'utils/notify';
 import { useStore } from 'store/GlobalStore';
 import utils from 'utils';
@@ -17,6 +17,10 @@ import { CartItem } from 'models/Cart';
 import FileDownloadIcon from '@mui/icons-material/FileDownload';
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 
+/**
+ * This component is responsible for rendering the payment step of the form.
+ * @returns JSX.Element
+ */
 const Payment = () => {
   const context = useContext<FormContextType | null>(FormContext);
 
@@ -25,11 +29,13 @@ const Payment = () => {
   const [description] = useField<PaymentNoticeInfo['description']>('description');
   const [fiscalCode] = useField<PaymentNoticeInfo['fiscalCode']>('fiscalCode');
   const [entityType] = useField<PaymentNoticeInfo['entityType']>('entityType');
+  const [org] = useField<PaymentNoticeInfo['org']>('org');
+  const [debtType] = useField<PaymentNoticeInfo['debtType']>('debtType');
   const [email] = useField<PaymentNoticeInfo['email']>('email');
   const isAnonymous = utils.storage.user.isAnonymous();
 
-  const organizationId = context?.org?.organizationId;
-  const debtPositionTypeOrgId = context?.debtType?.debtPositionTypeOrgId;
+  const organizationId = org.value?.organizationId;
+  const debtPositionTypeOrgId = debtType.value?.debtPositionTypeOrgId;
   const userDescription = context?.userDescription || undefined;
 
   const navigate = useNavigate();
@@ -81,6 +87,7 @@ const Payment = () => {
     if (!iuv || !nav) return;
     if (isItemInCart(iuv)) return;
     if (cart.items.length >= 5) return notify.emit(t('app.cart.items.full'), 'error');
+    setCartEmail(email.value || undefined);
     addItem({
       amount,
       paTaxCode: orgFiscalCode,
@@ -112,7 +119,7 @@ const Payment = () => {
       paFullName: orgName,
       description: remittanceInformation
     };
-    carts.mutate({ notices: [item], email: email.value });
+    carts.mutate({ notices: [item], email: email.value || undefined });
   };
 
   const goToDownloadPaymentNoticePage = () => {
