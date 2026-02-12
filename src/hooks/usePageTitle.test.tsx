@@ -27,7 +27,7 @@ describe('usePageTitle hook', () => {
     document.title = '';
   });
 
-  it('dovrebbe impostare il titolo basandosi sul titleKey della rotta', () => {
+  it('should set titles based on the route titleKey', () => {
     vi.mocked(useMatches).mockReturnValue([
       {
         handle: { titleKey: 'pageTitles.dashboard' }
@@ -39,7 +39,7 @@ describe('usePageTitle hook', () => {
     expect(document.title).toBe('Dashboard - Area Riservata');
   });
 
-  it('dovrebbe dare priorità al dynamicTitle se fornito', () => {
+  it('should prioritize dynamicTitle if present', () => {
     vi.mocked(useMatches).mockReturnValue([
       {
         handle: { titleKey: 'pageTitles.dashboard' }
@@ -51,7 +51,7 @@ describe('usePageTitle hook', () => {
     expect(document.title).toBe('Titolo Dinamico - Area Riservata');
   });
 
-  it("dovrebbe usare solo il titolo dell'app se non trova titleKey né dynamicTitle", () => {
+  it('should use only appTitle if both titleKey and dynamicTitle are absent', () => {
     vi.mocked(useMatches).mockReturnValue([]);
 
     renderHook(() => usePageTitle());

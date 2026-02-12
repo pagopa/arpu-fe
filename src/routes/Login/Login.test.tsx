@@ -8,10 +8,6 @@ import { ArcRoutes } from 'routes/routes';
 import { useNavigate } from 'react-router-dom';
 import { Mock } from 'vitest';
 
-vi.mock('react-helmet', () => ({
-  Helmet: ({ children }: any) => <div data-testid="helmet">{children}</div>
-}));
-
 describe('LoginRoute', () => {
   const mockNavigate = vi.fn();
   const replaceSpy = vi.fn();

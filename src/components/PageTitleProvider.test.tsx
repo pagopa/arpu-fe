@@ -9,13 +9,13 @@ vi.mock('hooks/usePageTitle', () => ({
 }));
 
 describe('PageTitleProvider component', () => {
-  it('dovrebbe invocare usePageTitle al montaggio', () => {
+  it('should invoke usePageTitle on mount', () => {
     render(<PageTitleProvider />);
 
     expect(usePageTitle).toHaveBeenCalledTimes(1);
   });
 
-  it('non dovrebbe renderizzare nulla nel DOM', () => {
+  it('should render nothing in DOM', () => {
     const { container } = render(<PageTitleProvider />);
 
     expect(container.firstChild).toBeNull();
