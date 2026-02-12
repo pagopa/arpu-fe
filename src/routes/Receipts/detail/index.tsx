@@ -59,7 +59,7 @@ export const ReceiptDetail = () => {
   return (
     <>
       <Helmet>
-        <title>{`${data?.debtPositionTypeOrgDescription || t('pageTitles.receiptDetail')} - ${t('app.title')}`}</title>
+        <title>{`${t('pageTitles.receiptDetail')} ${data?.debtPositionTypeOrgDescription} - ${t('app.title')}`}</title>
       </Helmet>
       <Stack alignItems="center" p={3} bgcolor={colors.grey['100']}>
         <Stack gap={3} width={{ xs: '100%', md: isAnonymous ? '70%' : '100%' }}>

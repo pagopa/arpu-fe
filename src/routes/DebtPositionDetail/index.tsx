@@ -60,7 +60,7 @@ const DebtPositionDetail = () => {
   return (
     <>
       <Helmet>
-        <title>{`${data.debtPositionTypeOrgDescription || t('pageTitles.debtPositionDetail')} - ${t('app.title')}`}</title>
+        <title>{`${t('pageTitles.debtPositionDetail')} ${data.debtPositionTypeOrgDescription} - ${t('app.title')}`}</title>
       </Helmet>
       <Stack gap={3}>
         <Typography
