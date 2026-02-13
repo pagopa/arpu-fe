@@ -32,9 +32,12 @@ import { PageTitleProvider } from './PageTitleProvider';
 import { t } from 'i18next';
 import '../styles.css';
 import appStore from 'store/appStore';
+import { StorageItems } from 'utils/storage';
+import { RouteGuard } from './RouteGuard';
 
 const defaultRouteHandle: RouteHandleObject = {
-  sidebar: { visible: true },
+  sidebar: true,
+  subHeadear: true,
   crumbs: { routeName: '', elements: [] },
   backButton: false
 };
@@ -52,7 +55,7 @@ export function Layout(props: { anonymous?: boolean }) {
 
   document.body.style.overflow = modalOpen || cart.isOpen || overlay ? 'hidden' : 'auto';
 
-  const { crumbs, sidebar, backButton, backButtonText, backButtonFunction } = {
+  const { crumbs, sidebar, backButton, backButtonText, backButtonFunction, subHeadear } = {
     ...defaultRouteHandle,
     ...(matches.find((match) => Boolean(match.handle))?.handle || {})
   } as RouteHandleObject;
@@ -65,6 +68,7 @@ export function Layout(props: { anonymous?: boolean }) {
   };
 
   const ASSISTANCE_MAIL = utils.config.assistanceLink;
+
   const onAssistanceClick = () => {
     window.open(`mailto:${ASSISTANCE_MAIL}`);
   };
@@ -105,13 +109,18 @@ export function Layout(props: { anonymous?: boolean }) {
               onAssistanceClick={onAssistanceClick}
               enableLogin={false}
             />
-            <SubHeader product={<ProductLogo />} />
+            {subHeadear && <SubHeader product={<ProductLogo />} />}
           </>
         )}
         <Stack direction={lg ? 'row' : 'column'} bgcolor={grey['100']}>
-          {sidebar?.visible ? <Sidebar /> : null}
+          {sidebar ? <Sidebar /> : null}
 
-          <Box padding={3} width={'100%'} component="main" id="main-content" tabIndex={-1}>
+          <Box
+            padding={!props.anonymous ? 3 : 0}
+            width={'100%'}
+            component="main"
+            id="main-content"
+            tabIndex={-1}>
             {backButton && <BackButton onClick={backButtonFunction} text={backButtonText} />}
             {crumbs && (
               <Breadcrumbs crumbs={crumbs} separator={<NavigateNext fontSize="small" />} />
@@ -127,3 +136,12 @@ export function Layout(props: { anonymous?: boolean }) {
     </>
   );
 }
+
+const withGuard = (Component: () => React.JSX.Element) => (
+  <RouteGuard itemKeys={[StorageItems.TOKEN]} storage={window.localStorage}>
+    <Component />
+  </RouteGuard>
+);
+
+export const AuthLayout = () => withGuard(() => <Layout />);
+export const PublicLayout = () => <Layout anonymous={true} />;

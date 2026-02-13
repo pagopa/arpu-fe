@@ -12,7 +12,8 @@ export interface BreadcrumbElement {
 
 export interface RouteHandleObject {
   crumbs?: BreadcrumbPath;
-  sidebar: { visible?: boolean };
+  sidebar?: boolean;
+  subHeadear?: boolean;
   backButton?: boolean;
   backButtonText?: string;
   backButtonFunction?: () => void;
