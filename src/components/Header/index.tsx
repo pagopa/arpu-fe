@@ -6,9 +6,7 @@ import LogoutRoundedIcon from '@mui/icons-material/LogoutRounded';
 import { useNavigate } from 'react-router-dom';
 import { ArcRoutes } from 'routes/routes';
 import { useUserInfo } from 'hooks/useUserInfo';
-import { SubHeader } from './SubHeader';
 import { useTranslation } from 'react-i18next';
-import { ProductLogo } from 'components/ProductLogo';
 import { Box } from '@mui/system';
 import appStore from 'store/appStore';
 
@@ -79,7 +77,6 @@ export const Header = (props: HeaderProps) => {
           userActions={userActions}
           translationsMap={{ assistance: t('ui.header.help') }}
         />
-        <SubHeader product={<ProductLogo />} />
       </Box>
     </>
   );

@@ -21,8 +21,7 @@ export const BackButton = (props: BackButtonProps) => {
       size="medium"
       startIcon={<ArrowBack />}
       variant="text"
-      onClick={onClick}
-      sx={{ marginBottom: 3 }}>
+      onClick={onClick}>
       {t(`app.routes.${text}`)}
     </Button>
   );

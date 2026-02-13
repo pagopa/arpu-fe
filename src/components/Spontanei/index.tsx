@@ -1,5 +1,5 @@
 import React from 'react';
-import { Box, Container, Stack, Typography } from '@mui/material';
+import { Box, Stack, Typography } from '@mui/material';
 
 import Steps from './steps';
 import FormContext from './FormContext';
@@ -102,12 +102,12 @@ const Spontanei = () => {
   );
 
   return (
-    <Container>
-      <Box padding={3} width={'100%'} component="main">
+    <>
+      <Box width={'100%'} component="main">
         <Formik initialValues={defaultPaymentNoticeInfo} validate={validate} onSubmit={console.log}>
           <FormContext.Provider value={contextValue}>
             <Stack>
-              <Typography variant="h6" mb={1}>
+              <Typography variant="h4" component="h1" mb={1}>
                 {t('spontanei.form.title')}
               </Typography>
               <Typography>{t('spontanei.form.description')}</Typography>
@@ -123,7 +123,7 @@ const Spontanei = () => {
           </FormContext.Provider>
         </Formik>
       </Box>
-    </Container>
+    </>
   );
 };
 

@@ -53,14 +53,20 @@ const router = createBrowserRouter([
       },
       {
         element: <PublicLayout />,
+        handle: {
+          sidebar: false,
+          backButton: false,
+          subHeader: false,
+          backButtonText: 'exit',
+          gutters: true
+        } as RouteHandleObject,
         children: [
           {
             path: ArcRoutes.LOGIN,
             element: <Login />,
             handle: {
-              subHeadear: false,
-              sidebar: false,
-              titleKey: 'pageTitles.login'
+              titleKey: 'pageTitles.logIn',
+              gutters: false
             } as RouteHandleObject
           },
           {
@@ -71,8 +77,7 @@ const router = createBrowserRouter([
                 element: <Spontanei />,
                 handle: {
                   backButton: true,
-                  subHeadear: true,
-                  sidebar: false,
+                  subHeader: true,
                   titleKey: 'pageTitles.spontanei'
                 } as RouteHandleObject
               },
@@ -80,9 +85,6 @@ const router = createBrowserRouter([
                 path: 'download/:orgId/:iuv',
                 element: <Download />,
                 handle: {
-                  backButton: false,
-                  subHeadear: false,
-                  sidebar: false,
                   titleKey: 'pageTitles.spontanei'
                 } as RouteHandleObject
               }
@@ -93,15 +95,15 @@ const router = createBrowserRouter([
             element: <DebtPositionsSearch />,
             handle: {
               titleKey: 'pageTitles.debtPositionsSearch',
-              sidebar: false
+              subHeader: true,
+              backButton: true
             } as RouteHandleObject
           },
           {
             path: ArcRoutes.public.DEBT_POSITION_DOWNLOAD,
             element: <DebtPositionDownload />,
             handle: {
-              titleKey: 'pageTitles.debtPositionsDownload',
-              sidebar: false
+              titleKey: 'pageTitles.debtPositionsDownload'
             } as RouteHandleObject
           },
           {
@@ -109,7 +111,9 @@ const router = createBrowserRouter([
             element: <ReceiptsSearch />,
             handle: {
               titleKey: 'pageTitles.receiptsSearch',
-              sidebar: false
+              sidebar: false,
+              subHeader: true,
+              backButton: true
             } as RouteHandleObject
           },
           {
@@ -123,8 +127,6 @@ const router = createBrowserRouter([
             path: ArcRoutes.TOS,
             element: <Resources resource="tos" />,
             handle: {
-              sidebar: false,
-              subHeadear: false,
               titleKey: 'pageTitles.tos'
             } as RouteHandleObject
           },
@@ -132,8 +134,6 @@ const router = createBrowserRouter([
             path: ArcRoutes.PRIVACY_POLICY,
             element: <Resources resource="pp" />,
             handle: {
-              sidebar: false,
-              subHeadear: false,
               titleKey: 'pageTitles.pp'
             } as RouteHandleObject
           },
@@ -142,8 +142,6 @@ const router = createBrowserRouter([
             loader: ({ params }) => Promise.resolve(params.error),
             element: <CourtesyPage />,
             handle: {
-              sidebar: false,
-              subHeadear: false,
               titleKey: 'pageTitles.courtesy'
             } as RouteHandleObject
           }
@@ -151,6 +149,12 @@ const router = createBrowserRouter([
       },
       {
         element: <AuthLayout />,
+        handle: {
+          sidebar: true,
+          subHeader: true,
+          backButton: false,
+          gutters: true
+        } as RouteHandleObject,
         children: [
           {
             path: ArcRoutes.DASHBOARD,
@@ -184,31 +188,33 @@ const router = createBrowserRouter([
             element: <DebtPositionsList />,
             handle: {
               titleKey: 'pageTitles.debtPositionsList'
-            } as RouteHandleObject
+            }
           },
           {
             path: ArcRoutes.DEBT_POSITION,
             element: <DebtPositionDetail />,
             handle: {
               titleKey: 'pageTitles.debtPositionDetail'
-            } as RouteHandleObject
+            }
           },
           {
             path: ArcRoutes.DEBT_POSITION_DOWNLOAD,
             element: <DebtPositionDownload />,
             handle: {
               titleKey: 'pageTitles.debtPositionsDownload'
-            } as RouteHandleObject
+            }
           },
           {
             path: ArcRoutes.PAYMENTS_ON_THE_FLY,
+            handle: {
+              sidebar: false
+            } as RouteHandleObject,
             children: [
               {
                 index: true,
                 element: <Spontanei />,
                 handle: {
                   backButton: true,
-                  sidebar: false,
                   titleKey: 'pageTitles.spontanei'
                 } as RouteHandleObject
               },
@@ -217,7 +223,6 @@ const router = createBrowserRouter([
                 element: <Download />,
                 handle: {
                   backButton: false,
-                  sidebar: false,
                   titleKey: 'pageTitles.spontanei'
                 } as RouteHandleObject
               }
@@ -227,7 +232,6 @@ const router = createBrowserRouter([
             path: ArcRoutes.ASSISTANCE,
             element: <Assistance />,
             handle: {
-              backButton: false,
               sidebar: false,
               titleKey: 'pageTitles.assistance'
             } as RouteHandleObject
