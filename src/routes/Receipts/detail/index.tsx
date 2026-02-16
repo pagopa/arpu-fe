@@ -1,16 +1,7 @@
 import React from 'react';
 import { generatePath, Location, useLocation, useNavigate, useParams } from 'react-router-dom';
 import config from 'utils/config';
-import {
-  Stack,
-  Card,
-  colors,
-  Button,
-  Divider,
-  Theme,
-  Typography,
-  useMediaQuery
-} from '@mui/material';
+import { Stack, Card, Button, Divider, Theme, Typography, useMediaQuery } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import { DataRow } from 'components/DataRow';
 import { CopiableRow } from 'components/CopiableRow';
@@ -74,11 +65,7 @@ export const ReceiptDetail = () => {
             {isAnonymous ? <Typography>{t('app.receiptDetail.subtitle')}</Typography> : null}
           </Stack>
           {isAnonymous ? null : (
-            <Button
-              variant="contained"
-              size="large"
-              onClick={onDownload}
-              startIcon={<Download />}>
+            <Button variant="contained" size="large" onClick={onDownload} startIcon={<Download />}>
               {t('app.receiptDetail.download')}
             </Button>
           )}
@@ -155,11 +142,7 @@ export const ReceiptDetail = () => {
             <Button size="large" variant="outlined" onClick={onBack} startIcon={<ArrowBack />}>
               {t('app.routes.back')}
             </Button>
-            <Button
-              variant="contained"
-              size="large"
-              onClick={onDownload}
-              startIcon={<Download />}>
+            <Button variant="contained" size="large" onClick={onDownload} startIcon={<Download />}>
               {t('app.receiptDetail.download')}
             </Button>
           </Stack>

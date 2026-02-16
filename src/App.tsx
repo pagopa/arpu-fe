@@ -102,7 +102,7 @@ const router = createBrowserRouter([
             path: ArcRoutes.public.DEBT_POSITION_DOWNLOAD,
             element: <DebtPositionDownload />,
             handle: {
-              titleKey: 'pageTitles.debtPositionsDownload',
+              titleKey: 'pageTitles.debtPositionsDownload'
             } as RouteHandleObject
           },
           {
