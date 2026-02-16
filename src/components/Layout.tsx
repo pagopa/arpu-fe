@@ -98,9 +98,7 @@ export function Layout(props: { anonymous?: boolean }) {
           {t('ui.header.skipToContent')}
         </Button>
         {!props.anonymous ? (
-          <Header
-            onAssistanceClick={() => window.open(ArcRoutes.ASSISTANCE, '_blank')}
-          />
+          <Header onAssistanceClick={() => window.open(ArcRoutes.ASSISTANCE, '_blank')} />
         ) : (
           <HeaderAccount
             rootLink={rootLink}
@@ -121,7 +119,7 @@ export function Layout(props: { anonymous?: boolean }) {
               </Container>
             ) : null}
             {gutters ? (
-              <Container sx={{ my: 3 }} maxWidth={false}>
+              <Container sx={{ my: 3 }} maxWidth={sidebar ? false : 'lg'}>
                 <Outlet />
               </Container>
             ) : (
