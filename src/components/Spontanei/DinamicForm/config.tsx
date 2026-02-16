@@ -16,6 +16,7 @@ import CURRENCYLABEL from './FieldBeans/CURRENCYLABEL';
 import MULTIFIELD from './FieldBeans/MULTIFIELD';
 import NONE from './FieldBeans/NONE';
 import TAB from './FieldBeans/TAB';
+import DYNAMIC_SELECT from './FieldBeans/DYNAMIC_SELECT';
 import { RenderType } from '../../../../generated/apiClient';
 
 export type FieldName = SpontaneousFormField['name'];
@@ -124,6 +125,8 @@ export const BuildInput = (element: SpontaneousFormField, allElements?: Spontane
       return <TAB input={element} />;
     case 'SINGLESELECT':
       return <SINGLESELECT input={element} />;
+    case 'DYNAMIC_SELECT':
+      return <DYNAMIC_SELECT input={element} />;
     case 'MULTISELECT':
       return <MULTISELECT input={element} />;
     case 'DATE':
