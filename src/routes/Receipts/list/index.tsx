@@ -96,6 +96,7 @@ export const ReceiptsList = () => {
           alignItems={{ xs: 'stretch', md: 'center' }}
           justifyContent="space-between"
           gap={3}
+          minHeight="62px"
           width="100%">
           <TextField
             label="Codice Avviso"
