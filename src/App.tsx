@@ -2,7 +2,7 @@ import React from 'react';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { Navigate, RouterProvider, createBrowserRouter } from 'react-router-dom';
 import { Theme } from './utils/style';
-import { Layout } from './components/Layout';
+import { PublicLayout, AuthLayout } from './components/Layout';
 import { ArcErrors, ArcRoutes } from './routes/routes';
 import DashboardRoute from './routes/Dashboard';
 import UserRoute from 'routes/User';
@@ -12,12 +12,10 @@ import { HealthCheck } from 'components/HealthCheck';
 import { CourtesyPage } from 'routes/CourtesyPage';
 import Login from 'routes/Login';
 import Assistance from 'routes/Assistance';
-import { RouteGuard } from 'components/RouteGuard';
 import utils from 'utils';
 import AuthCallback from 'routes/AuthCallback';
 import Resources from 'routes/Resources';
 import { getTokenOneidentity } from 'utils/loaders';
-import { PreLoginLayout } from 'components/PreLoginLayout';
 import { ApiClient } from 'components/ApiClient';
 import Spontanei from 'routes/Spontanei';
 import Download from 'components/Spontanei/Download';
@@ -26,7 +24,6 @@ import { ReceiptDetail } from 'routes/Receipts/detail';
 import { DebtPositionsList } from 'routes/DebtPositions/list';
 import { ReceiptsSearch } from 'routes/Receipts/search';
 import DebtPositionDetail from 'routes/DebtPositionDetail';
-import { StorageItems } from 'utils/storage';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { DebtPositionsSearch } from 'routes/DebtPositions/search';
 import { it } from 'date-fns/locale/it';
@@ -34,12 +31,6 @@ import { Overlay } from 'components/Overlay';
 import { DebtPositionDownload } from 'routes/DebtPositions/download';
 import { appSetup } from 'utils/setup';
 import appStore from 'store/appStore';
-
-const withGuard = (Component: () => React.JSX.Element) => (
-  <RouteGuard itemKeys={[StorageItems.TOKEN]} storage={window.localStorage}>
-    <Component />
-  </RouteGuard>
-);
 
 const router = createBrowserRouter([
   {
@@ -61,47 +52,88 @@ const router = createBrowserRouter([
         element: <Navigate to={ArcRoutes.DASHBOARD} />
       },
       {
-        element: <PreLoginLayout />,
+        element: <PublicLayout />,
+        handle: {
+          sidebar: false,
+          backButton: false,
+          subHeader: true,
+          backButtonText: 'exit',
+          gutters: true
+        } as RouteHandleObject,
         children: [
           {
             path: ArcRoutes.LOGIN,
             element: <Login />,
             handle: {
-              titleKey: 'pageTitles.login'
+              titleKey: 'pageTitles.logIn',
+              gutters: false,
+              subHeader: false
+            } as RouteHandleObject
+          },
+          {
+            path: ArcRoutes.public.PAYMENTS_ON_THE_FLY,
+            children: [
+              {
+                index: true,
+                element: <Spontanei />,
+                handle: {
+                  backButton: true,
+                  titleKey: 'pageTitles.spontanei'
+                } as RouteHandleObject
+              },
+              {
+                path: 'download/:orgId/:iuv',
+                element: <Download />,
+                handle: {
+                  titleKey: 'pageTitles.spontanei'
+                } as RouteHandleObject
+              }
+            ]
+          },
+          {
+            path: ArcRoutes.public.DEBT_POSITION_SEARCH,
+            element: <DebtPositionsSearch />,
+            handle: {
+              titleKey: 'pageTitles.debtPositionsSearch',
+              backButton: true
+            } as RouteHandleObject
+          },
+          {
+            path: ArcRoutes.public.DEBT_POSITION_DOWNLOAD,
+            element: <DebtPositionDownload />,
+            handle: {
+              titleKey: 'pageTitles.debtPositionsDownload'
             } as RouteHandleObject
           },
           {
             path: ArcRoutes.public.RECEIPTS_SEARCH,
             element: <ReceiptsSearch />,
             handle: {
-              titleKey: 'pageTitles.receiptsSearch'
+              titleKey: 'pageTitles.receiptsSearch',
+              backButton: true
             } as RouteHandleObject
           },
           {
             path: ArcRoutes.public.RECEIPT,
             element: <ReceiptDetail />,
             handle: {
-              titleKey: 'pageTitles.receiptDetail'
-            } as RouteHandleObject
-          },
-          {
-            path: ArcRoutes.public.DEBT_POSITION_DOWNLOAD,
-            element: <DebtPositionDownload />
-          },
-          {
-            path: ArcRoutes.public.DEBT_POSITION_SEARCH,
-            element: <DebtPositionsSearch />,
-            handle: {
-              titleKey: 'pageTitles.debtPositionsSearch'
+              titleKey: 'pageTitles.receiptDetail',
+              backButton: true
             } as RouteHandleObject
           },
           {
             path: ArcRoutes.TOS,
-            element: <Resources resource="tos" />
+            element: <Resources resource="tos" />,
+            handle: {
+              titleKey: 'pageTitles.tos'
+            } as RouteHandleObject
           },
           {
             path: ArcRoutes.PRIVACY_POLICY,
-            element: <Resources resource="pp" />
+            element: <Resources resource="pp" />,
+            handle: {
+              titleKey: 'pageTitles.pp'
+            } as RouteHandleObject
           },
           {
             path: ArcRoutes.COURTESY_PAGE,
@@ -114,11 +146,16 @@ const router = createBrowserRouter([
         ]
       },
       {
-        path: ArcRoutes.DASHBOARD,
-        element: withGuard(() => <Layout />),
+        element: <AuthLayout />,
+        handle: {
+          sidebar: true,
+          subHeader: true,
+          backButton: false,
+          gutters: true
+        } as RouteHandleObject,
         children: [
           {
-            index: true,
+            path: ArcRoutes.DASHBOARD,
             element: <DashboardRoute />
           },
           {
@@ -126,8 +163,15 @@ const router = createBrowserRouter([
             element: <UserRoute />,
             handle: {
               backButton: true,
-              sidebar: { visibile: false },
+              sidebar: false,
               titleKey: 'pageTitles.userpage'
+            } as RouteHandleObject
+          },
+          {
+            path: ArcRoutes.RECEIPTS,
+            element: <ReceiptsList />,
+            handle: {
+              titleKey: 'pageTitles.receiptsList'
             } as RouteHandleObject
           },
           {
@@ -138,39 +182,37 @@ const router = createBrowserRouter([
             } as RouteHandleObject
           },
           {
-            path: ArcRoutes.DEBT_POSITION_DOWNLOAD,
-            element: <DebtPositionDownload />
-          },
-          {
-            path: ArcRoutes.RECEIPTS,
-            element: <ReceiptsList />,
+            path: ArcRoutes.DEBT_POSITIONS,
+            element: <DebtPositionsList />,
             handle: {
-              titleKey: 'pageTitles.receiptsList'
-            } as RouteHandleObject
+              titleKey: 'pageTitles.debtPositionsList'
+            }
           },
           {
             path: ArcRoutes.DEBT_POSITION,
             element: <DebtPositionDetail />,
             handle: {
               titleKey: 'pageTitles.debtPositionDetail'
-            } as RouteHandleObject
+            }
           },
           {
-            path: ArcRoutes.DEBT_POSITIONS,
-            element: <DebtPositionsList />,
+            path: ArcRoutes.DEBT_POSITION_DOWNLOAD,
+            element: <DebtPositionDownload />,
             handle: {
-              titleKey: 'pageTitles.debtPositionsList'
-            } as RouteHandleObject
+              titleKey: 'pageTitles.debtPositionsDownload'
+            }
           },
           {
             path: ArcRoutes.PAYMENTS_ON_THE_FLY,
+            handle: {
+              sidebar: false
+            } as RouteHandleObject,
             children: [
               {
                 index: true,
                 element: <Spontanei />,
                 handle: {
                   backButton: true,
-                  sidebar: { visibile: false },
                   titleKey: 'pageTitles.spontanei'
                 } as RouteHandleObject
               },
@@ -179,7 +221,6 @@ const router = createBrowserRouter([
                 element: <Download />,
                 handle: {
                   backButton: false,
-                  sidebar: { visibile: false },
                   titleKey: 'pageTitles.spontanei'
                 } as RouteHandleObject
               }
@@ -189,35 +230,8 @@ const router = createBrowserRouter([
             path: ArcRoutes.ASSISTANCE,
             element: <Assistance />,
             handle: {
-              backButton: false,
-              sidebar: {
-                visibile: false
-              },
+              sidebar: false,
               titleKey: 'pageTitles.assistance'
-            } as RouteHandleObject
-          }
-        ]
-      },
-      {
-        path: ArcRoutes.public.PAYMENTS_ON_THE_FLY,
-        element: <Layout anonymous={true} />,
-        children: [
-          {
-            index: true,
-            element: <Spontanei />,
-            handle: {
-              backButton: true,
-              sidebar: { visibile: false },
-              titleKey: 'pageTitles.spontanei'
-            } as RouteHandleObject
-          },
-          {
-            path: 'download/:orgId/:iuv',
-            element: <Download />,
-            handle: {
-              backButton: false,
-              sidebar: { visibile: false },
-              titleKey: 'pageTitles.spontanei'
             } as RouteHandleObject
           }
         ]

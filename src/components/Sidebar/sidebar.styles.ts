@@ -17,7 +17,7 @@ export const sidebarStyles = (theme: Theme, collapsed: boolean): Record<string, 
     height: '100%',
     width: '100%',
     bgcolor: 'background.paper',
-    margin: collapsed ? 0 : '2px',
+    margin: 0,
     transition: 'margin 0.3s ease', // Add transition for smooth width change
     [theme.breakpoints.up('lg')]: { minHeight: '50vh' }
   },
