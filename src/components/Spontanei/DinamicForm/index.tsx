@@ -40,6 +40,7 @@ const DinamicForm = ({ fieldBeans, campoTotaleInclusoInXSD, formikRef }: Dinamic
     if (!result.success) {
       result.error.issues.forEach((issue) => (errors[issue.path[0]] = issue.message));
     }
+    console.log(errors);
     return errors;
   };
 
