@@ -166,8 +166,8 @@
       "paid": "Pagato",
       "viewDetail": "Visualizza il dettaglio per la transazione",
       "empty": {
-        "title": "Il download dell’avviso è in corso",
-        "subtitle": "Se non parte automaticamente, clicca qui. ",
+        "title": "Qui vedrai le tue ricevute",
+        "subtitle": "Le troverai qui dopo aver pagato una posizione debitoria presso un qualsiasi canale abilitato.",
         "back": "Torna al tuo profilo",
         "link": "Fai un pagamento"
       }

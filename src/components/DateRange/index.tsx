@@ -4,6 +4,8 @@ import { DateValidationError } from '@mui/x-date-pickers/models';
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Dayjs } from 'dayjs';
+import { styled } from '@mui/material/styles';
+import { Box } from '@mui/material';
 
 export type DateRangeValue = Dayjs | null;
 
@@ -19,73 +21,85 @@ export type DateRangeProps = {
   to: DateRange;
 };
 
+const StyledDatePicker = styled(DatePicker)({
+  '& .MuiInputBase-root': {
+    backgroundColor: 'transparent'
+  },
+  '& .MuiFormHelperText-root': {
+    position: 'absolute',
+    bottom: '-20px',
+    left: 0,
+    margin: 0
+  }
+}) as typeof DatePicker;
+
+const DateRangeContainer = styled(Box)({
+  display: 'flex',
+  gap: '16px',
+  alignItems: 'flex-start'
+});
+
 export const DateRange = ({ from, to }: DateRangeProps) => {
   const [startDateError, setStartDateError] = useState<DateValidationError | null>(null);
   const [endDateError, setEndDateError] = useState<DateValidationError | null>(null);
   const [isToDialogOpen, setIsToDialogOpen] = useState(false);
-
   const { t } = useTranslation();
 
-  const handleStartDateChange = (fromDate: Dayjs | null) => {
-    if (!fromDate) {
-      from.onChange(null);
-      return;
-    }
-
-    const fromValue = fromDate.startOf('day');
-    from.onChange(fromValue);
+  const handleStartDateChange = (fromDate: DateRangeValue) => {
+    from.onChange(fromDate ? fromDate.startOf('day') : null);
   };
 
-  const handleStartDateOnAccept = (fromDate: Dayjs | null) => {
-    if (!fromDate) return;
-
-    if (!to.value?.isValid() || fromDate.isAfter(to.value)) {
+  const handleStartDateOnAccept = (fromDate: DateRangeValue) => {
+    if (fromDate && (!to.value?.isValid() || fromDate.isAfter(to.value))) {
       setIsToDialogOpen(true);
     }
   };
 
-  const handleEndDateChange = (toDate: Dayjs | null) => {
+  const handleEndDateChange = (toDate: DateRangeValue) => {
     if (!toDate) {
       to.onChange(null);
       return;
     }
 
     if (!from.value?.isValid() || toDate.isSame(from.value) || toDate.isAfter(from.value)) {
-      const toValue = toDate.endOf('day');
-      to.onChange(toValue);
+      to.onChange(toDate.endOf('day'));
+    }
+  };
+
+  const fromError = startDateError ? from.errorMessage || t('dates.validation') : '';
+  const toError = endDateError ? to.errorMessage || t('dates.validation') : '';
+
+  const commonSlotProps = {
+    textField: {
+      size: 'small' as const,
+      variant: 'outlined' as const
+    },
+    openPickerIcon: {
+      color: 'action' as const
     }
   };
 
   return (
-    <>
-      <DatePicker
+    <DateRangeContainer>
+      <StyledDatePicker
         label={t('dates.from')}
-        value={from.value?.startOf('day')}
+        value={from.value}
         onChange={handleStartDateChange}
         onAccept={handleStartDateOnAccept}
         onError={setStartDateError}
         slots={{ openPickerIcon: ArrowDropDownIcon }}
         slotProps={{
-          openPickerIcon: {
-            color: 'action'
-          },
-          openPickerButton: {
-            sx: {
-              backgroundColor: 'transparent'
-            }
-          },
+          ...commonSlotProps,
           textField: {
-            size: 'small',
-            variant: 'outlined',
+            ...commonSlotProps.textField,
             error: !!startDateError,
-            helperText: startDateError ? from.errorMessage || t('dates.validation') : ''
+            helperText: fromError
           }
         }}
       />
-
-      <DatePicker
+      <StyledDatePicker
         label={t('dates.to')}
-        value={to?.value?.endOf('day')}
+        value={to.value}
         onChange={handleEndDateChange}
         minDate={from.value ?? undefined}
         open={isToDialogOpen}
@@ -93,23 +107,17 @@ export const DateRange = ({ from, to }: DateRangeProps) => {
         onError={setEndDateError}
         slots={{ openPickerIcon: ArrowDropDownIcon }}
         slotProps={{
+          ...commonSlotProps,
           textField: {
-            size: 'small',
-            variant: 'outlined',
+            ...commonSlotProps.textField,
             error: !!endDateError,
-            helperText: endDateError ? to.errorMessage || t('dates.validation') : ''
-          },
-          openPickerIcon: {
-            color: 'action'
+            helperText: toError
           },
           openPickerButton: {
-            sx: {
-              backgroundColor: 'transparent'
-            },
             onClick: () => setIsToDialogOpen((open) => !open)
           }
         }}
       />
-    </>
+    </DateRangeContainer>
   );
 };
