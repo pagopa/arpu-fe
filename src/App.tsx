@@ -56,7 +56,7 @@ const router = createBrowserRouter([
         handle: {
           sidebar: false,
           backButton: false,
-          subHeader: false,
+          subHeader: true,
           backButtonText: 'exit',
           gutters: true
         } as RouteHandleObject,
@@ -66,7 +66,8 @@ const router = createBrowserRouter([
             element: <Login />,
             handle: {
               titleKey: 'pageTitles.logIn',
-              gutters: false
+              gutters: false,
+              subHeader: false
             } as RouteHandleObject
           },
           {
@@ -77,7 +78,6 @@ const router = createBrowserRouter([
                 element: <Spontanei />,
                 handle: {
                   backButton: true,
-                  subHeader: true,
                   titleKey: 'pageTitles.spontanei'
                 } as RouteHandleObject
               },
@@ -95,7 +95,6 @@ const router = createBrowserRouter([
             element: <DebtPositionsSearch />,
             handle: {
               titleKey: 'pageTitles.debtPositionsSearch',
-              subHeader: true,
               backButton: true
             } as RouteHandleObject
           },
@@ -103,7 +102,7 @@ const router = createBrowserRouter([
             path: ArcRoutes.public.DEBT_POSITION_DOWNLOAD,
             element: <DebtPositionDownload />,
             handle: {
-              titleKey: 'pageTitles.debtPositionsDownload'
+              titleKey: 'pageTitles.debtPositionsDownload',
             } as RouteHandleObject
           },
           {
@@ -111,8 +110,6 @@ const router = createBrowserRouter([
             element: <ReceiptsSearch />,
             handle: {
               titleKey: 'pageTitles.receiptsSearch',
-              sidebar: false,
-              subHeader: true,
               backButton: true
             } as RouteHandleObject
           },
@@ -120,7 +117,8 @@ const router = createBrowserRouter([
             path: ArcRoutes.public.RECEIPT,
             element: <ReceiptDetail />,
             handle: {
-              titleKey: 'pageTitles.receiptDetail'
+              titleKey: 'pageTitles.receiptDetail',
+              backButton: true
             } as RouteHandleObject
           },
           {

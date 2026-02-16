@@ -212,7 +212,7 @@ export const IuvSearch = ({
           </Stack>
         </form>
       </Stack>
-      <Stack gap={3}>
+      <Stack gap={3} mt={3}>
         {installmentsMutation.isSuccess && resultKey && (
           <Typography component="h3" fontWeight={600}>
             {t(resultKey, { count: installmentsMutation?.data?.length || 0 })}
