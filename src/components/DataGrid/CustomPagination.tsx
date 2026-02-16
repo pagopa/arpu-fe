@@ -53,7 +53,7 @@ const CustomPagination = ({
     [hashParams]
   );
 
-  const handlePageChange = (_event: React.ChangeEvent<unknown>, newPage: number) => {
+  const handlePageChange = (_: React.ChangeEvent<unknown>, newPage: number) => {
     updateHashParams(newPage, pageSize);
   };
 
