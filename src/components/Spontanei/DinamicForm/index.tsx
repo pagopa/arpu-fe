@@ -1,13 +1,14 @@
 import React from 'react';
 import { Formik, Form, useField } from 'formik';
 import { BuildFormInputs, BuildFormSchema, BuildFormState } from './config';
-import { Card, Stack } from '@mui/material';
+import { Card, Stack, Typography } from '@mui/material';
 import { FormServizioDimaico } from './mockServiziDinamici';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers';
 
 import 'dayjs/locale/it';
 import { PaymentNoticeInfo } from '..';
+import { useTranslation } from 'react-i18next';
 
 type DinamicFormProps = FormServizioDimaico;
 
@@ -44,10 +45,13 @@ const DinamicForm = ({ fieldBeans, campoTotaleInclusoInXSD, formikRef }: Dinamic
     return errors;
   };
 
+  const { t } = useTranslation();
+
   return (
     <>
       <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale="it">
         <Card variant="outlined" sx={{ padding: 3 }}>
+          <Typography variant="h6" mb={2}>{t('spontanei.form.steps.step3.custom.title')}</Typography>
           <Formik
             innerRef={formikRef}
             onSubmit={console.log}
