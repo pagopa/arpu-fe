@@ -1,6 +1,7 @@
 import SELECT from './SELECT';
-import { FieldBeanPros } from '../config';
+import React from 'react';
+import withComputedValues, { computedPROPS } from './withDinamicValues';
 
-const SINGLESELECT = (props: FieldBeanPros) => <SELECT {...props} />;
+const SINGLESELECT = (props: computedPROPS) => <SELECT {...props} />;
 
-export default SINGLESELECT;
+export default withComputedValues(SINGLESELECT);

@@ -51,7 +51,9 @@ const DinamicForm = ({ fieldBeans, campoTotaleInclusoInXSD, formikRef }: Dinamic
     <>
       <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale="it">
         <Card variant="outlined" sx={{ padding: 3 }}>
-          <Typography variant="h6" mb={2}>{t('spontanei.form.steps.step3.custom.title')}</Typography>
+          <Typography variant="h6" mb={2}>
+            {t('spontanei.form.steps.step3.custom.title')}
+          </Typography>
           <Formik
             innerRef={formikRef}
             onSubmit={console.log}
