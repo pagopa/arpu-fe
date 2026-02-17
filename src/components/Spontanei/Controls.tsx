@@ -20,10 +20,13 @@ const Controls = (props: Props) => {
   const { t } = useTranslation();
   const context = useContext<FormContextType | null>(FormContext);
   const step = context?.step || 0;
+  const omitFirstStep = context?.omitFirstStep || false;
+  // If the first step is omitted, the back button should navigate to the previous page instead of the first step
+  const backButtonWithOmitFirstStep = step === 1 && omitFirstStep;
   const navigate = useNavigate();
 
   const onBack = () => {
-    if (!step || step < 1) {
+    if (!step || step < 1 || backButtonWithOmitFirstStep) {
       navigate(-1);
     } else {
       context?.setStep(step - 1);
@@ -40,7 +43,9 @@ const Controls = (props: Props) => {
   return (
     <Stack direction="row" justifyContent={'space-between'}>
       <Button size="large" variant="outlined" onClick={onBack} startIcon={<ArrowBack />}>
-        {step === 0 ? t('spontanei.form.abort') : t('spontanei.form.back')}
+        {step === 0 || backButtonWithOmitFirstStep
+          ? t('spontanei.form.abort')
+          : t('spontanei.form.back')}
       </Button>
       {!props.hideContinue && (
         <Button size="large" variant="contained" onClick={onContinue}>

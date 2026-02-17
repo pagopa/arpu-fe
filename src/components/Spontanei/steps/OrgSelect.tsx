@@ -1,9 +1,10 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import { Autocomplete, Card, Stack, TextField, Typography } from '@mui/material';
 import utils from 'utils';
 import { useTranslation } from 'react-i18next';
 import { OrganizationsWithSpontaneousDTO } from '../../../../generated/data-contracts';
 import Controls from '../Controls';
+import FormContext, { FormContextType } from '../FormContext';
 import { useField, useFormikContext } from 'formik';
 import { PaymentNoticeInfo } from '..';
 
@@ -13,6 +14,7 @@ import { PaymentNoticeInfo } from '..';
  */
 const OrgSelect = () => {
   const { t } = useTranslation();
+  const context = useContext<FormContextType | null>(FormContext);
   const brokerId = utils.storage.app.getBrokerId();
   const isAnonymous = utils.storage.user.isAnonymous();
 
@@ -22,6 +24,20 @@ const OrgSelect = () => {
   const { data: orgs } = isAnonymous
     ? utils.loaders.public.getPublicOrganizationsWithSpontaneous(brokerId)
     : utils.loaders.getOrganizationsWithSpontaneous(brokerId);
+
+  /**
+   * If there is only one organization, it is selected automatically and the user is moved to the next step.
+   */
+  React.useEffect(() => {
+    if (orgs?.length === 1 && !meta.value) {
+      // set the only org as value
+      helpers.setValue(orgs[0]);
+      // omit the first step in steppers
+      context && context.setOmitFirstStep(true);
+      // move to the next step
+      context?.setStep((prev) => prev + 1);
+    }
+  }, [orgs, meta.value, helpers, context]);
 
   const orgOptions = orgs || [];
 

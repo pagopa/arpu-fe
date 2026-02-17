@@ -81,7 +81,7 @@ export default {
     /** this check is necessary because we land on the auth-callback page without a brokerId in the URL */
     getBrokerId: () =>
       window.location.pathname.split('/')[2] === 'auth-callback'
-        ? getStorageItem(StorageItems.BROKERID)
-        : window.location.pathname.split('/')[2]
+        ? Number(getStorageItem(StorageItems.BROKERID))
+        : Number(window.location.pathname.split('/')[2])
   }
 };

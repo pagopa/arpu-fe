@@ -30,6 +30,8 @@ export type PaymentNoticeInfo = {
 };
 
 const Spontanei = () => {
+  // Omit the first step in steppers
+  const [omitFirstStep, setOmitFirstStep] = React.useState(false);
   // Step state
   const [step, setStep] = React.useState(0);
   // form type state
@@ -91,6 +93,8 @@ const Spontanei = () => {
 
   const contextValue = React.useMemo(
     () => ({
+      omitFirstStep,
+      setOmitFirstStep,
       step,
       setStep,
       formType,
@@ -98,7 +102,7 @@ const Spontanei = () => {
       userDescription,
       setUserDescription
     }),
-    [step, formType, userDescription]
+    [omitFirstStep, step, formType, userDescription]
   );
 
   return (
