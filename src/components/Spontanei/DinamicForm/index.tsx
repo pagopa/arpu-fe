@@ -1,7 +1,7 @@
 import React from 'react';
 import { Formik, Form, useField } from 'formik';
 import { BuildFormInputs, BuildFormSchema, BuildFormState } from './config';
-import { Stack } from '@mui/material';
+import { Card, Stack } from '@mui/material';
 import { FormServizioDimaico } from './mockServiziDinamici';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers';
@@ -47,15 +47,17 @@ const DinamicForm = ({ fieldBeans, campoTotaleInclusoInXSD, formikRef }: Dinamic
   return (
     <>
       <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale="it">
-        <Formik
-          innerRef={formikRef}
-          onSubmit={console.log}
-          initialValues={BuildFormState(fieldBeans)}
-          validate={validate}>
-          <Form>
-            <Stack gap={2}>{fields}</Stack>
-          </Form>
-        </Formik>
+        <Card variant="outlined" sx={{ padding: 3 }}>
+          <Formik
+            innerRef={formikRef}
+            onSubmit={console.log}
+            initialValues={BuildFormState(fieldBeans)}
+            validate={validate}>
+            <Form>
+              <Stack gap={2}>{fields}</Stack>
+            </Form>
+          </Formik>
+        </Card>
       </LocalizationProvider>
     </>
   );
