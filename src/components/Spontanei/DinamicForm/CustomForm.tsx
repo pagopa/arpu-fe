@@ -36,12 +36,12 @@ const CustomForm = (props: { fields: SpontaneousFormField[]; amountFieldName?: s
           <Typography variant="h6">{t('spontanei.form.steps.step3.title')}</Typography>
           <Typography>{t('spontanei.form.steps.step3.description')}</Typography>
           <Stack direction="column" justifyContent={'space-between'} spacing={2}>
+            <StaticFormSection />
             <DinamicForm
               fieldBeans={props.fields}
               campoTotaleInclusoInXSD={props.amountFieldName}
               formikRef={formikRef}
             />
-            <StaticFormSection />
           </Stack>
         </Stack>
       </Card>

@@ -67,7 +67,7 @@ export const buildDinamicValue = (
   return formatString(stringTemplate, { ...templateVars, ...updatedFields });
 };
 
-export const computeValue = (code: string, scope = {}) => sandbox.compile(code)(scope).run();
+export function computeValue<T>(code: string, scope = {}) { return sandbox.compile(code)(scope).run() as T; }
 /** set the form schema for validation */
 let schemaObject = {};
 export const BuildFormSchema = (fields: Array<SpontaneousFormField>) => {
@@ -137,6 +137,7 @@ export const BuildInput = (element: SpontaneousFormField, allElements?: Spontane
     case 'TEXT':
       return <TEXT input={element} />;
     case 'CURRENCY_LABEL':
+    case 'DYNAMIC_AMOUNT_LABEL':
       return <CURRENCYLABEL input={element} />;
     case 'MULTIFIELD':
       return <MULTIFIELD input={element} />;

@@ -25,7 +25,7 @@ const NONE = (props: FieldBeanPros & { allFields: [] }) => {
       disabled
       value={value}
       name={name}
-      //sx={{ display: 'none' }}
+      sx={{ display: 'none' }}
     />
   );
 };
