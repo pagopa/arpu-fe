@@ -5,14 +5,7 @@ import withComputedValues, { computedPROPS } from './withDinamicValues';
 
 const CURRENCYLABEL = (props: computedPROPS) => {
   const { value, name } = props;
-  return (
-    <TextField
-      variant="outlined"
-      disabled
-      value={utils.converters.toEuro(Number(value) * 100)}
-      name={name}
-    />
-  );
+  return <TextField disabled value={utils.converters.toEuro(Number(value) * 100)} name={name} />;
 };
 
 export default withComputedValues(CURRENCYLABEL);
