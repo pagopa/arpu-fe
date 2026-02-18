@@ -1,4 +1,5 @@
 import React from 'react';
+import * as z from 'zod';
 import { Box, Stack, Typography } from '@mui/material';
 
 import Steps from './steps';
@@ -8,7 +9,6 @@ import DebtTypeSelect from './steps/DebtTypeSelect';
 import DebtTypeConfig from './steps/DebtTypeConfig';
 import Summary from './steps/Summary';
 import { useTranslation } from 'react-i18next';
-import * as z from 'zod';
 import { Formik } from 'formik';
 import {
   DebtPositionTypeOrgsWithSpontaneousDTO,
@@ -17,6 +17,7 @@ import {
   PersonEntityType
 } from '../../../generated/data-contracts';
 import Payment from './steps/Payment';
+import PaymentNoticeInfoSchema from './SpontaneiSchemas';
 
 export type PaymentNoticeInfo = {
   fullName: string;
@@ -52,41 +53,11 @@ const Spontanei = () => {
     debtType: null
   };
 
-  const PaymentNoticeInfoSchema = z.object({
-    org: z
-      .object({
-        organizationId: z.number(),
-        orgName: z.string(),
-        orgFiscalCode: z.string()
-      })
-      .nullable()
-      .refine((org) => org !== null, t('spontanei.form.errors.org')),
-    debtType: z
-      .object({
-        debtPositionTypeOrgId: z.number(),
-        organizationId: z.number(),
-        code: z.string(),
-        description: z.string()
-      })
-      .nullable()
-      .refine((debtType) => debtType !== null, t('spontanei.form.errors.debtType')),
-    description: z.string().min(2, t('spontanei.form.errors.description')),
-    amount: z.number().min(1, t('spontanei.form.errors.amount')),
-    fullName: z.string().min(2, t('spontanei.form.errors.fullName')),
-    fiscalCode: z
-      .string()
-      .regex(
-        /(^[A-Za-z]{6}[0-9]{2}[A-Za-z]{1}[0-9]{2}[A-Za-z]{1}[0-9]{3}[A-Za-z]{1}$)|(^[0-9]{11}$)|ANONIMO/,
-        t('spontanei.form.errors.fullName')
-      ),
-    email: z.string().email(t('spontanei.form.errors.email')).optional().or(z.literal(''))
-  });
-
   const validate = (values: PaymentNoticeInfo) => {
     const errors: Record<string | number, string> = {};
-    const result = PaymentNoticeInfoSchema.safeParse(values);
+    const result = PaymentNoticeInfoSchema(t).safeParse(values);
     if (!result.success) {
-      result.error.issues.forEach((issue) => (errors[issue.path[0]] = issue.message));
+      result.error.issues.forEach((issue: z.ZodIssue) => (errors[issue.path[0]] = issue.message));
     }
     return errors;
   };
@@ -111,10 +82,12 @@ const Spontanei = () => {
         <Formik initialValues={defaultPaymentNoticeInfo} validate={validate} onSubmit={console.log}>
           <FormContext.Provider value={contextValue}>
             <Stack>
-              <Typography variant="h4" component="h1" mb={1}>
+              <Typography variant="h4" component="h1" mb={1} data-testid="spontanei-title">
                 {t('spontanei.form.title')}
               </Typography>
-              <Typography>{t('spontanei.form.description')}</Typography>
+              <Typography data-testid="spontanei-description">
+                {t('spontanei.form.description')}
+              </Typography>
               <Stack spacing={4} mt={4}>
                 <Steps activeStep={step} />
                 {step === 0 && <OrgSelect />}

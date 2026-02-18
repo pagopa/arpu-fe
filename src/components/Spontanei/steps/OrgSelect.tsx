@@ -64,9 +64,14 @@ const OrgSelect = () => {
     <>
       <Card variant="outlined">
         <Stack spacing={2} padding={4}>
-          <Typography variant="h6">{t('spontanei.form.steps.step1.title')}</Typography>
-          <Typography>{t('spontanei.form.steps.step1.description')}</Typography>
+          <Typography variant="h6" data-testid="spontanei-step1-title">
+            {t('spontanei.form.steps.step1.title')}
+          </Typography>
+          <Typography data-testid="spontanei-step1-description">
+            {t('spontanei.form.steps.step1.description')}
+          </Typography>
           <Autocomplete
+            data-testid="spontanei-step1-search-input"
             onChange={handleOrgChange}
             id="spontanei.form.steps.step1.orgSelectLabel"
             freeSolo
