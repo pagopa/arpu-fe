@@ -70,6 +70,7 @@ export const buildDinamicValue = (
 export function computeValue<T>(code: string, scope = {}) {
   return sandbox.compile(code)(scope).run() as T;
 }
+
 /** set the form schema for validation */
 let schemaObject = {};
 export const BuildFormSchema = (fields: Array<SpontaneousFormField>) => {
@@ -95,9 +96,13 @@ export const BuildFormSchema = (fields: Array<SpontaneousFormField>) => {
   return z.object(schemaObject);
 };
 
+export interface CustomFormValues {
+  [key: string]: string | string[] | undefined;
+}
+
 /** set the form state considering the initial value */
-let intialState = {};
-export const BuildFormState = (fields: Array<SpontaneousFormField>) => {
+let intialState: CustomFormValues = {};
+export const BuildFormState = (fields: Array<SpontaneousFormField>): CustomFormValues => {
   fields.forEach(({ name, defaultValue, subfields, htmlRender }) => {
     if (subfields) BuildFormState(subfields);
     /* I fields MULTFIELD sono solo contenitori di altri fields

@@ -1,14 +1,13 @@
 import React, { useEffect } from 'react';
 import { RenderType, SpontaneousFormField } from '../../../../../generated/data-contracts';
-import { buildDinamicValue, computeValue } from '../config';
+import { buildDinamicValue, computeValue, CustomFormValues } from '../config';
 import { FieldInputProps, useField, useFormikContext } from 'formik';
 import { Stack, Tooltip } from '@mui/material';
 import InfoRoundedIcon from '@mui/icons-material/InfoRounded';
 
 type Options = { label: string; value: string }[];
 
-export interface computedPROPS extends SpontaneousFormField, FieldInputProps<any> {
-  value: string;
+export interface computedPROPS extends SpontaneousFormField, FieldInputProps<CustomFormValues['']> {
   isHidden?: boolean;
   isDisabled?: boolean;
   hasError?: boolean;
@@ -41,10 +40,10 @@ const withComputedValues =
       value: enumeration
     }));
 
-    const [field, meta, helpers] = useField(name);
+    const [field, meta, helpers] = useField<CustomFormValues['']>(name);
     const [options, setOptions] = React.useState<Options>(initialOptions);
 
-    const { values } = useFormikContext();
+    const { values } = useFormikContext<CustomFormValues>();
 
     const isHidden = hiddenDependsOn
       ? computeValue<boolean>(hiddenDependsOn, values)
@@ -60,7 +59,7 @@ const withComputedValues =
 
     useEffect(() => {
       if (hasValuDependsOn && valueDependsOn) {
-        const newValue = computeValue(valueDependsOn, values);
+        const newValue = computeValue<string>(valueDependsOn, values);
         helpers.setValue(newValue, false);
       }
     }, [values]);

@@ -16,10 +16,17 @@ function isEmpty(obj) {
   return true;
 }
 
-const CustomForm = (props: { fields: SpontaneousFormField[]; amountFieldName?: string }) => {
+interface CustomFormProps {
+  fields: SpontaneousFormField[];
+  hasFlagAnonymousFiscalCode: boolean;
+  amountFieldName?: string;
+}
+
+const CustomForm = (props: CustomFormProps) => {
+  const { fields, amountFieldName, hasFlagAnonymousFiscalCode = false } = props;
+  const formikRef = useRef(null);
   const { t } = useTranslation();
   const { validateForm, submitForm } = useFormikContext();
-  const formikRef = useRef(null);
 
   const shouldContinue = async () => {
     await submitForm();
@@ -36,10 +43,10 @@ const CustomForm = (props: { fields: SpontaneousFormField[]; amountFieldName?: s
           <Typography variant="h6">{t('spontanei.form.steps.step3.title')}</Typography>
           <Typography>{t('spontanei.form.steps.step3.description')}</Typography>
           <Stack direction="column" justifyContent={'space-between'} spacing={2}>
-            <StaticFormSection />
+            <StaticFormSection hasFlagAnonymousFiscalCode={hasFlagAnonymousFiscalCode} />
             <DinamicForm
-              fieldBeans={props.fields}
-              campoTotaleInclusoInXSD={props.amountFieldName}
+              fieldBeans={fields}
+              campoTotaleInclusoInXSD={amountFieldName}
               formikRef={formikRef}
             />
           </Stack>
