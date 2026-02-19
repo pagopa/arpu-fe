@@ -1,6 +1,6 @@
 import React from 'react';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
-import { Navigate, RouterProvider, createBrowserRouter } from 'react-router-dom';
+import { Navigate, RouterProvider, createBrowserRouter, redirect } from 'react-router-dom';
 import { Theme } from './utils/style';
 import { PublicLayout, AuthLayout } from './components/Layout';
 import { ArcErrors, ArcRoutes } from './routes/routes';
@@ -65,7 +65,7 @@ const router = createBrowserRouter([
             path: ArcRoutes.LOGIN,
             element: <Login />,
             handle: {
-              titleKey: 'pageTitles.logIn',
+              titleKey: 'pageTitles.login',
               gutters: false,
               subHeader: false
             } as RouteHandleObject
@@ -89,6 +89,17 @@ const router = createBrowserRouter([
                 } as RouteHandleObject
               }
             ]
+          },
+          {
+            path: ArcRoutes.public.PAYMENTS_ON_THE_FLY_SINGLE_OUTCOME,
+            element: <CourtesyPage />,
+            loader: ({ params }) => Promise.resolve(params.outcome),
+            handle: {
+              titleKey: 'pageTitles.paymentOutcomeOk',
+              backButton: false,
+              subHeader: false,
+              gutters: false
+            } as RouteHandleObject
           },
           {
             path: ArcRoutes.public.DEBT_POSITION_SEARCH,
@@ -137,7 +148,13 @@ const router = createBrowserRouter([
           },
           {
             path: ArcRoutes.COURTESY_PAGE,
-            loader: ({ params }) => Promise.resolve(params.error),
+            loader: ({ params }) => {
+              const key = params.error as keyof typeof ArcErrors;
+              if (!(key in ArcErrors)) {
+                return redirect(ArcRoutes.COURTESY_PAGE.replace(':error', 'risorsa-non-trovata'));
+              }
+              return params.error!;
+            },
             element: <CourtesyPage />,
             handle: {
               titleKey: 'pageTitles.courtesy'

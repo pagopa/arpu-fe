@@ -451,6 +451,11 @@
       "title": "Qualcosa non ha funzionato",
       "body": "Si è verificato un Errore imprevisto. Riprova tra qualche minuto."
     },
+    "pagamento-avviso-completato": {
+      "title": "Pagamento completato",
+      "body": "Il tuo pagamento è stato ricevuto con successo.",
+      "cta": "Torna alla home"
+    },
     "400": {
       "title": "Qualcosa non ha funzionato",
       "body": "Si è verificato un Errore imprevisto. Riprova tra qualche minuto.",
@@ -506,7 +511,8 @@
     "receiptsSearch": "Recupera una ricevuta",
     "receiptsList": "Lista ricevute",
     "spontanei": "Pagamenti spontanei",
-    "assistance": "Assistenza"
+    "assistance": "Assistenza",
+    "paymentOutcomeOk": "Pagamento completato"
   },
   "spontanei": {
     "drawer": {

@@ -25,12 +25,17 @@ export const ArcRoutes = {
   public: {
     PAYMENTS_ON_THE_FLY: `${rootPrefix}/public/spontanei`,
     PAYMENTS_ON_THE_FLY_DOWNLOAD: `${rootPrefix}/public/spontanei/download/:orgId/:iuv`,
+    PAYMENTS_ON_THE_FLY_SINGLE_OUTCOME: `${rootPrefix}/public/spontanei/esito/:outcome`,
     RECEIPTS_SEARCH: `${rootPrefix}/public/ricevute/ricerca`,
     RECEIPT: `${rootPrefix}/public/ricevute/:receiptId/:organizationId`,
     DEBT_POSITION_DOWNLOAD: `${rootPrefix}/public/posizioni-debitorie/download/:iuv/:organizationId`,
     DEBT_POSITION_SEARCH: `${rootPrefix}/public/posizioni-debitorie/ricerca`
   }
 };
+
+export enum ArpuOutcome {
+  PAGAMENTO_AVVISO_COMPLETATO = 'pagamento-avviso-completato'
+}
 
 export enum ArcErrors {
   /** generic error */
