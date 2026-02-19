@@ -13,8 +13,7 @@ const SELECT = (props: computedPROPS & { multiple?: boolean }) => {
     hasError,
     required,
     errorMessage,
-    options = [],
-    enumerationList
+    options = []
   } = props;
 
   return (
