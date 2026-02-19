@@ -14,15 +14,17 @@ const Steps = (props: { activeStep: number }) => {
     t('spontanei.form.steps.step5.step')
   ];
   const [steps, setSteps] = React.useState(initialSteps);
+  const [stepBaseNumber, setStepBaseNumber] = React.useState(0);
 
   useEffect(() => {
     if (context?.omitFirstStep) {
       setSteps(initialSteps.slice(1));
+      setStepBaseNumber(1);
     }
   }, [context?.omitFirstStep]);
 
   return (
-    <Stepper activeStep={props.activeStep} alternativeLabel>
+    <Stepper activeStep={props.activeStep - stepBaseNumber} alternativeLabel>
       {steps.map((label) => {
         return (
           <Step key={label}>
