@@ -81,8 +81,8 @@ const withComputedValues =
         if (source) {
           try {
             const response = await fetch(source);
-            const { data } = await response.json();
-            setOptions(data);
+            const { result } = await response.json();
+            setOptions(result);
           } catch (error) {
             console.error('Error fetching options:', error);
           }
