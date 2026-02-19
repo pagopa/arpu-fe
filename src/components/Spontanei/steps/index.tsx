@@ -1,18 +1,30 @@
-import React from 'react';
+import React, { useContext, useEffect } from 'react';
 import { Step, StepLabel, Stepper } from '@mui/material';
 import { useTranslation } from 'react-i18next';
+import FormContext, { FormContextType } from '../FormContext';
 
 const Steps = (props: { activeStep: number }) => {
+  const context = useContext<FormContextType | null>(FormContext);
   const { t } = useTranslation();
-  const steps = [
+  const initialSteps = [
     t('spontanei.form.steps.step1.step'),
     t('spontanei.form.steps.step2.step'),
     t('spontanei.form.steps.step3.step'),
     t('spontanei.form.steps.step4.step'),
     t('spontanei.form.steps.step5.step')
   ];
+  const [steps, setSteps] = React.useState(initialSteps);
+  const [stepBaseNumber, setStepBaseNumber] = React.useState(0);
+
+  useEffect(() => {
+    if (context?.omitFirstStep) {
+      setSteps(initialSteps.slice(1));
+      setStepBaseNumber(1);
+    }
+  }, [context?.omitFirstStep]);
+
   return (
-    <Stepper activeStep={props.activeStep} alternativeLabel>
+    <Stepper activeStep={props.activeStep - stepBaseNumber} alternativeLabel>
       {steps.map((label) => {
         return (
           <Step key={label}>
