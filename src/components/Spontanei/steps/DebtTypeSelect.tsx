@@ -80,9 +80,14 @@ const DebtTypeSelect = () => {
     <>
       <Card variant="outlined">
         <Stack spacing={2} padding={4}>
-          <Typography variant="h6">{t('spontanei.form.steps.step2.title')}</Typography>
-          <Typography>{t('spontanei.form.steps.step2.description')}</Typography>
+          <Typography variant="h6" data-testid="spontanei-step2-title">
+            {t('spontanei.form.steps.step2.title')}
+          </Typography>
+          <Typography data-testid="spontanei-step2-description">
+            {t('spontanei.form.steps.step2.description')}
+          </Typography>
           <Autocomplete
+            data-testid="spontanei-step2-search-input"
             onChange={handleDebtTypeChange}
             freeSolo
             options={debtTypeOptions}
@@ -103,7 +108,7 @@ const DebtTypeSelect = () => {
           />
           {mostUsedDebtTypesQuery.data && mostUsedDebtTypesQuery.data.length > 0 && (
             <>
-              <Typography variant="subtitle1">
+              <Typography variant="subtitle1" data-testid="spontanei-step2-mostUsedDebtTypes">
                 {t('spontanei.form.steps.step2.mostUsedDebtTypes')}
               </Typography>
               <Stack
@@ -115,7 +120,10 @@ const DebtTypeSelect = () => {
                   py: 2
                 }}
                 spacing={2}>
-                <RadioGroup aria-label="debt-type" name="debtTypeCode">
+                <RadioGroup
+                  aria-label="debt-type"
+                  name="debtTypeCode"
+                  data-testid="spontanei-step2-radioGroup">
                   {mostUsedDebtTypesQuery.data.map((MostUsedDebtType) => (
                     <FormControl key={MostUsedDebtType.debtPositionTypeOrgId}>
                       <FormControlLabel
