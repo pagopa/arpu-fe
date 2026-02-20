@@ -1,33 +1,38 @@
 import React from 'react';
-import FormControl from '@mui/material/FormControl';
-import { FormHelperText, InputLabel, MenuItem, Select } from '@mui/material';
-import { FieldBeanPros } from '../config';
-import { useField } from 'formik';
+import { FormControl, FormHelperText, InputLabel, MenuItem, Select } from '@mui/material';
+import { computedPROPS } from './withDinamicValues';
 
-const SELECT = (props: FieldBeanPros & { multiple?: boolean }) => {
-  const { input, multiple = false } = props;
-  const { name, htmlLabel, required, extraAttr } = input;
-  const [field, meta] = useField(name);
-  const value = field.value;
-  const hasError = meta.touched && Boolean(meta.error);
+const SELECT = (props: computedPROPS & { multiple?: boolean }) => {
+  const {
+    value,
+    name,
+    multiple = false,
+    onChange,
+    onBlur,
+    htmlLabel,
+    hasError,
+    required,
+    errorMessage,
+    options = []
+  } = props;
 
   return (
     <FormControl fullWidth error={hasError} required={required}>
       {htmlLabel && <InputLabel>{htmlLabel}</InputLabel>}
       <Select
+        label={htmlLabel}
         multiple={multiple}
         name={name}
-        onChange={field.onChange}
-        onBlur={field.onBlur}
-        label={htmlLabel}
+        onChange={onChange}
+        onBlur={onBlur}
         value={value}>
-        {input.enumerationList?.map((option) => (
-          <MenuItem key={option} value={option}>
-            {option}
+        {options?.map((option) => (
+          <MenuItem key={option.value} value={option.value}>
+            {option.label}
           </MenuItem>
         ))}
       </Select>
-      {hasError && <FormHelperText>{extraAttr?.error_message}</FormHelperText>}
+      {hasError && <FormHelperText>{errorMessage}</FormHelperText>}
     </FormControl>
   );
 };

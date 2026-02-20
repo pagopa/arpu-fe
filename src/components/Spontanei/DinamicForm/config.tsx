@@ -16,6 +16,7 @@ import CURRENCYLABEL from './FieldBeans/CURRENCYLABEL';
 import MULTIFIELD from './FieldBeans/MULTIFIELD';
 import NONE from './FieldBeans/NONE';
 import TAB from './FieldBeans/TAB';
+import DYNAMIC_SELECT from './FieldBeans/DYNAMIC_SELECT';
 import { RenderType } from '../../../../generated/apiClient';
 
 export type FieldName = SpontaneousFormField['name'];
@@ -66,7 +67,10 @@ export const buildDinamicValue = (
   return formatString(stringTemplate, { ...templateVars, ...updatedFields });
 };
 
-export const computeValue = (code: string, scope = {}) => sandbox.compile(code)(scope).run();
+export function computeValue<T>(code: string, scope = {}) {
+  return sandbox.compile(code)(scope).run() as T;
+}
+
 /** set the form schema for validation */
 let schemaObject = {};
 export const BuildFormSchema = (fields: Array<SpontaneousFormField>) => {
@@ -92,9 +96,13 @@ export const BuildFormSchema = (fields: Array<SpontaneousFormField>) => {
   return z.object(schemaObject);
 };
 
+export interface CustomFormValues {
+  [key: string]: string | string[] | undefined;
+}
+
 /** set the form state considering the initial value */
-let intialState = {};
-export const BuildFormState = (fields: Array<SpontaneousFormField>) => {
+let intialState: CustomFormValues = {};
+export const BuildFormState = (fields: Array<SpontaneousFormField>): CustomFormValues => {
   fields.forEach(({ name, defaultValue, subfields, htmlRender }) => {
     if (subfields) BuildFormState(subfields);
     /* I fields MULTFIELD sono solo contenitori di altri fields
@@ -123,18 +131,21 @@ export const BuildInput = (element: SpontaneousFormField, allElements?: Spontane
     case 'TAB':
       return <TAB input={element} />;
     case 'SINGLESELECT':
-      return <SINGLESELECT input={element} />;
+      return <SINGLESELECT {...element} />;
+    case 'DYNAMIC_SELECT':
+      return <DYNAMIC_SELECT {...element} />;
     case 'MULTISELECT':
-      return <MULTISELECT input={element} />;
+      return <MULTISELECT {...element} />;
     case 'DATE':
-      return <DATEPICKER input={element} />;
+      return <DATEPICKER {...element} />;
     case 'NONE':
-      return <NONE input={element} allFields={allElements || []} />;
+      return <NONE {...element} allFields={allElements} />;
     case 'CURRENCY':
     case 'TEXT':
-      return <TEXT input={element} />;
+      return <TEXT {...element} />;
     case 'CURRENCY_LABEL':
-      return <CURRENCYLABEL input={element} />;
+    case 'DYNAMIC_AMOUNT_LABEL':
+      return <CURRENCYLABEL {...element} />;
     case 'MULTIFIELD':
       return <MULTIFIELD input={element} />;
     default:

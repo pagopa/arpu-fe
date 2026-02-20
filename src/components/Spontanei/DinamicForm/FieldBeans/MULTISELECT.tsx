@@ -1,6 +1,7 @@
-import { FieldBeanPros } from '../config';
+import React from 'react';
 import SELECT from './SELECT';
+import withComputedValues, { computedPROPS } from './withDinamicValues';
 
-const MULTISELECT = (props: FieldBeanPros) => <SELECT {...props} multiple />;
+const MULTISELECT = (props: computedPROPS) => <SELECT {...props} multiple />;
 
-export default MULTISELECT;
+export default withComputedValues(MULTISELECT);
