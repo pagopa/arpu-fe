@@ -19,6 +19,7 @@ import TAB from './FieldBeans/TAB';
 import DYNAMIC_SELECT from './FieldBeans/DYNAMIC_SELECT';
 import DYNAMIC_AMOUNTLABEL from './FieldBeans/DYNAMIC_AMOUNTLABEL';
 import { RenderType } from '../../../../generated/apiClient';
+import CURRENCY from './FieldBeans/CURRENCY';
 
 export type FieldName = SpontaneousFormField['name'];
 
@@ -89,9 +90,11 @@ export const BuildFormSchema = (fields: Array<SpontaneousFormField>) => {
     const regex = field.regex;
     const type = field.htmlRender;
     const errorMessage = field.extraAttr?.error_message;
-
+    const isAmountField = type === 'CURRENCY' || type === 'DYNAMIC_AMOUNT_LABEL' || type === 'CURRENCY_LABEL';
     let fieldSchema;
-    if (type === 'MULTISELECT') {
+    if (isAmountField) {
+      fieldSchema = isRequired ? z.number().min(0, errorMessage) : z.number();
+    } else if (type === 'MULTISELECT') {
       fieldSchema = isRequired ? z.array(z.string()).min(1, errorMessage) : z.array(z.string());
     } else {
       fieldSchema = isRequired ? z.string().min(1, errorMessage) : z.string();
@@ -159,15 +162,19 @@ export const BuildInput = (element: SpontaneousFormField, allElements?: Spontane
       return <DATEPICKER {...element} />;
     case 'NONE':
       return <NONE {...element} allFields={allElements} />;
-    case 'CURRENCY':
     case 'TEXT':
       return <TEXT {...element} />;
-    case 'CURRENCY_LABEL':
-      return <CURRENCYLABEL {...element} />;
-    case 'DYNAMIC_AMOUNT_LABEL':
-      return <DYNAMIC_AMOUNTLABEL {...element} />;
     case 'MULTIFIELD':
       return <MULTIFIELD input={element} />;
+    // amount
+    case 'CURRENCY':
+      return <CURRENCY {...element} />;
+    // readonly amount
+    case 'CURRENCY_LABEL':
+      return <CURRENCYLABEL {...element} />;
+    // dynamic readonly amount (amount that changes based on other fields and an API call)
+    case 'DYNAMIC_AMOUNT_LABEL':
+      return <DYNAMIC_AMOUNTLABEL {...element} />;
     default:
       return null;
   }

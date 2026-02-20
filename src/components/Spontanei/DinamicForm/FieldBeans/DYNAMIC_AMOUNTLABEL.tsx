@@ -1,4 +1,4 @@
-import CURRENCYLABEL from './CURRENCYLABEL';
+import CURRENCY from './CURRENCY';
 import withComputedValues from './withDinamicValues';
 
-export default withComputedValues(CURRENCYLABEL);
+export default withComputedValues(CURRENCY);

@@ -41,8 +41,8 @@ const CustomForm = ({ fieldBeans, campoTotaleInclusoInXSD, formikRef }: CustomFo
       } else {
         amount = values.importo;
       }
-      if (typeof amount === 'string') {
-        amountHelpers.setValue(parseFloat(amount));
+      if (typeof amount === 'number') {
+        amountHelpers.setValue(amount);
       } else {
         throw new Error(`An errror occurred trying to update the amount field: ${amount}`);
       }

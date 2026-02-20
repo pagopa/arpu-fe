@@ -33,7 +33,7 @@ const withComputedValues =
         allFields,
         source,
         sourceParams = [],
-        enumerationList = []
+        enumerationList = [],
       } = props;
 
       const initialOptions = enumerationList.map((enumeration) => ({
@@ -49,8 +49,9 @@ const withComputedValues =
       const isHidden = hiddenDependsOn
         ? computeValue<boolean>(hiddenDependsOn, values)
         : htmlRender === RenderType.NONE;
+
       //const isHidden = false;
-      const isEnabled = enabledDependsOn ? computeValue<boolean>(enabledDependsOn, values) : false;
+      const isEnabled = enabledDependsOn ? computeValue<boolean>(enabledDependsOn, values) : (htmlRender === RenderType.CURRENCY_LABEL || htmlRender === RenderType.DYNAMIC_AMOUNT_LABEL);
 
       const hasError = meta.touched && Boolean(meta.error);
 
@@ -77,7 +78,6 @@ const withComputedValues =
         if (hasJoinTemplate) helpers.setValue(value);
       }, [value]);
 
-
       const urlParams = getPlaceholders(source || '');
       const urlParamsValues = urlParams.map((urlParam) => values[urlParam]);
       const queryParams = sourceParams;
@@ -97,14 +97,13 @@ const withComputedValues =
               const queryString = queryParams.map((param) => `${param}=${values[param]}`).join('&');
               resultSource = `${resultSource}?${queryString}`;
               const response = await fetch(resultSource);
-              if (response.status !== 200) throw new Error();
               const { result } = await response.json();
               switch (htmlRender) {
                 case RenderType.DYNAMIC_SELECT:
                   setOptions(result as Options);
                   break;
                 case RenderType.DYNAMIC_AMOUNT_LABEL:
-                  helpers.setValue(`${result}`, false);
+                  helpers.setValue(result as number, false);
                   break;
                 default:
                   break;
@@ -124,7 +123,8 @@ const withComputedValues =
           direction="row"
           gap={2}
           alignItems="center"
-          sx={{ display: isHidden ? 'none' : 'inherit' }}>
+          sx={{ display: isHidden ? 'none' : 'inherit' }}
+        >
           <FieldBean
             {...props}
             {...field}
