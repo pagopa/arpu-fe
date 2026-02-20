@@ -1,5 +1,5 @@
 import React from 'react';
-import { Formik, Form, useField } from 'formik';
+import { Formik, Form, useField, useFormikContext } from 'formik';
 import { BuildFormInputs, BuildFormSchema, BuildFormState, CustomFormValues } from './config';
 import { Card, Stack, Typography } from '@mui/material';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
@@ -16,6 +16,7 @@ export type CustomFormProps = {
 };
 
 const CustomForm = ({ fieldBeans, campoTotaleInclusoInXSD, formikRef }: CustomFormProps) => {
+  const { values: prevValues } = useFormikContext<PaymentNoticeInfo>();
   const [, , amountHelpers] = useField<PaymentNoticeInfo['amount']>('amount');
   const [, , descriptionHelpers] = useField<PaymentNoticeInfo['description']>('description');
 
@@ -60,6 +61,21 @@ const CustomForm = ({ fieldBeans, campoTotaleInclusoInXSD, formikRef }: CustomFo
 
   const { t } = useTranslation();
 
+  const initialValues: CustomFormValues = {
+    ...BuildFormState(fieldBeans),
+    debtPositionTypeOrgCode: prevValues.debtType?.code,
+    fullName: prevValues.fullName,
+    email: prevValues.email,
+    fiscalCode: prevValues.fiscalCode,
+    entityType: prevValues.entityType,
+    debtPositionTypeOrgId: prevValues.debtType?.debtPositionTypeOrgId,
+    debtPositionTypeOrgDescription: prevValues.debtType?.description,
+    organizationId: prevValues.org?.organizationId,
+    organizationName: prevValues.org?.orgName,
+    orgFiscalCode: prevValues.org?.orgFiscalCode,
+    ipaCode: prevValues.org?.ipaCode,
+  };
+
   return (
     <>
       <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale="it">
@@ -70,7 +86,7 @@ const CustomForm = ({ fieldBeans, campoTotaleInclusoInXSD, formikRef }: CustomFo
           <Formik
             innerRef={formikRef}
             onSubmit={console.log}
-            initialValues={BuildFormState(fieldBeans)}
+            initialValues={initialValues}
             validate={validate}>
             <Form>
               <Stack gap={2}>{fields}</Stack>

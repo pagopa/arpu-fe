@@ -37,6 +37,13 @@ export const getErrorMessage = (issues: z.ZodIssue[], fieldName: string) =>
     .map(({ message }) => message)
     .toString();
 
+/** Extrae placeholders from a string */
+export const getPlaceholders = (template: string): string[] => {
+  const regex = /[$]?{([^{}]*)}/g;
+  const matches = template.matchAll(regex);
+  return Array.from(new Set(Array.from(matches, (match) => match[1])));
+};
+
 function formatString(formatString: string, dataObject: { [key: string]: unknown }): string {
   return formatString.replace(/[$]?{([^{}]*)}/g, (match, key) => {
     /*eslint no-prototype-builtins: "off"*/
@@ -98,7 +105,18 @@ export const BuildFormSchema = (fields: Array<SpontaneousFormField>) => {
 };
 
 export interface CustomFormValues {
-  [key: string]: string | string[] | undefined;
+  [key: string]: string | string[] | number | number[] | undefined;
+  debtPositionTypeOrgCode?: string;
+  debtPositionTypeOrgId?: number;
+  debtPositionTypeOrgDescription?: string;
+  organizationId?: number;
+  organizationName?: string;
+  orgFiscalCode?: string;
+  ipaCode?: string;
+  fullName?: string;
+  email?: string;
+  fiscalCode?: string;
+  description?: string;
 }
 
 /** set the form state considering the initial value */
