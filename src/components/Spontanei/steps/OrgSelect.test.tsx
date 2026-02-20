@@ -5,7 +5,12 @@ import OrgSelect from './OrgSelect';
 import FormContext, { FormContextType } from '../FormContext';
 import { Formik } from 'formik';
 import utils from 'utils';
-import { OrganizationsWithSpontaneousDTO } from '../../../../generated/data-contracts';
+import {
+  OrganizationsWithSpontaneousDTO,
+  PersonEntityType
+} from '../../../../generated/data-contracts';
+import { Mock } from 'vitest';
+import { PaymentNoticeInfo } from '../index';
 
 // Mock dependencies
 vi.mock('utils', () => ({
@@ -42,7 +47,7 @@ const getDefaultContext = (overrides: Partial<FormContextType> = {}): FormContex
 
 const initialValues = {
   fullName: '',
-  entityType: 'F',
+  entityType: PersonEntityType.F,
   email: '',
   fiscalCode: '',
   amount: 0,
@@ -65,9 +70,9 @@ const renderOrgSelect = (contextValue: Partial<FormContextType> = {}) => {
 describe('OrgSelect Component', () => {
   beforeEach(() => {
     vi.clearAllMocks();
-    (utils.storage.app.getBrokerId as any).mockReturnValue('broker123');
-    (utils.storage.user.isAnonymous as any).mockReturnValue(false);
-    (utils.loaders.getOrganizationsWithSpontaneous as any).mockReturnValue({ data: mockOrgs });
+    (utils.storage.app.getBrokerId as Mock).mockReturnValue('broker123');
+    (utils.storage.user.isAnonymous as Mock).mockReturnValue(false);
+    (utils.loaders.getOrganizationsWithSpontaneous as Mock).mockReturnValue({ data: mockOrgs });
   });
 
   it('renders correctly with multiple organizations', () => {
@@ -80,7 +85,7 @@ describe('OrgSelect Component', () => {
 
   it('automatically selects the only organization and advances the step', async () => {
     const singleOrg = [mockOrgs[0]];
-    (utils.loaders.getOrganizationsWithSpontaneous as any).mockReturnValue({ data: singleOrg });
+    (utils.loaders.getOrganizationsWithSpontaneous as Mock).mockReturnValue({ data: singleOrg });
     const setStep = vi.fn();
     const setOmitFirstStep = vi.fn();
 
@@ -109,8 +114,8 @@ describe('OrgSelect Component', () => {
   });
 
   it('calls public loader when user is anonymous', () => {
-    (utils.storage.user.isAnonymous as any).mockReturnValue(true);
-    (utils.loaders.public.getPublicOrganizationsWithSpontaneous as any).mockReturnValue({
+    (utils.storage.user.isAnonymous as Mock).mockReturnValue(true);
+    (utils.loaders.public.getPublicOrganizationsWithSpontaneous as Mock).mockReturnValue({
       data: mockOrgs
     });
 
@@ -124,8 +129,8 @@ describe('OrgSelect Component', () => {
   it('validates form and shows error when clicking continue with no selection', async () => {
     // We need to provide a validation schema to test validation error display
     const validationSchema = {
-      validate: (values: any) => {
-        const errors: any = {};
+      validate: (values: Partial<PaymentNoticeInfo>) => {
+        const errors: Record<string, string> = {};
         if (!values.org) {
           errors.org = 'Required';
         }

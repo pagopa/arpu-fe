@@ -7,7 +7,11 @@ import { Formik } from 'formik';
 import utils from 'utils';
 import { Mock } from 'vitest';
 import { PaymentNoticeInfo } from '../index';
-import { PersonEntityType } from '../../../../generated/data-contracts';
+import {
+  PersonEntityType,
+  OrganizationsWithSpontaneousDTO,
+  DebtPositionTypeOrgsWithSpontaneousDTO
+} from '../../../../generated/data-contracts';
 
 // Mock sub-components
 vi.mock('../StandarForm/StandardForm', () => ({
@@ -62,8 +66,10 @@ const getDefaultContext = (overrides: Partial<FormContextType> = {}): FormContex
 });
 
 const initialValues: PaymentNoticeInfo = {
-  org: { organizationId: 'org123' } as any,
-  debtType: { debtPositionTypeOrgId: 'debt123' } as any,
+  org: { organizationId: 'org123' } as unknown as OrganizationsWithSpontaneousDTO,
+  debtType: {
+    debtPositionTypeOrgId: 'debt123'
+  } as unknown as DebtPositionTypeOrgsWithSpontaneousDTO,
   fullName: '',
   fiscalCode: '',
   entityType: PersonEntityType.F,

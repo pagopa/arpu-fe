@@ -58,7 +58,6 @@ const initialValues: PaymentNoticeInfo = {
   description: 'Test Description'
 };
 
-
 const renderSummary = (
   contextValue: Partial<FormContextType> = {},
   formikValues: Partial<PaymentNoticeInfo> = initialValues
