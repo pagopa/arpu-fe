@@ -14,7 +14,7 @@ import loaders from 'utils/loaders';
 import utils from 'utils';
 import { ArrowBack, Download } from '@mui/icons-material';
 import { DateFormat } from 'utils/datetools';
-import { ArcRoutes } from 'routes/routes';
+import { ROUTES } from 'routes/routes';
 import { usePageTitle } from 'hooks/usePageTitle';
 
 export const ReceiptDetail = () => {
@@ -39,8 +39,8 @@ export const ReceiptDetail = () => {
 
   const onDownload = () => {
     const path = isAnonymous
-      ? ArcRoutes.public.DEBT_POSITION_DOWNLOAD
-      : ArcRoutes.DEBT_POSITION_DOWNLOAD;
+      ? ROUTES.public.DEBT_POSITION_DOWNLOAD
+      : ROUTES.DEBT_POSITION_DOWNLOAD;
 
     navigate(generatePath(path, { receiptId, organizationId }), { state: { fiscalCode } });
   };

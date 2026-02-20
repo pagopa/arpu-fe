@@ -11,7 +11,7 @@ import utils from 'utils';
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 import { usePostCarts } from 'hooks/usePostCarts';
 import { useNavigate } from 'react-router-dom';
-import { ArcRoutes } from 'routes/routes';
+import { ROUTES } from 'routes/routes';
 import { useUserEmail } from 'hooks/useUserEmail';
 
 interface paymentOptionsActionProps {
@@ -40,7 +40,7 @@ const PaymentOptionsActions = (props: paymentOptionsActionProps) => {
     onSuccess: (url) => {
       window.location.replace(url);
     },
-    onError: (error: string) => navigate(ArcRoutes.COURTESY_PAGE.replace(':error', error))
+    onError: (error: string) => navigate(ROUTES.public.COURTESY_PAGE.replace(':error', error))
   });
 
   const singleInstallmentItemId = installments[0].iuv;

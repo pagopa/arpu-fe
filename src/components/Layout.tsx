@@ -18,7 +18,7 @@ import { Outlet, useMatches } from 'react-router-dom';
 import { RouteHandleObject } from 'models/Breadcrumbs';
 import { Header } from './Header';
 import { BackButton } from './BackButton';
-import { ArcRoutes } from 'routes/routes';
+import { ROUTES } from 'routes/routes';
 import { ModalSystem } from './Modals';
 import utils from 'utils';
 import { useStore } from 'store/GlobalStore';
@@ -59,7 +59,7 @@ export function Layout(props: { anonymous?: boolean }) {
 
   const rootLink: RootLinkType = {
     label: appStore.value.brokerInfo?.brokerName || '',
-    href: ArcRoutes.DASHBOARD,
+    href: ROUTES.DASHBOARD,
     ariaLabel: appStore.value.brokerInfo?.brokerName || '',
     title: appStore.value.brokerInfo?.brokerName || ''
   };
@@ -98,7 +98,7 @@ export function Layout(props: { anonymous?: boolean }) {
           {t('ui.header.skipToContent')}
         </Button>
         {!props.anonymous ? (
-          <Header onAssistanceClick={() => window.open(ArcRoutes.ASSISTANCE, '_blank')} />
+          <Header onAssistanceClick={() => window.open(ROUTES.ASSISTANCE, '_blank')} />
         ) : (
           <HeaderAccount
             rootLink={rootLink}

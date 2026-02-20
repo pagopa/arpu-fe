@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { ArcRoutes } from 'routes/routes';
+import { ROUTES } from 'routes/routes';
 import {
   Box,
   Divider,
@@ -41,18 +41,18 @@ export const Sidebar: React.FC = () => {
     {
       label: t('menu.homepage'),
       icon: ViewSidebarIcon,
-      route: ArcRoutes.DASHBOARD,
+      route: ROUTES.DASHBOARD,
       end: true
     },
     {
       label: t('menu.debtPositions'),
       icon: Payments,
-      route: ArcRoutes.DEBT_POSITIONS
+      route: ROUTES.DEBT_POSITIONS
     },
     {
       label: t('menu.receipts.menuTitle'),
       icon: () => <ReceiptLongIcon sx={{ marginLeft: '-1px' }} />,
-      route: ArcRoutes.RECEIPTS
+      route: ROUTES.RECEIPTS
     }
   ];
 

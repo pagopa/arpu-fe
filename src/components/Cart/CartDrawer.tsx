@@ -9,7 +9,7 @@ import { toggleCartDrawer } from 'store/CartStore';
 import { ButtonNaked } from '@pagopa/mui-italia';
 import { Trans, useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
-import { ArcRoutes } from 'routes/routes';
+import { ROUTES } from 'routes/routes';
 import { cartDrawerStyles } from './CartDrawer.styles';
 import { useStore } from 'store/GlobalStore';
 import { toEuroOrMissingValue } from 'utils/converters';
@@ -27,7 +27,7 @@ export const CartDrawer = () => {
     onSuccess: (url) => {
       window.location.replace(url);
     },
-    onError: (error: string) => navigate(ArcRoutes.COURTESY_PAGE.replace(':error', error))
+    onError: (error: string) => navigate(ROUTES.COURTESY_PAGE.replace(':error', error))
   });
 
   const {
@@ -41,7 +41,7 @@ export const CartDrawer = () => {
 
   const onEmptyButtonClick = () => {
     toggleCartDrawer();
-    navigate(ArcRoutes.DEBT_POSITIONS);
+    navigate(ROUTES.DEBT_POSITIONS);
   };
 
   const onPayButton = () => {

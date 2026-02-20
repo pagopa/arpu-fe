@@ -10,7 +10,7 @@ import utils from 'utils';
 import { useTranslation } from 'react-i18next';
 import { Styles } from './styles';
 import { NavLink } from 'react-router-dom';
-import { ArcRoutes } from 'routes/routes';
+import { ROUTES } from 'routes/routes';
 
 const PaymentTypeDrawer = () => {
   const { t } = useTranslation();
@@ -63,7 +63,7 @@ const PaymentTypeDrawer = () => {
               </Typography>
               <Typography>{t('spontanei.drawer.card2.description')}</Typography>
               <NavLink
-                to={ArcRoutes.PAYMENTS_ON_THE_FLY}
+                to={ROUTES.PAYMENTS_ON_THE_FLY}
                 onClick={togglePaymentTypeDrawerVisibility}>
                 <Button variant="naked">
                   <Typography color={'primary'} fontWeight={700}>

@@ -4,7 +4,7 @@ import { useTranslation } from 'react-i18next';
 import utils from 'utils';
 import config from 'utils/config';
 import { useSearch } from 'hooks/useSearch';
-import { ArcRoutes } from 'routes/routes';
+import { ROUTES } from 'routes/routes';
 import { Link } from 'react-router-dom';
 import { Content } from 'components/Content';
 import PaymentButton from 'components/PaymentButton';
@@ -87,7 +87,7 @@ export const ReceiptsList = () => {
           </Typography>
           <Typography fontSize={16} component="h2">
             {t('app.receipts.subtitle')}{' '}
-            <Link to={ArcRoutes.public.RECEIPTS_SEARCH}>{t('app.receipts.subtitleLink')}</Link>
+            <Link to={ROUTES.public.RECEIPTS_SEARCH}>{t('app.receipts.subtitleLink')}</Link>
           </Typography>
         </Stack>
 

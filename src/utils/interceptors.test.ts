@@ -2,7 +2,7 @@ import { setupInterceptors } from './interceptors';
 import { Client } from 'models/Client';
 import { useNavigate } from 'react-router-dom';
 import storage, { StorageItems } from './storage';
-import { ArcRoutes, ArcErrors } from 'routes/routes';
+import { ROUTES, OUTCOMES } from 'routes/routes';
 import { Mock } from 'vitest';
 import utils from 'utils';
 
@@ -80,7 +80,7 @@ describe('setupInterceptors', () => {
       .calls[0][1];
     responseInterceptor(error);
     expect(storage.user.logOut).toHaveBeenCalledTimes(1);
-    expect(replaceMock).toBeCalledWith(ArcRoutes.COURTESY_PAGE.replace(':error', ArcErrors['401']));
+    expect(replaceMock).toBeCalledWith(ROUTES.public.COURTESY_PAGE.replace(':outcome', OUTCOMES['401']));
   });
 
   it('should emit an error toast notification (403)', () => {

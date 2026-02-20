@@ -3,7 +3,7 @@ import { DebtorUnpaidDebtPositionDTO } from '../../../../generated/data-contract
 import { generatePath } from 'react-router-dom';
 import { fromTaxCodeToSrcImage, toEuroOrMissingValue } from 'utils/converters';
 import { useTranslation } from 'react-i18next';
-import { ArcRoutes } from 'routes/routes';
+import { ROUTES } from 'routes/routes';
 import { ListItem } from 'components/ListItem';
 import { PayeeIcon } from 'components/PayeeIcon';
 import { useDueDateField } from '../hooks/useDueDateField';
@@ -32,7 +32,7 @@ export const DebtPositionItem = ({
 
   const fields = amount ? [amountField, dateField] : [dateField];
 
-  const detailPath = generatePath(ArcRoutes.DEBT_POSITION, { debtPositionId, organizationId });
+  const detailPath = generatePath(ROUTES.DEBT_POSITION, { debtPositionId, organizationId });
 
   const Icon = () => <PayeeIcon src={fromTaxCodeToSrcImage(orgFiscalCode)} alt={orgName} visible />;
 

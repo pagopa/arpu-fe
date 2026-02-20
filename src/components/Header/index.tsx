@@ -4,7 +4,7 @@ import utils from 'utils';
 import SettingsIcon from '@mui/icons-material/Settings';
 import LogoutRoundedIcon from '@mui/icons-material/LogoutRounded';
 import { useNavigate } from 'react-router-dom';
-import { ArcRoutes } from 'routes/routes';
+import { ROUTES } from 'routes/routes';
 import { useUserInfo } from 'hooks/useUserInfo';
 import { useTranslation } from 'react-i18next';
 import { Box } from '@mui/system';
@@ -27,7 +27,7 @@ export const Header = (props: HeaderProps) => {
       console.warn(e);
     } finally {
       utils.storage.user.logOut();
-      navigate(ArcRoutes.LOGIN);
+      navigate(ROUTES.LOGIN);
     }
   }
 
@@ -35,18 +35,18 @@ export const Header = (props: HeaderProps) => {
 
   const rootLink: RootLinkType = {
     label: appStore.value.brokerInfo?.brokerName || '',
-    href: ArcRoutes.DASHBOARD,
+    href: ROUTES.DASHBOARD,
     ariaLabel: appStore.value.brokerInfo?.brokerName || '',
     title: appStore.value.brokerInfo?.brokerName || ''
   };
 
   const jwtUser: JwtUser | undefined = userInfo
     ? {
-        id: userInfo?.userId,
-        name: utils.converters.capitalizeFirstLetter(userInfo?.name),
-        surname: utils.converters.capitalizeFirstLetter(userInfo?.familyName),
-        email: ''
-      }
+      id: userInfo?.userId,
+      name: utils.converters.capitalizeFirstLetter(userInfo?.name),
+      surname: utils.converters.capitalizeFirstLetter(userInfo?.familyName),
+      email: ''
+    }
     : undefined;
 
   const userActions: UserAction[] = [
@@ -54,7 +54,7 @@ export const Header = (props: HeaderProps) => {
       id: 'profile',
       label: t('ui.header.profile'),
       onClick: () => {
-        navigate(ArcRoutes.USER);
+        navigate(ROUTES.USER);
       },
       icon: <SettingsIcon fontSize="small" color="inherit" />
     },

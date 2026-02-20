@@ -12,7 +12,7 @@ vi.mock('./ProductLogo', () => ({
   ProductLogo: () => <div data-testid="product-logo">Logo</div>
 }));
 
-import { ArcRoutes } from 'routes/routes';
+import { ROUTES } from 'routes/routes';
 import { resetAppStore, setBrokerInfo } from 'store/appStore';
 
 describe('Footer', () => {
@@ -48,8 +48,8 @@ describe('Footer', () => {
     const a11yLink = screen.getByText('ui.footer.a11y').closest('a');
     const personalDataLink = screen.getByText('ui.footer.personalData').closest('a');
 
-    expect(privacyLink).toHaveAttribute('href', ArcRoutes.PRIVACY_POLICY);
-    expect(tosLink).toHaveAttribute('href', ArcRoutes.TOS);
+    expect(privacyLink).toHaveAttribute('href', ROUTES.PRIVACY_POLICY);
+    expect(tosLink).toHaveAttribute('href', ROUTES.TOS);
     expect(a11yLink).toHaveAttribute(
       'href',
       'https://www.w3.org/WAI/standards-guidelines/wai-aria/'

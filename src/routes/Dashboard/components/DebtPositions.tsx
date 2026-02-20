@@ -5,7 +5,7 @@ import utils from 'utils';
 import { Content } from 'components/Content';
 import { DebtPositionItem } from 'routes/DebtPositions/components/item';
 import { useTranslation } from 'react-i18next';
-import { ArcRoutes } from 'routes/routes';
+import { ROUTES } from 'routes/routes';
 import { Link } from 'react-router-dom';
 
 export const DebtPositions = () => {
@@ -31,7 +31,7 @@ export const DebtPositions = () => {
           {t('app.dashboard.lastDebtPositions')}
         </Typography>
         {debtPositions.query.data?.content?.length ? (
-          <Button component={Link} to={ArcRoutes.DEBT_POSITIONS}>
+          <Button component={Link} to={ROUTES.DEBT_POSITIONS}>
             {t('app.dashboard.seeAllTransactions')}
           </Button>
         ) : null}

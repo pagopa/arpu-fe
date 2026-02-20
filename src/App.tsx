@@ -3,7 +3,7 @@ import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { Navigate, RouterProvider, createBrowserRouter, redirect } from 'react-router-dom';
 import { Theme } from './utils/style';
 import { PublicLayout, AuthLayout } from './components/Layout';
-import { ArcErrors, ArcRoutes } from './routes/routes';
+import { ROUTES, OUTCOMES } from './routes/routes';
 import DashboardRoute from './routes/Dashboard';
 import UserRoute from 'routes/User';
 import { RouteHandleObject } from 'models/Breadcrumbs';
@@ -35,10 +35,10 @@ import appStore from 'store/appStore';
 const router = createBrowserRouter([
   {
     path: '*',
-    element: <Navigate replace to={ArcRoutes.COURTESY_PAGE.replace(':error', ArcErrors['404'])} />
+    element: <Navigate replace to={ROUTES.public.COURTESY_PAGE.replace(':outcome', OUTCOMES['404'])} />
   },
   {
-    path: ArcRoutes.AUTH_CALLBACK,
+    path: ROUTES.AUTH_CALLBACK,
     element: <AuthCallback />,
     loader: ({ request }) => getTokenOneidentity(request)
   },
@@ -49,7 +49,7 @@ const router = createBrowserRouter([
     children: [
       {
         path: '/',
-        element: <Navigate to={ArcRoutes.DASHBOARD} />
+        element: <Navigate to={ROUTES.DASHBOARD} />
       },
       {
         element: <PublicLayout />,
@@ -62,7 +62,7 @@ const router = createBrowserRouter([
         } as RouteHandleObject,
         children: [
           {
-            path: ArcRoutes.LOGIN,
+            path: ROUTES.LOGIN,
             element: <Login />,
             handle: {
               titleKey: 'pageTitles.login',
@@ -71,7 +71,7 @@ const router = createBrowserRouter([
             } as RouteHandleObject
           },
           {
-            path: ArcRoutes.public.PAYMENTS_ON_THE_FLY,
+            path: ROUTES.public.PAYMENTS_ON_THE_FLY,
             children: [
               {
                 index: true,
@@ -91,18 +91,7 @@ const router = createBrowserRouter([
             ]
           },
           {
-            path: ArcRoutes.public.PAYMENTS_ON_THE_FLY_SINGLE_OUTCOME,
-            element: <CourtesyPage />,
-            loader: ({ params }) => Promise.resolve(params.outcome),
-            handle: {
-              titleKey: 'pageTitles.paymentOutcomeOk',
-              backButton: false,
-              subHeader: false,
-              gutters: false
-            } as RouteHandleObject
-          },
-          {
-            path: ArcRoutes.public.DEBT_POSITION_SEARCH,
+            path: ROUTES.public.DEBT_POSITION_SEARCH,
             element: <DebtPositionsSearch />,
             handle: {
               titleKey: 'pageTitles.debtPositionsSearch',
@@ -110,14 +99,14 @@ const router = createBrowserRouter([
             } as RouteHandleObject
           },
           {
-            path: ArcRoutes.public.DEBT_POSITION_DOWNLOAD,
+            path: ROUTES.public.DEBT_POSITION_DOWNLOAD,
             element: <DebtPositionDownload />,
             handle: {
               titleKey: 'pageTitles.debtPositionsDownload'
             } as RouteHandleObject
           },
           {
-            path: ArcRoutes.public.RECEIPTS_SEARCH,
+            path: ROUTES.public.RECEIPTS_SEARCH,
             element: <ReceiptsSearch />,
             handle: {
               titleKey: 'pageTitles.receiptsSearch',
@@ -125,7 +114,7 @@ const router = createBrowserRouter([
             } as RouteHandleObject
           },
           {
-            path: ArcRoutes.public.RECEIPT,
+            path: ROUTES.public.RECEIPT,
             element: <ReceiptDetail />,
             handle: {
               titleKey: 'pageTitles.receiptDetail',
@@ -133,28 +122,22 @@ const router = createBrowserRouter([
             } as RouteHandleObject
           },
           {
-            path: ArcRoutes.TOS,
+            path: ROUTES.TOS,
             element: <Resources resource="tos" />,
             handle: {
               titleKey: 'pageTitles.tos'
             } as RouteHandleObject
           },
           {
-            path: ArcRoutes.PRIVACY_POLICY,
+            path: ROUTES.PRIVACY_POLICY,
             element: <Resources resource="pp" />,
             handle: {
               titleKey: 'pageTitles.pp'
             } as RouteHandleObject
           },
           {
-            path: ArcRoutes.COURTESY_PAGE,
-            loader: ({ params }) => {
-              const key = params.error as keyof typeof ArcErrors;
-              if (!(key in ArcErrors)) {
-                return redirect(ArcRoutes.COURTESY_PAGE.replace(':error', 'risorsa-non-trovata'));
-              }
-              return params.error!;
-            },
+            path: ROUTES.public.COURTESY_PAGE,
+            loader: ({ params }) => Promise.resolve(params.outcome),
             element: <CourtesyPage />,
             handle: {
               titleKey: 'pageTitles.courtesy'
@@ -172,11 +155,11 @@ const router = createBrowserRouter([
         } as RouteHandleObject,
         children: [
           {
-            path: ArcRoutes.DASHBOARD,
+            path: ROUTES.DASHBOARD,
             element: <DashboardRoute />
           },
           {
-            path: ArcRoutes.USER,
+            path: ROUTES.USER,
             element: <UserRoute />,
             handle: {
               backButton: true,
@@ -185,42 +168,42 @@ const router = createBrowserRouter([
             } as RouteHandleObject
           },
           {
-            path: ArcRoutes.RECEIPTS,
+            path: ROUTES.RECEIPTS,
             element: <ReceiptsList />,
             handle: {
               titleKey: 'pageTitles.receiptsList'
             } as RouteHandleObject
           },
           {
-            path: ArcRoutes.RECEIPT,
+            path: ROUTES.RECEIPT,
             element: <ReceiptDetail />,
             handle: {
               titleKey: 'pageTitles.receiptDetail'
             } as RouteHandleObject
           },
           {
-            path: ArcRoutes.DEBT_POSITIONS,
+            path: ROUTES.DEBT_POSITIONS,
             element: <DebtPositionsList />,
             handle: {
               titleKey: 'pageTitles.debtPositionsList'
             }
           },
           {
-            path: ArcRoutes.DEBT_POSITION,
+            path: ROUTES.DEBT_POSITION,
             element: <DebtPositionDetail />,
             handle: {
               titleKey: 'pageTitles.debtPositionDetail'
             }
           },
           {
-            path: ArcRoutes.DEBT_POSITION_DOWNLOAD,
+            path: ROUTES.DEBT_POSITION_DOWNLOAD,
             element: <DebtPositionDownload />,
             handle: {
               titleKey: 'pageTitles.debtPositionsDownload'
             }
           },
           {
-            path: ArcRoutes.PAYMENTS_ON_THE_FLY,
+            path: ROUTES.PAYMENTS_ON_THE_FLY,
             handle: {
               sidebar: false
             } as RouteHandleObject,
@@ -244,13 +227,25 @@ const router = createBrowserRouter([
             ]
           },
           {
-            path: ArcRoutes.ASSISTANCE,
+            path: ROUTES.ASSISTANCE,
             element: <Assistance />,
             handle: {
               sidebar: false,
               titleKey: 'pageTitles.assistance'
             } as RouteHandleObject
-          }
+          },
+          {
+            path: ROUTES.COURTESY_PAGE,
+            element: <CourtesyPage />,
+            loader: ({ params }) => Promise.resolve(params.outcome),
+            handle: {
+              titleKey: 'pageTitles.courtesyPage',
+              backButton: false,
+              subHeader: true,
+              sidebar: false,
+              gutters: false
+            } as RouteHandleObject
+          },
         ]
       }
     ]

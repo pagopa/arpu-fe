@@ -80,7 +80,7 @@ vi.mock('react-router-dom', async () => {
 });
 
 vi.mock('routes/routes', () => ({
-  ArcRoutes: {
+  ROUTES: {
     RECEIPT: '/receipt/:organizationId/:receiptId',
     DEBT_POSITION_DOWNLOAD: '/download/:organizationId/:iuv',
     COURTESY_PAGE: '/courtesy/:error',

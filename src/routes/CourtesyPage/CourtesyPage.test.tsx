@@ -1,7 +1,7 @@
 import React from 'react';
 import { screen } from '@testing-library/react';
 import { CourtesyPage, ErrorIconComponent } from '.';
-import { ArcErrors, ArpuOutcome } from 'routes/routes';
+import { OUTCOMES } from 'routes/routes';
 
 vi.mock('react-router-dom', async (importOriginal) => {
   const actual = await importOriginal<typeof import('react-router-dom')>();
@@ -12,7 +12,7 @@ import { useParams } from 'react-router-dom';
 import { i18nTestSetup } from '__tests__/i18nTestSetup';
 import { render } from '__tests__/renderers';
 
-const SESSION_EXPIRED_CODE = ArcErrors['sessione-scaduta'];
+const SESSION_EXPIRED_CODE = OUTCOMES['sessione-scaduta'];
 
 i18nTestSetup({
   courtesyPage: {
@@ -28,7 +28,7 @@ i18nTestSetup({
   }
 });
 
-const renderCourtesyPage = (param?: { error?: string; outcome?: string }) => {
+const renderCourtesyPage = (param?: { outcome?: string }) => {
   vi.mocked(useParams).mockReturnValue(param ?? {});
   return render(<CourtesyPage />);
 };
@@ -37,49 +37,49 @@ describe('ErrorIconComponent', () => {
   afterEach(() => vi.clearAllMocks());
 
   it('renders the "OK" pictogram for PAGAMENTO_AVVISO_COMPLETATO', () => {
-    render(<ErrorIconComponent code={ArpuOutcome.PAGAMENTO_AVVISO_COMPLETATO} />);
+    render(<ErrorIconComponent code={OUTCOMES['pagamento-avviso-completato']} />);
     const img = screen.getByTitle('OK');
     expect(img).toBeInTheDocument();
     expect(img).toHaveAttribute('src', '/cittadini/pictograms/paymentcompleted.svg');
   });
 
   it('renders the "Error" pictogram for accesso-non-autorizzato', () => {
-    render(<ErrorIconComponent code={ArcErrors['accesso-non-autorizzato']} />);
+    render(<ErrorIconComponent code={OUTCOMES['accesso-non-autorizzato']} />);
     const img = screen.getByTitle('Error');
     expect(img).toBeInTheDocument();
     expect(img).toHaveAttribute('src', '/cittadini/pictograms/genericerror.svg');
   });
 
   it('renders the "Error" pictogram for avviso-non-pagabile', () => {
-    render(<ErrorIconComponent code={ArcErrors['avviso-non-pagabile']} />);
+    render(<ErrorIconComponent code={OUTCOMES['avviso-non-pagabile']} />);
     const img = screen.getByTitle('Error');
     expect(img).toBeInTheDocument();
     expect(img).toHaveAttribute('src', '/cittadini/pictograms/genericerror.svg');
   });
 
   it('renders the "Expired" pictogram for sessione-scaduta', () => {
-    render(<ErrorIconComponent code={ArcErrors['sessione-scaduta']} />);
+    render(<ErrorIconComponent code={OUTCOMES['sessione-scaduta']} />);
     const img = screen.getByTitle('Expired');
     expect(img).toBeInTheDocument();
     expect(img).toHaveAttribute('src', '/cittadini/pictograms/expired.svg');
   });
 
   it('renders the umbrella pictogram for risorsa-non-trovata (falls to default)', () => {
-    render(<ErrorIconComponent code={ArcErrors['risorsa-non-trovata']} />);
+    render(<ErrorIconComponent code={OUTCOMES['risorsa-non-trovata']} />);
     const img = screen.getByTitle('Something went wrong');
     expect(img).toBeInTheDocument();
     expect(img).toHaveAttribute('src', '/cittadini/pictograms/umbrella.svg');
   });
 
   it('renders the umbrella pictogram for avvio-pagamento', () => {
-    render(<ErrorIconComponent code={ArcErrors['avvio-pagamento']} />);
+    render(<ErrorIconComponent code={OUTCOMES['avvio-pagamento']} />);
     const img = screen.getByTitle('Something went wrong');
     expect(img).toBeInTheDocument();
     expect(img).toHaveAttribute('src', '/cittadini/pictograms/umbrella.svg');
   });
 
   it('renders the umbrella pictogram for sconosciuto', () => {
-    render(<ErrorIconComponent code={ArcErrors['sconosciuto']} />);
+    render(<ErrorIconComponent code={OUTCOMES['sconosciuto']} />);
     const img = screen.getByTitle('Something went wrong');
     expect(img).toBeInTheDocument();
     expect(img).toHaveAttribute('src', '/cittadini/pictograms/umbrella.svg');
@@ -103,42 +103,34 @@ describe('CourtesyPage', () => {
   });
 
   it('shows default text when param is unrecognised', () => {
-    renderCourtesyPage({ error: 'codice-inesistente' });
+    renderCourtesyPage({ outcome: 'codice-inesistente' });
     expect(screen.getByTestId('courtesyPage.title')).toHaveTextContent('Default title');
     expect(screen.getByTestId('courtesyPage.body')).toHaveTextContent('Default body');
   });
 
   it('resolves an error param and renders the correct icon', () => {
-    renderCourtesyPage({ error: 'sessione-scaduta' });
+    renderCourtesyPage({ outcome: 'sessione-scaduta' });
     expect(screen.getByTitle('Expired')).toBeInTheDocument();
   });
 
   it('shows translated text for a known error param', () => {
-    renderCourtesyPage({ error: 'sessione-scaduta' });
+    renderCourtesyPage({ outcome: 'sessione-scaduta' });
     expect(screen.getByTestId('courtesyPage.title')).toHaveTextContent('Session expired');
     expect(screen.getByTestId('courtesyPage.body')).toHaveTextContent('Your session has expired.');
   });
 
   it('resolves an outcome param and renders the correct icon', () => {
-    renderCourtesyPage({ outcome: ArpuOutcome.PAGAMENTO_AVVISO_COMPLETATO });
+    renderCourtesyPage({ outcome: 'pagamento-avviso-completato' });
     expect(screen.getByTitle('OK')).toBeInTheDocument();
   });
 
-  it('prefers "error" over "outcome" when both params are present', () => {
-    renderCourtesyPage({
-      error: 'sessione-scaduta',
-      outcome: ArpuOutcome.PAGAMENTO_AVVISO_COMPLETATO
-    });
-    expect(screen.getByTitle('Expired')).toBeInTheDocument();
-  });
-
   it('does NOT render the CTA when the translation key is absent', () => {
-    renderCourtesyPage({ error: 'codice-inesistente' });
+    renderCourtesyPage({ outcome: 'codice-inesistente' });
     expect(screen.queryByTestId('courtesyPage.cta')).not.toBeInTheDocument();
   });
 
   it('renders the CTA with correct text when the translation key exists', () => {
-    renderCourtesyPage({ error: 'sessione-scaduta' });
+    renderCourtesyPage({ outcome: 'sessione-scaduta' });
     const cta = screen.getByTestId('courtesyPage.cta');
     expect(cta).toBeInTheDocument();
     expect(cta).toHaveTextContent('Log in again');
