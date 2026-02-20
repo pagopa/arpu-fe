@@ -17,6 +17,7 @@ import MULTIFIELD from './FieldBeans/MULTIFIELD';
 import NONE from './FieldBeans/NONE';
 import TAB from './FieldBeans/TAB';
 import DYNAMIC_SELECT from './FieldBeans/DYNAMIC_SELECT';
+import DYNAMIC_AMOUNTLABEL from './FieldBeans/DYNAMIC_AMOUNTLABEL';
 import { RenderType } from '../../../../generated/apiClient';
 
 export type FieldName = SpontaneousFormField['name'];
@@ -144,8 +145,9 @@ export const BuildInput = (element: SpontaneousFormField, allElements?: Spontane
     case 'TEXT':
       return <TEXT {...element} />;
     case 'CURRENCY_LABEL':
-    case 'DYNAMIC_AMOUNT_LABEL':
       return <CURRENCYLABEL {...element} />;
+    case 'DYNAMIC_AMOUNT_LABEL':
+      return <DYNAMIC_AMOUNTLABEL {...element} />;
     case 'MULTIFIELD':
       return <MULTIFIELD input={element} />;
     default:

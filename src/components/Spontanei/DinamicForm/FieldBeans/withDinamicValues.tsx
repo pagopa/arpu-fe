@@ -32,6 +32,7 @@ const withComputedValues =
       extraAttr,
       allFields,
       source,
+      sourceParams = [],
       enumerationList = []
     } = props;
 
@@ -48,6 +49,7 @@ const withComputedValues =
     const isHidden = hiddenDependsOn
       ? computeValue<boolean>(hiddenDependsOn, values)
       : htmlRender === RenderType.NONE;
+    //const isHidden = false;
     const isEnabled = enabledDependsOn ? computeValue<boolean>(enabledDependsOn, values) : false;
 
     const hasError = meta.touched && Boolean(meta.error);
@@ -75,20 +77,35 @@ const withComputedValues =
       if (hasJoinTemplate) helpers.setValue(value);
     }, [value]);
 
+    /* required to trigger the effect 
+      and recall the source API to get 
+      a new result and update the value */
+    const dependecies = sourceParams.map((param) => values[param]);
     React.useEffect(() => {
-      const fetchOptions = async () => {
-        if (source) {
-          try {
-            const response = await fetch(source);
+      const fetchDynamicResult = async () => {
+        try {
+          if (source) {
+            const resultSource = buildDinamicValue(source, values);
+            const response = await fetch(resultSource);
+            if (response.status !== 200) throw new Error();
             const { result } = await response.json();
-            setOptions(result);
-          } catch (error) {
-            console.error('Error fetching options:', error);
+            switch (htmlRender) {
+              case RenderType.DYNAMIC_SELECT:
+                setOptions(result as Options);
+                break;
+              case RenderType.DYNAMIC_AMOUNT_LABEL:
+                helpers.setValue(`${result}`, false);
+                break;
+              default:
+                break;
+            }
           }
+        } catch (error) {
+          console.error('Error fetching dynamic result:', error);
         }
       };
-      fetchOptions();
-    }, [source]);
+      fetchDynamicResult();
+    }, [source, ...dependecies]);
 
     return (
       <Stack
