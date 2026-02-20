@@ -4,7 +4,7 @@ import { fireEvent, render, screen } from '@testing-library/react';
 import Login from '.';
 import '@testing-library/jest-dom';
 import utils from 'utils';
-import { ArcRoutes } from 'routes/routes';
+import { ROUTES } from 'routes/routes';
 import { useNavigate } from 'react-router-dom';
 import { Mock } from 'vitest';
 
@@ -43,6 +43,6 @@ describe('LoginRoute', () => {
     vi.spyOn(utils.storage.user, 'hasToken').mockImplementation(() => true);
     vi.spyOn(utils.storage.user, 'hasToken').mockImplementation(() => true);
     render(<Login />);
-    expect(mockNavigate).toBeCalledWith(ArcRoutes.DASHBOARD);
+    expect(mockNavigate).toBeCalledWith(ROUTES.DASHBOARD);
   });
 });

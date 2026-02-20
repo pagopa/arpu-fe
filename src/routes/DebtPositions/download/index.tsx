@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import { Link, useLocation, useParams, Location } from 'react-router-dom';
 import { Stack, Typography, Button, Link as MuiLink } from '@mui/material';
-import { ArcRoutes, ExternalRoutes } from 'routes/routes';
+import { ROUTES, ExternalRoutes } from 'routes/routes';
 import { Trans, useTranslation } from 'react-i18next';
 import loaders from 'utils/loaders';
 import storage from 'utils/storage';
@@ -64,7 +64,7 @@ export const DebtPositionDownload = () => {
         variant="contained"
         size="large"
         component={Link}
-        to={isAnonymous ? ArcRoutes.LOGIN : ArcRoutes.DASHBOARD}>
+        to={isAnonymous ? ROUTES.LOGIN : ROUTES.DASHBOARD}>
         {t('actions.close')}
       </Button>
       <Link to={ExternalRoutes.PAYMENT_LINKS} target="_blank">

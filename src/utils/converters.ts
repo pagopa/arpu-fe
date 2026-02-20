@@ -17,7 +17,7 @@ import {
   PaymentOptionType
 } from 'models/PaymentNotice';
 import { CartItem } from 'models/Cart';
-import { ArcRoutes } from 'routes/routes';
+import { ROUTES } from 'routes/routes';
 
 // This high order function is useful to 'decorate' existing function to add
 // the functionality to manage undefined (not optional) parameters and output a global character instead
@@ -177,9 +177,9 @@ const cartItemsToCartsRequest = (cartItems: CartItem[]) => {
       noticeNumber: item.nav
     })),
     returnUrls: {
-      returnOkUrl: `${ORIGIN}${isAnonymous ? ArcRoutes.LOGIN : ArcRoutes.DASHBOARD}?fromAction=payment-success`,
-      returnCancelUrl: `${ORIGIN}${isAnonymous ? ArcRoutes.LOGIN : ArcRoutes.DEBT_POSITIONS}?fromAction=payment-cancel`,
-      returnErrorUrl: `${ORIGIN}${isAnonymous ? ArcRoutes.LOGIN : ArcRoutes.DEBT_POSITIONS}?fromAction=payment-error`
+      returnOkUrl: `${ORIGIN}${isAnonymous ? ROUTES.LOGIN : ROUTES.DASHBOARD}?fromAction=payment-success`,
+      returnCancelUrl: `${ORIGIN}${isAnonymous ? ROUTES.LOGIN : ROUTES.DEBT_POSITIONS}?fromAction=payment-cancel`,
+      returnErrorUrl: `${ORIGIN}${isAnonymous ? ROUTES.LOGIN : ROUTES.DEBT_POSITIONS}?fromAction=payment-error`
     }
   };
 };

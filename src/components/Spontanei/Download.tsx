@@ -4,7 +4,7 @@ import { Trans, useTranslation } from 'react-i18next';
 import IllusHourGlass from './IllusHourGlass';
 import utils from 'utils';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
-import { ArcRoutes } from 'routes/routes';
+import { ROUTES } from 'routes/routes';
 import storage from 'utils/storage';
 
 const Download = () => {
@@ -48,9 +48,9 @@ const Download = () => {
 
   const close = () => {
     if (isAnonymous) {
-      navigate(ArcRoutes.LOGIN);
+      navigate(ROUTES.LOGIN);
     } else {
-      navigate(ArcRoutes.DASHBOARD);
+      navigate(ROUTES.DASHBOARD);
     }
   };
 

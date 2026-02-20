@@ -3,7 +3,7 @@ import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Header, HeaderProps } from './index';
-import { ArcRoutes } from 'routes/routes';
+import { ROUTES } from 'routes/routes';
 import { Mock } from 'vitest';
 import { StoreProvider } from 'store/GlobalStore';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
@@ -83,7 +83,7 @@ describe('Header component', () => {
     fireEvent.click(profileButton);
 
     // Ensure it navigates to the user profile route
-    expect(mockNavigate).toHaveBeenCalledWith(ArcRoutes.USER);
+    expect(mockNavigate).toHaveBeenCalledWith(ROUTES.USER);
   });
 
   it('should clear session and local storage and navigate to login when "Esci" is clicked', async () => {
@@ -105,7 +105,7 @@ describe('Header component', () => {
       expect(sessionStorage.clear).toHaveBeenCalled();
 
       // Ensure it navigates to the login route
-      expect(mockNavigate).toHaveBeenCalledWith(ArcRoutes.LOGIN);
+      expect(mockNavigate).toHaveBeenCalledWith(ROUTES.LOGIN);
     });
 
     mockStorage.mockClear();

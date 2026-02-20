@@ -1,84 +1,138 @@
 import React from 'react';
-import { render, screen } from '@testing-library/react';
-import { CourtesyPage } from '.';
-import '@testing-library/jest-dom';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { ErrorIconComponent } from './index';
-import { ArcErrors } from 'routes/routes';
+import { screen } from '@testing-library/react';
+import { CourtesyPage, ErrorIconComponent } from '.';
+import { OUTCOMES } from 'routes/routes';
 
-const queryClient = new QueryClient();
+vi.mock('react-router-dom', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('react-router-dom')>();
+  return { ...actual, useParams: vi.fn() };
+});
 
-vi.mock('react-router-dom', () => ({
-  useSearchParams: () => [
-    {
-      get: () => '403'
+import { useParams } from 'react-router-dom';
+import { i18nTestSetup } from '__tests__/i18nTestSetup';
+import { render } from '__tests__/renderers';
+
+const SESSION_EXPIRED_CODE = OUTCOMES['sessione-scaduta'];
+
+i18nTestSetup({
+  courtesyPage: {
+    default: {
+      title: 'Default title',
+      body: 'Default body'
+    },
+    [SESSION_EXPIRED_CODE]: {
+      title: 'Session expired',
+      body: 'Your session has expired.',
+      cta: 'Log in again'
     }
-  ],
-  useParams: vi.fn(),
-  Link: vi.fn()
-}));
+  }
+});
 
-describe('UserRoute', () => {
-  afterEach(() => {
-    vi.clearAllMocks();
+const renderCourtesyPage = (param?: { outcome?: string }) => {
+  vi.mocked(useParams).mockReturnValue(param ?? {});
+  return render(<CourtesyPage />);
+};
+
+describe('ErrorIconComponent', () => {
+  afterEach(() => vi.clearAllMocks());
+
+  it('renders the "OK" pictogram for PAGAMENTO_AVVISO_COMPLETATO', () => {
+    render(<ErrorIconComponent code={OUTCOMES['pagamento-avviso-completato']} />);
+    const img = screen.getByTitle('OK');
+    expect(img).toBeInTheDocument();
+    expect(img).toHaveAttribute('src', '/cittadini/pictograms/paymentcompleted.svg');
   });
 
-  it('renders without crashing', async () => {
-    render(
-      <QueryClientProvider client={queryClient}>
-        <CourtesyPage />
-      </QueryClientProvider>
-    );
+  it('renders the "Error" pictogram for accesso-non-autorizzato', () => {
+    render(<ErrorIconComponent code={OUTCOMES['accesso-non-autorizzato']} />);
+    const img = screen.getByTitle('Error');
+    expect(img).toBeInTheDocument();
+    expect(img).toHaveAttribute('src', '/cittadini/pictograms/genericerror.svg');
+  });
+
+  it('renders the "Error" pictogram for avviso-non-pagabile', () => {
+    render(<ErrorIconComponent code={OUTCOMES['avviso-non-pagabile']} />);
+    const img = screen.getByTitle('Error');
+    expect(img).toBeInTheDocument();
+    expect(img).toHaveAttribute('src', '/cittadini/pictograms/genericerror.svg');
+  });
+
+  it('renders the "Expired" pictogram for sessione-scaduta', () => {
+    render(<ErrorIconComponent code={OUTCOMES['sessione-scaduta']} />);
+    const img = screen.getByTitle('Expired');
+    expect(img).toBeInTheDocument();
+    expect(img).toHaveAttribute('src', '/cittadini/pictograms/expired.svg');
+  });
+
+  it('renders the umbrella pictogram for risorsa-non-trovata (falls to default)', () => {
+    render(<ErrorIconComponent code={OUTCOMES['risorsa-non-trovata']} />);
+    const img = screen.getByTitle('Something went wrong');
+    expect(img).toBeInTheDocument();
+    expect(img).toHaveAttribute('src', '/cittadini/pictograms/umbrella.svg');
+  });
+
+  it('renders the umbrella pictogram for avvio-pagamento', () => {
+    render(<ErrorIconComponent code={OUTCOMES['avvio-pagamento']} />);
+    const img = screen.getByTitle('Something went wrong');
+    expect(img).toBeInTheDocument();
+    expect(img).toHaveAttribute('src', '/cittadini/pictograms/umbrella.svg');
+  });
+
+  it('renders the umbrella pictogram for sconosciuto', () => {
+    render(<ErrorIconComponent code={OUTCOMES['sconosciuto']} />);
+    const img = screen.getByTitle('Something went wrong');
+    expect(img).toBeInTheDocument();
+    expect(img).toHaveAttribute('src', '/cittadini/pictograms/umbrella.svg');
+  });
+
+  it('renders the umbrella pictogram when no code is provided (default branch)', () => {
+    render(<ErrorIconComponent />);
+    const img = screen.getByTitle('Something went wrong');
+    expect(img).toBeInTheDocument();
+    expect(img).toHaveAttribute('src', '/cittadini/pictograms/umbrella.svg');
   });
 });
 
-describe('ErrorIconComponent', () => {
-  it('should render the ErrorIconComponent correctly (accesso-non-autorizzato)', () => {
-    render(<ErrorIconComponent erroCode={ArcErrors['accesso-non-autorizzato']} />);
-    const imgElement = screen.getByTitle('Error');
-    expect(imgElement).toBeInTheDocument();
-    expect(imgElement).toHaveAttribute('src', '/cittadini/pictograms/genericerror.svg');
+describe('CourtesyPage', () => {
+  afterEach(() => vi.clearAllMocks());
+
+  it('renders title and body when no params are present', () => {
+    renderCourtesyPage();
+    expect(screen.getByTestId('courtesyPage.title')).toBeInTheDocument();
+    expect(screen.getByTestId('courtesyPage.body')).toBeInTheDocument();
   });
 
-  it('should render the ErrorIconComponent correctly (avviso-non-pagabile)', () => {
-    render(<ErrorIconComponent erroCode={ArcErrors['accesso-non-autorizzato']} />);
-    const imgElement = screen.getByTitle('Error');
-    expect(imgElement).toBeInTheDocument();
-    expect(imgElement).toHaveAttribute('src', '/cittadini/pictograms/genericerror.svg');
+  it('shows default text when param is unrecognised', () => {
+    renderCourtesyPage({ outcome: 'codice-inesistente' });
+    expect(screen.getByTestId('courtesyPage.title')).toHaveTextContent('Default title');
+    expect(screen.getByTestId('courtesyPage.body')).toHaveTextContent('Default body');
   });
 
-  it('should render the ErrorIconComponent correctly (sessione-scaduta)', () => {
-    render(<ErrorIconComponent erroCode={ArcErrors['sessione-scaduta']} />);
-    const imgElement = screen.getByTitle('Expired');
-    expect(imgElement).toBeInTheDocument();
-    expect(imgElement).toHaveAttribute('src', '/cittadini/pictograms/expired.svg');
+  it('resolves an error param and renders the correct icon', () => {
+    renderCourtesyPage({ outcome: 'sessione-scaduta' });
+    expect(screen.getByTitle('Expired')).toBeInTheDocument();
   });
 
-  it('should render the ErrorIconComponent correctly (risorsa-non-trovata)', () => {
-    render(<ErrorIconComponent erroCode={ArcErrors['risorsa-non-trovata']} />);
-    const imgElement = screen.getByTitle('Something went wrong');
-    expect(imgElement).toBeInTheDocument();
-    expect(imgElement).toHaveAttribute('src', '/cittadini/pictograms/umbrella.svg');
+  it('shows translated text for a known error param', () => {
+    renderCourtesyPage({ outcome: 'sessione-scaduta' });
+    expect(screen.getByTestId('courtesyPage.title')).toHaveTextContent('Session expired');
+    expect(screen.getByTestId('courtesyPage.body')).toHaveTextContent('Your session has expired.');
   });
 
-  it('should render the ErrorIconComponent correctly (avvio-pagamento)', () => {
-    render(<ErrorIconComponent erroCode={ArcErrors['avvio-pagamento']} />);
-    const imgElement = screen.getByTitle('Something went wrong');
-    expect(imgElement).toBeInTheDocument();
-    expect(imgElement).toHaveAttribute('src', '/cittadini/pictograms/umbrella.svg');
+  it('resolves an outcome param and renders the correct icon', () => {
+    renderCourtesyPage({ outcome: 'pagamento-avviso-completato' });
+    expect(screen.getByTitle('OK')).toBeInTheDocument();
   });
 
-  it('should render the ErrorIconComponent correctly (sconosciuto)', () => {
-    render(<ErrorIconComponent erroCode={ArcErrors['sconosciuto']} />);
-    const imgElement = screen.getByTitle('Something went wrong');
-    expect(imgElement).toBeInTheDocument();
-    expect(imgElement).toHaveAttribute('src', '/cittadini/pictograms/umbrella.svg');
+  it('does NOT render the CTA when the translation key is absent', () => {
+    renderCourtesyPage({ outcome: 'codice-inesistente' });
+    expect(screen.queryByTestId('courtesyPage.cta')).not.toBeInTheDocument();
   });
 
-  it('should render the ErrorIconComponent default correctly', () => {
-    render(<ErrorIconComponent />);
-    const imgElement = screen.getByTitle('Something went wrong');
-    expect(imgElement).toBeInTheDocument();
-    expect(imgElement).toHaveAttribute('src', '/cittadini/pictograms/umbrella.svg');
+  it('renders the CTA with correct text when the translation key exists', () => {
+    renderCourtesyPage({ outcome: 'sessione-scaduta' });
+    const cta = screen.getByTestId('courtesyPage.cta');
+    expect(cta).toBeInTheDocument();
+    expect(cta).toHaveTextContent('Log in again');
   });
 });

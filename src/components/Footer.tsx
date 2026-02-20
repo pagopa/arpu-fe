@@ -2,7 +2,7 @@ import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { useLanguage } from 'hooks/useLanguage';
 import { Divider, Link, Stack, Typography } from '@mui/material';
-import { ArcRoutes } from 'routes/routes';
+import { ROUTES } from 'routes/routes';
 import { ProductLogo } from './ProductLogo';
 import appStore from 'store/appStore';
 
@@ -43,8 +43,8 @@ export const Footer = () => {
         minHeight={50}>
         <ProductLogo />
         <Stack direction="row" gap={2} alignItems="center" component="nav">
-          <FooterLink href={ArcRoutes.PRIVACY_POLICY}>{t('ui.footer.privacy')}</FooterLink>
-          <FooterLink href={ArcRoutes.TOS}>{t('ui.footer.termsAndConditions')}</FooterLink>
+          <FooterLink href={ROUTES.PRIVACY_POLICY}>{t('ui.footer.privacy')}</FooterLink>
+          <FooterLink href={ROUTES.TOS}>{t('ui.footer.termsAndConditions')}</FooterLink>
           <FooterLink href={LINK_A11Y}>{t('ui.footer.a11y')}</FooterLink>
           <FooterLink href={LINK_PERSONAL_DATA_PROTECTION}>
             {t('ui.footer.personalData')}

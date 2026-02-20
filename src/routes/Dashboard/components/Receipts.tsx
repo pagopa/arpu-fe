@@ -2,7 +2,7 @@ import React from 'react';
 import { Button, Stack, Typography } from '@mui/material';
 import { Link } from 'react-router-dom';
 import { Content } from 'components/Content';
-import { ArcRoutes } from 'routes/routes';
+import { ROUTES } from 'routes/routes';
 import { useSearch } from 'hooks/useSearch';
 import { useTranslation } from 'react-i18next';
 import utils from 'utils';
@@ -31,7 +31,7 @@ export const Receipts = () => {
           {t('app.dashboard.lastTransactions')}
         </Typography>
         {receipts.query.data?.content?.length ? (
-          <Button component={Link} to={ArcRoutes.RECEIPTS}>
+          <Button component={Link} to={ROUTES.RECEIPTS}>
             {t('app.dashboard.seeAllTransactions')}
           </Button>
         ) : null}

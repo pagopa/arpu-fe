@@ -475,6 +475,11 @@
       "body": "Si è verificato un problema durante l'accesso. Riprova tra qualche minuto.",
       "cta": "Riprova"
     },
+    "420": {
+      "title": "Pagamento completato",
+      "body": "Il tuo pagamento è stato ricevuto con successo.",
+      "cta": "Torna alla home"
+    },
     "422": {
       "title": "Non possiamo procedere con il pagamento",
       "body": "Per avere maggiori informazioni sull’avviso contatta l’Ente Creditore.",
@@ -506,7 +511,8 @@
     "receiptsSearch": "Recupera una ricevuta",
     "receiptsList": "Lista ricevute",
     "spontanei": "Pagamenti spontanei",
-    "assistance": "Assistenza"
+    "assistance": "Assistenza",
+    "paymentOutcomeOk": "Pagamento completato"
   },
   "spontanei": {
     "drawer": {

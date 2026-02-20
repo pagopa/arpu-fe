@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 import utils from 'utils';
-import { ArcRoutes } from 'routes/routes';
+import { ROUTES } from 'routes/routes';
 import {
   Button,
   Card,
@@ -27,12 +27,12 @@ const Login = () => {
   const logIn = () => window.location.replace(utils.config.loginUrl);
 
   useEffect(() => {
-    if (utils.storage.user.hasToken()) navigate(ArcRoutes.DASHBOARD);
+    if (utils.storage.user.hasToken()) navigate(ROUTES.DASHBOARD);
   }, []);
 
-  const handleCTA1 = () => navigate(ArcRoutes.public.PAYMENTS_ON_THE_FLY);
-  const handleCTA2 = () => navigate(ArcRoutes.public.RECEIPTS_SEARCH);
-  const handleCTA3 = () => navigate(ArcRoutes.public.DEBT_POSITION_SEARCH);
+  const handleCTA1 = () => navigate(ROUTES.public.PAYMENTS_ON_THE_FLY);
+  const handleCTA2 = () => navigate(ROUTES.public.RECEIPTS_SEARCH);
+  const handleCTA3 = () => navigate(ROUTES.public.DEBT_POSITION_SEARCH);
 
   return (
     <>

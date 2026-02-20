@@ -12,7 +12,7 @@ import { useField } from 'formik';
 import { PaymentNoticeInfo } from '..';
 import FormContext, { FormContextType } from '../FormContext';
 import { usePostCarts } from 'hooks/usePostCarts';
-import { ArcRoutes } from 'routes/routes';
+import { ROUTES } from 'routes/routes';
 import { CartItem } from 'models/Cart';
 import FileDownloadIcon from '@mui/icons-material/FileDownload';
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
@@ -103,7 +103,7 @@ const Payment = () => {
     onSuccess: (url) => {
       window.location.replace(url);
     },
-    onError: (error: string) => navigate(ArcRoutes.COURTESY_PAGE.replace(':error', error))
+    onError: (error: string) => navigate(ROUTES.COURTESY_PAGE.replace(':error', error))
   });
 
   const pay = () => {
@@ -128,10 +128,10 @@ const Payment = () => {
     const { iuv } = paymentDetails;
     if (!iuv) return;
     isAnonymous
-      ? navigate(generatePath(ArcRoutes.public.PAYMENTS_ON_THE_FLY_DOWNLOAD, { orgId, iuv }), {
+      ? navigate(generatePath(ROUTES.public.PAYMENTS_ON_THE_FLY_DOWNLOAD, { orgId, iuv }), {
           state: { debtorFiscalCode: fiscalCode.value }
         })
-      : navigate(generatePath(ArcRoutes.PAYMENTS_ON_THE_FLY_DOWNLOAD, { orgId, iuv }));
+      : navigate(generatePath(ROUTES.PAYMENTS_ON_THE_FLY_DOWNLOAD, { orgId, iuv }));
   };
 
   return (
