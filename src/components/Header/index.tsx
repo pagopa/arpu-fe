@@ -42,11 +42,11 @@ export const Header = (props: HeaderProps) => {
 
   const jwtUser: JwtUser | undefined = userInfo
     ? {
-      id: userInfo?.userId,
-      name: utils.converters.capitalizeFirstLetter(userInfo?.name),
-      surname: utils.converters.capitalizeFirstLetter(userInfo?.familyName),
-      email: ''
-    }
+        id: userInfo?.userId,
+        name: utils.converters.capitalizeFirstLetter(userInfo?.name),
+        surname: utils.converters.capitalizeFirstLetter(userInfo?.familyName),
+        email: ''
+      }
     : undefined;
 
   const userActions: UserAction[] = [

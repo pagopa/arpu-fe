@@ -80,7 +80,9 @@ describe('setupInterceptors', () => {
       .calls[0][1];
     responseInterceptor(error);
     expect(storage.user.logOut).toHaveBeenCalledTimes(1);
-    expect(replaceMock).toBeCalledWith(ROUTES.public.COURTESY_PAGE.replace(':outcome', OUTCOMES['401']));
+    expect(replaceMock).toBeCalledWith(
+      ROUTES.public.COURTESY_PAGE.replace(':outcome', OUTCOMES['401'])
+    );
   });
 
   it('should emit an error toast notification (403)', () => {

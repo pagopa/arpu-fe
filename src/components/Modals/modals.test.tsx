@@ -47,7 +47,7 @@ vi.mock(import('utils'), async (importActual) => ({
         value: 'OPTIN'
       }
     },
-    close: () => { }
+    close: () => {}
   }
 }));
 

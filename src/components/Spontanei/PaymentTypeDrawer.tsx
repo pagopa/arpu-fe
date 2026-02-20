@@ -62,9 +62,7 @@ const PaymentTypeDrawer = () => {
                 {t('spontanei.drawer.card2.title')}
               </Typography>
               <Typography>{t('spontanei.drawer.card2.description')}</Typography>
-              <NavLink
-                to={ROUTES.PAYMENTS_ON_THE_FLY}
-                onClick={togglePaymentTypeDrawerVisibility}>
+              <NavLink to={ROUTES.PAYMENTS_ON_THE_FLY} onClick={togglePaymentTypeDrawerVisibility}>
                 <Button variant="naked">
                   <Typography color={'primary'} fontWeight={700}>
                     {t('spontanei.drawer.card2.cta')}

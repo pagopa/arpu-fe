@@ -23,11 +23,11 @@ import { ROUTES } from 'routes/routes';
 // the functionality to manage undefined (not optional) parameters and output a global character instead
 const withMissingValue =
   <P extends unknown[], R>(f: (...args: P) => R, missingValue?: string) =>
-    (...args: { [K in keyof P]: P[K] | undefined }) => {
-      return [...args].every((arg) => arg !== undefined)
-        ? f(...(args as P))
-        : missingValue || utils.config.missingValue;
-    };
+  (...args: { [K in keyof P]: P[K] | undefined }) => {
+    return [...args].every((arg) => arg !== undefined)
+      ? f(...(args as P))
+      : missingValue || utils.config.missingValue;
+  };
 
 export const fromTaxCodeToSrcImage = (payeeTaxCode: string) =>
   `${utils.config.entitiesLogoCdn}/${payeeTaxCode.replace(/^0+/, '')}.png`;
@@ -50,22 +50,22 @@ const prepareNoticeDetailData = (noticeDetail: NoticeDetailsDTO): NoticeDetail |
     infoNotice && {
       ...(infoNotice.payer &&
         infoNotice.payer.name && {
-        payer: {
-          name: infoNotice.payer.name,
-          taxCode: propertyOrMissingValue(infoNotice.payer.taxCode)
-        }
-      }),
+          payer: {
+            name: infoNotice.payer.name,
+            taxCode: propertyOrMissingValue(infoNotice.payer.taxCode)
+          }
+        }),
       ...(infoNotice.walletInfo &&
         infoNotice.walletInfo.accountHolder &&
         infoNotice.walletInfo.blurredNumber &&
         infoNotice.walletInfo.brand && {
-        walletInfo: {
-          accountHolder: infoNotice.walletInfo.accountHolder,
-          brand: infoNotice.walletInfo.brand,
-          blurredNumber: infoNotice.walletInfo.blurredNumber,
-          maskedEmail: infoNotice.walletInfo.maskedEmail
-        }
-      }),
+          walletInfo: {
+            accountHolder: infoNotice.walletInfo.accountHolder,
+            brand: infoNotice.walletInfo.brand,
+            blurredNumber: infoNotice.walletInfo.blurredNumber,
+            maskedEmail: infoNotice.walletInfo.maskedEmail
+          }
+        }),
       paymentMethod: propertyOrMissingValue(
         infoNotice.paymentMethod
       ) as InfoNoticeDTO['paymentMethod'],

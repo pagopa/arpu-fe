@@ -1,6 +1,6 @@
 import React from 'react';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
-import { Navigate, RouterProvider, createBrowserRouter, redirect } from 'react-router-dom';
+import { Navigate, RouterProvider, createBrowserRouter } from 'react-router-dom';
 import { Theme } from './utils/style';
 import { PublicLayout, AuthLayout } from './components/Layout';
 import { ROUTES, OUTCOMES } from './routes/routes';
@@ -35,7 +35,9 @@ import appStore from 'store/appStore';
 const router = createBrowserRouter([
   {
     path: '*',
-    element: <Navigate replace to={ROUTES.public.COURTESY_PAGE.replace(':outcome', OUTCOMES['404'])} />
+    element: (
+      <Navigate replace to={ROUTES.public.COURTESY_PAGE.replace(':outcome', OUTCOMES['404'])} />
+    )
   },
   {
     path: ROUTES.AUTH_CALLBACK,
@@ -245,7 +247,7 @@ const router = createBrowserRouter([
               sidebar: false,
               gutters: false
             } as RouteHandleObject
-          },
+          }
         ]
       }
     ]
