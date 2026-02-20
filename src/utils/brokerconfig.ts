@@ -27,14 +27,13 @@ export const parseBrokerConfig = (raw?: string) => {
     try {
       const parsed = JSON.parse(raw);
       const result = BrokerConfigSchema.safeParse(parsed);
-
       if (!result.success) {
         console.warn('[brokerConfig] validation failed:', result.error.flatten());
+      } else {
+        applyBrokerTranslations(result.data);
       }
-
-      applyBrokerTranslations(parsed);
     } catch {
-      console.warn('[brokerConfig] not valid a valid JSON.');
+      console.warn('[brokerConfig] not a valid JSON.');
     }
   }
 };
