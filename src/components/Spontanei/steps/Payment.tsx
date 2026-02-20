@@ -136,12 +136,12 @@ const Payment = () => {
 
   return (
     <>
-      <Card variant="outlined">
+      <Card variant="outlined" data-testid="spontanei-step4-payment-container">
         <Stack spacing={2} padding={4}>
           <Typography variant="h6">{t('spontanei.form.steps.step5.title')}</Typography>
           <Typography>{t('spontanei.form.steps.step5.description')}</Typography>
 
-          <Card variant="outlined">
+          <Card variant="outlined" data-testid="payment-methods-card">
             <Stack spacing={2} padding={4} direction="row" justifyContent="space-between">
               <Stack>
                 <Typography fontSize="18px" fontWeight="600">
@@ -152,17 +152,21 @@ const Payment = () => {
                 </Typography>
               </Stack>
               <Stack direction="row" spacing={2}>
-                <Button variant="text" onClick={addToCart} startIcon={<ShoppingCartIcon />}>
+                <Button
+                  variant="text"
+                  onClick={addToCart}
+                  startIcon={<ShoppingCartIcon />}
+                  data-testid="add-to-cart-button">
                   {t('spontanei.form.steps.step5.pay.addItemToCartButton')}
                 </Button>
-                <Button variant="contained" onClick={pay}>
+                <Button variant="contained" onClick={pay} data-testid="pay-button">
                   {t('spontanei.form.steps.step5.pay.payButton')}
                 </Button>
               </Stack>
             </Stack>
           </Card>
 
-          <Card variant="outlined">
+          <Card variant="outlined" data-testid="download-notice-card">
             <Stack spacing={2} padding={4} direction="row" justifyContent="space-between">
               <Stack>
                 <Typography fontSize="18px" fontWeight="600">
@@ -175,7 +179,8 @@ const Payment = () => {
               <Button
                 variant="text"
                 startIcon={<FileDownloadIcon />}
-                onClick={goToDownloadPaymentNoticePage}>
+                onClick={goToDownloadPaymentNoticePage}
+                data-testid="download-notice-button">
                 {t('spontanei.form.steps.step5.download.downloadButton')}
               </Button>
             </Stack>
