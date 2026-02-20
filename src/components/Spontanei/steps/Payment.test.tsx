@@ -45,15 +45,9 @@ vi.mock('hooks/usePostCarts', () => ({
 
 // Mock navigation
 const mockNavigate = vi.fn();
-vi.mock('react-router-dom', () => ({
-  useNavigate: () => mockNavigate,
-  generatePath: vi.fn((path, params) => {
-    let result = path;
-    for (const key in params) {
-      result = result.replace(`:${key}`, params[key]);
-    }
-    return result;
-  })
+vi.mock('react-router-dom', async (importOriginal) => ({
+  ...(await importOriginal<typeof import('react-router-dom')>()),
+  useNavigate: () => mockNavigate
 }));
 
 // Mock icons
