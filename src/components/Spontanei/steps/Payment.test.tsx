@@ -1,0 +1,257 @@
+import React from 'react';
+import { render, screen, cleanup, fireEvent } from '__tests__/renderers';
+import '@testing-library/jest-dom';
+import Payment from './Payment';
+import FormContext, { FormContextType } from '../FormContext';
+import { Formik } from 'formik';
+import { PaymentNoticeInfo } from '../index';
+import {
+    OrganizationsWithSpontaneousDTO,
+    DebtPositionTypeOrgsWithSpontaneousDTO,
+    PersonEntityType,
+    FormTypeEnum
+} from '../../../../generated/data-contracts';
+import { ArcRoutes } from 'routes/routes';
+import * as CartStore from 'store/CartStore';
+import notify from 'utils/notify';
+import utils from 'utils';
+
+// Mock sub-components
+vi.mock('../Controls', () => ({
+    default: vi.fn(({ hideContinue }: { hideContinue?: boolean }) => (
+        <div data-testid="controls-mock">{hideContinue ? 'Hidden' : 'Visible'}</div>
+    ))
+}));
+
+// Mock store and hooks
+let mockCart = { items: [] as any[] };
+vi.mock('store/GlobalStore', () => ({
+    StoreProvider: ({ children }: { children: React.ReactNode }) => <div>{children}</div>,
+    useStore: vi.fn(() => ({
+        state: { cart: mockCart },
+        setState: vi.fn()
+    }))
+}));
+
+const mockMutate = vi.fn();
+vi.mock('hooks/usePostCarts', () => ({
+    usePostCarts: vi.fn((callbacks) => ({
+        mutate: mockMutate,
+        onSuccess: callbacks?.onSuccess,
+        onError: callbacks?.onError
+    }))
+}));
+
+// Mock navigation
+const mockNavigate = vi.fn();
+vi.mock('react-router-dom', () => ({
+    useNavigate: () => mockNavigate,
+    generatePath: vi.fn((path, params) => {
+        let result = path;
+        for (const key in params) {
+            result = result.replace(`:${key}`, params[key]);
+        }
+        return result;
+    })
+}));
+
+// Mock icons
+vi.mock('@mui/icons-material/FileDownload', () => ({ default: () => <span>DownloadIcon</span> }));
+vi.mock('@mui/icons-material/ShoppingCart', () => ({ default: () => <span>CartIcon</span> }));
+
+// Mock utils
+vi.mock('utils', () => ({
+    default: {
+        storage: {
+            user: { isAnonymous: vi.fn(() => false) },
+            app: { getBrokerId: vi.fn(() => '1') }
+        },
+        loaders: {
+            createSpontaneousDebtPosition: vi.fn(() => ({
+                data: {
+                    organizationId: '123',
+                    orgFiscalCode: '12345678901',
+                    orgName: 'Test Org',
+                    paymentDetails: {
+                        iuv: 'IUV123',
+                        nav: 'NAV123',
+                        amountCents: 1000,
+                        remittanceInformation: 'Test Description'
+                    }
+                }
+            })),
+            public: {
+                createPublicSpontaneousDebtPosition: vi.fn(() => ({
+                    data: {
+                        organizationId: '123',
+                        orgFiscalCode: '12345678901',
+                        orgName: 'Test Org',
+                        paymentDetails: {
+                            iuv: 'IUV123',
+                            nav: 'NAV123',
+                            amountCents: 1000,
+                            remittanceInformation: 'Test Description'
+                        }
+                    }
+                }))
+            }
+        },
+        notify: { emit: vi.fn() }
+    }
+}));
+
+vi.mock('utils/notify', () => ({
+    default: {
+        emit: vi.fn(),
+        dismiss: vi.fn()
+    }
+}));
+
+// Mock Store functions
+vi.mock('store/CartStore', () => ({
+    addItem: vi.fn(),
+    isItemInCart: vi.fn(() => false),
+    setCartEmail: vi.fn(),
+    toggleCartDrawer: vi.fn()
+}));
+
+const getDefaultContext = (overrides: Partial<FormContextType> = {}): FormContextType => ({
+    step: 4,
+    setStep: vi.fn(),
+    omitFirstStep: false,
+    setOmitFirstStep: vi.fn(),
+    formType: FormTypeEnum.STANDARD,
+    setFormType: vi.fn(),
+    userDescription: null,
+    setUserDescription: vi.fn(),
+    ...overrides
+});
+
+const initialValues: PaymentNoticeInfo = {
+    org: {
+        organizationId: 123,
+        orgName: 'Test Org',
+        orgFiscalCode: '12345678901'
+    } as OrganizationsWithSpontaneousDTO,
+    debtType: {
+        debtPositionTypeOrgId: 456,
+        organizationId: 123,
+        code: 'DEBT_CODE',
+        description: 'Test Debt Type'
+    } as DebtPositionTypeOrgsWithSpontaneousDTO,
+    fullName: 'Mario Rossi',
+    fiscalCode: 'RSSMRA80A01H501U',
+    entityType: PersonEntityType.F,
+    amount: 10,
+    description: 'Test Description',
+    email: 'mario.rossi@example.com'
+};
+
+const renderPayment = (
+    contextValue: Partial<FormContextType> = {},
+    formikValues: Partial<PaymentNoticeInfo> = initialValues
+) => {
+    const defaultContext = getDefaultContext(contextValue);
+    const mergedValues = { ...initialValues, ...formikValues } as PaymentNoticeInfo;
+    return render(
+        <Formik initialValues={mergedValues} onSubmit={vi.fn()}>
+            <FormContext.Provider value={defaultContext}>
+                <Payment />
+            </FormContext.Provider>
+        </Formik>
+    );
+};
+
+describe('Payment Component', () => {
+    beforeEach(() => {
+        vi.clearAllMocks();
+    });
+
+    afterEach(() => {
+        cleanup();
+    });
+
+    it('renders correctly', () => {
+        renderPayment();
+        expect(screen.getByTestId('spontanei-step4-payment-container')).toBeInTheDocument();
+        expect(screen.getByTestId('payment-methods-card')).toBeInTheDocument();
+        expect(screen.getByTestId('download-notice-card')).toBeInTheDocument();
+        expect(screen.getByTestId('add-to-cart-button')).toBeInTheDocument();
+        expect(screen.getByTestId('pay-button')).toBeInTheDocument();
+        expect(screen.getByTestId('download-notice-button')).toBeInTheDocument();
+    });
+
+    it('calls addItem and toggleCartDrawer when add to cart is clicked', async () => {
+        renderPayment();
+        const addToCartButton = screen.getByTestId('add-to-cart-button');
+        fireEvent.click(addToCartButton);
+
+        expect(CartStore.addItem).toHaveBeenCalledWith({
+            amount: 1000,
+            paTaxCode: '12345678901',
+            paFullName: 'Test Org',
+            iuv: 'IUV123',
+            nav: 'NAV123',
+            description: 'Test Description'
+        });
+        expect(CartStore.toggleCartDrawer).toHaveBeenCalled();
+    });
+
+    it('calls carts.mutate when pay is clicked', async () => {
+        renderPayment();
+        const payButton = screen.getByTestId('pay-button');
+        fireEvent.click(payButton);
+
+        expect(mockMutate).toHaveBeenCalledWith({
+            notices: [{
+                amount: 1000,
+                nav: 'NAV123',
+                iuv: 'IUV123',
+                paTaxCode: '12345678901',
+                paFullName: 'Test Org',
+                description: 'Test Description'
+            }],
+            email: 'mario.rossi@example.com'
+        });
+    });
+
+    it('navigates to public download page when anonymous and download is clicked', async () => {
+        (utils.storage.user.isAnonymous as any).mockReturnValue(true);
+        renderPayment();
+
+        const downloadButton = screen.getByTestId('download-notice-button');
+        fireEvent.click(downloadButton);
+
+        expect(mockNavigate).toHaveBeenCalledWith(
+            ArcRoutes.public.PAYMENTS_ON_THE_FLY_DOWNLOAD.replace(':orgId', '123').replace(':iuv', 'IUV123'),
+            { state: { debtorFiscalCode: 'RSSMRA80A01H501U' } }
+        );
+    });
+
+    it('navigates to private download page when not anonymous and download is clicked', async () => {
+        (utils.storage.user.isAnonymous as any).mockReturnValue(false);
+        renderPayment();
+
+        const downloadButton = screen.getByTestId('download-notice-button');
+        fireEvent.click(downloadButton);
+
+        expect(mockNavigate).toHaveBeenCalledWith(
+            ArcRoutes.PAYMENTS_ON_THE_FLY_DOWNLOAD.replace(':orgId', '123').replace(':iuv', 'IUV123')
+        );
+    });
+
+    it('shows error notification when cart is full', async () => {
+        const { useStore } = await import('store/GlobalStore');
+        (useStore as any).mockReturnValue({
+            state: { cart: { items: [1, 2, 3, 4, 5] } },
+            setState: vi.fn()
+        });
+
+        renderPayment();
+        const addToCartButton = screen.getByTestId('add-to-cart-button');
+        fireEvent.click(addToCartButton);
+
+        expect(notify.emit).toHaveBeenCalledWith(expect.any(String), 'error');
+        expect(CartStore.addItem).not.toHaveBeenCalled();
+    });
+});

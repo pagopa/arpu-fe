@@ -7,22 +7,41 @@ import { useField } from 'formik';
 import { PaymentNoticeInfo } from '..';
 import Controls from '../Controls';
 
-const SummaryStructure = (props: { title: string; children: React.ReactNode }) => (
-  <Stack direction="column" padding={3} gap={2}>
-    <Typography fontSize={18} fontWeight={600} fontStyle="semibold">
+const SummaryStructure = (props: {
+  title: string;
+  children: React.ReactNode;
+  dataTestId?: string;
+}) => (
+  <Stack
+    direction="column"
+    padding={3}
+    gap={2}
+    data-testid={props.dataTestId || 'spontanei-step3-summary-structure'}>
+    <Typography
+      fontSize={18}
+      fontWeight={600}
+      fontStyle="semibold"
+      data-testid={`${props.dataTestId || 'spontanei-step3-summary-structure'}-title`}>
       {props.title}
     </Typography>
     {props.children}
   </Stack>
 );
 
-const SummaryItem = (props: { label: string; value: string }) => (
-  <Grid container>
+const SummaryItem = (props: { label: string; value: string; dataTestId?: string }) => (
+  <Grid container data-testid={props.dataTestId || 'spontanei-step3-summary-item'}>
     <Grid size={4}>
-      <Typography variant="body2">{props.label}</Typography>
+      <Typography
+        variant="body2"
+        data-testid={`${props.dataTestId || 'spontanei-step3-summary-item'}-label`}>
+        {props.label}
+      </Typography>
     </Grid>
     <Grid size={8}>
-      <Typography variant="body2" fontWeight={600}>
+      <Typography
+        variant="body2"
+        fontWeight={600}
+        data-testid={`${props.dataTestId || 'spontanei-step3-summary-item'}-value`}>
         {props.value}
       </Typography>
     </Grid>
@@ -39,13 +58,30 @@ const OrgAndServiceSummary = () => {
   const debtTypeName = debtType.value?.description || '';
 
   return (
-    <Card sx={{ marginBottom: 2 }} variant="outlined">
-      <SummaryStructure title={t('spontanei.form.steps.step4.org.title')}>
-        <SummaryItem label={t('spontanei.form.steps.step4.org.name')} value={orgName} />
-        <SummaryItem label={t('spontanei.form.steps.step4.org.code')} value={orgCode} />
+    <Card
+      sx={{ marginBottom: 2 }}
+      variant="outlined"
+      data-testid="spontanei-step3-org-and-service-summary">
+      <SummaryStructure title={t('spontanei.form.steps.step4.org.title')} dataTestId="summary-org">
+        <SummaryItem
+          label={t('spontanei.form.steps.step4.org.name')}
+          value={orgName}
+          dataTestId="summary-org-name"
+        />
+        <SummaryItem
+          label={t('spontanei.form.steps.step4.org.code')}
+          value={orgCode}
+          dataTestId="summary-org-code"
+        />
       </SummaryStructure>
-      <SummaryStructure title={t('spontanei.form.steps.step4.service.title')}>
-        <SummaryItem label={t('spontanei.form.steps.step4.service.name')} value={debtTypeName} />
+      <SummaryStructure
+        title={t('spontanei.form.steps.step4.service.title')}
+        dataTestId="summary-service">
+        <SummaryItem
+          label={t('spontanei.form.steps.step4.service.name')}
+          value={debtTypeName}
+          dataTestId="summary-service-name"
+        />
       </SummaryStructure>
     </Card>
   );
@@ -64,8 +100,8 @@ const DebtTypeSummary = () => {
   const isFisicalPerson = entityType.value === 'F';
 
   return (
-    <Card sx={{ marginBottom: 2 }} variant="outlined">
-      <SummaryStructure title={t('Dati del debitore')}>
+    <Card sx={{ marginBottom: 2 }} variant="outlined" data-testid="spontanei-step3-debtor-summary">
+      <SummaryStructure title={t('Dati del debitore')} dataTestId="summary-debtor">
         <SummaryItem
           label={
             isFisicalPerson
@@ -73,6 +109,7 @@ const DebtTypeSummary = () => {
               : t('spontanei.form.steps.step4.debtor.G.name')
           }
           value={fullName.value}
+          dataTestId="summary-debtor-name"
         />
         <SummaryItem
           label={
@@ -81,6 +118,7 @@ const DebtTypeSummary = () => {
               : t('spontanei.form.steps.step4.debtor.G.code')
           }
           value={fiscalCode.value}
+          dataTestId="summary-debtor-code"
         />
         {email.value && (
           <SummaryItem
@@ -90,6 +128,7 @@ const DebtTypeSummary = () => {
                 : t('spontanei.form.steps.step4.debtor.G.email')
             }
             value={email.value}
+            dataTestId="summary-debtor-email"
           />
         )}
       </SummaryStructure>
@@ -114,15 +153,19 @@ const PaymentSummary = () => {
   }, []);
 
   return (
-    <Card sx={{ marginBottom: 2 }} variant="outlined">
-      <SummaryStructure title={t('spontanei.form.steps.step4.payment.title')}>
+    <Card sx={{ marginBottom: 2 }} variant="outlined" data-testid="spontanei-step3-payment-summary">
+      <SummaryStructure
+        title={t('spontanei.form.steps.step4.payment.title')}
+        dataTestId="summary-payment">
         <SummaryItem
           label={t('spontanei.form.steps.step4.payment.description')}
           value={descriptionLabel}
+          dataTestId="summary-payment-description"
         />
         <SummaryItem
           label={t('spontanei.form.steps.step4.payment.amount')}
           value={utils.converters.toEuro(amount.value * 100)}
+          dataTestId="summary-payment-amount"
         />
       </SummaryStructure>
     </Card>
@@ -134,7 +177,7 @@ const Summary = () => {
 
   return (
     <>
-      <Card sx={{ padding: 3 }}>
+      <Card sx={{ padding: 3 }} data-testid="spontanei-step3-summary">
         <Typography variant="h6" mb={2}>
           {t('spontanei.form.steps.step4.title')}
         </Typography>
