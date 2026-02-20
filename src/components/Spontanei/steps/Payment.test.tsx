@@ -11,7 +11,7 @@ import {
   PersonEntityType,
   FormTypeEnum
 } from '../../../../generated/data-contracts';
-import { ArcRoutes } from 'routes/routes';
+import { ROUTES } from 'routes/routes';
 import * as CartStore from 'store/CartStore';
 import notify from 'utils/notify';
 import utils from 'utils';
@@ -220,10 +220,7 @@ describe('Payment Component', () => {
     fireEvent.click(downloadButton);
 
     expect(mockNavigate).toHaveBeenCalledWith(
-      ArcRoutes.public.PAYMENTS_ON_THE_FLY_DOWNLOAD.replace(':orgId', '123').replace(
-        ':iuv',
-        'IUV123'
-      ),
+      ROUTES.public.PAYMENTS_ON_THE_FLY_DOWNLOAD.replace(':orgId', '123').replace(':iuv', 'IUV123'),
       { state: { debtorFiscalCode: 'RSSMRA80A01H501U' } }
     );
   });
@@ -236,7 +233,7 @@ describe('Payment Component', () => {
     fireEvent.click(downloadButton);
 
     expect(mockNavigate).toHaveBeenCalledWith(
-      ArcRoutes.PAYMENTS_ON_THE_FLY_DOWNLOAD.replace(':orgId', '123').replace(':iuv', 'IUV123')
+      ROUTES.PAYMENTS_ON_THE_FLY_DOWNLOAD.replace(':orgId', '123').replace(':iuv', 'IUV123')
     );
   });
 
