@@ -51,7 +51,8 @@ const DebtTypeConfig = () => {
     return () => context?.setFormType(null);
   }, [type, context]);
 
-  const hasFlagAnonymousFiscalCode = data?.flagAnonymousFiscalCode || false;
+  const hasFlagAnonymousFiscalCode = data?.flagAnonymousFiscalCode;
+  const allowedEntityType = data?.allowedEntityType;
 
   /**
    * Renders the form based on the debt type (memoizing).
@@ -59,12 +60,18 @@ const DebtTypeConfig = () => {
   const renderedForm = React.useMemo(() => {
     switch (type) {
       case 'STANDARD':
-        return <StandardForm hasFlagAnonymousFiscalCode={hasFlagAnonymousFiscalCode} />;
+        return (
+          <StandardForm
+            hasFlagAnonymousFiscalCode={hasFlagAnonymousFiscalCode}
+            allowedEntityType={allowedEntityType}
+          />
+        );
       case 'PRESET_AMOUNT':
         return (
           <StandardForm
             fixedAmount={data?.amountCents}
             hasFlagAnonymousFiscalCode={hasFlagAnonymousFiscalCode}
+            allowedEntityType={allowedEntityType}
           />
         );
       case 'CUSTOM':

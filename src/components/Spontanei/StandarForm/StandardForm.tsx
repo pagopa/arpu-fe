@@ -6,20 +6,31 @@ import { useField, useFormikContext } from 'formik';
 import { useEffect } from 'react';
 import { PaymentNoticeInfo } from '..';
 import Controls from '../Controls';
+import { PersonEntityType } from '../../../../generated/data-contracts';
 
-const StandardForm = (props: { fixedAmount?: number; hasFlagAnonymousFiscalCode?: boolean }) => {
+type StandardFormProps = {
+  fixedAmount?: number;
+  hasFlagAnonymousFiscalCode?: boolean;
+  allowedEntityType?: PersonEntityType;
+};
+
+const StandardForm = ({
+  fixedAmount,
+  hasFlagAnonymousFiscalCode,
+  allowedEntityType
+}: StandardFormProps) => {
   const { t } = useTranslation();
   const formik = useFormikContext<PaymentNoticeInfo>();
   const [amount, amountMeta, amountHelpers] = useField<PaymentNoticeInfo['amount']>('amount');
   const [description, descriptionMeta] = useField<PaymentNoticeInfo['description']>('description');
 
   useEffect(() => {
-    if (props.fixedAmount !== undefined) {
-      amountHelpers.setValue(props.fixedAmount / 100);
+    if (fixedAmount !== undefined) {
+      amountHelpers.setValue(fixedAmount / 100);
     } else {
       amountHelpers.setValue(0);
     }
-  }, [props.fixedAmount]);
+  }, [fixedAmount]);
 
   const shouldContinue = async () => {
     formik.handleSubmit();
@@ -39,7 +50,10 @@ const StandardForm = (props: { fixedAmount?: number; hasFlagAnonymousFiscalCode?
         </Stack>
 
         <Stack gap={2}>
-          <DebtorSection hasFlagAnonymousFiscalCode={props.hasFlagAnonymousFiscalCode || false} />
+          <DebtorSection
+            hasFlagAnonymousFiscalCode={hasFlagAnonymousFiscalCode}
+            allowedEntityType={allowedEntityType}
+          />
           <Card variant="outlined" sx={{ padding: 3 }}>
             <Stack gap={2}>
               <Typography variant="h6">
@@ -57,7 +71,7 @@ const StandardForm = (props: { fixedAmount?: number; hasFlagAnonymousFiscalCode?
                     }
                   }}
                   type="number"
-                  disabled={props.fixedAmount !== undefined}
+                  disabled={fixedAmount !== undefined}
                   {...amount}
                   error={amountMeta.touched && Boolean(amountMeta.error)}
                   helperText={amountMeta.touched && amountMeta.error}

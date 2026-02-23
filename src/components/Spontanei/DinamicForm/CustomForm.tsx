@@ -18,7 +18,7 @@ function isEmpty(obj) {
 
 interface CustomFormProps {
   fields: SpontaneousFormField[];
-  hasFlagAnonymousFiscalCode: boolean;
+  hasFlagAnonymousFiscalCode?: boolean;
   amountFieldName?: string;
 }
 
