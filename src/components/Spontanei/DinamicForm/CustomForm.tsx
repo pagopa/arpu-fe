@@ -2,7 +2,7 @@ import { Card, Stack, Typography } from '@mui/material';
 import React, { useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import DinamicForm from '../DinamicForm';
-import { SpontaneousFormField } from '../../../../generated/data-contracts';
+import { PersonEntityType, SpontaneousFormField } from '../../../../generated/data-contracts';
 import StaticFormSection from '../DebtorSection';
 import Controls from '../Controls';
 import { useFormikContext } from 'formik';
@@ -19,6 +19,7 @@ function isEmpty(obj) {
 interface CustomFormProps {
   fields: SpontaneousFormField[];
   hasFlagAnonymousFiscalCode?: boolean;
+  allowedEntityType?: PersonEntityType;
   amountFieldName?: string;
 }
 
@@ -43,7 +44,10 @@ const CustomForm = (props: CustomFormProps) => {
           <Typography variant="h6">{t('spontanei.form.steps.step3.title')}</Typography>
           <Typography>{t('spontanei.form.steps.step3.description')}</Typography>
           <Stack direction="column" justifyContent={'space-between'} spacing={2}>
-            <StaticFormSection hasFlagAnonymousFiscalCode={hasFlagAnonymousFiscalCode} />
+            <StaticFormSection
+              allowedEntityType={props.allowedEntityType}
+              hasFlagAnonymousFiscalCode={hasFlagAnonymousFiscalCode}
+            />
             <DinamicForm
               fieldBeans={fields}
               campoTotaleInclusoInXSD={amountFieldName}

@@ -79,6 +79,7 @@ const DebtTypeConfig = () => {
           <CustomForm
             fields={data?.formCustom?.structure.fields || []}
             amountFieldName={data?.formCustom?.structure.amountFieldName}
+            allowedEntityType={allowedEntityType}
             hasFlagAnonymousFiscalCode={hasFlagAnonymousFiscalCode}
           />
         );
