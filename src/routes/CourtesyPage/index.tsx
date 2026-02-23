@@ -4,6 +4,7 @@ import { Link, useParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { OUTCOMES, ROUTES } from '../../routes/routes';
 import i18next from 'i18next';
+import { CourtesyPageActions } from './components/CourtesyPageActions';
 
 interface ErrorIconComponentProps {
   code?: OUTCOMES;
@@ -15,7 +16,8 @@ export const ErrorIconComponent: React.FC<ErrorIconComponentProps> = ({ code }) 
       return <img src="/cittadini/pictograms/paymentcompleted.svg" title="OK" aria-hidden="true" />;
     case OUTCOMES['accesso-non-autorizzato']:
     case OUTCOMES['avviso-non-pagabile']:
-      return <img src="/cittadini/pictograms/genericerror.svg" title="Error" aria-hidden="true" />;
+    case OUTCOMES['pagamento-non-riuscito']:
+      return <img src="/cittadini/pictograms/warning.svg" title="Error" aria-hidden="true" />;
     case OUTCOMES['sessione-scaduta']:
       return <img src="/cittadini/pictograms/expired.svg" title="Expired" aria-hidden="true" />;
     case OUTCOMES['avvio-pagamento']:
@@ -61,19 +63,24 @@ export const CourtesyPage = () => {
               defaultValue: t('courtesyPage.default.body')
             })}
           </Typography>
-          {/* v8 ignore next 12 */}
-          {i18next.exists(`courtesyPage.${code}.cta`) && (
-            <Button
-              component={Link}
-              to={ROUTES.LOGIN}
-              variant="contained"
-              size="large"
-              color="primary"
-              data-testid="courtesyPage.cta">
-              {t(`courtesyPage.${code}.cta`, {
-                defaultValue: t('courtesyPage.default.cta')
-              })}
-            </Button>
+
+          {code === OUTCOMES['pagamento-non-riuscito'] ? (
+            <CourtesyPageActions />
+          ) : (
+            /* v8 ignore next 12 */
+            i18next.exists(`courtesyPage.${code}.cta`) && (
+              <Button
+                component={Link}
+                to={ROUTES.LOGIN}
+                variant="contained"
+                size="large"
+                color="primary"
+                data-testid="courtesyPage.cta">
+                {t(`courtesyPage.${code}.cta`, {
+                  defaultValue: t('courtesyPage.default.cta')
+                })}
+              </Button>
+            )
           )}
         </Box>
       </Container>

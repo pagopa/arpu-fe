@@ -47,5 +47,6 @@ export enum OUTCOMES {
   'pagamento-avviso-completato' = 420,
   'avviso-non-pagabile' = 422,
   'avvio-pagamento' = 423,
+  'pagamento-non-riuscito' = 424,
   'errore-server' = 500
 }

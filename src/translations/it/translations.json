@@ -485,6 +485,12 @@
       "body": "Per avere maggiori informazioni sull’avviso contatta l’Ente Creditore.",
       "cta": "Chiudi"
     },
+    "424": {
+      "title": "Il pagamento non è andato a buon fine",
+      "body": "Puoi riprovare oppure scaricare l'avviso pagoPA e pagare presso tutti i canali abilitati.",
+      "cta": "Riprova",
+      "downloadCta": "Scarica l'avviso"
+    },
     "423": {
       "title": "Non siamo riusciti ad avviare il pagamento",
       "body": "Riprova tra qualche minuto.",
