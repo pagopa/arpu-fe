@@ -14,7 +14,8 @@ import {
   DebtPositionTypeOrgsWithSpontaneousDTO,
   FormTypeEnum,
   OrganizationsWithSpontaneousDTO,
-  PersonEntityType
+  PersonEntityType,
+  SpontaneousFormStructure
 } from '../../../generated/data-contracts';
 import Payment from './steps/Payment';
 import PaymentNoticeInfoSchema from './SpontaneiSchemas';
@@ -39,6 +40,8 @@ const Spontanei = () => {
   const [formType, setFormType] = React.useState<FormTypeEnum | null>(null);
   // user description state
   const [userDescription, setUserDescription] = React.useState<string | null>(null);
+  // summary fields state
+  const [summaryFields, setSummaryFields] = React.useState<SpontaneousFormStructure['summaryFields']>([]);
 
   const { t } = useTranslation();
 
@@ -71,9 +74,11 @@ const Spontanei = () => {
       formType,
       setFormType,
       userDescription,
-      setUserDescription
+      setUserDescription,
+      summaryFields,
+      setSummaryFields
     }),
-    [omitFirstStep, step, formType, userDescription]
+    [omitFirstStep, step, formType, userDescription, summaryFields]
   );
 
   return (

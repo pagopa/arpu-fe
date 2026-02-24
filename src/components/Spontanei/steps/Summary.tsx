@@ -52,37 +52,56 @@ const OrgAndServiceSummary = () => {
   const { t } = useTranslation();
   const [org] = useField<PaymentNoticeInfo['org']>('org');
   const [debtType] = useField<PaymentNoticeInfo['debtType']>('debtType');
+  const context = useContext<FormContextType | null>(FormContext);
+  const summaryFields = context?.summaryFields;
+
 
   const orgName = org.value?.orgName || '';
   const orgCode = org.value?.orgFiscalCode || '';
   const debtTypeName = debtType.value?.description || '';
+
+  if (!summaryFields?.includes('orgName') && !summaryFields?.includes('orgCode') && !summaryFields?.includes('debtTypeName')) {
+    return null;
+  }
 
   return (
     <Card
       sx={{ marginBottom: 2 }}
       variant="outlined"
       data-testid="spontanei-step3-org-and-service-summary">
-      <SummaryStructure title={t('spontanei.form.steps.step4.org.title')} dataTestId="summary-org">
-        <SummaryItem
-          label={t('spontanei.form.steps.step4.org.name')}
-          value={orgName}
-          dataTestId="summary-org-name"
-        />
-        <SummaryItem
-          label={t('spontanei.form.steps.step4.org.code')}
-          value={orgCode}
-          dataTestId="summary-org-code"
-        />
-      </SummaryStructure>
-      <SummaryStructure
-        title={t('spontanei.form.steps.step4.service.title')}
-        dataTestId="summary-service">
-        <SummaryItem
-          label={t('spontanei.form.steps.step4.service.name')}
-          value={debtTypeName}
-          dataTestId="summary-service-name"
-        />
-      </SummaryStructure>
+      {
+        summaryFields?.includes('orgName') || summaryFields?.includes('orgCode') ?
+          <SummaryStructure title={t('spontanei.form.steps.step4.org.title')} dataTestId="summary-org">
+            {
+              summaryFields?.includes('orgName') &&
+              <SummaryItem
+                label={t('spontanei.form.steps.step4.org.name')}
+                value={orgName}
+                dataTestId="summary-org-name"
+              />
+            }
+            {
+              summaryFields?.includes('orgCode') &&
+              <SummaryItem
+                label={t('spontanei.form.steps.step4.org.code')}
+                value={orgCode}
+                dataTestId="summary-org-code"
+              />
+            }
+          </SummaryStructure>
+          : null}
+      {
+        summaryFields?.includes('debtTypeName') &&
+        <SummaryStructure
+          title={t('spontanei.form.steps.step4.service.title')}
+          dataTestId="summary-service">
+          <SummaryItem
+            label={t('spontanei.form.steps.step4.service.name')}
+            value={debtTypeName}
+            dataTestId="summary-service-name"
+          />
+        </SummaryStructure>
+      }
     </Card>
   );
 };
@@ -98,29 +117,41 @@ const DebtTypeSummary = () => {
   const [fiscalCode] = useField<PaymentNoticeInfo['fiscalCode']>('fiscalCode');
   const [email] = useField<PaymentNoticeInfo['email']>('email');
   const isFisicalPerson = entityType.value === 'F';
+  const context = useContext<FormContextType | null>(FormContext);
+  const summaryFields = context?.summaryFields;
+
+  if (!summaryFields?.includes('entityType') && !summaryFields?.includes('fullName') && !summaryFields?.includes('fiscalCode') && !summaryFields?.includes('email')) {
+    return null;
+  }
 
   return (
     <Card sx={{ marginBottom: 2 }} variant="outlined" data-testid="spontanei-step3-debtor-summary">
       <SummaryStructure title={t('Dati del debitore')} dataTestId="summary-debtor">
-        <SummaryItem
-          label={
-            isFisicalPerson
-              ? t('spontanei.form.steps.step4.debtor.F.name')
-              : t('spontanei.form.steps.step4.debtor.G.name')
-          }
-          value={fullName.value}
-          dataTestId="summary-debtor-name"
-        />
-        <SummaryItem
-          label={
-            isFisicalPerson
-              ? t('spontanei.form.steps.step4.debtor.F.code')
-              : t('spontanei.form.steps.step4.debtor.G.code')
-          }
-          value={fiscalCode.value}
-          dataTestId="summary-debtor-code"
-        />
-        {email.value && (
+        {
+          summaryFields?.includes('fullName') &&
+          <SummaryItem
+            label={
+              isFisicalPerson
+                ? t('spontanei.form.steps.step4.debtor.F.name')
+                : t('spontanei.form.steps.step4.debtor.G.name')
+            }
+            value={fullName.value}
+            dataTestId="summary-debtor-name"
+          />
+        }
+        {
+          summaryFields?.includes('fiscalCode') &&
+          <SummaryItem
+            label={
+              isFisicalPerson
+                ? t('spontanei.form.steps.step4.debtor.F.code')
+                : t('spontanei.form.steps.step4.debtor.G.code')
+            }
+            value={fiscalCode.value}
+            dataTestId="summary-debtor-code"
+          />
+        }
+        {email.value && summaryFields?.includes('email') && (
           <SummaryItem
             label={
               isFisicalPerson
@@ -143,6 +174,7 @@ const PaymentSummary = () => {
   const [debtType] = useField<PaymentNoticeInfo['debtType']>('debtType');
   const context = useContext<FormContextType | null>(FormContext);
   const formType = context?.formType;
+  const summaryFields = context?.summaryFields;
 
   const descriptionLabel = `Pagamento on-the-fly ${formType === 'CUSTOM' ? debtType.value?.description : description.value}`;
 
@@ -152,21 +184,31 @@ const PaymentSummary = () => {
     }
   }, []);
 
+  if (!summaryFields?.includes('amount') && !summaryFields?.includes('description')) {
+    return null;
+  }
+
   return (
     <Card sx={{ marginBottom: 2 }} variant="outlined" data-testid="spontanei-step3-payment-summary">
       <SummaryStructure
         title={t('spontanei.form.steps.step4.payment.title')}
         dataTestId="summary-payment">
-        <SummaryItem
-          label={t('spontanei.form.steps.step4.payment.description')}
-          value={descriptionLabel}
-          dataTestId="summary-payment-description"
-        />
-        <SummaryItem
-          label={t('spontanei.form.steps.step4.payment.amount')}
-          value={utils.converters.toEuro(amount.value)}
-          dataTestId="summary-payment-amount"
-        />
+        {
+          summaryFields?.includes('description') &&
+          <SummaryItem
+            label={t('spontanei.form.steps.step4.payment.description')}
+            value={descriptionLabel}
+            dataTestId="summary-payment-description"
+          />
+        }
+        {
+          summaryFields?.includes('amount') &&
+          <SummaryItem
+            label={t('spontanei.form.steps.step4.payment.amount')}
+            value={utils.converters.toEuro(amount.value)}
+            dataTestId="summary-payment-amount"
+          />
+        }
       </SummaryStructure>
     </Card>
   );

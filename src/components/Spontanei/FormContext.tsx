@@ -1,5 +1,5 @@
 import { createContext } from 'react';
-import { FormTypeEnum } from '../../../generated/data-contracts';
+import { FormTypeEnum, SpontaneousFormStructure } from '../../../generated/data-contracts';
 
 export type FormContextType = {
   omitFirstStep: boolean;
@@ -8,6 +8,8 @@ export type FormContextType = {
   setStep: React.Dispatch<React.SetStateAction<number>>;
   formType: FormTypeEnum | null;
   setFormType: React.Dispatch<React.SetStateAction<FormTypeEnum | null>>;
+  summaryFields: SpontaneousFormStructure['summaryFields'];
+  setSummaryFields: React.Dispatch<React.SetStateAction<SpontaneousFormStructure['summaryFields']>>;
   userDescription: string | null;
   setUserDescription: React.Dispatch<React.SetStateAction<string | null>>;
 };
