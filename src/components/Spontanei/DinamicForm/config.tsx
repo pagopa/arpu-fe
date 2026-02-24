@@ -17,7 +17,9 @@ import MULTIFIELD from './FieldBeans/MULTIFIELD';
 import NONE from './FieldBeans/NONE';
 import TAB from './FieldBeans/TAB';
 import DYNAMIC_SELECT from './FieldBeans/DYNAMIC_SELECT';
+import DYNAMIC_AMOUNTLABEL from './FieldBeans/DYNAMIC_AMOUNT_LABEL';
 import { RenderType } from '../../../../generated/apiClient';
+import CURRENCY from './FieldBeans/CURRENCY';
 
 export type FieldName = SpontaneousFormField['name'];
 
@@ -35,6 +37,13 @@ export const getErrorMessage = (issues: z.ZodIssue[], fieldName: string) =>
     .filter((error) => error.path.includes(fieldName))
     .map(({ message }) => message)
     .toString();
+
+/** Extrae placeholders from a string */
+export const getPlaceholders = (template: string): string[] => {
+  const regex = /[$]?{([^{}]*)}/g;
+  const matches = template.matchAll(regex);
+  return Array.from(new Set(Array.from(matches, (match) => match[1])));
+};
 
 function formatString(formatString: string, dataObject: { [key: string]: unknown }): string {
   return formatString.replace(/[$]?{([^{}]*)}/g, (match, key) => {
@@ -81,9 +90,14 @@ export const BuildFormSchema = (fields: Array<SpontaneousFormField>) => {
     const regex = field.regex;
     const type = field.htmlRender;
     const errorMessage = field.extraAttr?.error_message;
-
+    const isAmountField =
+      type === RenderType.CURRENCY ||
+      type === RenderType.DYNAMIC_AMOUNT_LABEL ||
+      type === RenderType.CURRENCY_LABEL;
     let fieldSchema;
-    if (type === 'MULTISELECT') {
+    if (isAmountField) {
+      fieldSchema = isRequired ? z.number().min(0, errorMessage) : z.number();
+    } else if (type === RenderType.MULTISELECT) {
       fieldSchema = isRequired ? z.array(z.string()).min(1, errorMessage) : z.array(z.string());
     } else {
       fieldSchema = isRequired ? z.string().min(1, errorMessage) : z.string();
@@ -97,7 +111,18 @@ export const BuildFormSchema = (fields: Array<SpontaneousFormField>) => {
 };
 
 export interface CustomFormValues {
-  [key: string]: string | string[] | undefined;
+  [key: string]: string | string[] | number | number[] | undefined;
+  debtPositionTypeOrgCode?: string;
+  debtPositionTypeOrgId?: number;
+  debtPositionTypeOrgDescription?: string;
+  organizationId?: number;
+  organizationName?: string;
+  orgFiscalCode?: string;
+  ipaCode?: string;
+  fullName?: string;
+  email?: string;
+  fiscalCode?: string;
+  description?: string;
 }
 
 /** set the form state considering the initial value */
@@ -110,12 +135,12 @@ export const BuildFormState = (fields: Array<SpontaneousFormField>): CustomFormV
       necessario tenere tracciao dello stato
       probabilmente anche altri tipi di fields non necessitano
       di stato  */
-    if (htmlRender !== 'MULTIFIELD') {
+    if (htmlRender !== RenderType.MULTIFIELD) {
       // Una multiselect usa un array di valori
       // TODO: gestire un eventuale valore
       // iniziale. In questo caso è più complesso
       // perchè defaultValue dovrebbe essere un array di valori
-      if (htmlRender == 'MULTISELECT') {
+      if (htmlRender == RenderType.MULTISELECT) {
         intialState = { ...intialState, [name]: [] };
       } else {
         intialState = { ...intialState, [name]: defaultValue };
@@ -128,26 +153,31 @@ export const BuildFormState = (fields: Array<SpontaneousFormField>): CustomFormV
 /** Render a single input */
 export const BuildInput = (element: SpontaneousFormField, allElements?: SpontaneousFormField[]) => {
   switch (element.htmlRender) {
-    case 'TAB':
+    case RenderType.TAB:
       return <TAB input={element} />;
-    case 'SINGLESELECT':
+    case RenderType.SINGLESELECT:
       return <SINGLESELECT {...element} />;
-    case 'DYNAMIC_SELECT':
+    case RenderType.DYNAMIC_SELECT:
       return <DYNAMIC_SELECT {...element} />;
-    case 'MULTISELECT':
+    case RenderType.MULTISELECT:
       return <MULTISELECT {...element} />;
-    case 'DATE':
+    case RenderType.DATE:
       return <DATEPICKER {...element} />;
-    case 'NONE':
+    case RenderType.NONE:
       return <NONE {...element} allFields={allElements} />;
-    case 'CURRENCY':
-    case 'TEXT':
+    case RenderType.TEXT:
       return <TEXT {...element} />;
-    case 'CURRENCY_LABEL':
-    case 'DYNAMIC_AMOUNT_LABEL':
-      return <CURRENCYLABEL {...element} />;
-    case 'MULTIFIELD':
+    case RenderType.MULTIFIELD:
       return <MULTIFIELD input={element} />;
+    // amount
+    case RenderType.CURRENCY:
+      return <CURRENCY {...element} />;
+    // readonly amount
+    case RenderType.CURRENCY_LABEL:
+      return <CURRENCYLABEL {...element} />;
+    // dynamic readonly amount (amount that changes based on other fields and an API call)
+    case RenderType.DYNAMIC_AMOUNT_LABEL:
+      return <DYNAMIC_AMOUNTLABEL {...element} />;
     default:
       return null;
   }

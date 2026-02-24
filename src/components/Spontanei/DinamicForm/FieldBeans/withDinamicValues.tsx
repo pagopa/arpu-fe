@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import { RenderType, SpontaneousFormField } from '../../../../../generated/data-contracts';
-import { buildDinamicValue, computeValue, CustomFormValues } from '../config';
+import { buildDinamicValue, computeValue, CustomFormValues, getPlaceholders } from '../config';
 import { FieldInputProps, useField, useFormikContext } from 'formik';
 import { Stack, Tooltip } from '@mui/material';
 import InfoRoundedIcon from '@mui/icons-material/InfoRounded';
@@ -32,6 +32,7 @@ const withComputedValues =
       extraAttr,
       allFields,
       source,
+      sourceParams = [],
       enumerationList = []
     } = props;
 
@@ -48,7 +49,11 @@ const withComputedValues =
     const isHidden = hiddenDependsOn
       ? computeValue<boolean>(hiddenDependsOn, values)
       : htmlRender === RenderType.NONE;
-    const isEnabled = enabledDependsOn ? computeValue<boolean>(enabledDependsOn, values) : false;
+
+    //const isHidden = false;
+    const isEnabled = enabledDependsOn
+      ? computeValue<boolean>(enabledDependsOn, values)
+      : htmlRender === RenderType.CURRENCY_LABEL || htmlRender === RenderType.DYNAMIC_AMOUNT_LABEL;
 
     const hasError = meta.touched && Boolean(meta.error);
 
@@ -75,20 +80,45 @@ const withComputedValues =
       if (hasJoinTemplate) helpers.setValue(value);
     }, [value]);
 
+    const urlParams = getPlaceholders(source || '');
+    const urlParamsValues = urlParams.map((urlParam) => values[urlParam]);
+    const queryParams = sourceParams;
+
+    /* this to delete duplicated dependencies  */
+    const allDependencies = [...new Set([...queryParams, ...urlParams])];
+    /* required to trigger the effect 
+        and recall the source API to get 
+        a new result and update the value */
+    const allDependenciesValues = allDependencies.map((dependency) => values[dependency]);
+
     React.useEffect(() => {
-      const fetchOptions = async () => {
-        if (source) {
-          try {
-            const response = await fetch(source);
+      const fetchDynamicResult = async () => {
+        try {
+          if (source) {
+            let resultSource = buildDinamicValue(source, values);
+            const queryString = queryParams.map((param) => `${param}=${values[param]}`).join('&');
+            resultSource = `${resultSource}?${queryString}`;
+            const response = await fetch(resultSource);
             const { result } = await response.json();
-            setOptions(result);
-          } catch (error) {
-            console.error('Error fetching options:', error);
+            switch (htmlRender) {
+              case RenderType.DYNAMIC_SELECT:
+                setOptions(result as Options);
+                break;
+              case RenderType.DYNAMIC_AMOUNT_LABEL:
+                helpers.setValue(result as number, false);
+                break;
+              default:
+                break;
+            }
           }
+        } catch (error) {
+          console.error('Error fetching dynamic result:', error);
         }
       };
-      fetchOptions();
-    }, [source]);
+      /** this is to prevent to call an source url without url placeholders */
+      if (urlParamsValues.length > 0 && urlParamsValues.every((value) => !value)) return;
+      fetchDynamicResult();
+    }, [source, ...allDependenciesValues]);
 
     return (
       <Stack
