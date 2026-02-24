@@ -17,7 +17,7 @@ import MULTIFIELD from './FieldBeans/MULTIFIELD';
 import NONE from './FieldBeans/NONE';
 import TAB from './FieldBeans/TAB';
 import DYNAMIC_SELECT from './FieldBeans/DYNAMIC_SELECT';
-import DYNAMIC_AMOUNTLABEL from './FieldBeans/DYNAMIC_AMOUNTLABEL';
+import DYNAMIC_AMOUNTLABEL from './FieldBeans/DYNAMIC_AMOUNT_LABEL';
 import { RenderType } from '../../../../generated/apiClient';
 import CURRENCY from './FieldBeans/CURRENCY';
 
@@ -151,30 +151,30 @@ export const BuildFormState = (fields: Array<SpontaneousFormField>): CustomFormV
 /** Render a single input */
 export const BuildInput = (element: SpontaneousFormField, allElements?: SpontaneousFormField[]) => {
   switch (element.htmlRender) {
-    case 'TAB':
+    case RenderType.TAB:
       return <TAB input={element} />;
-    case 'SINGLESELECT':
+    case RenderType.SINGLESELECT:
       return <SINGLESELECT {...element} />;
-    case 'DYNAMIC_SELECT':
+    case RenderType.DYNAMIC_SELECT:
       return <DYNAMIC_SELECT {...element} />;
-    case 'MULTISELECT':
+    case RenderType.MULTISELECT:
       return <MULTISELECT {...element} />;
-    case 'DATE':
+    case RenderType.DATE:
       return <DATEPICKER {...element} />;
-    case 'NONE':
+    case RenderType.NONE:
       return <NONE {...element} allFields={allElements} />;
-    case 'TEXT':
+    case RenderType.TEXT:
       return <TEXT {...element} />;
-    case 'MULTIFIELD':
+    case RenderType.MULTIFIELD:
       return <MULTIFIELD input={element} />;
     // amount
-    case 'CURRENCY':
+    case RenderType.CURRENCY:
       return <CURRENCY {...element} />;
     // readonly amount
-    case 'CURRENCY_LABEL':
+    case RenderType.CURRENCY_LABEL:
       return <CURRENCYLABEL {...element} />;
     // dynamic readonly amount (amount that changes based on other fields and an API call)
-    case 'DYNAMIC_AMOUNT_LABEL':
+    case RenderType.DYNAMIC_AMOUNT_LABEL:
       return <DYNAMIC_AMOUNTLABEL {...element} />;
     default:
       return null;
