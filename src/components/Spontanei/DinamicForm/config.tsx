@@ -91,11 +91,13 @@ export const BuildFormSchema = (fields: Array<SpontaneousFormField>) => {
     const type = field.htmlRender;
     const errorMessage = field.extraAttr?.error_message;
     const isAmountField =
-      type === 'CURRENCY' || type === 'DYNAMIC_AMOUNT_LABEL' || type === 'CURRENCY_LABEL';
+      type === RenderType.CURRENCY ||
+      type === RenderType.DYNAMIC_AMOUNT_LABEL ||
+      type === RenderType.CURRENCY_LABEL;
     let fieldSchema;
     if (isAmountField) {
       fieldSchema = isRequired ? z.number().min(0, errorMessage) : z.number();
-    } else if (type === 'MULTISELECT') {
+    } else if (type === RenderType.MULTISELECT) {
       fieldSchema = isRequired ? z.array(z.string()).min(1, errorMessage) : z.array(z.string());
     } else {
       fieldSchema = isRequired ? z.string().min(1, errorMessage) : z.string();
@@ -133,12 +135,12 @@ export const BuildFormState = (fields: Array<SpontaneousFormField>): CustomFormV
       necessario tenere tracciao dello stato
       probabilmente anche altri tipi di fields non necessitano
       di stato  */
-    if (htmlRender !== 'MULTIFIELD') {
+    if (htmlRender !== RenderType.MULTIFIELD) {
       // Una multiselect usa un array di valori
       // TODO: gestire un eventuale valore
       // iniziale. In questo caso è più complesso
       // perchè defaultValue dovrebbe essere un array di valori
-      if (htmlRender == 'MULTISELECT') {
+      if (htmlRender == RenderType.MULTISELECT) {
         intialState = { ...intialState, [name]: [] };
       } else {
         intialState = { ...intialState, [name]: defaultValue };
