@@ -310,7 +310,7 @@ describe('Payment Notices API', () => {
     });
   });
 
-  it('getPublicPaymentNotice mutation calls API and extract filename correctly', async () => {
+  it('getPublicPaymentNotice mutation calls API with fiscal code header when provided', async () => {
     const apiMock = vi.spyOn(utils.apiClient.public, 'getPublicPaymentNotice').mockResolvedValue({
       data: 'Test',
       headers: { 'content-disposition': "attachment; filename='test.pdf'" }
@@ -653,11 +653,12 @@ describe('usePublicInstallmentsByIuvOrNav', () => {
     vi.clearAllMocks();
   });
 
-  it('fetches installments successfully', async () => {
+  it('fetches installments with orgFiscalCode and fiscalCode', async () => {
     const { result } = renderHook(() => loaders.public.usePublicInstallmentsByIuvOrNav(999));
 
     await result.current.mutateAsync({
       iuvOrNav: '123456789012345678',
+      orgFiscalCode: '12345678901',
       fiscalCode: 'RSSMRA80A01H501U'
     });
 
@@ -667,8 +668,27 @@ describe('usePublicInstallmentsByIuvOrNav', () => {
 
     expect(utils.apiClient.public.getPublicInstallmentsByIuvOrNav).toHaveBeenCalledWith(
       999,
-      { iuvOrNav: '123456789012345678' },
+      { iuvOrNav: '123456789012345678', orgFiscalCode: '12345678901' },
       { headers: { 'X-fiscal-code': 'RSSMRA80A01H501U' } }
+    );
+  });
+
+  it('fetches installments with orgFiscalCode only (no fiscalCode)', async () => {
+    const { result } = renderHook(() => loaders.public.usePublicInstallmentsByIuvOrNav(999));
+
+    await result.current.mutateAsync({
+      iuvOrNav: '123456789012345678',
+      orgFiscalCode: '12345678901'
+    });
+
+    await waitFor(() => {
+      expect(result.current.isSuccess).toBe(true);
+    });
+
+    expect(utils.apiClient.public.getPublicInstallmentsByIuvOrNav).toHaveBeenCalledWith(
+      999,
+      { iuvOrNav: '123456789012345678', orgFiscalCode: '12345678901' },
+      {}
     );
   });
 
@@ -682,7 +702,7 @@ describe('usePublicInstallmentsByIuvOrNav', () => {
     try {
       await result.current.mutateAsync({
         iuvOrNav: '123456789012345678',
-        fiscalCode: 'RSSMRA80A01H501U'
+        orgFiscalCode: '12345678901'
       });
     } catch (e) {
       // Expected error

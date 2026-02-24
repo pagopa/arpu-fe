@@ -16,7 +16,9 @@ export const ErrorIconComponent: React.FC<ErrorIconComponentProps> = ({ code }) 
       return <img src="/cittadini/pictograms/paymentcompleted.svg" title="OK" aria-hidden="true" />;
     case OUTCOMES['accesso-non-autorizzato']:
     case OUTCOMES['avviso-non-pagabile']:
+      return <img src="/cittadini/pictograms/genericerror.svg" title="Error" aria-hidden="true" />;
     case OUTCOMES['pagamento-non-riuscito']:
+    case OUTCOMES['pagamento-annullato']:
       return <img src="/cittadini/pictograms/warning.svg" title="Error" aria-hidden="true" />;
     case OUTCOMES['sessione-scaduta']:
       return <img src="/cittadini/pictograms/expired.svg" title="Expired" aria-hidden="true" />;
@@ -46,6 +48,9 @@ export const CourtesyPage = () => {
   const outcome = params?.outcome as keyof typeof OUTCOMES;
   const code = OUTCOMES[outcome];
 
+  const hasCustomActions =
+    code === OUTCOMES['pagamento-non-riuscito'] || code === OUTCOMES['pagamento-annullato'];
+
   return (
     <>
       <Container maxWidth="sm">
@@ -64,8 +69,8 @@ export const CourtesyPage = () => {
             })}
           </Typography>
 
-          {code === OUTCOMES['pagamento-non-riuscito'] ? (
-            <CourtesyPageActions />
+          {hasCustomActions ? (
+            <CourtesyPageActions code={code} />
           ) : (
             /* v8 ignore next 12 */
             i18next.exists(`courtesyPage.${code}.cta`) && (

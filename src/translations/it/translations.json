@@ -491,6 +491,12 @@
       "cta": "Riprova",
       "downloadCta": "Scarica l'avviso"
     },
+    "425": {
+      "title": "Hai annullato il pagamento",
+      "body": "Se lo desideri, puoi scaricare l'avviso pagoPA e pagare presso tutti i canali abilitati.",
+      "cta": "Torna alla home",
+      "downloadCta": "Scarica l'avviso"
+    },
     "423": {
       "title": "Non siamo riusciti ad avviare il pagamento",
       "body": "Riprova tra qualche minuto.",

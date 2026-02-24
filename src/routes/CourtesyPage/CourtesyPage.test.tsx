@@ -13,11 +13,16 @@ import { i18nTestSetup } from '__tests__/i18nTestSetup';
 import { render } from '__tests__/renderers';
 
 vi.mock('./components/CourtesyPageActions', () => ({
-  CourtesyPageActions: () => <div data-testid="courtesyPageActions">CourtesyPageActions mock</div>
+  CourtesyPageActions: ({ code }: { code: number }) => (
+    <div data-testid="courtesyPageActions" data-code={code}>
+      CourtesyPageActions mock
+    </div>
+  )
 }));
 
 const SESSION_EXPIRED_CODE = OUTCOMES['sessione-scaduta'];
 const CHECKOUT_KO_CODE = OUTCOMES['pagamento-non-riuscito'];
+const CANCELLED_CODE = OUTCOMES['pagamento-annullato'];
 
 i18nTestSetup({
   courtesyPage: {
@@ -34,6 +39,12 @@ i18nTestSetup({
       title: 'Payment failed',
       body: 'You can retry or download the notice.',
       cta: 'Retry',
+      downloadCta: 'Download notice'
+    },
+    [CANCELLED_CODE]: {
+      title: 'Payment cancelled',
+      body: 'You cancelled the payment. You can download the notice.',
+      cta: 'Back to home',
       downloadCta: 'Download notice'
     }
   }
@@ -60,18 +71,25 @@ describe('ErrorIconComponent', () => {
     render(<ErrorIconComponent code={OUTCOMES['accesso-non-autorizzato']} />);
     const img = screen.getByTitle('Error');
     expect(img).toBeInTheDocument();
-    expect(img).toHaveAttribute('src', '/cittadini/pictograms/warning.svg');
+    expect(img).toHaveAttribute('src', '/cittadini/pictograms/genericerror.svg');
   });
 
   it('renders the "Error" pictogram for avviso-non-pagabile', () => {
     render(<ErrorIconComponent code={OUTCOMES['avviso-non-pagabile']} />);
     const img = screen.getByTitle('Error');
     expect(img).toBeInTheDocument();
-    expect(img).toHaveAttribute('src', '/cittadini/pictograms/warning.svg');
+    expect(img).toHaveAttribute('src', '/cittadini/pictograms/genericerror.svg');
   });
 
   it('renders the "Error" pictogram for pagamento-non-riuscito', () => {
     render(<ErrorIconComponent code={OUTCOMES['pagamento-non-riuscito']} />);
+    const img = screen.getByTitle('Error');
+    expect(img).toBeInTheDocument();
+    expect(img).toHaveAttribute('src', '/cittadini/pictograms/warning.svg');
+  });
+
+  it('renders the "Error" pictogram for pagamento-annullato', () => {
+    render(<ErrorIconComponent code={OUTCOMES['pagamento-annullato']} />);
     const img = screen.getByTitle('Error');
     expect(img).toBeInTheDocument();
     expect(img).toHaveAttribute('src', '/cittadini/pictograms/warning.svg');
@@ -173,9 +191,11 @@ describe('CourtesyPage – pagamento-non-riuscito (424)', () => {
     );
   });
 
-  it('renders CourtesyPageActions instead of the default CTA', () => {
+  it('renders CourtesyPageActions with code 424 instead of the default CTA', () => {
     renderCourtesyPage({ outcome: 'pagamento-non-riuscito' });
-    expect(screen.getByTestId('courtesyPageActions')).toBeInTheDocument();
+    const actions = screen.getByTestId('courtesyPageActions');
+    expect(actions).toBeInTheDocument();
+    expect(actions).toHaveAttribute('data-code', String(OUTCOMES['pagamento-non-riuscito']));
     expect(screen.queryByTestId('courtesyPage.cta')).not.toBeInTheDocument();
   });
 
@@ -183,5 +203,30 @@ describe('CourtesyPage – pagamento-non-riuscito (424)', () => {
     renderCourtesyPage({ outcome: 'sessione-scaduta' });
     expect(screen.queryByTestId('courtesyPageActions')).not.toBeInTheDocument();
     expect(screen.getByTestId('courtesyPage.cta')).toBeInTheDocument();
+  });
+});
+
+describe('CourtesyPage – pagamento-annullato (425)', () => {
+  afterEach(() => vi.clearAllMocks());
+
+  it('renders the Error icon for pagamento-annullato', () => {
+    renderCourtesyPage({ outcome: 'pagamento-annullato' });
+    expect(screen.getByTitle('Error')).toBeInTheDocument();
+  });
+
+  it('shows translated title and body for pagamento-annullato', () => {
+    renderCourtesyPage({ outcome: 'pagamento-annullato' });
+    expect(screen.getByTestId('courtesyPage.title')).toHaveTextContent('Payment cancelled');
+    expect(screen.getByTestId('courtesyPage.body')).toHaveTextContent(
+      'You cancelled the payment. You can download the notice.'
+    );
+  });
+
+  it('renders CourtesyPageActions with code 425 instead of the default CTA', () => {
+    renderCourtesyPage({ outcome: 'pagamento-annullato' });
+    const actions = screen.getByTestId('courtesyPageActions');
+    expect(actions).toBeInTheDocument();
+    expect(actions).toHaveAttribute('data-code', String(OUTCOMES['pagamento-annullato']));
+    expect(screen.queryByTestId('courtesyPage.cta')).not.toBeInTheDocument();
   });
 });
