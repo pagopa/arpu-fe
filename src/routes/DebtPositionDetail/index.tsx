@@ -40,7 +40,7 @@ const DebtPositionDetail = () => {
   usePageTitle(dynamicTitle);
 
   if (!data) {
-    return <div>Loading...</div>; // Maybe we should subsitite this with a spinner or a skeleton
+    return <div>Loading...</div>; //TODO: we have to subsitite this with a spinner or a skeleton
   }
 
   const orgInfo = {
