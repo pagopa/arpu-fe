@@ -87,8 +87,8 @@ const withComputedValues =
     /* this to delete duplicated dependencies  */
     const allDependencies = [...new Set([...queryParams, ...urlParams])];
     /* required to trigger the effect 
-      and recall the source API to get 
-      a new result and update the value */
+        and recall the source API to get 
+        a new result and update the value */
     const allDependenciesValues = allDependencies.map((dependency) => values[dependency]);
 
     React.useEffect(() => {

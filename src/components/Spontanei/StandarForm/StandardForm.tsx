@@ -25,8 +25,8 @@ const StandardForm = ({
   const [description, descriptionMeta] = useField<PaymentNoticeInfo['description']>('description');
 
   useEffect(() => {
-    if (fixedAmount !== undefined) {
-      amountHelpers.setValue(fixedAmount / 100);
+    if (props.fixedAmount !== undefined) {
+      amountHelpers.setValue(props.fixedAmount);
     } else {
       amountHelpers.setValue(0);
     }
@@ -73,6 +73,7 @@ const StandardForm = ({
                   type="number"
                   disabled={fixedAmount !== undefined}
                   {...amount}
+                  value={amount.value / 100}
                   error={amountMeta.touched && Boolean(amountMeta.error)}
                   helperText={amountMeta.touched && amountMeta.error}
                 />

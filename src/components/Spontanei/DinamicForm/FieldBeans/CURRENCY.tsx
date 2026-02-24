@@ -23,7 +23,7 @@ const CURRENCY = (props: computedPROPS) => {
       required={required}
       helperText={hasError && errorMessage}
       sx={{ flexGrow: 1 }}
-      value={Number(value as string)}
+      value={(value as number) / 100}
     />
   );
 };
