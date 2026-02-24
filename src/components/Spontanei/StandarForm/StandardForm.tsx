@@ -25,8 +25,8 @@ const StandardForm = ({
   const [description, descriptionMeta] = useField<PaymentNoticeInfo['description']>('description');
 
   useEffect(() => {
-    if (props.fixedAmount !== undefined) {
-      amountHelpers.setValue(props.fixedAmount);
+    if (fixedAmount !== undefined) {
+      amountHelpers.setValue(fixedAmount);
     } else {
       amountHelpers.setValue(0);
     }
