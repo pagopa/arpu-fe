@@ -164,7 +164,7 @@ const PaymentSummary = () => {
         />
         <SummaryItem
           label={t('spontanei.form.steps.step4.payment.amount')}
-          value={utils.converters.toEuro(amount.value * 100)}
+          value={utils.converters.toEuro(amount.value)}
           dataTestId="summary-payment-amount"
         />
       </SummaryStructure>

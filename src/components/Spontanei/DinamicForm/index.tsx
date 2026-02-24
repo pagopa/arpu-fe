@@ -73,7 +73,7 @@ const CustomForm = ({ fieldBeans, campoTotaleInclusoInXSD, formikRef }: CustomFo
     organizationId: prevValues.org?.organizationId,
     organizationName: prevValues.org?.orgName,
     orgFiscalCode: prevValues.org?.orgFiscalCode,
-    ipaCode: prevValues.org?.ipaCode,
+    ipaCode: prevValues.org?.ipaCode
   };
 
   return (

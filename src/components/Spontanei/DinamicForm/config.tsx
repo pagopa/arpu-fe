@@ -90,7 +90,8 @@ export const BuildFormSchema = (fields: Array<SpontaneousFormField>) => {
     const regex = field.regex;
     const type = field.htmlRender;
     const errorMessage = field.extraAttr?.error_message;
-    const isAmountField = type === 'CURRENCY' || type === 'DYNAMIC_AMOUNT_LABEL' || type === 'CURRENCY_LABEL';
+    const isAmountField =
+      type === 'CURRENCY' || type === 'DYNAMIC_AMOUNT_LABEL' || type === 'CURRENCY_LABEL';
     let fieldSchema;
     if (isAmountField) {
       fieldSchema = isRequired ? z.number().min(0, errorMessage) : z.number();
