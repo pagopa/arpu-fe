@@ -141,7 +141,7 @@ describe('Summary Component', () => {
     renderSummary(
       { formType: FormTypeEnum.STANDARD },
       {
-        amount: 50.5,
+        amount: 5050,
         description: 'Monthly Fee'
       }
     );
