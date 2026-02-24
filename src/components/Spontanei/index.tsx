@@ -81,7 +81,7 @@ const Spontanei = () => {
       <Box width={'100%'} component="main">
         <Formik initialValues={defaultPaymentNoticeInfo} validate={validate} onSubmit={console.log}>
           <FormContext.Provider value={contextValue}>
-            <Stack>
+            <Stack direction={'column'} justifyContent={'start'}>
               <Typography variant="h4" component="h1" mb={1} data-testid="spontanei-title">
                 {t('spontanei.form.title')}
               </Typography>

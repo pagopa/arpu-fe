@@ -103,7 +103,7 @@ export const createPublicSpontaneousDebtPosition = (
 
 export const getOrganizationsWithSpontaneous = (brokerId: number) =>
   useQuery({
-    queryKey: ['getOrganizationsWithSpontaneous'],
+    queryKey: ['getOrganizationsWithSpontaneous', brokerId],
     queryFn: async () => {
       const { data } = await utils.apiClient.brokers.getOrganizationsWithSpontaneous(brokerId);
       return data;

@@ -13,6 +13,10 @@ import { Mock } from 'vitest';
 import { PaymentNoticeInfo } from '../index';
 
 // Mock dependencies
+vi.mock('./StepWrapper', () => ({
+  default: ({ children }: { children: React.ReactNode }) => <>{children}</>
+}));
+
 vi.mock('utils', () => ({
   default: {
     storage: {

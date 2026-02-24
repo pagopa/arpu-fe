@@ -1,8 +1,17 @@
 import React from 'react';
-import { render, screen } from '__tests__/renderers';
+import { render, screen, act } from '__tests__/renderers';
 import '@testing-library/jest-dom';
 import Steps from './index';
 import FormContext, { FormContextType } from '../FormContext';
+import { vi } from 'vitest';
+
+vi.mock('@tanstack/react-query', async () => {
+  const actual = await vi.importActual('@tanstack/react-query');
+  return {
+    ...actual,
+    useIsFetching: vi.fn().mockReturnValue(1)
+  };
+});
 
 const getDefaultContext = (overrides: Partial<FormContextType> = {}): FormContextType => ({
   step: 0,
@@ -30,8 +39,20 @@ const renderWithContext = (
 };
 
 describe('Steps Component', () => {
+  beforeEach(() => {
+    vi.useFakeTimers();
+  });
+
+  afterEach(() => {
+    vi.useRealTimers();
+  });
+
   it('renders 5 steps by default', () => {
     renderWithContext({ activeStep: 0 }, { omitFirstStep: false });
+
+    act(() => {
+      vi.advanceTimersByTime(1000);
+    });
 
     expect(screen.getByText('spontanei.form.steps.step1.step')).toBeInTheDocument();
     expect(screen.getByText('spontanei.form.steps.step2.step')).toBeInTheDocument();
@@ -43,8 +64,13 @@ describe('Steps Component', () => {
   it('renders 4 steps when omitFirstStep is true', () => {
     renderWithContext({ activeStep: 0 }, { omitFirstStep: true });
 
-    expect(screen.queryByText('spontanei.form.steps.step1.step')).not.toBeInTheDocument();
+    act(() => {
+      vi.advanceTimersByTime(1000);
+    });
+
+    // wait for one of the steps to be in the document to ensure skeleton is gone
     expect(screen.getByText('spontanei.form.steps.step2.step')).toBeInTheDocument();
+    expect(screen.queryByText('spontanei.form.steps.step1.step')).not.toBeInTheDocument();
     expect(screen.getByText('spontanei.form.steps.step3.step')).toBeInTheDocument();
     expect(screen.getByText('spontanei.form.steps.step4.step')).toBeInTheDocument();
     expect(screen.getByText('spontanei.form.steps.step5.step')).toBeInTheDocument();
@@ -57,6 +83,9 @@ describe('Steps Component', () => {
       </FormContext.Provider>
     );
 
+    act(() => {
+      vi.advanceTimersByTime(1000);
+    });
     expect(screen.getByText('spontanei.form.steps.step1.step')).toBeInTheDocument();
 
     rerender(
@@ -65,6 +94,9 @@ describe('Steps Component', () => {
       </FormContext.Provider>
     );
 
+    act(() => {
+      vi.advanceTimersByTime(1000); // Need to wait for next render cycle probably not needed but safe
+    });
     expect(screen.queryByText('spontanei.form.steps.step1.step')).not.toBeInTheDocument();
   });
 });

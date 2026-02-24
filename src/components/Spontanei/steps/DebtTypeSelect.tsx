@@ -1,7 +1,6 @@
 import React from 'react';
 import {
   Autocomplete,
-  Card,
   FormControl,
   FormControlLabel,
   Radio,
@@ -16,6 +15,7 @@ import { DebtPositionTypeOrgsWithSpontaneousDTO } from '../../../../generated/da
 import Controls from '../Controls';
 import { useField, useFormikContext } from 'formik';
 import { PaymentNoticeInfo } from '..';
+import StepWrapper from './StepWrapper';
 
 /**
  * This component is responsible for selecting the debt type. As second step of Spontanei form.
@@ -54,13 +54,13 @@ const DebtTypeSelect = () => {
 
   const mostUsedDebtTypesQuery = isAnonymous
     ? utils.loaders.public.getPublicMostUsedSpontaneousDebtPositionTypeOrgsForCurrentYear(
-        brokerId,
-        organizationId
-      )
+      brokerId,
+      organizationId
+    )
     : utils.loaders.getMostUsedSpontaneousDebtPositionTypeOrgsForCurrentYear(
-        brokerId,
-        organizationId
-      );
+      brokerId,
+      organizationId
+    );
 
   const onChange = async (debtType: DebtPositionTypeOrgsWithSpontaneousDTO) => {
     await formik.validateForm();
@@ -78,7 +78,7 @@ const DebtTypeSelect = () => {
 
   return (
     <>
-      <Card variant="outlined">
+      <StepWrapper isPending={mostUsedDebtTypesQuery.isPending}>
         <Stack spacing={2} padding={4}>
           <Typography variant="h6" data-testid="spontanei-step2-title">
             {t('spontanei.form.steps.step2.title')}
@@ -147,7 +147,7 @@ const DebtTypeSelect = () => {
             </>
           )}
         </Stack>
-      </Card>
+      </StepWrapper>
       <Controls shouldContinue={shouldContinue} />
     </>
   );
