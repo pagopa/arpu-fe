@@ -1,6 +1,11 @@
 import React from 'react';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
-import { Navigate, RouterProvider, createBrowserRouter } from 'react-router-dom';
+import {
+  LoaderFunctionArgs,
+  Navigate,
+  RouterProvider,
+  createBrowserRouter
+} from 'react-router-dom';
 import { Theme } from './utils/style';
 import { PublicLayout, AuthLayout } from './components/Layout';
 import { ROUTES, OUTCOMES } from './routes/routes';
@@ -31,6 +36,31 @@ import { Overlay } from 'components/Overlay';
 import { DebtPositionDownload } from 'routes/DebtPositions/download';
 import { appSetup } from 'utils/setup';
 import appStore from 'store/appStore';
+
+/**
+ * Validates that the required query params (nav, org_fiscal_code, installment_id)
+ * are present for outcomes that need them (pagamento-non-riuscito, pagamento-annullato).
+ * If missing, throws an error caught by the errorElement (ErrorFallback).
+ */
+const courtesyPageLoader = ({ params, request }: LoaderFunctionArgs) => {
+  const url = new URL(request.url);
+  const outcome = params.outcome as keyof typeof OUTCOMES;
+  const code = OUTCOMES[outcome];
+
+  const needsParams =
+    code === OUTCOMES['pagamento-non-riuscito'] || code === OUTCOMES['pagamento-annullato'];
+
+  if (needsParams) {
+    const nav = url.searchParams.get('nav');
+    const orgFiscalCode = url.searchParams.get('org_fiscal_code');
+    const installmentId = url.searchParams.get('installment_id');
+    if (!nav || !orgFiscalCode || !installmentId) {
+      throw new Error('Missing required query params');
+    }
+  }
+
+  return params.outcome ?? null;
+};
 
 const router = createBrowserRouter([
   {
@@ -139,7 +169,7 @@ const router = createBrowserRouter([
           },
           {
             path: ROUTES.public.COURTESY_PAGE,
-            loader: ({ params }) => Promise.resolve(params.outcome),
+            loader: courtesyPageLoader,
             element: <CourtesyPage />,
             handle: {
               titleKey: 'pageTitles.courtesy'
@@ -239,7 +269,7 @@ const router = createBrowserRouter([
           {
             path: ROUTES.COURTESY_PAGE,
             element: <CourtesyPage />,
-            loader: ({ params }) => Promise.resolve(params.outcome),
+            loader: courtesyPageLoader,
             handle: {
               titleKey: 'pageTitles.courtesyPage',
               backButton: false,

@@ -376,7 +376,8 @@ const usePagedUnpaidDebtPositions = (brokerId: number) =>
 
 type InstallmentsByIuvOrNavArgs = {
   iuvOrNav: string;
-  fiscalCode: string;
+  fiscalCode?: string;
+  orgFiscalCode?: string;
   statuses?: InstallmentStatus[];
 };
 
@@ -391,8 +392,8 @@ const usePublicInstallmentsByIuvOrNav = (brokerId: number) =>
     mutationFn: async (args: InstallmentsByIuvOrNavArgs) => {
       const { data } = await utils.apiClient.public.getPublicInstallmentsByIuvOrNav(
         brokerId,
-        { iuvOrNav: args.iuvOrNav, statuses: args.statuses },
-        { headers: { 'X-fiscal-code': args.fiscalCode } }
+        { iuvOrNav: args.iuvOrNav, orgFiscalCode: args.orgFiscalCode, statuses: args.statuses },
+        args.fiscalCode ? { headers: { 'X-fiscal-code': args.fiscalCode } } : {}
       );
       return data;
     }
