@@ -1,5 +1,5 @@
 import React, { useContext } from 'react';
-import { Autocomplete, Card, Stack, TextField, Typography } from '@mui/material';
+import { Autocomplete, Stack, TextField, Typography } from '@mui/material';
 import utils from 'utils';
 import { useTranslation } from 'react-i18next';
 import { OrganizationsWithSpontaneousDTO } from '../../../../generated/data-contracts';
@@ -7,6 +7,7 @@ import Controls from '../Controls';
 import FormContext, { FormContextType } from '../FormContext';
 import { useField, useFormikContext } from 'formik';
 import { PaymentNoticeInfo } from '..';
+import StepWrapper from './StepWrapper';
 
 /**
  * This component is responsible for selecting the organization. As first step of Spontanei form.
@@ -21,9 +22,11 @@ const OrgSelect = () => {
   const formik = useFormikContext<PaymentNoticeInfo>();
   const [, meta, helpers] = useField<PaymentNoticeInfo['org']>('org');
 
-  const { data: orgs } = isAnonymous
+  const serviceQuery = isAnonymous
     ? utils.loaders.public.getPublicOrganizationsWithSpontaneous(brokerId)
     : utils.loaders.getOrganizationsWithSpontaneous(brokerId);
+
+  const orgs = serviceQuery.data;
 
   /**
    * If there is only one organization, it is selected automatically and the user is moved to the next step.
@@ -34,7 +37,6 @@ const OrgSelect = () => {
       helpers.setValue(orgs[0]);
       // omit the first step in steppers
       context && context.setOmitFirstStep(true);
-      // move to the next step
       context?.setStep((prev) => prev + 1);
     }
   }, [orgs, meta.value, helpers, context]);
@@ -62,7 +64,7 @@ const OrgSelect = () => {
 
   return (
     <>
-      <Card variant="outlined">
+      <StepWrapper isPending={serviceQuery.isPending}>
         <Stack spacing={2} padding={4}>
           <Typography variant="h6" data-testid="spontanei-step1-title">
             {t('spontanei.form.steps.step1.title')}
@@ -91,7 +93,7 @@ const OrgSelect = () => {
             )}
           />
         </Stack>
-      </Card>
+      </StepWrapper>
       <Controls shouldContinue={shouldContinue} />
     </>
   );

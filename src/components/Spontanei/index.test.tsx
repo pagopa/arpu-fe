@@ -4,6 +4,11 @@ import Spontanei from './index';
 import utils from 'utils';
 import { Mock } from 'vitest';
 
+// Mock StepWrapper to immediately render children and bypass the Skeleton delay
+vi.mock('./steps/StepWrapper', () => ({
+  default: ({ children }: { children: React.ReactNode }) => <>{children}</>
+}));
+
 vi.mock('utils', () => ({
   default: {
     loaders: {

@@ -1,7 +1,8 @@
 import React, { useContext, useEffect } from 'react';
-import { Step, StepLabel, Stepper } from '@mui/material';
+import { Skeleton, Step, StepLabel, Stepper } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import FormContext, { FormContextType } from '../FormContext';
+import { useIsFetching } from '@tanstack/react-query';
 
 const Steps = (props: { activeStep: number }) => {
   const context = useContext<FormContextType | null>(FormContext);
@@ -15,6 +16,14 @@ const Steps = (props: { activeStep: number }) => {
   ];
   const [steps, setSteps] = React.useState(initialSteps);
   const [stepBaseNumber, setStepBaseNumber] = React.useState(0);
+  const [viewSkeleton, setViewSkeleton] = React.useState(true);
+
+  // Check if any of the org select queries are pending
+  const isPendingOrgSelect = useIsFetching({
+    predicate: (query) =>
+      query.queryKey[0] === 'getPublicOrganizationsWithSpontaneous' ||
+      query.queryKey[0] === 'getOrganizationsWithSpontaneous'
+  });
 
   useEffect(() => {
     if (context?.omitFirstStep) {
@@ -23,16 +32,30 @@ const Steps = (props: { activeStep: number }) => {
     }
   }, [context?.omitFirstStep]);
 
+  useEffect(() => {
+    if (isPendingOrgSelect > 0) {
+      setTimeout(() => {
+        setViewSkeleton(false);
+      }, 1000);
+    }
+  }, [isPendingOrgSelect]);
+
   return (
-    <Stepper activeStep={props.activeStep - stepBaseNumber} alternativeLabel>
-      {steps.map((label) => {
-        return (
-          <Step key={label}>
-            <StepLabel>{label}</StepLabel>
-          </Step>
-        );
-      })}
-    </Stepper>
+    <>
+      {viewSkeleton ? (
+        <Skeleton variant="rectangular" height={'64px'} sx={{ p: 4 }} animation={'wave'}></Skeleton>
+      ) : (
+        <Stepper activeStep={props.activeStep - stepBaseNumber} alternativeLabel>
+          {steps.map((label) => {
+            return (
+              <Step key={label}>
+                <StepLabel>{label}</StepLabel>
+              </Step>
+            );
+          })}
+        </Stepper>
+      )}
+    </>
   );
 };
 
