@@ -1,11 +1,12 @@
 import { Card, Stack, Typography } from '@mui/material';
-import React, { useRef } from 'react';
+import React from 'react';
 import { useTranslation } from 'react-i18next';
 import DinamicForm from '../DinamicForm';
 import { PersonEntityType, SpontaneousFormField } from '../../../../generated/data-contracts';
 import StaticFormSection from '../DebtorSection';
 import Controls from '../Controls';
 import { useFormikContext } from 'formik';
+import { BuildFormSchema, CustomFormValues } from './config';
 
 function isEmpty(obj) {
   for (const prop in obj) {
@@ -25,16 +26,31 @@ interface CustomFormProps {
 
 const CustomForm = (props: CustomFormProps) => {
   const { fields, amountFieldName, hasFlagAnonymousFiscalCode = false } = props;
-  const formikRef = useRef(null);
   const { t } = useTranslation();
   const { validateForm, submitForm } = useFormikContext();
+
+  const schema = BuildFormSchema(fields);
+
+  const validate = (values: CustomFormValues) => {
+    try {
+      const errors = {};
+      const result = schema.safeParse(values);
+      if (!result.success) {
+        result.error.issues.forEach((issue) => (errors[issue.path[0]] = issue.message));
+      }
+      console.log(errors);
+      return errors;
+    } catch (e) {
+      console.error(e);
+      return {};
+    }
+  };
 
   const shouldContinue = async () => {
     await submitForm();
     const globalFormErrors = await validateForm();
-    await formikRef.current?.submitForm();
-    const localFormErrors = await formikRef.current?.validateForm();
-    return isEmpty(globalFormErrors || {}) && isEmpty(localFormErrors || {});
+    console.log('shouldContinue', globalFormErrors);
+    return isEmpty(globalFormErrors || {});
   };
 
   return (
@@ -50,8 +66,7 @@ const CustomForm = (props: CustomFormProps) => {
             />
             <DinamicForm
               fieldBeans={fields}
-              campoTotaleInclusoInXSD={amountFieldName}
-              formikRef={formikRef}
+              amountFieldName={amountFieldName}
             />
           </Stack>
         </Stack>

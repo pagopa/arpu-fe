@@ -87,8 +87,6 @@ const ExtraSummaryFields = (props: { extraSummaryFields: string[] }) => {
 
   const { values } = useFormikContext<PaymentNoticeInfo>();
 
-  console.log('values', values);
-
   return (
     <Card sx={{ marginBottom: 2 }} variant="outlined" data-testid="spontanei-step3-extra-summary">
       <SummaryStructure title={t('spontanei.form.steps.step4.extra.title')} dataTestId="summary-extra">
@@ -97,7 +95,7 @@ const ExtraSummaryFields = (props: { extraSummaryFields: string[] }) => {
             <SummaryItem
               key={field}
               label={t(`spontanei.form.steps.step4.extra.${field}`)}
-              value={field}
+              value={values[field]}
               dataTestId={`summary-extra-${field}`}
             />
           ))

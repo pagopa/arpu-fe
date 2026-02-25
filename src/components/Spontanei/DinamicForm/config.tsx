@@ -151,7 +151,7 @@ export const BuildFormState = (fields: Array<SpontaneousFormField>): CustomFormV
 };
 
 /** Render a single input */
-export const BuildInput = (element: SpontaneousFormField, allElements?: SpontaneousFormField[]) => {
+export const BuildInput = (element: SpontaneousFormField, allElements?: SpontaneousFormField[], amountFieldName = 'importo') => {
   switch (element.htmlRender) {
     case RenderType.TAB:
       return <TAB input={element} />;
@@ -171,23 +171,23 @@ export const BuildInput = (element: SpontaneousFormField, allElements?: Spontane
       return <MULTIFIELD input={element} />;
     // amount
     case RenderType.CURRENCY:
-      return <CURRENCY {...element} />;
+      return <CURRENCY {...element} amountFieldName={amountFieldName} />;
     // readonly amount
     case RenderType.CURRENCY_LABEL:
-      return <CURRENCYLABEL {...element} />;
+      return <CURRENCYLABEL {...element} amountFieldName={amountFieldName} />;
     // dynamic readonly amount (amount that changes based on other fields and an API call)
     case RenderType.DYNAMIC_AMOUNT_LABEL:
-      return <DYNAMIC_AMOUNTLABEL {...element} />;
+      return <DYNAMIC_AMOUNTLABEL {...element} amountFieldName={amountFieldName} />;
     default:
       return null;
   }
 };
 
 /** Render a group of inputs */
-export const BuildFormInputs = (elements: Array<SpontaneousFormField>, addTotaleField = false) => {
+export const BuildFormInputs = (elements: Array<SpontaneousFormField>, amountFieldName?: string) => {
   const fields = elements;
 
-  if (addTotaleField) {
+  if (!amountFieldName) {
     fields.push({
       name: 'importo',
       required: true,
@@ -213,7 +213,7 @@ export const BuildFormInputs = (elements: Array<SpontaneousFormField>, addTotale
 
   return fields
     .sort((a, b) => a.renderableOrder - b.renderableOrder)
-    .map((element) => BuildInput(element, elements));
+    .map((element) => BuildInput(element, elements, amountFieldName));
 };
 
 export type FieldBeanPros = {
