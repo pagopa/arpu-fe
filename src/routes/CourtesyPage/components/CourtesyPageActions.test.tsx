@@ -3,9 +3,11 @@ import { screen, fireEvent, waitFor } from '@testing-library/react';
 import { CourtesyPageActions } from './CourtesyPageActions';
 import { OUTCOMES, ROUTES } from 'routes/routes';
 
+const mockNavigate = vi.fn();
+
 vi.mock('react-router-dom', async (importOriginal) => {
   const actual = await importOriginal<typeof import('react-router-dom')>();
-  return { ...actual, useSearchParams: vi.fn() };
+  return { ...actual, useSearchParams: vi.fn(), useNavigate: () => mockNavigate };
 });
 
 import { useSearchParams } from 'react-router-dom';
@@ -144,18 +146,20 @@ describe('CourtesyPageActions – pagamento-non-riuscito (424)', () => {
     });
   });
 
-  it('does not fetch installments when nav is missing', () => {
+  it('throws when nav is missing', () => {
     setupSearchParams({ org_fiscal_code: 'ORG-FC-001', installment_id: '42' });
-    render(<CourtesyPageActions code={CODE_424} />);
 
-    expect(mockInstallmentsMutateAsync).not.toHaveBeenCalled();
+    expect(() => render(<CourtesyPageActions code={CODE_424} />)).toThrow(
+      'Missing required query params: nav, org_fiscal_code or brokerId'
+    );
   });
 
-  it('does not fetch installments when org_fiscal_code is missing', () => {
+  it('throws when org_fiscal_code is missing', () => {
     setupSearchParams({ nav: 'NAV-001', installment_id: '42' });
-    render(<CourtesyPageActions code={CODE_424} />);
 
-    expect(mockInstallmentsMutateAsync).not.toHaveBeenCalled();
+    expect(() => render(<CourtesyPageActions code={CODE_424} />)).toThrow(
+      'Missing required query params: nav, org_fiscal_code or brokerId'
+    );
   });
 
   it('finds the correct installment by installment_id', async () => {
@@ -183,7 +187,7 @@ describe('CourtesyPageActions – pagamento-non-riuscito (424)', () => {
     });
   });
 
-  it('does not call postCarts when installment is not resolved (no match)', async () => {
+  it('navigates to error page when retry is clicked without a resolved installment', async () => {
     mockInstallmentsMutateAsync.mockResolvedValue([INSTALLMENT_OTHER]);
     setupSearchParams({ nav: 'NAV-001', org_fiscal_code: 'ORG-FC-001', installment_id: '42' });
     render(<CourtesyPageActions code={CODE_424} />);
@@ -195,9 +199,12 @@ describe('CourtesyPageActions – pagamento-non-riuscito (424)', () => {
     fireEvent.click(screen.getByTestId('courtesyPage.cta'));
 
     expect(mockPostCartsMutate).not.toHaveBeenCalled();
+    expect(mockNavigate).toHaveBeenCalledWith(
+      ROUTES.public.COURTESY_PAGE.replace(':outcome', String(OUTCOMES['sconosciuto']))
+    );
   });
 
-  it('sets installment to null when fetch fails', async () => {
+  it('navigates to error page when retry is clicked after fetch failure', async () => {
     mockInstallmentsMutateAsync.mockRejectedValue(new Error('Network error'));
     setupSearchParams({ nav: 'NAV-001', org_fiscal_code: 'ORG-FC-001', installment_id: '42' });
     render(<CourtesyPageActions code={CODE_424} />);
@@ -209,6 +216,9 @@ describe('CourtesyPageActions – pagamento-non-riuscito (424)', () => {
     fireEvent.click(screen.getByTestId('courtesyPage.cta'));
 
     expect(mockPostCartsMutate).not.toHaveBeenCalled();
+    expect(mockNavigate).toHaveBeenCalledWith(
+      ROUTES.public.COURTESY_PAGE.replace(':outcome', String(OUTCOMES['sconosciuto']))
+    );
   });
 
   it('calls downloadBlob on successful download', async () => {

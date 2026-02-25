@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { Button, Stack } from '@mui/material';
-import { Link, useSearchParams } from 'react-router-dom';
+import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { Download } from '@mui/icons-material';
 import { useTranslation } from 'react-i18next';
 import { usePostCarts } from 'hooks/usePostCarts';
@@ -44,6 +44,7 @@ interface CourtesyPageActionsProps {
 
 export const CourtesyPageActions: React.FC<CourtesyPageActionsProps> = ({ code }) => {
   const { t } = useTranslation();
+  const navigate = useNavigate();
   const [searchParams] = useSearchParams();
 
   const nav = searchParams.get('nav');
@@ -56,11 +57,13 @@ export const CourtesyPageActions: React.FC<CourtesyPageActionsProps> = ({ code }
 
   const hasRequiredParams = Boolean(nav && orgFiscalCode && brokerId);
 
+  if (!hasRequiredParams) {
+    throw new Error('Missing required query params: nav, org_fiscal_code or brokerId');
+  }
+
   const installmentsMutation = loaders.public.usePublicInstallmentsByIuvOrNav(brokerId!);
 
   useEffect(() => {
-    if (!hasRequiredParams) return;
-
     const fetchInstallment = async () => {
       try {
         const data = await installmentsMutation.mutateAsync({
@@ -90,7 +93,10 @@ export const CourtesyPageActions: React.FC<CourtesyPageActionsProps> = ({ code }
   });
 
   const handleRetry = useCallback(() => {
-    if (!installment) return;
+    if (!installment) {
+      navigate(ROUTES.public.COURTESY_PAGE.replace(':outcome', String(OUTCOMES['sconosciuto'])));
+      return;
+    }
 
     const cartItem: CartItem = {
       paFullName: installment.orgName ?? '',
@@ -112,9 +118,10 @@ export const CourtesyPageActions: React.FC<CourtesyPageActionsProps> = ({ code }
   );
 
   const handleDownload = useCallback(async () => {
-    if (!installment?.organizationId || !installment?.iuv || !brokerId) return;
-
     try {
+      if (!installment?.organizationId || !installment?.iuv || !brokerId) {
+        throw new Error('Missing required data for download');
+      }
       const { data, filename } = await downloadMutation.mutateAsync();
       files.downloadBlob(data, filename || `${installment.iuv}.pdf`);
     } catch {
