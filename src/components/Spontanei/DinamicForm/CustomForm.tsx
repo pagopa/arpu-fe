@@ -7,6 +7,7 @@ import StaticFormSection from '../DebtorSection';
 import Controls from '../Controls';
 import { useFormikContext } from 'formik';
 import { BuildFormSchema, CustomFormValues } from './config';
+import * as z from 'zod';
 
 function isEmpty(obj) {
   for (const prop in obj) {
@@ -27,30 +28,25 @@ interface CustomFormProps {
 const CustomForm = (props: CustomFormProps) => {
   const { fields, amountFieldName, hasFlagAnonymousFiscalCode = false } = props;
   const { t } = useTranslation();
-  const { validateForm, submitForm } = useFormikContext();
+  const { values, validateForm, submitForm, setErrors } = useFormikContext();
 
-  const schema = BuildFormSchema(fields);
+  const customFormValuesSchema = BuildFormSchema(fields);
 
   const validate = (values: CustomFormValues) => {
-    try {
-      const errors = {};
-      const result = schema.safeParse(values);
-      if (!result.success) {
-        result.error.issues.forEach((issue) => (errors[issue.path[0]] = issue.message));
-      }
-      console.log(errors);
-      return errors;
-    } catch (e) {
-      console.error(e);
-      return {};
+    const errors: Record<string | number, string> = {};
+    const result = customFormValuesSchema.safeParse(values);
+    if (!result.success) {
+      result.error.issues.forEach((issue: z.ZodIssue) => (errors[issue.path[0]] = issue.message));
     }
+    return errors;
   };
 
   const shouldContinue = async () => {
     await submitForm();
     const globalFormErrors = await validateForm();
-    console.log('shouldContinue', globalFormErrors);
-    return isEmpty(globalFormErrors || {});
+    const customFormErrors = validate(values);
+    setErrors({ ...globalFormErrors, ...customFormErrors });
+    return isEmpty(globalFormErrors || {}) && isEmpty(customFormErrors || {});
   };
 
   return (
@@ -64,10 +60,7 @@ const CustomForm = (props: CustomFormProps) => {
               allowedEntityType={props.allowedEntityType}
               hasFlagAnonymousFiscalCode={hasFlagAnonymousFiscalCode}
             />
-            <DinamicForm
-              fieldBeans={fields}
-              amountFieldName={amountFieldName}
-            />
+            <DinamicForm fieldBeans={fields} amountFieldName={amountFieldName} />
           </Stack>
         </Stack>
       </Card>

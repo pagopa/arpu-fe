@@ -6,6 +6,7 @@ import CustomForm from '../DinamicForm/CustomForm';
 import ExternalUrlForm from '../ExternalUrlForm/ExternalUrlForm';
 import { useField } from 'formik';
 import { PaymentNoticeInfo } from '..';
+import { FormTypeEnum } from '../../../../generated/data-contracts';
 
 /**
  * This component is responsible for rendering the form based on the debt type.
@@ -29,15 +30,15 @@ const DebtTypeConfig = () => {
 
   const { data } = isAnonymous
     ? utils.loaders.public.getPublicDebtPositionTypeOrgsWithSpontaneousDetail(
-      brokerId,
-      organizationId,
-      debtPositionTypeOrgId
-    )
+        brokerId,
+        organizationId,
+        debtPositionTypeOrgId
+      )
     : utils.loaders.getDebtPositionTypeOrgsWithSpontaneousDetail(
-      brokerId,
-      organizationId,
-      debtPositionTypeOrgId
-    );
+        brokerId,
+        organizationId,
+        debtPositionTypeOrgId
+      );
 
   const type = data?.formType;
 
@@ -50,7 +51,6 @@ const DebtTypeConfig = () => {
     }
     return () => context?.setFormType(null);
   }, [type, context]);
-
 
   const summaryFields = data?.formCustom?.structure.summaryFields || [];
 
@@ -71,14 +71,14 @@ const DebtTypeConfig = () => {
    */
   const renderedForm = React.useMemo(() => {
     switch (type) {
-      case 'STANDARD':
+      case FormTypeEnum.STANDARD:
         return (
           <StandardForm
             hasFlagAnonymousFiscalCode={hasFlagAnonymousFiscalCode}
             allowedEntityType={allowedEntityType}
           />
         );
-      case 'PRESET_AMOUNT':
+      case FormTypeEnum.PRESET_AMOUNT:
         return (
           <StandardForm
             fixedAmount={data?.amountCents}
@@ -86,7 +86,7 @@ const DebtTypeConfig = () => {
             allowedEntityType={allowedEntityType}
           />
         );
-      case 'CUSTOM':
+      case FormTypeEnum.CUSTOM:
         return (
           <CustomForm
             fields={data?.formCustom?.structure.fields || []}
@@ -95,7 +95,7 @@ const DebtTypeConfig = () => {
             hasFlagAnonymousFiscalCode={hasFlagAnonymousFiscalCode}
           />
         );
-      case 'EXTERNAL_URL':
+      case FormTypeEnum.EXTERNAL_URL:
         return <ExternalUrlForm link={data?.externalPaymentUrl || ''} />;
       default:
         return null;

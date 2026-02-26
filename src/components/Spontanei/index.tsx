@@ -41,7 +41,9 @@ const Spontanei = () => {
   // user description state
   const [userDescription, setUserDescription] = React.useState<string | null>(null);
   // summary fields state
-  const [summaryFields, setSummaryFields] = React.useState<SpontaneousFormStructure['summaryFields']>([]);
+  const [summaryFields, setSummaryFields] = React.useState<
+    SpontaneousFormStructure['summaryFields']
+  >([]);
 
   const { t } = useTranslation();
 

@@ -24,11 +24,11 @@ const CustomForm = ({ fieldBeans, amountFieldName }: CustomFormProps) => {
 
   useEffect(() => {
     setFormikState((state) => {
-      return ({
+      return {
         ...state,
         values: {
-          ...state.values,
           ...initialValues,
+          ...state.values,
           // TODO: this should be romved
           // sourceParams should be an array of objects instead of a string
           // sourceParmas = ['debtPositionTypeOrgDescription']
@@ -38,8 +38,8 @@ const CustomForm = ({ fieldBeans, amountFieldName }: CustomFormProps) => {
           // }]
           debtPositionTypeOrgDescription: state.values.debtType?.description
         }
-      })
-    })
+      };
+    });
   }, []);
 
   return (

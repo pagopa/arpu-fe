@@ -16,14 +16,16 @@ enum SummaryFields {
   FISCAL_CODE = 'fiscalCode',
   EMAIL = 'email',
   AMOUNT = 'amount',
-  DESCRIPTION = 'description',
+  DESCRIPTION = 'description'
 }
 
 interface WithSummaryFieldsProps {
   summaryFields: SummaryFields[];
 }
 
-const WithSummaryFields = (WrappedComponent: React.ComponentType<any>) => {
+const WithSummaryFieldsOrHidden = (
+  WrappedComponent: React.ComponentType<WithSummaryFieldsProps>
+) => {
   return (props: WithSummaryFieldsProps) => {
     const context = useContext<FormContextType | null>(FormContext);
     const summaryFieldsFromContext = context?.summaryFields;
@@ -33,7 +35,9 @@ const WithSummaryFields = (WrappedComponent: React.ComponentType<any>) => {
       return <WrappedComponent {...props} summaryFields={props.summaryFields} />;
     }
     // if the context is not empty, we must filter the summary fields based on the context
-    const filteredSummaryFields = props.summaryFields.filter(field => summaryFieldsFromContext?.includes(field));
+    const filteredSummaryFields = props.summaryFields.filter((field) =>
+      summaryFieldsFromContext?.includes(field)
+    );
     if (filteredSummaryFields.length === 0) {
       return null;
     }
@@ -90,23 +94,23 @@ const ExtraSummaryFields = (props: { extraSummaryFields: string[] }) => {
   const flattenedValues = flattenObject(values);
   return (
     <Card sx={{ marginBottom: 2 }} variant="outlined" data-testid="spontanei-step3-extra-summary">
-      <SummaryStructure title={t('spontanei.form.steps.step4.extra.title')} dataTestId="summary-extra">
-        {
-          extraSummaryFields.map((field) => (
-            <SummaryItem
-              key={field}
-              label={t(`spontanei.form.steps.step4.extra.${field}`)}
-              value={`${flattenedValues[field]}`}
-              dataTestId={`summary-extra-${field}`}
-            />
-          ))
-        }
+      <SummaryStructure
+        title={t('spontanei.form.steps.step4.extra.title')}
+        dataTestId="summary-extra">
+        {extraSummaryFields.map((field) => (
+          <SummaryItem
+            key={field}
+            label={t(`spontanei.form.steps.step4.extra.${field}`)}
+            value={`${flattenedValues[field]}`}
+            dataTestId={`summary-extra-${field}`}
+          />
+        ))}
       </SummaryStructure>
     </Card>
   );
 };
 
-const OrgAndServiceSummary = WithSummaryFields((props: WithSummaryFieldsProps) => {
+const OrgAndServiceSummary = WithSummaryFieldsOrHidden((props: WithSummaryFieldsProps) => {
   const { t } = useTranslation();
   const [org] = useField<PaymentNoticeInfo['org']>('org');
   const [debtType] = useField<PaymentNoticeInfo['debtType']>('debtType');
@@ -121,29 +125,28 @@ const OrgAndServiceSummary = WithSummaryFields((props: WithSummaryFieldsProps) =
       sx={{ marginBottom: 2 }}
       variant="outlined"
       data-testid="spontanei-step3-org-and-service-summary">
-      {
-        summaryFields?.includes(SummaryFields.ORG_NAME) || summaryFields?.includes(SummaryFields.ORG_CODE) ?
-          <SummaryStructure title={t('spontanei.form.steps.step4.org.title')} dataTestId="summary-org">
-            {
-              summaryFields?.includes(SummaryFields.ORG_NAME) &&
-              <SummaryItem
-                label={t('spontanei.form.steps.step4.org.name')}
-                value={orgName}
-                dataTestId="summary-org-name"
-              />
-            }
-            {
-              summaryFields?.includes(SummaryFields.ORG_CODE) &&
-              <SummaryItem
-                label={t('spontanei.form.steps.step4.org.code')}
-                value={orgCode}
-                dataTestId="summary-org-code"
-              />
-            }
-          </SummaryStructure>
-          : null}
-      {
-        summaryFields?.includes(SummaryFields.DEBT_TYPE_NAME) &&
+      {summaryFields?.includes(SummaryFields.ORG_NAME) ||
+      summaryFields?.includes(SummaryFields.ORG_CODE) ? (
+        <SummaryStructure
+          title={t('spontanei.form.steps.step4.org.title')}
+          dataTestId="summary-org">
+          {summaryFields?.includes(SummaryFields.ORG_NAME) && (
+            <SummaryItem
+              label={t('spontanei.form.steps.step4.org.name')}
+              value={orgName}
+              dataTestId="summary-org-name"
+            />
+          )}
+          {summaryFields?.includes(SummaryFields.ORG_CODE) && (
+            <SummaryItem
+              label={t('spontanei.form.steps.step4.org.code')}
+              value={orgCode}
+              dataTestId="summary-org-code"
+            />
+          )}
+        </SummaryStructure>
+      ) : null}
+      {summaryFields?.includes(SummaryFields.DEBT_TYPE_NAME) && (
         <SummaryStructure
           title={t('spontanei.form.steps.step4.service.title')}
           dataTestId="summary-service">
@@ -153,12 +156,12 @@ const OrgAndServiceSummary = WithSummaryFields((props: WithSummaryFieldsProps) =
             dataTestId="summary-service-name"
           />
         </SummaryStructure>
-      }
+      )}
     </Card>
   );
 });
 
-const DebtTypeSummary = WithSummaryFields((props: WithSummaryFieldsProps) => {
+const DebtTypeSummary = WithSummaryFieldsOrHidden((props: WithSummaryFieldsProps) => {
   const { t } = useTranslation();
   const [entityType] = useField<PaymentNoticeInfo['entityType']>('entityType');
   const [fullName] = useField<PaymentNoticeInfo['fullName']>('fullName');
@@ -169,9 +172,10 @@ const DebtTypeSummary = WithSummaryFields((props: WithSummaryFieldsProps) => {
 
   return (
     <Card sx={{ marginBottom: 2 }} variant="outlined" data-testid="spontanei-step3-debtor-summary">
-      <SummaryStructure title={t('spontanei.form.steps.step4.debtor.title')} dataTestId="summary-debtor">
-        {
-          summaryFields?.includes(SummaryFields.FULL_NAME) &&
+      <SummaryStructure
+        title={t('spontanei.form.steps.step4.debtor.title')}
+        dataTestId="summary-debtor">
+        {summaryFields?.includes(SummaryFields.FULL_NAME) && (
           <SummaryItem
             label={
               isFisicalPerson
@@ -181,9 +185,8 @@ const DebtTypeSummary = WithSummaryFields((props: WithSummaryFieldsProps) => {
             value={fullName.value}
             dataTestId="summary-debtor-name"
           />
-        }
-        {
-          summaryFields?.includes(SummaryFields.FISCAL_CODE) &&
+        )}
+        {summaryFields?.includes(SummaryFields.FISCAL_CODE) && (
           <SummaryItem
             label={
               isFisicalPerson
@@ -193,7 +196,7 @@ const DebtTypeSummary = WithSummaryFields((props: WithSummaryFieldsProps) => {
             value={fiscalCode.value}
             dataTestId="summary-debtor-code"
           />
-        }
+        )}
         {email.value && summaryFields?.includes(SummaryFields.EMAIL) && (
           <SummaryItem
             label={
@@ -210,7 +213,7 @@ const DebtTypeSummary = WithSummaryFields((props: WithSummaryFieldsProps) => {
   );
 });
 
-const PaymentSummary = WithSummaryFields((props: WithSummaryFieldsProps) => {
+const PaymentSummary = WithSummaryFieldsOrHidden((props: WithSummaryFieldsProps) => {
   const { t } = useTranslation();
   const [amount] = useField<PaymentNoticeInfo['amount']>('amount');
   const [description] = useField<PaymentNoticeInfo['description']>('description');
@@ -232,22 +235,20 @@ const PaymentSummary = WithSummaryFields((props: WithSummaryFieldsProps) => {
       <SummaryStructure
         title={t('spontanei.form.steps.step4.payment.title')}
         dataTestId="summary-payment">
-        {
-          summaryFields?.includes(SummaryFields.DESCRIPTION) ?
-            <SummaryItem
-              label={t('spontanei.form.steps.step4.payment.description')}
-              value={descriptionLabel}
-              dataTestId="summary-payment-description"
-            /> : null
-        }
-        {
-          summaryFields?.includes(SummaryFields.AMOUNT) ?
-            <SummaryItem
-              label={t('spontanei.form.steps.step4.payment.amount')}
-              value={utils.converters.toEuro(amount.value)}
-              dataTestId="summary-payment-amount"
-            /> : null
-        }
+        {summaryFields?.includes(SummaryFields.DESCRIPTION) ? (
+          <SummaryItem
+            label={t('spontanei.form.steps.step4.payment.description')}
+            value={descriptionLabel}
+            dataTestId="summary-payment-description"
+          />
+        ) : null}
+        {summaryFields?.includes(SummaryFields.AMOUNT) ? (
+          <SummaryItem
+            label={t('spontanei.form.steps.step4.payment.amount')}
+            value={utils.converters.toEuro(amount.value)}
+            dataTestId="summary-payment-amount"
+          />
+        ) : null}
       </SummaryStructure>
     </Card>
   );
@@ -259,16 +260,19 @@ const Summary = () => {
   const context = useContext<FormContextType | null>(FormContext);
   const summaryFieldsFromContext = context?.summaryFields;
 
-  const extraSummaryFields = summaryFieldsFromContext?.filter((field) => {
-    return field !== SummaryFields.ORG_NAME &&
-      field !== SummaryFields.ORG_CODE &&
-      field !== SummaryFields.DEBT_TYPE_NAME &&
-      field !== SummaryFields.FULL_NAME &&
-      field !== SummaryFields.FISCAL_CODE &&
-      field !== SummaryFields.EMAIL &&
-      field !== SummaryFields.AMOUNT &&
-      field !== SummaryFields.DESCRIPTION;
-  }) || [];
+  const extraSummaryFields =
+    summaryFieldsFromContext?.filter((field) => {
+      return (
+        field !== SummaryFields.ORG_NAME &&
+        field !== SummaryFields.ORG_CODE &&
+        field !== SummaryFields.DEBT_TYPE_NAME &&
+        field !== SummaryFields.FULL_NAME &&
+        field !== SummaryFields.FISCAL_CODE &&
+        field !== SummaryFields.EMAIL &&
+        field !== SummaryFields.AMOUNT &&
+        field !== SummaryFields.DESCRIPTION
+      );
+    }) || [];
 
   const hasExtraSummaryFields = extraSummaryFields?.length > 0;
 
@@ -282,12 +286,21 @@ const Summary = () => {
           {t('spontanei.form.steps.step4.description')}
         </Typography>
         <Stack direction="column">
-          {
-            hasExtraSummaryFields &&
-            <ExtraSummaryFields extraSummaryFields={extraSummaryFields} />
-          }
-          <OrgAndServiceSummary summaryFields={[SummaryFields.ORG_NAME, SummaryFields.ORG_CODE, SummaryFields.DEBT_TYPE_NAME]} />
-          <DebtTypeSummary summaryFields={[SummaryFields.FULL_NAME, SummaryFields.FISCAL_CODE, SummaryFields.EMAIL]} />
+          {hasExtraSummaryFields && <ExtraSummaryFields extraSummaryFields={extraSummaryFields} />}
+          <OrgAndServiceSummary
+            summaryFields={[
+              SummaryFields.ORG_NAME,
+              SummaryFields.ORG_CODE,
+              SummaryFields.DEBT_TYPE_NAME
+            ]}
+          />
+          <DebtTypeSummary
+            summaryFields={[
+              SummaryFields.FULL_NAME,
+              SummaryFields.FISCAL_CODE,
+              SummaryFields.EMAIL
+            ]}
+          />
           <PaymentSummary summaryFields={[SummaryFields.AMOUNT, SummaryFields.DESCRIPTION]} />
         </Stack>
       </Card>

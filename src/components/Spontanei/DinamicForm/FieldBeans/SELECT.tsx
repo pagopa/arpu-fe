@@ -6,17 +6,9 @@ import { Option } from './withDinamicValues';
 import { useField } from 'formik';
 
 const SELECT = (props: computedPROPS & { multiple?: boolean }) => {
-  const {
-    name,
-    onBlur,
-    htmlLabel,
-    hasError,
-    required,
-    errorMessage,
-    options = []
-  } = props;
+  const { name, onBlur, htmlLabel, hasError, required, errorMessage, options = [] } = props;
 
-  const [fieldValue, _, helpers] = useField<Option | null>(name);
+  const [fieldValue, , helpers] = useField<Option | null>(name);
 
   const handleChange = (
     _event: React.SyntheticEvent<Element, Event>,
@@ -25,8 +17,7 @@ const SELECT = (props: computedPROPS & { multiple?: boolean }) => {
     if (!option || typeof option === 'string') {
       helpers.setValue(null);
     } else {
-      const selectedOption =
-        options?.find((o) => o.value === option?.value) || null;
+      const selectedOption = options?.find((o) => o.value === option?.value) || null;
       helpers.setValue(selectedOption);
     }
   };
@@ -47,9 +38,10 @@ const SELECT = (props: computedPROPS & { multiple?: boolean }) => {
             label={htmlLabel}
             name={name}
             error={hasError}
-            helperText={errorMessage}
+            helperText={hasError && errorMessage}
           />
-        )} />
+        )}
+      />
     </FormControl>
   );
 };
