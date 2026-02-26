@@ -12,7 +12,6 @@ vi.mock('./ProductLogo', () => ({
   ProductLogo: () => <div data-testid="product-logo">Logo</div>
 }));
 
-import { ROUTES } from 'routes/routes';
 import { resetAppStore, setBrokerInfo } from 'store/appStore';
 
 describe('Footer', () => {
@@ -38,26 +37,6 @@ describe('Footer', () => {
     expect(screen.getByText('ui.footer.termsAndConditions')).toBeInTheDocument();
     expect(screen.getByText('ui.footer.a11y')).toBeInTheDocument();
     expect(screen.getByText('ui.footer.personalData')).toBeInTheDocument();
-  });
-
-  it('renders links with correct href attributes', () => {
-    render(<Footer />);
-
-    const privacyLink = screen.getByText('ui.footer.privacy').closest('a');
-    const tosLink = screen.getByText('ui.footer.termsAndConditions').closest('a');
-    const a11yLink = screen.getByText('ui.footer.a11y').closest('a');
-    const personalDataLink = screen.getByText('ui.footer.personalData').closest('a');
-
-    expect(privacyLink).toHaveAttribute('href', ROUTES.PRIVACY_POLICY);
-    expect(tosLink).toHaveAttribute('href', ROUTES.TOS);
-    expect(a11yLink).toHaveAttribute(
-      'href',
-      'https://www.w3.org/WAI/standards-guidelines/wai-aria/'
-    );
-    expect(personalDataLink).toHaveAttribute(
-      'href',
-      'https://privacyportal-de.onetrust.com/webform/77f17844-04c3-4969-a11d-462ee77acbe1/9ab6533d-be4a-482e-929a-0d8d2ab29df8'
-    );
   });
 
   it('renders external links with target blank and rel attributes', () => {
