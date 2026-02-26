@@ -1,4 +1,4 @@
-import React, { useContext, useEffect } from 'react';
+import React, { useContext } from 'react';
 import { Card, Grid, Stack, Typography } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import FormContext, { FormContextType } from '../FormContext';
@@ -217,18 +217,8 @@ const PaymentSummary = WithSummaryFieldsOrHidden((props: WithSummaryFieldsProps)
   const { t } = useTranslation();
   const [amount] = useField<PaymentNoticeInfo['amount']>('amount');
   const [description] = useField<PaymentNoticeInfo['description']>('description');
-  const [debtType] = useField<PaymentNoticeInfo['debtType']>('debtType');
-  const context = useContext<FormContextType | null>(FormContext);
-  const formType = context?.formType;
+
   const { summaryFields } = props;
-
-  const descriptionLabel = `Pagamento on-the-fly ${formType === 'CUSTOM' ? debtType.value?.description : description.value}`;
-
-  useEffect(() => {
-    if (formType === 'CUSTOM') {
-      context?.setUserDescription(descriptionLabel);
-    }
-  }, []);
 
   return (
     <Card sx={{ marginBottom: 2 }} variant="outlined" data-testid="spontanei-step3-payment-summary">
@@ -238,7 +228,7 @@ const PaymentSummary = WithSummaryFieldsOrHidden((props: WithSummaryFieldsProps)
         {summaryFields?.includes(SummaryFields.DESCRIPTION) ? (
           <SummaryItem
             label={t('spontanei.form.steps.step4.payment.description')}
-            value={descriptionLabel}
+            value={description.value}
             dataTestId="summary-payment-description"
           />
         ) : null}
