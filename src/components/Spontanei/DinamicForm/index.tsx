@@ -36,7 +36,7 @@ const CustomForm = ({ fieldBeans, amountFieldName }: CustomFormProps) => {
           //   name: 'debtPositionTypeOrgDescription',
           //   value: 'debtType.description'
           // }]
-          debtPositionTypeOrgDescription: state.values.debtType?.description
+          debtPositionTypeOrgCode: state.values.debtType?.code
         }
       };
     });
