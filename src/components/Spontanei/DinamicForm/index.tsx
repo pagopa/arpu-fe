@@ -15,26 +15,12 @@ export type CustomFormProps = {
 };
 
 const CustomForm = ({ fieldBeans, amountFieldName }: CustomFormProps) => {
-  const { values: prevValues, setFormikState, } = useFormikContext<PaymentNoticeInfo>();
-
-  const fields = BuildFormInputs(fieldBeans, amountFieldName);
-
   const { t } = useTranslation();
 
-  const initialValues: CustomFormValues = {
-    ...BuildFormState(fieldBeans),
-    debtPositionTypeOrgCode: prevValues.debtType?.code,
-    fullName: prevValues.fullName,
-    email: prevValues.email,
-    fiscalCode: prevValues.fiscalCode,
-    entityType: prevValues.entityType,
-    debtPositionTypeOrgId: prevValues.debtType?.debtPositionTypeOrgId,
-    debtPositionTypeOrgDescription: prevValues.debtType?.description,
-    organizationId: prevValues.org?.organizationId,
-    organizationName: prevValues.org?.orgName,
-    orgFiscalCode: prevValues.org?.orgFiscalCode,
-    ipaCode: prevValues.org?.ipaCode
-  };
+  const { setFormikState } = useFormikContext<PaymentNoticeInfo>();
+
+  const fields = BuildFormInputs(fieldBeans, amountFieldName);
+  const initialValues: CustomFormValues = BuildFormState(fieldBeans);
 
   useEffect(() => {
     setFormikState((state) => {
@@ -42,7 +28,15 @@ const CustomForm = ({ fieldBeans, amountFieldName }: CustomFormProps) => {
         ...state,
         values: {
           ...state.values,
-          ...initialValues
+          ...initialValues,
+          // TODO: this should be romved
+          // sourceParams should be an array of objects instead of a string
+          // sourceParmas = ['debtPositionTypeOrgDescription']
+          // sourceParams = [{
+          //   name: 'debtPositionTypeOrgDescription',
+          //   value: 'debtType.description'
+          // }]
+          debtPositionTypeOrgDescription: state.values.debtType?.description
         }
       })
     })
