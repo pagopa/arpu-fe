@@ -6,9 +6,6 @@ import { ROUTES } from 'routes/routes';
 import { ProductLogo } from './ProductLogo';
 import appStore from 'store/appStore';
 
-const LINK_PERSONAL_DATA_PROTECTION =
-  'https://privacyportal-de.onetrust.com/webform/77f17844-04c3-4969-a11d-462ee77acbe1/9ab6533d-be4a-482e-929a-0d8d2ab29df8';
-
 const LINK_A11Y = 'https://www.w3.org/WAI/standards-guidelines/wai-aria/';
 
 const FooterLink = ({ href, children }: { href: string; children: string }) => {
@@ -46,9 +43,7 @@ export const Footer = () => {
           <FooterLink href={ROUTES.PRIVACY_POLICY}>{t('ui.footer.privacy')}</FooterLink>
           <FooterLink href={ROUTES.TOS}>{t('ui.footer.termsAndConditions')}</FooterLink>
           <FooterLink href={LINK_A11Y}>{t('ui.footer.a11y')}</FooterLink>
-          <FooterLink href={LINK_PERSONAL_DATA_PROTECTION}>
-            {t('ui.footer.personalData')}
-          </FooterLink>
+          <FooterLink href="#">{t('ui.footer.personalData')}</FooterLink>
         </Stack>
       </Stack>
       <Stack>

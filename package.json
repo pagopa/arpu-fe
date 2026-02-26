@@ -95,52 +95,5 @@
   "parcelIgnore": [
     "otSDKStub.js",
     "otnotice-1.0.min.js"
-  ],
-  "staticFiles": [
-    {
-      "staticPath": "static"
-    },
-    {
-      "staticPath": "src/components/Matomo/js/container_KHGZHzVu.js",
-      "staticOutPath": "matomo",
-      "env": {
-        "ENV": "DEV"
-      }
-    },
-    {
-      "staticPath": "src/components/Matomo/js/container_DHShZNWx.js",
-      "staticOutPath": "matomo",
-      "env": {
-        "ENV": "UAT"
-      }
-    },
-    {
-      "staticPath": "src/components/Matomo/js/container_a7fdRBO1.js",
-      "staticOutPath": "matomo",
-      "env": {
-        "ENV": "PROD"
-      }
-    },
-    {
-      "staticPath": "src/components/CookieBanner/assets/019501b5-266d-7001-9222-526523cd490d-test",
-      "staticOutPath": "onetrust/consent/019501b5-266d-7001-9222-526523cd490d-test",
-      "env": {
-        "ENV": "DEV"
-      }
-    },
-    {
-      "staticPath": "src/components/CookieBanner/assets/019501b5-266d-7001-9222-526523cd490d-test",
-      "staticOutPath": "onetrust/consent/019501b5-266d-7001-9222-526523cd490d-test",
-      "env": {
-        "ENV": "UAT"
-      }
-    },
-    {
-      "staticPath": "src/components/CookieBanner/assets/019501b5-266d-7001-9222-526523cd490d",
-      "staticOutPath": "onetrust/consent/019501b5-266d-7001-9222-526523cd490d",
-      "env": {
-        "ENV": "PROD"
-      }
-    }
   ]
 }

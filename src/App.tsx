@@ -19,7 +19,6 @@ import Login from 'routes/Login';
 import Assistance from 'routes/Assistance';
 import utils from 'utils';
 import AuthCallback from 'routes/AuthCallback';
-import Resources from 'routes/Resources';
 import { getTokenOneidentity } from 'utils/loaders';
 import { ApiClient } from 'components/ApiClient';
 import Spontanei from 'routes/Spontanei';
@@ -151,20 +150,6 @@ const router = createBrowserRouter([
             handle: {
               titleKey: 'pageTitles.receiptDetail',
               backButton: true
-            } as RouteHandleObject
-          },
-          {
-            path: ROUTES.TOS,
-            element: <Resources resource="tos" />,
-            handle: {
-              titleKey: 'pageTitles.tos'
-            } as RouteHandleObject
-          },
-          {
-            path: ROUTES.PRIVACY_POLICY,
-            element: <Resources resource="pp" />,
-            handle: {
-              titleKey: 'pageTitles.pp'
             } as RouteHandleObject
           },
           {
