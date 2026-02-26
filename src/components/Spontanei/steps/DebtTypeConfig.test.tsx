@@ -62,6 +62,8 @@ const getDefaultContext = (overrides: Partial<FormContextType> = {}): FormContex
   setFormType: vi.fn(),
   userDescription: null,
   setUserDescription: vi.fn(),
+  setSummaryFields: vi.fn(),
+  summaryFields: [],
   ...overrides
 });
 
