@@ -152,6 +152,20 @@ const router = createBrowserRouter([
               backButton: true
             } as RouteHandleObject
           },
+          //  {
+          //   path: ROUTES.TOS,
+          //   element: <Resources resource="tos" />,
+          //   handle: {
+          //     titleKey: 'pageTitles.tos'
+          //   } as RouteHandleObject
+          // },
+          // {
+          //   path: ROUTES.PRIVACY_POLICY,
+          //   element: <Resources resource="pp" />,
+          //   handle: {
+          //     titleKey: 'pageTitles.pp'
+          //   } as RouteHandleObject
+          // },
           {
             path: ROUTES.public.COURTESY_PAGE,
             loader: courtesyPageLoader,
