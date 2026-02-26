@@ -6,6 +6,7 @@ import utils from 'utils';
 import { useField, useFormikContext } from 'formik';
 import { PaymentNoticeInfo } from '..';
 import Controls from '../Controls';
+import { flattenObject } from '../DinamicForm/config';
 
 enum SummaryFields {
   ORG_NAME = 'orgName',
@@ -86,7 +87,7 @@ const ExtraSummaryFields = (props: { extraSummaryFields: string[] }) => {
   const { extraSummaryFields } = props;
 
   const { values } = useFormikContext<PaymentNoticeInfo>();
-
+  const flattenedValues = flattenObject(values);
   return (
     <Card sx={{ marginBottom: 2 }} variant="outlined" data-testid="spontanei-step3-extra-summary">
       <SummaryStructure title={t('spontanei.form.steps.step4.extra.title')} dataTestId="summary-extra">
@@ -95,7 +96,7 @@ const ExtraSummaryFields = (props: { extraSummaryFields: string[] }) => {
             <SummaryItem
               key={field}
               label={t(`spontanei.form.steps.step4.extra.${field}`)}
-              value={values[field]}
+              value={`${flattenedValues[field]}`}
               dataTestId={`summary-extra-${field}`}
             />
           ))

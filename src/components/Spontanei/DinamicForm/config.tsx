@@ -1,6 +1,7 @@
 import React from 'react';
 import * as z from 'zod';
 import { SpontaneousFormField } from '../../../../generated/data-contracts';
+import { Option } from './FieldBeans/withDinamicValues';
 
 // SANDBOX
 import sand from '@nyariv/sandboxjs';
@@ -54,6 +55,19 @@ function formatString(formatString: string, dataObject: { [key: string]: unknown
     return match;
   });
 }
+
+export const flattenObject = (obj, delimiter = '.', prefix = ''): Record<string, string | number> =>
+  Object.keys(obj).reduce((acc, k) => {
+    const pre = prefix.length ? `${prefix}${delimiter}` : '';
+    if (
+      typeof obj[k] === 'object' &&
+      obj[k] !== null &&
+      Object.keys(obj[k]).length > 0
+    )
+      Object.assign(acc, flattenObject(obj[k], delimiter, pre + k));
+    else acc[pre + k] = obj[k];
+    return acc;
+  }, {});
 
 /** usata per la causale */
 export const buildDinamicValue = (
@@ -111,7 +125,7 @@ export const BuildFormSchema = (fields: Array<SpontaneousFormField>) => {
 };
 
 export interface CustomFormValues {
-  [key: string]: string | string[] | number | number[] | undefined;
+  [key: string]: string | string[] | number | number[] | Option | undefined;
   debtPositionTypeOrgCode?: string;
   debtPositionTypeOrgId?: number;
   debtPositionTypeOrgDescription?: string;
