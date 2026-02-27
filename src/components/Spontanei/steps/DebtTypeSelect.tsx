@@ -54,13 +54,13 @@ const DebtTypeSelect = () => {
 
   const mostUsedDebtTypesQuery = isAnonymous
     ? utils.loaders.public.getPublicMostUsedSpontaneousDebtPositionTypeOrgsForCurrentYear(
-      brokerId,
-      organizationId
-    )
+        brokerId,
+        organizationId
+      )
     : utils.loaders.getMostUsedSpontaneousDebtPositionTypeOrgsForCurrentYear(
-      brokerId,
-      organizationId
-    );
+        brokerId,
+        organizationId
+      );
 
   const onChange = async (debtType: DebtPositionTypeOrgsWithSpontaneousDTO) => {
     await formik.validateForm();
