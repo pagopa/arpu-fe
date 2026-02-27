@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useContext, useEffect } from 'react';
 import {
   Autocomplete,
   FormControl,
@@ -16,6 +16,7 @@ import Controls from '../Controls';
 import { useField, useFormikContext } from 'formik';
 import { PaymentNoticeInfo } from '..';
 import StepWrapper from './StepWrapper';
+import FormContext, { FormContextType } from '../FormContext';
 
 /**
  * This component is responsible for selecting the debt type. As second step of Spontanei form.
@@ -25,9 +26,8 @@ const DebtTypeSelect = () => {
   const { t } = useTranslation();
   const brokerId = utils.storage.app.getBrokerId();
   const isAnonymous = utils.storage.user.isAnonymous();
-
+  const context = useContext<FormContextType | null>(FormContext);
   const formik = useFormikContext<PaymentNoticeInfo>();
-
   const [org] = useField<PaymentNoticeInfo['org']>('org');
   const [debtType, debtTypeMeta, debtTypeHelpers] =
     useField<PaymentNoticeInfo['debtType']>('debtType');
@@ -73,6 +73,10 @@ const DebtTypeSelect = () => {
     const errors = await formik.validateForm();
     return !errors.org && !errors.debtType;
   };
+
+  useEffect(() => {
+    context?.setCausaleHasJoinTemplate(false);
+  }, []);
 
   const errorMessage = formik.touched.debtType ? formik.errors.debtType : '';
 

@@ -55,10 +55,10 @@ const getDefaultContext = (overrides: Partial<FormContextType> = {}): FormContex
   setStep: vi.fn(),
   omitFirstStep: false,
   setOmitFirstStep: vi.fn(),
-  formType: null,
-  setFormType: vi.fn(),
-  userDescription: null,
-  setUserDescription: vi.fn(),
+  causaleHasJoinTemplate: false,
+  setCausaleHasJoinTemplate: vi.fn(),
+  summaryFields: [],
+  setSummaryFields: vi.fn(),
   ...overrides
 });
 

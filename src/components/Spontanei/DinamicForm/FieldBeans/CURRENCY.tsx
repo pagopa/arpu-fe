@@ -1,11 +1,13 @@
 import React from 'react';
 import { InputAdornment, TextField } from '@mui/material';
 import withComputedValues, { computedPROPS } from './withDinamicValues';
+import { useField } from 'formik';
 
-const CURRENCY = (props: computedPROPS) => {
-  const { value, name, htmlLabel, onChange, onBlur, hasError, required, errorMessage, isDisabled } =
-    props;
+export const CURRENCY = (props: computedPROPS) => {
   //asserting value is a number(Euro in Cents)
+  const { value, name, htmlLabel, onBlur, hasError, required, errorMessage, isDisabled } = props;
+
+  const [, , helpers] = useField<number>(name);
   return (
     <TextField
       disabled={isDisabled}
@@ -17,7 +19,10 @@ const CURRENCY = (props: computedPROPS) => {
       }}
       label={htmlLabel}
       name={name}
-      onChange={onChange}
+      onChange={(e) => {
+        const value = Number(e.target.value);
+        helpers.setValue(value * 100);
+      }}
       onBlur={onBlur}
       error={hasError}
       required={required}

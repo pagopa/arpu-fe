@@ -1,6 +1,7 @@
 import React from 'react';
 import * as z from 'zod';
 import { SpontaneousFormField } from '../../../../generated/data-contracts';
+import { Option } from './FieldBeans/withDinamicValues';
 
 // SANDBOX
 import sand from '@nyariv/sandboxjs';
@@ -12,7 +13,7 @@ import SINGLESELECT from './FieldBeans/SINGLESELECT';
 import MULTISELECT from './FieldBeans/MULTISELECT';
 import DATEPICKER from './FieldBeans/DATE';
 import TEXT from './FieldBeans/TEXT';
-import CURRENCYLABEL from './FieldBeans/CURRENCYLABEL';
+import CURRENCY_LABEL from './FieldBeans/CURRENCY_LABEL';
 import MULTIFIELD from './FieldBeans/MULTIFIELD';
 import NONE from './FieldBeans/NONE';
 import TAB from './FieldBeans/TAB';
@@ -55,6 +56,15 @@ function formatString(formatString: string, dataObject: { [key: string]: unknown
   });
 }
 
+export const flattenObject = (obj, delimiter = '.', prefix = ''): Record<string, string | number> =>
+  Object.keys(obj).reduce((acc, k) => {
+    const pre = prefix.length ? `${prefix}${delimiter}` : '';
+    if (typeof obj[k] === 'object' && obj[k] !== null && Object.keys(obj[k]).length > 0)
+      Object.assign(acc, flattenObject(obj[k], delimiter, pre + k));
+    else acc[pre + k] = obj[k];
+    return acc;
+  }, {});
+
 /** usata per la causale */
 export const buildDinamicValue = (
   stringTemplate: string,
@@ -89,7 +99,7 @@ export const BuildFormSchema = (fields: Array<SpontaneousFormField>) => {
     const isRequired = field.required;
     const regex = field.regex;
     const type = field.htmlRender;
-    const errorMessage = field.extraAttr?.error_message;
+    const errorMessage = field.extraAttr?.error_messag;
     const isAmountField =
       type === RenderType.CURRENCY ||
       type === RenderType.DYNAMIC_AMOUNT_LABEL ||
@@ -97,6 +107,14 @@ export const BuildFormSchema = (fields: Array<SpontaneousFormField>) => {
     let fieldSchema;
     if (isAmountField) {
       fieldSchema = isRequired ? z.number().min(0, errorMessage) : z.number();
+    } else if (type === RenderType.SINGLESELECT || type === RenderType.DYNAMIC_SELECT) {
+      fieldSchema = z
+        .object({
+          label: z.string(),
+          value: z.string()
+        })
+        .nullable()
+        .refine((option) => isRequired && option !== null, errorMessage);
     } else if (type === RenderType.MULTISELECT) {
       fieldSchema = isRequired ? z.array(z.string()).min(1, errorMessage) : z.array(z.string());
     } else {
@@ -111,7 +129,7 @@ export const BuildFormSchema = (fields: Array<SpontaneousFormField>) => {
 };
 
 export interface CustomFormValues {
-  [key: string]: string | string[] | number | number[] | undefined;
+  [key: string]: string | string[] | number | number[] | Option | undefined;
   debtPositionTypeOrgCode?: string;
   debtPositionTypeOrgId?: number;
   debtPositionTypeOrgDescription?: string;
@@ -151,7 +169,11 @@ export const BuildFormState = (fields: Array<SpontaneousFormField>): CustomFormV
 };
 
 /** Render a single input */
-export const BuildInput = (element: SpontaneousFormField, allElements?: SpontaneousFormField[]) => {
+export const BuildInput = (
+  element: SpontaneousFormField,
+  allElements?: SpontaneousFormField[],
+  amountFieldName = 'importo'
+) => {
   switch (element.htmlRender) {
     case RenderType.TAB:
       return <TAB input={element} />;
@@ -171,23 +193,26 @@ export const BuildInput = (element: SpontaneousFormField, allElements?: Spontane
       return <MULTIFIELD input={element} />;
     // amount
     case RenderType.CURRENCY:
-      return <CURRENCY {...element} />;
+      return <CURRENCY {...element} amountFieldName={amountFieldName} />;
     // readonly amount
     case RenderType.CURRENCY_LABEL:
-      return <CURRENCYLABEL {...element} />;
+      return <CURRENCY_LABEL {...element} amountFieldName={amountFieldName} />;
     // dynamic readonly amount (amount that changes based on other fields and an API call)
     case RenderType.DYNAMIC_AMOUNT_LABEL:
-      return <DYNAMIC_AMOUNTLABEL {...element} />;
+      return <DYNAMIC_AMOUNTLABEL {...element} amountFieldName={amountFieldName} />;
     default:
       return null;
   }
 };
 
 /** Render a group of inputs */
-export const BuildFormInputs = (elements: Array<SpontaneousFormField>, addTotaleField = false) => {
+export const BuildFormInputs = (
+  elements: Array<SpontaneousFormField>,
+  amountFieldName?: string
+) => {
   const fields = elements;
 
-  if (addTotaleField) {
+  if (!amountFieldName) {
     fields.push({
       name: 'importo',
       required: true,
@@ -213,7 +238,7 @@ export const BuildFormInputs = (elements: Array<SpontaneousFormField>, addTotale
 
   return fields
     .sort((a, b) => a.renderableOrder - b.renderableOrder)
-    .map((element) => BuildInput(element, elements));
+    .map((element) => BuildInput(element, elements, amountFieldName));
 };
 
 export type FieldBeanPros = {

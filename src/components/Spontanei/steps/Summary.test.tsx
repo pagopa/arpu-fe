@@ -35,6 +35,8 @@ const getDefaultContext = (overrides: Partial<FormContextType> = {}): FormContex
   setFormType: vi.fn(),
   userDescription: null,
   setUserDescription: vi.fn(),
+  setSummaryFields: vi.fn(),
+  summaryFields: [],
   ...overrides
 });
 
@@ -148,7 +150,7 @@ describe('Summary Component', () => {
 
     // Pagamento on-the-fly ${formType === 'CUSTOM' ? debtType.value?.description : description.value}
     expect(screen.getByTestId('summary-payment-description-value')).toHaveTextContent(
-      'Pagamento on-the-fly Monthly Fee'
+      'Monthly Fee'
     );
     expect(screen.getByTestId('summary-payment-amount-value')).toHaveTextContent('€ 50,50');
   });
@@ -159,16 +161,15 @@ describe('Summary Component', () => {
       { formType: FormTypeEnum.CUSTOM, setUserDescription },
       {
         debtType: {
-          description: 'Custom App Service'
+          description: 'Test Description'
         } as DebtPositionTypeOrgsWithSpontaneousDTO,
         amount: 100
       }
     );
 
     expect(screen.getByTestId('summary-payment-description-value')).toHaveTextContent(
-      'Pagamento on-the-fly Custom App Service'
+      'Test Description'
     );
-    expect(setUserDescription).toHaveBeenCalledWith('Pagamento on-the-fly Custom App Service');
   });
 
   it('renders controls', () => {

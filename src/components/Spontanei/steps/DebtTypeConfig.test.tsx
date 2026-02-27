@@ -58,10 +58,10 @@ const getDefaultContext = (overrides: Partial<FormContextType> = {}): FormContex
   setStep: vi.fn(),
   omitFirstStep: false,
   setOmitFirstStep: vi.fn(),
-  formType: null,
-  setFormType: vi.fn(),
-  userDescription: null,
-  setUserDescription: vi.fn(),
+  causaleHasJoinTemplate: false,
+  setCausaleHasJoinTemplate: vi.fn(),
+  summaryFields: [],
+  setSummaryFields: vi.fn(),
   ...overrides
 });
 
@@ -140,20 +140,6 @@ describe('DebtTypeConfig Component', () => {
       'org123',
       'debt123'
     );
-  });
-
-  it('updates formType in context and clears it on unmount', () => {
-    const setFormType = vi.fn();
-    (utils.loaders.getDebtPositionTypeOrgsWithSpontaneousDetail as Mock).mockReturnValue({
-      data: { formType: 'STANDARD' }
-    });
-
-    const { unmount } = renderDebtTypeConfig({ setFormType });
-
-    expect(setFormType).toHaveBeenCalledWith('STANDARD');
-
-    unmount();
-    expect(setFormType).toHaveBeenCalledWith(null);
   });
 
   it('renders StandardForm for STANDARD type', () => {

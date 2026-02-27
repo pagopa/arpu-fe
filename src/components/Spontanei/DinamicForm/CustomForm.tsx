@@ -1,11 +1,13 @@
 import { Card, Stack, Typography } from '@mui/material';
-import React, { useRef } from 'react';
+import React from 'react';
 import { useTranslation } from 'react-i18next';
 import DinamicForm from '../DinamicForm';
 import { PersonEntityType, SpontaneousFormField } from '../../../../generated/data-contracts';
 import StaticFormSection from '../DebtorSection';
 import Controls from '../Controls';
 import { useFormikContext } from 'formik';
+import { BuildFormSchema, CustomFormValues } from './config';
+import * as z from 'zod';
 
 function isEmpty(obj) {
   for (const prop in obj) {
@@ -25,16 +27,26 @@ interface CustomFormProps {
 
 const CustomForm = (props: CustomFormProps) => {
   const { fields, amountFieldName, hasFlagAnonymousFiscalCode = false } = props;
-  const formikRef = useRef(null);
   const { t } = useTranslation();
-  const { validateForm, submitForm } = useFormikContext();
+  const { values, validateForm, submitForm, setErrors } = useFormikContext();
+
+  const customFormValuesSchema = BuildFormSchema(fields);
+
+  const validate = (values: CustomFormValues) => {
+    const errors: Record<string | number, string> = {};
+    const result = customFormValuesSchema.safeParse(values);
+    if (!result.success) {
+      result.error.issues.forEach((issue: z.ZodIssue) => (errors[issue.path[0]] = issue.message));
+    }
+    return errors;
+  };
 
   const shouldContinue = async () => {
     await submitForm();
     const globalFormErrors = await validateForm();
-    await formikRef.current?.submitForm();
-    const localFormErrors = await formikRef.current?.validateForm();
-    return isEmpty(globalFormErrors || {}) && isEmpty(localFormErrors || {});
+    const customFormErrors = validate(values);
+    setErrors({ ...globalFormErrors, ...customFormErrors });
+    return isEmpty(globalFormErrors || {}) && isEmpty(customFormErrors || {});
   };
 
   return (
@@ -48,11 +60,7 @@ const CustomForm = (props: CustomFormProps) => {
               allowedEntityType={props.allowedEntityType}
               hasFlagAnonymousFiscalCode={hasFlagAnonymousFiscalCode}
             />
-            <DinamicForm
-              fieldBeans={fields}
-              campoTotaleInclusoInXSD={amountFieldName}
-              formikRef={formikRef}
-            />
+            <DinamicForm fieldBeans={fields} amountFieldName={amountFieldName} />
           </Stack>
         </Stack>
       </Card>
