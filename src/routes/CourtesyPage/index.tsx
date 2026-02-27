@@ -52,43 +52,49 @@ export const CourtesyPage = () => {
     code === OUTCOMES['pagamento-non-riuscito'] || code === OUTCOMES['pagamento-annullato'];
 
   return (
-    <>
-      <Container maxWidth="sm">
-        <Box textAlign="center" mt={10} mb={10}>
-          <Box my={3}>
-            <ErrorIconComponent code={code} />
-          </Box>
-          <Typography variant="h4" gutterBottom data-testid="courtesyPage.title">
-            {t(`courtesyPage.${code}.title`, {
-              defaultValue: t('courtesyPage.default.title')
-            })}
-          </Typography>
-          <Typography variant="body1" paragraph data-testid="courtesyPage.body">
-            {t(`courtesyPage.${code}.body`, {
-              defaultValue: t('courtesyPage.default.body')
-            })}
-          </Typography>
-
-          {hasCustomActions ? (
-            <CourtesyPageActions code={code} />
-          ) : (
-            /* v8 ignore next 12 */
-            i18next.exists(`courtesyPage.${code}.cta`) && (
-              <Button
-                component={Link}
-                to={ROUTES.LOGIN}
-                variant="contained"
-                size="large"
-                color="primary"
-                data-testid="courtesyPage.cta">
-                {t(`courtesyPage.${code}.cta`, {
-                  defaultValue: t('courtesyPage.default.cta')
-                })}
-              </Button>
-            )
-          )}
+    <Container
+      maxWidth="sm"
+      id="courtesyPage"
+      sx={{
+        display: 'flex',
+        alignItems: 'center',
+        minHeight: '70vh',
+        justifyContent: 'center',
+        paddingBottom: 15
+      }}>
+      <Box textAlign="center" mt={10} mb={10}>
+        <Box my={3}>
+          <ErrorIconComponent code={code} />
         </Box>
-      </Container>
-    </>
+        <Typography variant="h4" gutterBottom data-testid="courtesyPage.title">
+          {t(`courtesyPage.${code}.title`, {
+            defaultValue: t('courtesyPage.default.title')
+          })}
+        </Typography>
+        <Typography variant="body1" paragraph data-testid="courtesyPage.body">
+          {t(`courtesyPage.${code}.body`, {
+            defaultValue: t('courtesyPage.default.body')
+          })}
+        </Typography>
+
+        {hasCustomActions ? (
+          <CourtesyPageActions code={code} />
+        ) : (
+          i18next.exists(`courtesyPage.${code}.cta`) && (
+            <Button
+              component={Link}
+              to={ROUTES.LOGIN}
+              variant="contained"
+              size="large"
+              color="primary"
+              data-testid="courtesyPage.cta">
+              {t(`courtesyPage.${code}.cta`, {
+                defaultValue: t('courtesyPage.default.cta')
+              })}
+            </Button>
+          )
+        )}
+      </Box>
+    </Container>
   );
 };

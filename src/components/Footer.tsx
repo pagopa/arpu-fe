@@ -25,6 +25,8 @@ export const Footer = () => {
   const { t } = useTranslation();
   useLanguage();
 
+  const { brokerInfo } = appStore.value;
+
   return (
     <Stack
       component="footer"
@@ -46,14 +48,16 @@ export const Footer = () => {
           <FooterLink href="#">{t('ui.footer.personalData')}</FooterLink>
         </Stack>
       </Stack>
-      <Stack>
-        <Divider />
-        <Stack alignItems="center" justifyContent="center" height={60}>
-          <Typography component="span" fontWeight={600} fontSize={14}>
-            {appStore.value.brokerInfo?.brokerName}
-          </Typography>
+      {brokerInfo?.brokerName ? (
+        <Stack>
+          <Divider />
+          <Stack alignItems="center" justifyContent="center" height={60}>
+            <Typography component="span" fontWeight={600} fontSize={14}>
+              {brokerInfo.brokerName}
+            </Typography>
+          </Stack>
         </Stack>
-      </Stack>
+      ) : null}
     </Stack>
   );
 };
