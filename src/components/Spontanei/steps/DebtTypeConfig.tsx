@@ -30,15 +30,15 @@ const DebtTypeConfig = () => {
 
   const { data } = isAnonymous
     ? utils.loaders.public.getPublicDebtPositionTypeOrgsWithSpontaneousDetail(
-        brokerId,
-        organizationId,
-        debtPositionTypeOrgId
-      )
+      brokerId,
+      organizationId,
+      debtPositionTypeOrgId
+    )
     : utils.loaders.getDebtPositionTypeOrgsWithSpontaneousDetail(
-        brokerId,
-        organizationId,
-        debtPositionTypeOrgId
-      );
+      brokerId,
+      organizationId,
+      debtPositionTypeOrgId
+    );
 
   const type = data?.formType;
 
@@ -50,7 +50,7 @@ const DebtTypeConfig = () => {
       context?.setFormType(type);
     }
     return () => context?.setFormType(null);
-  }, [type, context]);
+  }, []);
 
   const summaryFields = data?.formCustom?.structure.summaryFields || [];
 
@@ -61,7 +61,7 @@ const DebtTypeConfig = () => {
     if (summaryFields) {
       context?.setSummaryFields(summaryFields);
     }
-  }, [summaryFields, context]);
+  }, []);
 
   const hasFlagAnonymousFiscalCode = data?.flagAnonymousFiscalCode;
   const allowedEntityType = data?.allowedEntityType;

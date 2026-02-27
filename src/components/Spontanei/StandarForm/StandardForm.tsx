@@ -27,8 +27,6 @@ const StandardForm = ({
   useEffect(() => {
     if (fixedAmount !== undefined) {
       amountHelpers.setValue(fixedAmount);
-    } else {
-      amountHelpers.setValue(0);
     }
   }, [fixedAmount]);
 
@@ -73,6 +71,10 @@ const StandardForm = ({
                   type="number"
                   disabled={fixedAmount !== undefined}
                   {...amount}
+                  onChange={(e) => {
+                    const value = Number(e.target.value);
+                    amountHelpers.setValue(value * 100);
+                  }}
                   value={amount.value / 100}
                   error={amountMeta.touched && Boolean(amountMeta.error)}
                   helperText={amountMeta.touched && amountMeta.error}

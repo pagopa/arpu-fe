@@ -13,7 +13,7 @@ import SINGLESELECT from './FieldBeans/SINGLESELECT';
 import MULTISELECT from './FieldBeans/MULTISELECT';
 import DATEPICKER from './FieldBeans/DATE';
 import TEXT from './FieldBeans/TEXT';
-import CURRENCYLABEL from './FieldBeans/CURRENCYLABEL';
+import CURRENCY_LABEL from './FieldBeans/CURRENCY_LABEL';
 import MULTIFIELD from './FieldBeans/MULTIFIELD';
 import NONE from './FieldBeans/NONE';
 import TAB from './FieldBeans/TAB';
@@ -196,7 +196,7 @@ export const BuildInput = (
       return <CURRENCY {...element} amountFieldName={amountFieldName} />;
     // readonly amount
     case RenderType.CURRENCY_LABEL:
-      return <CURRENCYLABEL {...element} amountFieldName={amountFieldName} />;
+      return <CURRENCY_LABEL {...element} amountFieldName={amountFieldName} />;
     // dynamic readonly amount (amount that changes based on other fields and an API call)
     case RenderType.DYNAMIC_AMOUNT_LABEL:
       return <DYNAMIC_AMOUNTLABEL {...element} amountFieldName={amountFieldName} />;
