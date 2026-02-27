@@ -217,7 +217,11 @@ const PaymentSummary = WithSummaryFieldsOrHidden((props: WithSummaryFieldsProps)
   const { t } = useTranslation();
   const [amount] = useField<PaymentNoticeInfo['amount']>('amount');
   const [description] = useField<PaymentNoticeInfo['description']>('description');
+  const [debtType] = useField<PaymentNoticeInfo['debtType']>('debtType');
+  const context = useContext<FormContextType | null>(FormContext);
+  const causaleHasJoinTemplate = context?.causaleHasJoinTemplate;
 
+  const descriptionLabel = causaleHasJoinTemplate ? debtType.value?.description : description.value;
   const { summaryFields } = props;
 
   return (
@@ -228,7 +232,7 @@ const PaymentSummary = WithSummaryFieldsOrHidden((props: WithSummaryFieldsProps)
         {summaryFields?.includes(SummaryFields.DESCRIPTION) ? (
           <SummaryItem
             label={t('spontanei.form.steps.step4.payment.description')}
-            value={description.value}
+            value={descriptionLabel || ''}
             dataTestId="summary-payment-description"
           />
         ) : null}

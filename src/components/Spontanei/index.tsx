@@ -12,7 +12,6 @@ import { useTranslation } from 'react-i18next';
 import { Formik } from 'formik';
 import {
   DebtPositionTypeOrgsWithSpontaneousDTO,
-  FormTypeEnum,
   OrganizationsWithSpontaneousDTO,
   PersonEntityType,
   SpontaneousFormStructure
@@ -36,10 +35,8 @@ const Spontanei = () => {
   const [omitFirstStep, setOmitFirstStep] = React.useState(false);
   // Step state
   const [step, setStep] = React.useState(0);
-  // form type state
-  const [formType, setFormType] = React.useState<FormTypeEnum | null>(null);
-  // user description state
-  const [userDescription, setUserDescription] = React.useState<string | null>(null);
+  // causale has join template state
+  const [causaleHasJoinTemplate, setCausaleHasJoinTemplate] = React.useState(false);
   // summary fields state
   const [summaryFields, setSummaryFields] = React.useState<
     SpontaneousFormStructure['summaryFields']
@@ -73,14 +70,12 @@ const Spontanei = () => {
       setOmitFirstStep,
       step,
       setStep,
-      formType,
-      setFormType,
-      userDescription,
-      setUserDescription,
+      causaleHasJoinTemplate,
+      setCausaleHasJoinTemplate,
       summaryFields,
       setSummaryFields
     }),
-    [omitFirstStep, step, formType, userDescription, summaryFields]
+    [omitFirstStep, step, causaleHasJoinTemplate, summaryFields]
   );
 
   return (
