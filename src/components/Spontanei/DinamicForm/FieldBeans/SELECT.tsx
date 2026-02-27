@@ -1,47 +1,41 @@
 import React from 'react';
-import { FormControl } from '@mui/material';
-import { computedPROPS } from './withDinamicValues';
-import { Autocomplete, TextField } from '@mui/material';
 import { Option } from './withDinamicValues';
 import { useField } from 'formik';
+import { FormControl, FormHelperText, MenuItem } from '@mui/material';
+import { computedPROPS } from './withDinamicValues';
+import { Autocomplete } from '@pagopa/mui-italia';
 
-const SELECT = (props: computedPROPS & { multiple?: boolean }) => {
-  const { name, onBlur, htmlLabel, hasError, required, errorMessage, options = [] } = props;
-
-  const [fieldValue, , helpers] = useField<Option | null>(name);
-
-  const handleChange = (
-    _event: React.SyntheticEvent<Element, Event>,
-    option: Option | string | null
-  ) => {
-    if (!option || typeof option === 'string') {
-      helpers.setValue(null);
-    } else {
-      const selectedOption = options?.find((o) => o.value === option?.value) || null;
-      helpers.setValue(selectedOption);
-    }
-  };
+const SELECT = ({
+  onBlur,
+  name,
+  htmlLabel,
+  hasError,
+  required,
+  multiple,
+  errorMessage,
+  options = []
+}: computedPROPS & { multiple?: boolean }) => {
+  const [fieldValue, , helpers] = useField<Option | Option[] | undefined>(name);
 
   return (
-    <FormControl fullWidth error={hasError} required={required}>
+    <FormControl required={required} fullWidth>
       <Autocomplete
-        options={options}
-        onChange={handleChange}
-        onBlur={onBlur}
-        freeSolo
+        id={name}
+        required={required}
+        label={htmlLabel}
+        multiple={multiple}
+        noResultsText={errorMessage}
         value={fieldValue.value}
-        getOptionKey={(opt) => (opt as Option).value}
-        getOptionLabel={(org) => (org as Option).label}
-        renderInput={(params) => (
-          <TextField
-            {...params}
-            label={htmlLabel}
-            name={name}
-            error={hasError}
-            helperText={hasError && errorMessage}
-          />
+        options={options}
+        onChange={helpers.setValue}
+        onBlur={onBlur}
+        renderOption={(option, index) => (
+          <MenuItem key={option.value + index} value={option.value}>
+            {option.label}
+          </MenuItem>
         )}
       />
+      {hasError && <FormHelperText>{errorMessage}</FormHelperText>}
     </FormControl>
   );
 };
