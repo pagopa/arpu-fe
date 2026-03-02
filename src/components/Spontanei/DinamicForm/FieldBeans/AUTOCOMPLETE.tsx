@@ -20,9 +20,20 @@ const AUTOCOMPLETE = ({
   const { t } = useTranslation();
   const [fieldValue, , helpers] = useField<Option | Option[] | undefined>(name);
 
+  const handleChange = (option: Option | Option[]) => {
+    if (Array.isArray(option)) {
+      helpers.setValue(undefined);
+    } else {
+      const selectedOption = options?.find((o) => o.value === option?.value) || undefined;
+      helpers.setValue(selectedOption);
+    }
+  };
+
   return (
-    <FormControl required={required} fullWidth>
+    <FormControl fullWidth error={hasError} required={required} onBlur={onBlur}>
       <Autocomplete
+        error={hasError}
+        helperText={hasError ? errorMessage : ''}
         id={name}
         required={required}
         label={htmlLabel}
@@ -30,15 +41,13 @@ const AUTOCOMPLETE = ({
         noResultsText={t('errors.empty.search')}
         value={fieldValue.value}
         options={options}
-        onChange={helpers.setValue}
-        onBlur={onBlur}
+        onChange={handleChange}
         renderOption={(option, index) => (
           <MenuItem key={option.value + index} value={option.value}>
             {option.label}
           </MenuItem>
         )}
       />
-      {hasError && <FormHelperText>{errorMessage}</FormHelperText>}
     </FormControl>
   );
 };
