@@ -60,7 +60,7 @@ const getBrokerCodeFromUrl = (): string | null => {
     return getStorageItem(StorageItems.BROKERCODE);
   }
 
-  return segments[2] || null;
+  return segments[2]?.toLowerCase() || null;
 };
 
 export default {

@@ -78,34 +78,66 @@ describe('storage', () => {
     Object.defineProperty(window, 'location', { value: originalLocation });
   });
 
-  it('app.setBrokerId and getBrokerId should work correctly', () => {
+  it('app.setBrokerId and getBrokerId should read from localStorage', () => {
     const setItemSpy = vi.spyOn(Storage.prototype, 'setItem');
     const getItemSpy = vi.spyOn(Storage.prototype, 'getItem');
 
-    const brokerId = '12345';
-    storage.app.setBrokerId(brokerId);
-    expect(setItemSpy).toHaveBeenCalledWith(storage.StorageItems.BROKERID, brokerId);
+    storage.app.setBrokerId(12345);
+    expect(setItemSpy).toHaveBeenCalledWith(storage.StorageItems.BROKERID, '12345');
 
-    // Mock window.location.pathname
-    const originalLocation = window.location;
-    Object.defineProperty(window, 'location', {
-      value: { ...originalLocation, pathname: '/somepath/67890' },
-      writable: true
-    });
-
-    // Case 1: brokerId from URL
-    expect(storage.app.getBrokerCode()).toBe('67890');
-
-    // Case 2: brokerId from storage when on auth-callback
-    window.location.pathname = '/something/auth-callback';
     getItemSpy.mockImplementation((key) => {
-      if (key === storage.StorageItems.TOKEN) return 'token';
-      if (key === storage.StorageItems.BROKERID) return brokerId;
+      if (key === storage.StorageItems.BROKERID) return '12345';
       return null;
     });
     expect(storage.app.getBrokerId()).toBe(12345);
 
+    getItemSpy.mockReturnValue(null);
+    expect(storage.app.getBrokerId()).toBeNull();
+  });
+
+  it('app.getBrokerCode should extract brokerCode from URL and normalize to lowercase', () => {
+    const originalLocation = window.location;
+
+    Object.defineProperty(window, 'location', {
+      value: { ...originalLocation, pathname: '/cittadini/CIE/dashboard' },
+      writable: true
+    });
+    expect(storage.app.getBrokerCode()).toBe('cie');
+
+    window.location.pathname = '/cittadini/RomaCentro/accesso';
+    expect(storage.app.getBrokerCode()).toBe('romacentro');
+
+    window.location.pathname = '/cittadini/cie/dashboard';
+    expect(storage.app.getBrokerCode()).toBe('cie');
+
     Object.defineProperty(window, 'location', { value: originalLocation });
+  });
+
+  it('app.getBrokerCode should fallback to localStorage on auth-callback page', () => {
+    const originalLocation = window.location;
+    const getItemSpy = vi.spyOn(Storage.prototype, 'getItem');
+
+    Object.defineProperty(window, 'location', {
+      value: { ...originalLocation, pathname: '/cittadini/auth-callback' },
+      writable: true
+    });
+
+    getItemSpy.mockImplementation((key) => {
+      if (key === storage.StorageItems.BROKERCODE) return 'cie';
+      return null;
+    });
+
+    expect(storage.app.getBrokerCode()).toBe('cie');
+    expect(getItemSpy).toHaveBeenCalledWith(storage.StorageItems.BROKERCODE);
+
+    Object.defineProperty(window, 'location', { value: originalLocation });
+  });
+
+  it('app.setBrokerCode should persist to localStorage', () => {
+    const setItemSpy = vi.spyOn(Storage.prototype, 'setItem');
+
+    storage.app.setBrokerCode('cie');
+    expect(setItemSpy).toHaveBeenCalledWith(storage.StorageItems.BROKERCODE, 'cie');
   });
 
   it('should handle storage errors gracefully', () => {
