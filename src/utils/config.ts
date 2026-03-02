@@ -66,6 +66,8 @@ type Config = {
   tokenHeaderExcludePaths: string[];
   version: string;
   brokerId: string | null;
+  /** The broker's external identifier (human-readable), used in URLs */
+  brokerCode: string | null;
   showNotices: boolean;
   paramsSerializer: CustomParamsSerializer;
 };
@@ -110,6 +112,8 @@ const config: Config = {
   /** Running version, usually valued by pipelines */
   version: VERSION,
   brokerId: storage.app.getBrokerId(),
+  /** The broker code is extracted from the URL path, with localStorage as fallback (see storage.ts) */
+  brokerCode: storage.app.getBrokerCode(),
   showNotices: PARSED_SHOW_NOTICES,
   /** A global custom parameters serializer:
    * - null value and empty string parameters are strippef off.

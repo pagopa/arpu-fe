@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import React from 'react';
 import { screen, fireEvent, waitFor } from '@testing-library/react';
 import { CourtesyPageActions } from './CourtesyPageActions';
@@ -35,7 +36,9 @@ vi.mock('utils/storage', async (importOriginal) => {
     default: {
       ...actual.default,
       app: {
-        getBrokerId: vi.fn(() => 'broker-123')
+        ...(actual.default as any).app,
+        getBrokerId: vi.fn(() => 'broker-123'),
+        getBrokerCode: vi.fn(() => 'BROKER-CODE-123')
       }
     }
   };

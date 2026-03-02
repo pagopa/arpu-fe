@@ -94,7 +94,7 @@ describe('storage', () => {
     });
 
     // Case 1: brokerId from URL
-    expect(storage.app.getBrokerId()).toBe(67890);
+    expect(storage.app.getBrokerCode()).toBe('67890');
 
     // Case 2: brokerId from storage when on auth-callback
     window.location.pathname = '/something/auth-callback';
