@@ -1,5 +1,5 @@
-import React from 'react';
-import { FormControl, FormHelperText, MenuItem } from '@mui/material';
+import React, { useMemo } from 'react';
+import { FormControl } from '@mui/material';
 import { Autocomplete } from '@pagopa/mui-italia';
 import { useTranslation } from 'react-i18next';
 import { useField } from 'formik';
@@ -18,16 +18,13 @@ const AUTOCOMPLETE = ({
   options = []
 }: computedPROPS & { multiple?: boolean }) => {
   const { t } = useTranslation();
-  const [fieldValue, , helpers] = useField<Option | Option[] | undefined>(name);
+  const [field, , helpers] = useField<Option | Option[] | undefined>(name);
 
-  const handleChange = (option: Option | Option[]) => {
-    if (Array.isArray(option)) {
-      helpers.setValue(undefined);
-    } else {
-      const selectedOption = options?.find((o) => o.value === option?.value) || undefined;
-      helpers.setValue(selectedOption);
-    }
-  };
+  const inputValue = useMemo(() => {
+    return Array.isArray(field.value)
+      ? field.value.map((o) => o.label).join(', ')
+      : field.value?.label;
+  }, [field.value]);
 
   return (
     <FormControl fullWidth error={hasError} required={required} onBlur={onBlur}>
@@ -39,14 +36,10 @@ const AUTOCOMPLETE = ({
         label={htmlLabel}
         multiple={multiple}
         noResultsText={t('errors.empty.search')}
-        value={fieldValue.value}
+        inputValue={inputValue}
+        value={field.value}
         options={options}
-        onChange={handleChange}
-        renderOption={(option, index) => (
-          <MenuItem key={option.value + index} value={option.value}>
-            {option.label}
-          </MenuItem>
-        )}
+        onChange={helpers.setValue}
       />
     </FormControl>
   );
