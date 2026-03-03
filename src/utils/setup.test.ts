@@ -34,7 +34,11 @@ describe('setup', () => {
   });
 
   it('executes setup routine correctly returning true', async () => {
-    const mockData = { brokerFiscalCode: '', brokerName: '', config: { useCart: true, translation: {} } };
+    const mockData = {
+      brokerFiscalCode: '',
+      brokerName: '',
+      config: { useCart: true, translation: {} }
+    };
     vi.spyOn(utils.apiClient.public, 'getPublicBrokerInfo').mockResolvedValue({
       data: mockData
     } as AxiosResponse);
