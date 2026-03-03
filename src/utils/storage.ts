@@ -20,7 +20,8 @@ const getSessionItem = (key: SessionItems) => sessionStorage.getItem(key);
 
 export enum StorageItems {
   TOKEN = 'ARPU-accessToken',
-  BROKERID = 'ARPU-brokerId'
+  BROKERID = 'ARPU-brokerId',
+  BROKERCODE = 'ARPU-brokerCode'
 }
 
 /** set a session item and return his value. If not possible returs null */
@@ -51,6 +52,17 @@ const isAnonymous = () => {
   return !hasToken && isOnPublicRoute;
 };
 
+const getBrokerCodeFromUrl = (): string | null => {
+  const segments = window.location.pathname.split('/');
+  const isAuthCallback = segments[2] === 'auth-callback';
+
+  if (isAuthCallback) {
+    return getStorageItem(StorageItems.BROKERCODE);
+  }
+
+  return segments[2]?.toLowerCase() || null;
+};
+
 export default {
   SessionItems,
   StorageItems,
@@ -78,10 +90,11 @@ export default {
   app: {
     setBrokerId: (brokerId: string | number) =>
       setStorageItem(StorageItems.BROKERID, brokerId.toString()),
-    /** this check is necessary because we land on the auth-callback page without a brokerId in the URL */
-    getBrokerId: () =>
-      window.location.pathname.split('/')[2] === 'auth-callback'
-        ? Number(getStorageItem(StorageItems.BROKERID))
-        : Number(window.location.pathname.split('/')[2])
+    getBrokerId: () => {
+      const stored = getStorageItem(StorageItems.BROKERID);
+      return stored ? Number(stored) : null;
+    },
+    setBrokerCode: (brokerCode: string) => setStorageItem(StorageItems.BROKERCODE, brokerCode),
+    getBrokerCode: () => getBrokerCodeFromUrl()
   }
 };

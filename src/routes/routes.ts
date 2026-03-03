@@ -1,6 +1,6 @@
 import config from 'utils/config';
 
-const rootPrefix = `${config.deployPath}/${config.brokerId}`;
+const rootPrefix = `${config.deployPath}/${config.brokerCode}`;
 
 export const ExternalRoutes = {
   PAYMENT_LINKS: `https://www.pagopa.gov.it/it/cittadini/dove-pagare/`

@@ -6,6 +6,13 @@ import { setAppReady, setBrokerInfo } from 'store/appStore';
 import { OUTCOMES, ROUTES } from 'routes/routes';
 
 vi.mock('./brokerconfig', () => ({ parseBrokerConfig: vi.fn() }));
+
+vi.mock('./config', () => ({
+  default: {
+    brokerCode: 'BROKER_CODE'
+  }
+}));
+
 vi.mock('store/appStore', () => ({ setAppReady: vi.fn(), setBrokerInfo: vi.fn() }));
 
 const mockReplace = vi.fn();
@@ -51,7 +58,8 @@ describe('setup', () => {
 
     await appSetup();
 
-    expect(setBrokerInfo).toHaveBeenCalledWith(mockData);
+    // setup.tsx persists both broker info and brokerCode
+    expect(setBrokerInfo).toHaveBeenCalledWith(mockData, 'BROKER_CODE');
   });
 
   it('always calls setAppReady in the finally block on success', async () => {
