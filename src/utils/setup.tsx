@@ -1,5 +1,5 @@
 import utils from '.';
-import { parseBrokerConfig } from './brokerconfig';
+import { applyBrokerTranslations, parseBrokerConfig } from './brokerconfig';
 import config from './config';
 import { OUTCOMES, ROUTES } from 'routes/routes';
 import { setAppReady, setBrokerInfo } from 'store/appStore';
@@ -20,12 +20,14 @@ const stateSetup = async () => {
   // Call the broker info API using the externalId (brokerCode) query param
   const { data } = await utils.apiClient.public.getPublicBrokerInfo({ externalId: brokerCode });
 
-  // Parse and validate the broker config, then apply translations if present.
-  // If config is missing or invalid, i18next keeps the local defaults.
-  parseBrokerConfig(data?.config);
+  // Parse and validate the broker config
+  const brokerConfig = parseBrokerConfig(data?.config);
+
+  // apply translations if present
+  applyBrokerTranslations(brokerConfig.translation);
 
   // Persist both brokerCode and the resolved brokerId
-  setBrokerInfo(data, brokerCode);
+  setBrokerInfo({ ...data, config: brokerConfig }, brokerCode);
 };
 
 const setupOrError = async () => {
