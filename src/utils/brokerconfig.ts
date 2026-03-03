@@ -13,14 +13,14 @@ const ResourceSchema = z.record(z.string(), ResourceLanguageSchema);
 // Zod schema for the broker config string.
 const BrokerConfigSchema = z.object({
   translation: ResourceSchema,
-  useCart: z.boolean().optional(),
+  useCart: z.boolean().optional()
 });
 
 export type BrokerConfig = z.infer<typeof BrokerConfigSchema>;
 
 export const defaultBrokerConfig: BrokerConfig = {
   translation: {},
-  useCart: true,
+  useCart: true
 };
 
 /**

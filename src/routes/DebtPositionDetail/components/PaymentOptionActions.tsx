@@ -13,6 +13,7 @@ import { usePostCarts } from 'hooks/usePostCarts';
 import { useNavigate } from 'react-router-dom';
 import { ROUTES } from 'routes/routes';
 import { useUserEmail } from 'hooks/useUserEmail';
+import appStore from 'store/appStore';
 
 interface paymentOptionsActionProps {
   selectPaymentOptionType: PaymentOptionType;
@@ -127,7 +128,8 @@ const PaymentOptionsActions = (props: paymentOptionsActionProps) => {
 
   return (
     <Stack direction="row" spacing={2} marginTop={2} justifyContent="flex-end">
-      {selectPaymentOptionType === PaymentOptionType.SINGLE_INSTALLMENT &&
+      {appStore.value.brokerInfo?.config?.useCart &&
+        selectPaymentOptionType === PaymentOptionType.SINGLE_INSTALLMENT &&
         !isItemInCart(singleInstallmentItemId) && (
           <Button
             startIcon={<ShoppingCartIcon />}

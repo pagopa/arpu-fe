@@ -4,12 +4,12 @@ import storage from 'utils/storage';
 import { BrokerConfig, defaultBrokerConfig } from 'utils/brokerconfig';
 
 interface ParsedConfig extends Omit<BrokerInfoDTO, 'config'> {
-  config?: BrokerConfig
+  config?: BrokerConfig;
 }
 
 type AppStore = {
   isReady: boolean;
-  brokerInfo: ParsedConfig | null
+  brokerInfo: ParsedConfig | null;
   /** The broker's external identifier (human-readable), used in URLs */
   brokerCode: string | null;
 };
@@ -38,8 +38,8 @@ export function setBrokerInfo(parsedConfig: ParsedConfig, brokerCode: string) {
       config: {
         ...appStore.value.brokerInfo?.config,
         translation: parsedConfig.config?.translation ?? defaultBrokerConfig.translation,
-        useCart: parsedConfig.config?.useCart ?? defaultBrokerConfig.useCart,
-      },
+        useCart: parsedConfig.config?.useCart ?? defaultBrokerConfig.useCart
+      }
     },
     brokerCode
   };

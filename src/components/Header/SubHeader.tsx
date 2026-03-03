@@ -38,7 +38,6 @@ const Cart = () => {
   );
 };
 
-
 export const SubHeader = ({ product }: { product: ReactNode }) => {
   const { spacing } = useTheme();
   const useCart = appStore.value.brokerInfo?.config?.useCart;
