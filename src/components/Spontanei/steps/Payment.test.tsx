@@ -16,6 +16,7 @@ import * as CartStore from 'store/CartStore';
 import notify from 'utils/notify';
 import utils from 'utils';
 import { Mock } from 'vitest';
+import { setBrokerInfo } from 'store/appStore';
 
 // Mock sub-components
 vi.mock('../Controls', () => ({
@@ -165,6 +166,19 @@ describe('Payment Component', () => {
   afterEach(() => {
     cleanup();
   });
+
+  setBrokerInfo(
+    {
+      brokerId: 1,
+      brokerName: 'TestBrokerName',
+      brokerFiscalCode: 'TestBrokerTaxCode',
+      config: {
+        translation: {},
+        useCart: true
+      }
+    },
+    'test'
+  );
 
   it('renders correctly', () => {
     renderPayment();

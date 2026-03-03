@@ -3,6 +3,7 @@ import { describe, it, expect } from 'vitest';
 import { render, screen, fireEvent } from '@testing-library/react';
 import { SubHeader } from './SubHeader';
 import { cartState, toggleCartDrawer } from '../../store/CartStore';
+import { setBrokerInfo } from 'store/appStore';
 
 vi.mock(import('store/CartStore'), async (importOriginal) => {
   const actual = await importOriginal();
@@ -32,6 +33,19 @@ const customProduct = (
 );
 
 describe('SubHeader', () => {
+  setBrokerInfo(
+    {
+      brokerId: 1,
+      brokerName: 'TestBrokerName',
+      brokerFiscalCode: 'TestBrokerTaxCode',
+      config: {
+        translation: {},
+        useCart: true
+      }
+    },
+    'test'
+  );
+
   it('calls toggleCartDrawer when the cart button is clicked', () => {
     render(<SubHeader product={customProduct} />);
     const cartButton = screen.getByTestId('ShoppingCartIcon');
