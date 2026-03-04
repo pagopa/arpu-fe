@@ -18,6 +18,8 @@ import { PaymentNoticeInfo } from '..';
 import StepWrapper from './StepWrapper';
 import FormContext, { FormContextType } from '../FormContext';
 
+const LIMIT_DEBT_TYPE = 10;
+
 /**
  * This component is responsible for selecting the debt type. As second step of Spontanei form.
  * @returns JSX.Element
@@ -45,22 +47,35 @@ const DebtTypeSelect = () => {
     _event: React.SyntheticEvent<Element, Event> | null,
     value: string | DebtPositionTypeOrgsWithSpontaneousDTO | null
   ) => {
-    if (value && typeof value !== 'string') {
+    if (!value) {
+      debtTypeHelpers.setValue(null);
+      return;
+    }
+    // if value isn't a string, it means it's an option from the autocomplete
+    if (typeof value !== 'string') {
       debtTypeHelpers.setValue(value);
     } else {
-      debtTypeHelpers.setValue(null);
+      // if value is a string, it means it's an option from the radio group
+      const debtPositionTypeOrgId: DebtPositionTypeOrgsWithSpontaneousDTO['debtPositionTypeOrgId'] = parseInt(value);
+      const selectedDebtType = debtTypeOptions.find((debtTypeOption) => debtTypeOption.debtPositionTypeOrgId === debtPositionTypeOrgId);
+      if (selectedDebtType) {
+        debtTypeHelpers.setValue(selectedDebtType);
+      } else {
+        // if value is not found, set it to null  
+        debtTypeHelpers.setValue(null);
+      }
     }
   };
 
   const mostUsedDebtTypesQuery = isAnonymous
     ? utils.loaders.public.getPublicMostUsedSpontaneousDebtPositionTypeOrgsForCurrentYear(
-        brokerId,
-        organizationId
-      )
+      brokerId,
+      organizationId
+    )
     : utils.loaders.getMostUsedSpontaneousDebtPositionTypeOrgsForCurrentYear(
-        brokerId,
-        organizationId
-      );
+      brokerId,
+      organizationId
+    );
 
   const onChange = async (debtType: DebtPositionTypeOrgsWithSpontaneousDTO) => {
     await formik.validateForm();
@@ -80,6 +95,10 @@ const DebtTypeSelect = () => {
 
   const errorMessage = formik.touched.debtType ? formik.errors.debtType : '';
 
+  const debtTypeOptionsLength = DebtPositionTypeOrgsWithSpontaneous?.length || 0;
+
+  const shouldShowMostUsedDebtTypes = debtTypeOptionsLength > LIMIT_DEBT_TYPE;
+
   return (
     <>
       <StepWrapper isPending={mostUsedDebtTypesQuery.isPending}>
@@ -90,27 +109,45 @@ const DebtTypeSelect = () => {
           <Typography data-testid="spontanei-step2-description">
             {t('spontanei.form.steps.step2.description')}
           </Typography>
-          <Autocomplete
-            data-testid="spontanei-step2-search-input"
-            onChange={handleDebtTypeChange}
-            freeSolo
-            options={debtTypeOptions}
-            value={debtType.value}
-            getOptionKey={(option) =>
-              (option as DebtPositionTypeOrgsWithSpontaneousDTO).debtPositionTypeOrgId
-            }
-            getOptionLabel={(option) =>
-              (option as DebtPositionTypeOrgsWithSpontaneousDTO).description
-            }
-            renderInput={(params) => (
-              <TextField
-                {...params}
-                label={t('spontanei.form.steps.step2.search')}
-                error={!!errorMessage}
-              />
-            )}
-          />
-          {mostUsedDebtTypesQuery.data && mostUsedDebtTypesQuery.data.length > 0 && (
+          {
+            !shouldShowMostUsedDebtTypes ?
+              (
+                <FormControl sx={{ mt: 2 }}>
+                  <RadioGroup
+                    aria-labelledby="spontanei-step2-radioGroup"
+                    name="controlled-radio-buttons-group"
+                    value={debtType.value?.debtPositionTypeOrgId}
+                    onChange={handleDebtTypeChange}
+                  >
+                    {
+                      debtTypeOptions.map((debtTypeOption) => (
+                        <FormControlLabel value={debtTypeOption.debtPositionTypeOrgId} control={<Radio />} label={debtTypeOption.description} key={debtTypeOption.debtPositionTypeOrgId} />
+                      ))
+                    }
+                  </RadioGroup>
+                </FormControl>
+              ) : (<Autocomplete
+                data-testid="spontanei-step2-search-input"
+                onChange={handleDebtTypeChange}
+                freeSolo
+                options={debtTypeOptions}
+                value={debtType.value}
+                getOptionKey={(option) =>
+                  (option as DebtPositionTypeOrgsWithSpontaneousDTO).debtPositionTypeOrgId
+                }
+                getOptionLabel={(option) =>
+                  (option as DebtPositionTypeOrgsWithSpontaneousDTO).description
+                }
+                renderInput={(params) => (
+                  <TextField
+                    {...params}
+                    label={t('spontanei.form.steps.step2.search')}
+                    error={!!errorMessage}
+                  />
+                )}
+              />)
+          }
+          {shouldShowMostUsedDebtTypes && mostUsedDebtTypesQuery.data && mostUsedDebtTypesQuery.data.length > 0 && (
             <>
               <Typography variant="subtitle1" data-testid="spontanei-step2-mostUsedDebtTypes">
                 {t('spontanei.form.steps.step2.mostUsedDebtTypes')}
