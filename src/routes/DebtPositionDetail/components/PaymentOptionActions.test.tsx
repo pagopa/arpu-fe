@@ -8,8 +8,22 @@ import {
 } from './__test__/mocks';
 import * as cartActions from 'store/CartStore';
 import * as installementsDrawerActions from 'store/installmentsDrawer';
+import { setBrokerInfo } from 'store/appStore';
 
 describe('PaymentOptionActions: single installment', () => {
+  setBrokerInfo(
+    {
+      brokerId: 1,
+      brokerName: 'TestBrokerName',
+      brokerFiscalCode: 'TestBrokerTaxCode',
+      config: {
+        translation: {},
+        useCart: true
+      }
+    },
+    'test'
+  );
+
   it('renders elements as expected', () => {
     render(
       <PaymentOptionsActions

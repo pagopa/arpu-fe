@@ -22,6 +22,7 @@ import { addItem, toggleCartDrawer, setCartEmail } from 'store/CartStore';
 import utils from 'utils';
 import { CartItem } from 'models/Cart';
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
+import appStore from 'store/appStore';
 
 const InstallmentsDrawer = () => {
   const [addedInstallments, setAddedInstallments] = React.useState<InstallmentDrawerItem[]>([]);
@@ -237,14 +238,15 @@ const InstallmentsDrawer = () => {
 
           {/* Action Button */}
           <Stack justifyContent="center" spacing={2}>
-            <Button
-              startIcon={<ShoppingCartIcon />}
-              variant="outlined"
-              size="large"
-              onClick={addToCart}>
-              {t('app.installmentsDrawer.actions.add', { count: addedInstallments.length })}
-            </Button>
-
+            {appStore.value.brokerInfo?.config?.useCart && (
+              <Button
+                startIcon={<ShoppingCartIcon />}
+                variant="outlined"
+                size="large"
+                onClick={addToCart}>
+                {t('app.installmentsDrawer.actions.add', { count: addedInstallments.length })}
+              </Button>
+            )}
             <Button
               variant="contained"
               size="large"

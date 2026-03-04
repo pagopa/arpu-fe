@@ -16,6 +16,7 @@ import { ROUTES } from 'routes/routes';
 import { CartItem } from 'models/Cart';
 import FileDownloadIcon from '@mui/icons-material/FileDownload';
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
+import appStore from 'store/appStore';
 
 /**
  * This component is responsible for rendering the payment step of the form.
@@ -152,13 +153,15 @@ const Payment = () => {
                 </Typography>
               </Stack>
               <Stack direction="row" spacing={2}>
-                <Button
-                  variant="text"
-                  onClick={addToCart}
-                  startIcon={<ShoppingCartIcon />}
-                  data-testid="add-to-cart-button">
-                  {t('spontanei.form.steps.step5.pay.addItemToCartButton')}
-                </Button>
+                {appStore.value.brokerInfo?.config?.useCart && (
+                  <Button
+                    variant="text"
+                    onClick={addToCart}
+                    startIcon={<ShoppingCartIcon />}
+                    data-testid="add-to-cart-button">
+                    {t('spontanei.form.steps.step5.pay.addItemToCartButton')}
+                  </Button>
+                )}
                 <Button variant="contained" onClick={pay} data-testid="pay-button">
                   {t('spontanei.form.steps.step5.pay.payButton')}
                 </Button>
