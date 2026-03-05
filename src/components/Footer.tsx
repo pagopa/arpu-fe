@@ -5,6 +5,8 @@ import { Divider, Link, Stack, Typography } from '@mui/material';
 import { ROUTES } from 'routes/routes';
 import { ProductLogo } from './ProductLogo';
 import appStore from 'store/appStore';
+import { LangSwitch } from '@pagopa/mui-italia';
+import { languages } from 'translations/languages';
 
 const LINK_A11Y = 'https://www.w3.org/WAI/standards-guidelines/wai-aria/';
 
@@ -23,7 +25,7 @@ const FooterLink = ({ href, children }: { href: string; children: string }) => {
 
 export const Footer = () => {
   const { t } = useTranslation();
-  useLanguage();
+  const { language, changeLanguage } = useLanguage();
 
   const { brokerInfo } = appStore.value;
 
@@ -41,11 +43,18 @@ export const Footer = () => {
         padding={3}
         minHeight={50}>
         <ProductLogo />
-        <Stack direction="row" gap={2} alignItems="center" component="nav">
-          <FooterLink href={ROUTES.PRIVACY_POLICY}>{t('ui.footer.privacy')}</FooterLink>
-          <FooterLink href={ROUTES.TOS}>{t('ui.footer.termsAndConditions')}</FooterLink>
-          <FooterLink href={LINK_A11Y}>{t('ui.footer.a11y')}</FooterLink>
-          <FooterLink href="#">{t('ui.footer.personalData')}</FooterLink>
+        <Stack alignItems="flex-end">
+          <Stack direction="row" gap={2} alignItems="center" component="nav">
+            <FooterLink href={ROUTES.PRIVACY_POLICY}>{t('ui.footer.privacy')}</FooterLink>
+            <FooterLink href={ROUTES.TOS}>{t('ui.footer.termsAndConditions')}</FooterLink>
+            <FooterLink href={LINK_A11Y}>{t('ui.footer.a11y')}</FooterLink>
+            <FooterLink href="#">{t('ui.footer.personalData')}</FooterLink>
+            <LangSwitch
+              currentLangCode={language}
+              onLanguageChanged={changeLanguage}
+              languages={languages}
+            />
+          </Stack>
         </Stack>
       </Stack>
       {brokerInfo?.brokerName ? (
