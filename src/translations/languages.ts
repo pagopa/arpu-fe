@@ -1,39 +1,18 @@
 import { Languages } from '@pagopa/mui-italia';
 
+const langMap = {
+  it: 'italiano',
+  en: 'english',
+  fr: 'français',
+  sl: 'slovenski',
+  de: 'deutsch'
+};
+
+// Done this way to respect switcher component props
 export const languages: Languages = {
-  it: {
-    it: 'Italiano',
-    en: 'Inglese',
-    fr: 'Francese',
-    sl: 'Sloveno',
-    de: 'Tedesco'
-  },
-  en: {
-    it: 'Italian',
-    en: 'English',
-    fr: 'French',
-    sl: 'Slovenian',
-    de: 'German'
-  },
-  fr: {
-    it: 'Italien',
-    en: 'Anglais',
-    fr: 'Francais',
-    sl: 'slovène',
-    de: 'Allemand'
-  },
-  sl: {
-    it: 'italijanski',
-    en: 'engleski',
-    fr: 'francoski',
-    sl: 'slovenski',
-    de: 'nemščina'
-  },
-  de: {
-    it: 'italiano',
-    en: 'englisch',
-    fr: 'französisch',
-    sl: 'slovenisch',
-    de: 'deutsch'
-  }
+  it: langMap,
+  en: langMap,
+  fr: langMap,
+  sl: langMap,
+  de: langMap
 };
