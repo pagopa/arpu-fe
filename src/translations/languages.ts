@@ -4,16 +4,36 @@ export const languages: Languages = {
   it: {
     it: 'Italiano',
     en: 'Inglese',
-    fr: 'Francese'
+    fr: 'Francese',
+    sl: 'Sloveno',
+    de: 'Tedesco'
   },
   en: {
     it: 'Italian',
     en: 'English',
-    fr: 'French'
+    fr: 'French',
+    sl: 'Slovenian',
+    de: 'German'
   },
   fr: {
     it: 'Italien',
     en: 'Anglais',
-    fr: 'Francais'
+    fr: 'Francais',
+    sl: 'slovène',
+    de: 'Allemand'
+  },
+  sl: {
+    it: 'italijanski',
+    en: 'engleski',
+    fr: 'francoski',
+    sl: 'slovenski',
+    de: 'nemščina'
+  },
+  de: {
+    it: 'italiano',
+    en: 'englisch',
+    fr: 'französisch',
+    sl: 'slovenisch',
+    de: 'deutsch'
   }
 };
