@@ -5,6 +5,7 @@ import * as zodSchema from '../../generated/zod-schema';
 import { DebtPositionRequestDTO, InstallmentStatus } from '../../generated/data-contracts';
 import { FilteredRequest } from 'models/Filters';
 import { STATE } from 'store/types';
+import { getResourceUrl, ResourceType } from './resources';
 
 const parseAndLog = <T>(schema: ZodSchema, data: T, throwError: boolean = true): void | never => {
   const result = schema.safeParse(data);
@@ -475,6 +476,31 @@ const getPublicMostUsedSpontaneousDebtPositionTypeOrgsForCurrentYear = (
     staleTime: Infinity
   });
 
+/**
+ * Fetches legal resource content (ToS or PP) from a static URL.
+ * The URL is resolved via getResourceUrl by interpolating brokerCode, language and type.
+ *
+ * @param type - The resource type: 'tos' or 'pp'
+ * @param lang - The language code (defaults to 'it')
+ */
+const useResourceContent = (type: ResourceType, lang: string = 'it') =>
+  useQuery({
+    queryKey: ['resourceContent', type, lang],
+    queryFn: async () => {
+      const url = getResourceUrl(type, lang);
+      const response = await fetch(url);
+      if (!response.ok) throw new Error('HTTP error: ' + response.status);
+
+      const contentType = response.headers.get('content-type') || '';
+      if (contentType.includes('text/html')) {
+        throw new Error('Unexpected content-type: ' + contentType);
+      }
+
+      return response.text();
+    },
+    staleTime: Infinity
+  });
+
 export default {
   createSpontaneousDebtPosition,
   getDebtPositionTypeOrgsWithSpontaneous,
@@ -491,6 +517,7 @@ export default {
   getDebtPositionDetail,
   getDebtorReceipts,
   getMostUsedSpontaneousDebtPositionTypeOrgsForCurrentYear,
+  useResourceContent,
   public: {
     createPublicSpontaneousDebtPosition,
     getPublicDebtPositionTypeOrgsWithSpontaneous,

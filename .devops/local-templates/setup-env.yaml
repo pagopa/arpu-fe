@@ -44,6 +44,10 @@ parameters:
     type: string
     default: '1'
 
+  - name: 'resources_url'
+    type: string
+    default: ''
+
 steps:
 - bash: |
     chmod +x env.sh
@@ -59,6 +63,7 @@ steps:
       ARC_FE_DEPLOY_PATH=${{ parameters.deploy_path }} \
       ARC_FE_VERSION=${{ parameters.version }} \
       ARC_FE_SHOW_NOTICES=${{ parameters.show_notices }} \
+      ARC_FE_RESOURCES_URL=${{ parameters.resources_url }} \
       bash env.sh
 
   displayName: 'Populate environment file'
