@@ -12,15 +12,22 @@ const ResourceSchema = z.record(z.string(), ResourceLanguageSchema);
 
 // Zod schema for the broker config string.
 const BrokerConfigSchema = z.object({
-  translation: ResourceSchema
+  translation: ResourceSchema,
+  useCart: z.boolean().optional()
 });
 
 export type BrokerConfig = z.infer<typeof BrokerConfigSchema>;
 
+export const defaultBrokerConfig: BrokerConfig = {
+  translation: {},
+  useCart: true
+};
+
 /**
  * Parses and validates the broker config string.
+ * Returns a default config if the input is invalid or missing.
  */
-export const parseBrokerConfig = (raw?: string) => {
+export const parseBrokerConfig = (raw?: string): BrokerConfig => {
   if (!raw) {
     console.warn('[brokerConfig] Config is missing.');
   } else {
@@ -30,20 +37,21 @@ export const parseBrokerConfig = (raw?: string) => {
       if (!result.success) {
         console.warn('[brokerConfig] validation failed:', result.error.flatten());
       } else {
-        applyBrokerTranslations(result.data);
+        return result.data;
       }
     } catch {
       console.warn('[brokerConfig] not a valid JSON.');
     }
   }
+  return defaultBrokerConfig;
 };
 
 /**
  * Applies broker translations to i18next if present in the config.
  * Uses addResourceBundle with deep=true, overwrite=true so broker keys win.
  */
-export const applyBrokerTranslations = (config: BrokerConfig | null): void => {
-  Object.entries(config?.translation || {}).forEach(([lang, translations]) =>
+export const applyBrokerTranslations = (translationConfig: BrokerConfig['translation']): void => {
+  Object.entries(translationConfig || {}).forEach(([lang, translations]) =>
     i18n.addResourceBundle(lang, 'translation', translations, true, true)
   );
 };

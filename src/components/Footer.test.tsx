@@ -5,7 +5,7 @@ import { render, screen } from '__tests__/renderers';
 import { Footer } from './Footer';
 
 vi.mock('hooks/useLanguage', () => ({
-  useLanguage: vi.fn()
+  useLanguage: vi.fn(() => ({ language: 'test', changeLanguage: vi.fn() }))
 }));
 
 vi.mock('./ProductLogo', () => ({

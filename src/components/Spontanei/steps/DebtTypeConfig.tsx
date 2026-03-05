@@ -48,10 +48,8 @@ const DebtTypeConfig = () => {
    * Sets the summary fields in the context.
    */
   useEffect(() => {
-    if (summaryFields) {
-      context?.setSummaryFields(summaryFields);
-    }
-  }, []);
+    context?.setSummaryFields(summaryFields);
+  }, [summaryFields.length]);
 
   const hasFlagAnonymousFiscalCode = data?.flagAnonymousFiscalCode;
   const allowedEntityType = data?.allowedEntityType;

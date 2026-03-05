@@ -5,7 +5,10 @@ import { parseBrokerConfig } from './brokerconfig';
 import { setAppReady, setBrokerInfo } from 'store/appStore';
 import { OUTCOMES, ROUTES } from 'routes/routes';
 
-vi.mock('./brokerconfig', () => ({ parseBrokerConfig: vi.fn() }));
+vi.mock('./brokerconfig', () => ({
+  parseBrokerConfig: vi.fn((config) => config || { translation: {} }),
+  applyBrokerTranslations: vi.fn()
+}));
 
 vi.mock('./config', () => ({
   default: {
@@ -31,7 +34,11 @@ describe('setup', () => {
   });
 
   it('executes setup routine correctly returning true', async () => {
-    const mockData = { brokerFiscalCode: '', brokerName: '', config: { someKey: 'someValue' } };
+    const mockData = {
+      brokerFiscalCode: '',
+      brokerName: '',
+      config: { useCart: true, translation: {} }
+    };
     vi.spyOn(utils.apiClient.public, 'getPublicBrokerInfo').mockResolvedValue({
       data: mockData
     } as AxiosResponse);
@@ -59,7 +66,10 @@ describe('setup', () => {
     await appSetup();
 
     // setup.tsx persists both broker info and brokerCode
-    expect(setBrokerInfo).toHaveBeenCalledWith(mockData, 'BROKER_CODE');
+    expect(setBrokerInfo).toHaveBeenCalledWith(
+      expect.objectContaining({ ...mockData, config: expect.anything() }),
+      'BROKER_CODE'
+    );
   });
 
   it('always calls setAppReady in the finally block on success', async () => {
