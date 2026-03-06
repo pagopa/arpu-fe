@@ -1,6 +1,7 @@
 import React, { useContext, useEffect } from 'react';
 import {
   Autocomplete,
+  Divider,
   FormControl,
   FormControlLabel,
   Radio,
@@ -17,6 +18,7 @@ import { useField, useFormikContext } from 'formik';
 import { PaymentNoticeInfo } from '..';
 import StepWrapper from './StepWrapper';
 import FormContext, { FormContextType } from '../FormContext';
+import { Box } from '@mui/system';
 
 const LIMIT_DEBT_TYPE = 10;
 
@@ -113,19 +115,22 @@ const DebtTypeSelect = () => {
             {t('spontanei.form.steps.step2.description')}
           </Typography>
           {!shouldShowMostUsedDebtTypes ? (
-            <FormControl sx={{ mt: 2 }}>
+            <FormControl sx={{ pt: 1 }}>
               <RadioGroup
                 aria-labelledby="spontanei-step2-radioGroup"
                 name="controlled-radio-buttons-group"
                 value={debtType.value?.debtPositionTypeOrgId}
                 onChange={handleDebtTypeChange}>
-                {debtTypeOptions.map((debtTypeOption) => (
-                  <FormControlLabel
-                    value={debtTypeOption.debtPositionTypeOrgId}
-                    control={<Radio />}
-                    label={debtTypeOption.description}
-                    key={debtTypeOption.debtPositionTypeOrgId}
-                  />
+                {debtTypeOptions.map((debtTypeOption, index) => (
+                  <Box key={debtTypeOption.debtPositionTypeOrgId}>
+                    <FormControlLabel
+                      sx={{ my: 0.5 }}
+                      value={debtTypeOption.debtPositionTypeOrgId}
+                      control={<Radio />}
+                      label={debtTypeOption.description}
+                    />
+                    {index !== debtTypeOptions.length - 1 && <Divider />}
+                  </Box>
                 ))}
               </RadioGroup>
             </FormControl>
