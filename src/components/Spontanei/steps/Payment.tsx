@@ -60,7 +60,7 @@ const Payment = () => {
           ...acc,
           [field.name]: flattenedValues[field.key]
         };
-      }),
+      }, {}),
     [flattenedValues, submitFields]
   );
 
