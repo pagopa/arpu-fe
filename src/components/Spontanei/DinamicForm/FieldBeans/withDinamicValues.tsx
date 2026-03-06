@@ -97,14 +97,19 @@ const withComputedValues =
     const urlParams = getPlaceholders(source || '');
     const urlParamsValues = urlParams.map((urlParam) => flattenedValues[urlParam]);
     const queryParams = sourceParams;
-    const queryParamsValues = queryParams.map((urlParam) => flattenedValues[urlParam]);
+    const queryParamsValues = queryParams.map(
+      (urlParam) => urlParam?.key && flattenedValues[urlParam.key]
+    );
     const allDependenciesValues = [...urlParamsValues, ...queryParamsValues];
+
     React.useEffect(() => {
       const fetchDynamicResult = async () => {
         try {
           if (source) {
             let resultSource = buildDinamicValue(source, flattenedValues);
-            const queryString = queryParams.map((param) => `${param}=${values[param]}`).join('&');
+            const queryString = queryParams
+              .map((param) => param.key && `${param.name}=${flattenedValues[param.key]}`)
+              .join('&');
             resultSource = `${resultSource}?${queryString}`;
             const response = await fetch(resultSource);
             const { result } = await response.json();
