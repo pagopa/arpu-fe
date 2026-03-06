@@ -16,8 +16,8 @@ export type ResourceType = 'tos' | 'pp';
  * @returns The fully resolved URL
  */
 export const getResourceUrl = (type: ResourceType, lang: string = 'it'): string => {
-  const brokerCode = appStore.value.brokerInfo?.externalId ?? '';
-  const shortLang = lang.split('-')[0];
+  const brokerCode = appStore.value.brokerCode ?? '';
+  const shortLang = lang.split(/[-_]/)[0];
 
   const resolved = config.resourcesUrl
     .replace('{BROKER_EXTERNAL_ID}', brokerCode)

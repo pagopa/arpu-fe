@@ -6,9 +6,7 @@ import config from 'utils/config';
 vi.mock('store/appStore', () => ({
   default: {
     value: {
-      brokerInfo: {
-        externalId: 'broker-abc'
-      }
+      brokerCode: 'broker-abc'
     }
   }
 }));
@@ -20,7 +18,6 @@ vi.mock('utils/config', () => ({
   }
 }));
 
-// Mock window.location.origin for relative path tests
 const originalLocation = window.location;
 
 beforeAll(() => {
@@ -39,7 +36,7 @@ afterAll(() => {
 
 describe('getResourceUrl', () => {
   afterEach(() => {
-    (appStore as any).value = { brokerInfo: { externalId: 'broker-abc' } };
+    (appStore as any).value = { brokerCode: 'broker-abc' };
     config.resourcesUrl =
       '/cittadini-legaldocs/{BROKER_EXTERNAL_ID}/{DOCUMENT_TYPE}/{DOC_LANGUAGE}_{DOCUMENT_TYPE}.md';
   });
@@ -56,6 +53,11 @@ describe('getResourceUrl', () => {
 
   it('should extract short language code from locale with hyphen (e.g. it-IT -> it)', () => {
     const result = getResourceUrl('tos', 'it-IT');
+    expect(result).toBe('https://dev.p4pa.pagopa.it/cittadini-legaldocs/broker-abc/tos/it_tos.md');
+  });
+
+  it('should extract short language code from locale with underscore (e.g. it_IT -> it)', () => {
+    const result = getResourceUrl('tos', 'it_IT');
     expect(result).toBe('https://dev.p4pa.pagopa.it/cittadini-legaldocs/broker-abc/tos/it_tos.md');
   });
 
@@ -80,18 +82,11 @@ describe('getResourceUrl', () => {
     expect(result).toContain('_tos.md');
   });
 
-  it('should use empty string when brokerCode is missing', () => {
-    (appStore as any).value = { brokerInfo: {} };
+  it('should use empty string when brokerCode is null', () => {
+    (appStore as any).value = { brokerCode: null };
 
     const result = getResourceUrl('tos');
     expect(result).toBe('https://dev.p4pa.pagopa.it/cittadini-legaldocs//tos/it_tos.md');
-  });
-
-  it('should use empty string when brokerInfo is null', () => {
-    (appStore as any).value = { brokerInfo: null };
-
-    const result = getResourceUrl('pp', 'en');
-    expect(result).toBe('https://dev.p4pa.pagopa.it/cittadini-legaldocs//pp/en_pp.md');
   });
 
   it('should not prepend origin when resourcesUrl is a full URL', () => {
