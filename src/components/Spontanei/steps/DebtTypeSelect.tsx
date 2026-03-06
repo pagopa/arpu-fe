@@ -38,7 +38,10 @@ const DebtTypeSelect = () => {
 
   const organizationId = org.value?.organizationId || 0;
 
-  const { data: DebtPositionTypeOrgsWithSpontaneous } = isAnonymous
+  const {
+    data: DebtPositionTypeOrgsWithSpontaneous,
+    isPending: isDebtPositionTypeOrgsWithSpontaneousPending
+  } = isAnonymous
     ? utils.loaders.public.getPublicDebtPositionTypeOrgsWithSpontaneous(brokerId, organizationId)
     : utils.loaders.getDebtPositionTypeOrgsWithSpontaneous(brokerId, organizationId);
 
@@ -72,14 +75,20 @@ const DebtTypeSelect = () => {
     }
   };
 
+  const debtTypeOptionsLength = DebtPositionTypeOrgsWithSpontaneous?.length || 0;
+
+  const shouldShowMostUsedDebtTypes = debtTypeOptionsLength > LIMIT_DEBT_TYPE;
+
   const mostUsedDebtTypesQuery = isAnonymous
     ? utils.loaders.public.getPublicMostUsedSpontaneousDebtPositionTypeOrgsForCurrentYear(
         brokerId,
-        organizationId
+        organizationId,
+        shouldShowMostUsedDebtTypes
       )
     : utils.loaders.getMostUsedSpontaneousDebtPositionTypeOrgsForCurrentYear(
         brokerId,
-        organizationId
+        organizationId,
+        shouldShowMostUsedDebtTypes
       );
 
   const onChange = async (debtType: DebtPositionTypeOrgsWithSpontaneousDTO) => {
@@ -100,13 +109,9 @@ const DebtTypeSelect = () => {
 
   const errorMessage = formik.touched.debtType ? formik.errors.debtType : '';
 
-  const debtTypeOptionsLength = DebtPositionTypeOrgsWithSpontaneous?.length || 0;
-
-  const shouldShowMostUsedDebtTypes = debtTypeOptionsLength > LIMIT_DEBT_TYPE;
-
   return (
     <>
-      <StepWrapper isPending={mostUsedDebtTypesQuery.isPending}>
+      <StepWrapper isPending={isDebtPositionTypeOrgsWithSpontaneousPending}>
         <Stack spacing={2} padding={4}>
           <Typography variant="h6" data-testid="spontanei-step2-title">
             {t('spontanei.form.steps.step2.title')}

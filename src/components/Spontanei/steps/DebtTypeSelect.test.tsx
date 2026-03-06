@@ -165,7 +165,7 @@ describe('DebtTypeSelect Component', () => {
     );
     expect(
       utils.loaders.public.getPublicMostUsedSpontaneousDebtPositionTypeOrgsForCurrentYear
-    ).toHaveBeenCalledWith('broker123', 100);
+    ).toHaveBeenCalledWith('broker123', 100, true);
   });
 
   it('shows error message when clicking continue without selection', async () => {
