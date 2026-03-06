@@ -32,12 +32,12 @@ const OrgSelect = () => {
    * If there is only one organization, it is selected automatically and the user is moved to the next step.
    */
   React.useEffect(() => {
-    if (orgs?.length === 1 && !meta.value) {
+    if (orgs?.length === 1 && !meta.value && context?.step === 0) {
       // set the only org as value
       helpers.setValue(orgs[0]);
       // omit the first step in steppers
       context && context.setOmitFirstStep(true);
-      context?.setStep((prev) => prev + 1);
+      context?.setStep(1);
     }
   }, [orgs, meta.value, helpers, context]);
 
