@@ -35,10 +35,12 @@ export function setBrokerInfo(parsedConfig: ParsedConfig, brokerCode: string) {
       brokerName: parsedConfig.brokerName,
       brokerFiscalCode: parsedConfig.brokerFiscalCode,
       brokerLogo: parsedConfig.brokerLogo,
+      externalId: parsedConfig.externalId ?? appStore.value.brokerInfo?.externalId ?? '',
       config: {
         ...appStore.value.brokerInfo?.config,
         translation: parsedConfig.config?.translation ?? defaultBrokerConfig.translation,
-        useCart: parsedConfig.config?.useCart ?? defaultBrokerConfig.useCart
+        useCart: parsedConfig.config?.useCart ?? defaultBrokerConfig.useCart,
+        a11yLink: parsedConfig.config?.a11yLink ?? defaultBrokerConfig.a11yLink
       }
     },
     brokerCode

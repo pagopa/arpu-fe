@@ -8,7 +8,7 @@ import appStore from 'store/appStore';
 import { LangSwitch } from '@pagopa/mui-italia';
 import { languages } from 'translations/languages';
 
-const LINK_A11Y = 'https://www.w3.org/WAI/standards-guidelines/wai-aria/';
+const DEFAULT_LINK_A11Y = 'https://www.w3.org/WAI/standards-guidelines/wai-aria/';
 
 const FooterLink = ({ href, children }: { href: string; children: string }) => {
   return (
@@ -28,6 +28,7 @@ export const Footer = () => {
   const { language, changeLanguage } = useLanguage();
 
   const { brokerInfo } = appStore.value;
+  const a11yLink = brokerInfo?.config?.a11yLink ?? DEFAULT_LINK_A11Y;
 
   return (
     <Stack
@@ -47,7 +48,7 @@ export const Footer = () => {
           <Stack direction="row" gap={2} alignItems="center" component="nav">
             <FooterLink href={ROUTES.PRIVACY_POLICY}>{t('ui.footer.privacy')}</FooterLink>
             <FooterLink href={ROUTES.TOS}>{t('ui.footer.termsAndConditions')}</FooterLink>
-            <FooterLink href={LINK_A11Y}>{t('ui.footer.a11y')}</FooterLink>
+            <FooterLink href={a11yLink}>{t('ui.footer.a11y')}</FooterLink>
             <FooterLink href="#">{t('ui.footer.personalData')}</FooterLink>
             <LangSwitch
               currentLangCode={language}
