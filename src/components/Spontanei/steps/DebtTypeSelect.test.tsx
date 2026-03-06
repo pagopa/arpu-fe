@@ -47,7 +47,16 @@ vi.mock('utils', () => ({
 
 const mockDebtTypes: DebtPositionTypeOrgsWithSpontaneousDTO[] = [
   { debtPositionTypeOrgId: 1, description: 'Debt Type 1', code: '111', organizationId: 1 },
-  { debtPositionTypeOrgId: 2, description: 'Debt Type 2', code: '222', organizationId: 1 }
+  { debtPositionTypeOrgId: 2, description: 'Debt Type 2', code: '222', organizationId: 1 },
+  { debtPositionTypeOrgId: 3, description: 'Debt Type 3', code: '333', organizationId: 1 },
+  { debtPositionTypeOrgId: 4, description: 'Debt Type 4', code: '444', organizationId: 1 },
+  { debtPositionTypeOrgId: 5, description: 'Debt Type 5', code: '555', organizationId: 1 },
+  { debtPositionTypeOrgId: 6, description: 'Debt Type 6', code: '666', organizationId: 1 },
+  { debtPositionTypeOrgId: 7, description: 'Debt Type 7', code: '777', organizationId: 1 },
+  { debtPositionTypeOrgId: 8, description: 'Debt Type 8', code: '888', organizationId: 1 },
+  { debtPositionTypeOrgId: 9, description: 'Debt Type 9', code: '999', organizationId: 1 },
+  { debtPositionTypeOrgId: 10, description: 'Debt Type 10', code: '101', organizationId: 1 },
+  { debtPositionTypeOrgId: 11, description: 'Debt Type 11', code: '000', organizationId: 1 }
 ];
 
 const getDefaultContext = (overrides: Partial<FormContextType> = {}): FormContextType => ({
