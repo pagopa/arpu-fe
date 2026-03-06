@@ -433,7 +433,8 @@ const getDebtorReceipts = (
 
 const getMostUsedSpontaneousDebtPositionTypeOrgsForCurrentYear = (
   brokerId: number,
-  organizationId: number
+  organizationId: number,
+  shouldShowMostUsedDebtTypes?: boolean
 ) =>
   useQuery({
     queryKey: [
@@ -449,13 +450,14 @@ const getMostUsedSpontaneousDebtPositionTypeOrgsForCurrentYear = (
         );
       return data;
     },
-    enabled: brokerId != null && organizationId != null,
+    enabled: shouldShowMostUsedDebtTypes && brokerId != null && organizationId != null,
     staleTime: Infinity
   });
 
 const getPublicMostUsedSpontaneousDebtPositionTypeOrgsForCurrentYear = (
   brokerId: number,
-  organizationId: number
+  organizationId: number,
+  shouldShowMostUsedDebtTypes?: boolean
 ) =>
   useQuery({
     queryKey: [
@@ -471,7 +473,7 @@ const getPublicMostUsedSpontaneousDebtPositionTypeOrgsForCurrentYear = (
         );
       return data;
     },
-    enabled: brokerId != null && organizationId != null,
+    enabled: shouldShowMostUsedDebtTypes && brokerId != null && organizationId != null,
     staleTime: Infinity
   });
 
