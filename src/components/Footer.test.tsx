@@ -57,7 +57,7 @@ describe('Footer', () => {
     const a11yLink = screen.getByText('ui.footer.a11y').closest('a');
     expect(a11yLink).toHaveAttribute(
       'href',
-      'https://form.agid.gov.it/view/cbed4100-ff1e-11ef-aef0-65558716aff1'
+      'https://www.w3.org/WAI/standards-guidelines/wai-aria/'
     );
   });
 
