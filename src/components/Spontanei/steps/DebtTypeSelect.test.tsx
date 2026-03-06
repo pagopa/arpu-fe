@@ -123,30 +123,29 @@ describe('DebtTypeSelect Component', () => {
 
     const input = screen.getByRole('combobox');
     fireEvent.focus(input);
-    fireEvent.change(input, { target: { value: 'Debt Type 2' } });
+    fireEvent.change(input, { target: { value: 'Debt Type 10' } });
 
-    const option = await screen.findByText('Debt Type 2');
+    const option = await screen.findByText('Debt Type 10');
     fireEvent.click(option);
 
     await waitFor(() => {
-      expect(input).toHaveValue('Debt Type 2');
+      expect(input).toHaveValue('Debt Type 10');
     });
   });
 
   it('handles debt type selection via RadioGroup and resets description', async () => {
+    (utils.loaders.getDebtPositionTypeOrgsWithSpontaneous as Mock).mockReturnValue({
+      data: [mockDebtTypes[0], mockDebtTypes[1]]
+    });
     const { getByLabelText } = renderDebtTypeSelect();
 
     const radio = getByLabelText('Debt Type 1');
     fireEvent.click(radio);
 
-    // After clicking radio, the autocomplete should reflect the selection
-    const input = screen.getByRole('combobox');
+    // After clicking radio, it should be checked
     await waitFor(() => {
-      expect(input).toHaveValue('Debt Type 1');
+      expect(radio).toBeChecked();
     });
-
-    // Verify onChange logic (check if description would be reset - though testing formik state inside here is tricky without access to formik BAG)
-    // We can at least see it was called.
   });
 
   it('calls public loaders when user is anonymous', () => {
