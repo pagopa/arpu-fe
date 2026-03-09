@@ -89,7 +89,7 @@ describe('Spontanei Component', () => {
     });
   });
 
-  it('manually selects an organization and moves to step 1', async () => {
+  it('manually selects an organization and moves to step 2', async () => {
     const mockOrg = { organizationId: 1, orgName: 'Org 1', orgFiscalCode: '1' };
     const mockOrgs = [mockOrg, { organizationId: 2, orgName: 'Org 2', orgFiscalCode: '2' }];
     (utils.loaders.getOrganizationsWithSpontaneous as Mock).mockReturnValue({
@@ -99,7 +99,7 @@ describe('Spontanei Component', () => {
 
     render(<Spontanei />);
 
-    const input = await screen.getByTestId('spontanei-step1-search-input').querySelector('input');
+    const input = screen.getByTestId('spontanei-step1-search-input').querySelector('input');
     input && fireEvent.focus(input);
     input && fireEvent.change(input, { target: { value: 'Org 1' } });
 
@@ -143,14 +143,14 @@ describe('Spontanei Component', () => {
       isLoading: false
     });
 
-    const mockDebtType = {
-      debtPositionTypeOrgId: 10,
+    const mockDebtTypes = Array.from(Array(11).keys()).map((i) => ({
+      debtPositionTypeOrgId: i,
       organizationId: 1,
-      code: 'DT1',
-      description: 'Debt Type 1'
-    };
+      code: `DT${i}`,
+      description: `Debt Type ${i}`
+    }));
     (utils.loaders.getDebtPositionTypeOrgsWithSpontaneous as Mock).mockReturnValue({
-      data: [mockDebtType],
+      data: mockDebtTypes,
       isLoading: false
     });
 
@@ -161,12 +161,12 @@ describe('Spontanei Component', () => {
 
     render(<Spontanei />);
 
-    // Auto-selects org and moves to step 1
+    // Auto-selects org and moves to step 2
     await waitFor(() => {
       expect(screen.getByTestId('spontanei-step2-title')).toBeInTheDocument();
     });
 
-    const input = await screen.getByTestId('spontanei-step2-search-input').querySelector('input');
+    const input = screen.getByTestId('spontanei-step2-search-input').querySelector('input');
     input && fireEvent.focus(input);
     input && fireEvent.change(input, { target: { value: 'Debt Type 1' } });
 

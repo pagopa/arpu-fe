@@ -8,6 +8,8 @@ export type FormContextType = {
   setStep: React.Dispatch<React.SetStateAction<number>>;
   summaryFields: SpontaneousFormStructure['summaryFields'];
   setSummaryFields: React.Dispatch<React.SetStateAction<SpontaneousFormStructure['summaryFields']>>;
+  submitFields: SpontaneousFormStructure['submitFields'];
+  setSubmitFields: React.Dispatch<React.SetStateAction<SpontaneousFormStructure['submitFields']>>;
   causaleHasJoinTemplate: boolean;
   setCausaleHasJoinTemplate: React.Dispatch<React.SetStateAction<boolean>>;
 };

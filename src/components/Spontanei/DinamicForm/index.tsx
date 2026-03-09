@@ -28,15 +28,7 @@ const CustomForm = ({ fieldBeans, amountFieldName }: CustomFormProps) => {
         ...state,
         values: {
           ...initialValues,
-          ...state.values,
-          // TODO: this should be romved
-          // sourceParams should be an array of objects instead of a string
-          // sourceParmas = ['debtPositionTypeOrgDescription']
-          // sourceParams = [{
-          //   name: 'debtPositionTypeOrgDescription',
-          //   value: 'debtType.description'
-          // }]
-          debtPositionTypeOrgCode: state.values.debtType?.code
+          ...state.values
         }
       };
     });

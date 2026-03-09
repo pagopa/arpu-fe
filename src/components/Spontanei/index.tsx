@@ -41,6 +41,9 @@ const Spontanei = () => {
   const [summaryFields, setSummaryFields] = React.useState<
     SpontaneousFormStructure['summaryFields']
   >([]);
+  const [submitFields, setSubmitFields] = React.useState<SpontaneousFormStructure['submitFields']>(
+    []
+  );
 
   const { t } = useTranslation();
 
@@ -73,9 +76,11 @@ const Spontanei = () => {
       causaleHasJoinTemplate,
       setCausaleHasJoinTemplate,
       summaryFields,
-      setSummaryFields
+      setSummaryFields,
+      submitFields,
+      setSubmitFields
     }),
-    [omitFirstStep, step, causaleHasJoinTemplate, summaryFields]
+    [omitFirstStep, step, causaleHasJoinTemplate, summaryFields, submitFields]
   );
 
   return (

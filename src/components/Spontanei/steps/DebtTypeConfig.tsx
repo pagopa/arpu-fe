@@ -43,6 +43,7 @@ const DebtTypeConfig = () => {
   const type = data?.formType;
 
   const summaryFields = data?.formCustom?.structure.summaryFields || [];
+  const submitFields = data?.formCustom?.structure.submitFields || [];
 
   /**
    * Sets the summary fields in the context.
@@ -50,6 +51,13 @@ const DebtTypeConfig = () => {
   useEffect(() => {
     context?.setSummaryFields(summaryFields);
   }, [summaryFields.length]);
+
+  /**
+   * Sets the submit fields in the context.
+   */
+  useEffect(() => {
+    context?.setSubmitFields(submitFields);
+  }, [submitFields.length]);
 
   const hasFlagAnonymousFiscalCode = data?.flagAnonymousFiscalCode;
   const allowedEntityType = data?.allowedEntityType;
