@@ -33,6 +33,7 @@ variables:
     checkout_host: '$(UAT_CHECKOUT_PREFIX_DOMAIN)'
     checkout_platform_url: '$(UAT_CHECKOUT_PLATFORM_URL)'
     show_notices: '1'
+    resources_url: '$(UAT_LEGALDOCS_TEMPLATE_URL)'
 
   ${{ elseif eq(variables['Build.SourceBranch'], 'refs/heads/main') }}:
     environment: 'PROD'
@@ -47,6 +48,7 @@ variables:
     checkout_host: '$(PROD_CHECKOUT_PREFIX_DOMAIN)'
     checkout_platform_url: '$(PROD_CHECKOUT_PLATFORM_URL)'
     show_notices: '1'
+    resources_url: '$(PROD_LEGALDOCS_TEMPLATE_URL)'
 
   # every branch different from past will be considered as DEV
   ${{ else }}:
@@ -62,6 +64,7 @@ variables:
     checkout_host: '$(DEV_CHECKOUT_PREFIX_DOMAIN)'
     checkout_platform_url: '$(DEV_CHECKOUT_PLATFORM_URL)'
     show_notices: '1'
+    resources_url: '$(DEV_LEGALDOCS_TEMPLATE_URL)'
 
 resources:
   repositories:
@@ -97,6 +100,7 @@ stages:
               deploy_path: '$(DEPLOY_PATH)'
               version: '$(Build.SourceBranchName):$(Build.SourceVersion)'
               show_notices: '$(show_notices)'
+              resources_url: '$(resources_url)'
 
           - script: |
               yarn build
