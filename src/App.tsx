@@ -35,6 +35,7 @@ import { Overlay } from 'components/Overlay';
 import { DebtPositionDownload } from 'routes/DebtPositions/download';
 import { appSetup } from 'utils/setup';
 import appStore from 'store/appStore';
+import ResourcePage from 'routes/ResourcePage/ResourcePage';
 
 /**
  * Validates that the required query params (nav, org_fiscal_code, installment_id)
@@ -152,20 +153,20 @@ const router = createBrowserRouter([
               backButton: true
             } as RouteHandleObject
           },
-          //  {
-          //   path: ROUTES.TOS,
-          //   element: <Resources resource="tos" />,
-          //   handle: {
-          //     titleKey: 'pageTitles.tos'
-          //   } as RouteHandleObject
-          // },
-          // {
-          //   path: ROUTES.PRIVACY_POLICY,
-          //   element: <Resources resource="pp" />,
-          //   handle: {
-          //     titleKey: 'pageTitles.pp'
-          //   } as RouteHandleObject
-          // },
+          {
+            path: ROUTES.TOS,
+            element: <ResourcePage resource="tos" />,
+            handle: {
+              titleKey: 'pageTitles.tos'
+            } as RouteHandleObject
+          },
+          {
+            path: ROUTES.PRIVACY_POLICY,
+            element: <ResourcePage resource="pp" />,
+            handle: {
+              titleKey: 'pageTitles.pp'
+            } as RouteHandleObject
+          },
           {
             path: ROUTES.public.COURTESY_PAGE,
             loader: courtesyPageLoader,

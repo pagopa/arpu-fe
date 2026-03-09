@@ -51,8 +51,46 @@ describe('Footer', () => {
     expect(personalDataLink).toHaveAttribute('rel', 'noopener noreferrer');
   });
 
+  it('renders default a11y link when brokerInfo has no a11yLink', () => {
+    render(<Footer />);
+
+    const a11yLink = screen.getByText('ui.footer.a11y').closest('a');
+    expect(a11yLink).toHaveAttribute(
+      'href',
+      'https://www.w3.org/WAI/standards-guidelines/wai-aria/'
+    );
+  });
+
+  it('renders a11y link from brokerInfo config when available', () => {
+    setBrokerInfo(
+      {
+        brokerName: 'Test Broker S.p.A.',
+        brokerFiscalCode: 'ABC',
+        config: {
+          a11yLink: 'https://custom-a11y.example.com',
+          translation: {}
+        },
+        brokerId: 0,
+        externalId: ''
+      },
+      'test-broker'
+    );
+    render(<Footer />);
+
+    const a11yLink = screen.getByText('ui.footer.a11y').closest('a');
+    expect(a11yLink).toHaveAttribute('href', 'https://custom-a11y.example.com');
+  });
+
   it('renders broker name', () => {
-    setBrokerInfo({ brokerName: 'Test Broker S.p.A.', brokerFiscalCode: 'ABC' });
+    setBrokerInfo(
+      {
+        brokerName: 'Test Broker S.p.A.',
+        brokerFiscalCode: 'ABC',
+        brokerId: 0,
+        externalId: ''
+      },
+      'test-broker'
+    );
     render(<Footer />);
 
     expect(screen.getByText('Test Broker S.p.A.')).toBeInTheDocument();

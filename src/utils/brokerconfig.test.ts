@@ -49,9 +49,24 @@ describe('brokerconfig', () => {
         }
       };
 
-      parseBrokerConfig(JSON.stringify(validConfig));
+      const result = parseBrokerConfig(JSON.stringify(validConfig));
 
       expect(console.warn).not.toHaveBeenCalled();
+      expect(result.a11yLink).toBeUndefined();
+    });
+
+    it('parses a11yLink when present in config', () => {
+      const configWithA11y = {
+        translation: {
+          it: { greeting: 'Ciao' }
+        },
+        a11yLink: 'https://test.it'
+      };
+
+      const result = parseBrokerConfig(JSON.stringify(configWithA11y));
+
+      expect(console.warn).not.toHaveBeenCalled();
+      expect(result.a11yLink).toBe('https://test.it');
     });
 
     it('parses assistanceLink when present', () => {

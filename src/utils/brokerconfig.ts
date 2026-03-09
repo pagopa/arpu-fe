@@ -14,7 +14,8 @@ const ResourceSchema = z.record(z.string(), ResourceLanguageSchema);
 const BrokerConfigSchema = z.object({
   translation: ResourceSchema,
   useCart: z.boolean().optional(),
-  assistanceLink: z.string().url().optional()
+  assistanceLink: z.string().url().optional(),
+  a11yLink: z.string().optional()
 });
 
 export type BrokerConfig = z.infer<typeof BrokerConfigSchema>;
