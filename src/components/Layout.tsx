@@ -64,10 +64,12 @@ export function Layout(props: { anonymous?: boolean }) {
     title: appStore.value.brokerInfo?.brokerName || ''
   };
 
-  const ASSISTANCE_MAIL = utils.config.assistanceLink;
+  const assistanceLink = appStore.value.brokerInfo?.config?.assistanceLink;
 
   const onAssistanceClick = () => {
-    window.open(`mailto:${ASSISTANCE_MAIL}`);
+    if (assistanceLink) {
+      window.open(assistanceLink, '_blank');
+    }
   };
 
   const skipToContent = () => {

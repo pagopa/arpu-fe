@@ -20,9 +20,13 @@ export const Header = (props: HeaderProps) => {
 
   const assistanceLink = appStore.value.brokerInfo?.config?.assistanceLink;
 
-  const onAssistanceClick =
-    props.onAssistanceClick ??
-    (assistanceLink ? () => window.open(assistanceLink, '_blank') : () => undefined);
+  const handleAssistanceClick = () => {
+    if (props.onAssistanceClick) {
+      props.onAssistanceClick();
+    } else if (assistanceLink) {
+      window.open(assistanceLink, '_blank');
+    }
+  };
 
   async function logoutUser() {
     try {
@@ -76,7 +80,8 @@ export const Header = (props: HeaderProps) => {
         <HeaderAccount
           rootLink={rootLink}
           enableDropdown
-          onAssistanceClick={onAssistanceClick}
+          enableAssistanceButton
+          onAssistanceClick={handleAssistanceClick}
           loggedUser={jwtUser}
           userActions={userActions}
           translationsMap={{ assistance: t('ui.header.help') }}
