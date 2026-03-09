@@ -6,5 +6,10 @@
     "pathRewrite": {
       "^/arc/v1": ""
     }
+  },
+  "/cittadini-legaldocs/**": {
+    "target": "https://dev.p4pa.pagopa.it",
+    "changeOrigin": true,
+    "logLevel": "debug"
   }
 }
