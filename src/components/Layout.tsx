@@ -98,7 +98,7 @@ export function Layout(props: { anonymous?: boolean }) {
           {t('ui.header.skipToContent')}
         </Button>
         {!props.anonymous ? (
-          <Header onAssistanceClick={() => window.open(ROUTES.ASSISTANCE, '_blank')} />
+          <Header />
         ) : (
           <HeaderAccount
             rootLink={rootLink}
