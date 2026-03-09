@@ -157,6 +157,7 @@ const DebtorSection = ({ allowedEntityType, hasFlagAnonymousFiscalCode }: Debtor
               }
               variant="outlined"
               type="email"
+              required
               {...email}
               error={emailMeta.touched && Boolean(emailMeta.error)}
               helperText={emailMeta.touched && emailMeta.error}
