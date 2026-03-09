@@ -1,5 +1,5 @@
 import { Button, Card, Stack, Typography } from '@mui/material';
-import React, { useContext } from 'react';
+import React, { useContext, useMemo } from 'react';
 import Controls from '../Controls';
 import { useTranslation } from 'react-i18next';
 import { addItem, isItemInCart, setCartEmail, toggleCartDrawer } from 'store/CartStore';
@@ -8,7 +8,7 @@ import { useStore } from 'store/GlobalStore';
 import utils from 'utils';
 import { generatePath, useNavigate } from 'react-router-dom';
 import { DebtPositionRequestDTO, FormTypeEnum } from '../../../../generated/data-contracts';
-import { useField } from 'formik';
+import { useField, useFormikContext } from 'formik';
 import { PaymentNoticeInfo } from '..';
 import FormContext, { FormContextType } from '../FormContext';
 import { usePostCarts } from 'hooks/usePostCarts';
@@ -17,6 +17,7 @@ import { CartItem } from 'models/Cart';
 import FileDownloadIcon from '@mui/icons-material/FileDownload';
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 import appStore from 'store/appStore';
+import { flattenObject } from '../DinamicForm/config';
 
 /**
  * This component is responsible for rendering the payment step of the form.
@@ -24,6 +25,10 @@ import appStore from 'store/appStore';
  */
 const Payment = () => {
   const context = useContext<FormContextType | null>(FormContext);
+  const { submitFields } = context || {};
+
+  const { values } = useFormikContext<PaymentNoticeInfo>();
+  const flattenedValues = flattenObject(values);
 
   const [fullName] = useField<PaymentNoticeInfo['fullName']>('fullName');
   const [amount] = useField<PaymentNoticeInfo['amount']>('amount');
@@ -46,6 +51,18 @@ const Payment = () => {
   if (!organizationId || !debtPositionTypeOrgId || !brokerId) {
     throw new Error('Missing required parameters');
   }
+
+  const fieldValues: DebtPositionRequestDTO['fieldValues'] = useMemo(
+    () =>
+      submitFields?.reduce((acc, field) => {
+        if (!field.key || !field.name || !flattenedValues[field.key]) return acc;
+        return {
+          ...acc,
+          [field.name]: flattenedValues[field.key]
+        };
+      }, {}),
+    [flattenedValues, submitFields]
+  );
 
   const { t } = useTranslation();
 
@@ -74,7 +91,8 @@ const Payment = () => {
           }
         ]
       }
-    ]
+    ],
+    fieldValues
   };
 
   const { data: debtPositionResponse } = isAnonymous

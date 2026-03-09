@@ -415,6 +415,7 @@
     "expand": "Espandi il menu"
   },
   "errors": {
+    "resourceNotAvailable": "Risorsa non disponibile",
     "form": {
       "required": "Questo campo non puoi essere vuoto."
     },
@@ -524,7 +525,9 @@
     "receiptsList": "Lista ricevute",
     "spontanei": "Pagamenti spontanei",
     "assistance": "Assistenza",
-    "paymentOutcomeOk": "Pagamento completato"
+    "paymentOutcomeOk": "Pagamento completato",
+    "pp": "Privacy Policy",
+    "tos": "Termini di servizio"
   },
   "spontanei": {
     "drawer": {

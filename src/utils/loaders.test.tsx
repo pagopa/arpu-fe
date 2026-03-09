@@ -782,3 +782,117 @@ describe('getPublicMostUsedSpontaneousDebtPositionTypeOrgsForCurrentYear', () =>
     });
   });
 });
+
+describe('useResourceContent', () => {
+  const mockContent = '<h1>Terms of Service</h1><p>Lorem ipsum</p>';
+
+  const createNoRetryWrapper = () => {
+    const qc = new QueryClient({
+      defaultOptions: { queries: { retry: false } }
+    });
+    return ({ children }: { children: ReactNode }) => (
+      <StoreProvider>
+        <QueryClientProvider client={qc}>{children}</QueryClientProvider>
+      </StoreProvider>
+    );
+  };
+
+  beforeEach(() => {
+    vi.clearAllMocks();
+    global.fetch = vi.fn();
+  });
+
+  afterEach(() => {
+    vi.restoreAllMocks();
+  });
+
+  it('fetches and returns resource content on success', async () => {
+    (global.fetch as any).mockResolvedValue({
+      ok: true,
+      headers: { get: () => 'text/markdown' },
+      text: () => Promise.resolve(mockContent)
+    });
+
+    const { result } = renderHook(() => loaders.useResourceContent('tos', 'it'), {
+      wrapper: createNoRetryWrapper()
+    });
+
+    await waitFor(() => {
+      expect(result.current.isSuccess).toBe(true);
+    });
+
+    expect(result.current.data).toBe(mockContent);
+    expect(global.fetch).toHaveBeenCalledTimes(1);
+  });
+
+  it('throws error when response is not ok', async () => {
+    (global.fetch as any).mockResolvedValue({
+      ok: false,
+      status: 404
+    });
+
+    const { result } = renderHook(() => loaders.useResourceContent('pp', 'it'), {
+      wrapper: createNoRetryWrapper()
+    });
+
+    await waitFor(() => {
+      expect(result.current.isError).toBe(true);
+    });
+  });
+
+  it('handles fetch network error', async () => {
+    (global.fetch as any).mockRejectedValue(new Error('Network error'));
+
+    const { result } = renderHook(() => loaders.useResourceContent('tos', 'en'), {
+      wrapper: createNoRetryWrapper()
+    });
+
+    await waitFor(() => {
+      expect(result.current.isError).toBe(true);
+    });
+  });
+
+  it('uses different query keys for different resource types', async () => {
+    (global.fetch as any).mockResolvedValue({
+      ok: true,
+      headers: { get: () => 'text/markdown' },
+      text: () => Promise.resolve(mockContent)
+    });
+
+    const noRetryWrapper = createNoRetryWrapper();
+
+    const { result: tosResult } = renderHook(() => loaders.useResourceContent('tos', 'it'), {
+      wrapper: noRetryWrapper
+    });
+
+    await waitFor(() => {
+      expect(tosResult.current.isSuccess).toBe(true);
+    });
+
+    const { result: ppResult } = renderHook(() => loaders.useResourceContent('pp', 'it'), {
+      wrapper: noRetryWrapper
+    });
+
+    await waitFor(() => {
+      expect(ppResult.current.isSuccess).toBe(true);
+    });
+
+    expect(global.fetch).toHaveBeenCalledTimes(2);
+  });
+  it('throws error when response content-type is text/html (SPA fallback)', async () => {
+    (global.fetch as any).mockResolvedValue({
+      ok: true,
+      headers: {
+        get: (name: string) => (name === 'content-type' ? 'text/html; charset=utf-8' : null)
+      }
+    });
+
+    const { result } = renderHook(() => loaders.useResourceContent('tos', 'it'), {
+      wrapper: createNoRetryWrapper()
+    });
+
+    await waitFor(() => {
+      expect(result.current.isError).toBe(true);
+    });
+  });
+});

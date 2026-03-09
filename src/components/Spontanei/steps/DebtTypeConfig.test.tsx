@@ -62,6 +62,8 @@ const getDefaultContext = (overrides: Partial<FormContextType> = {}): FormContex
   setCausaleHasJoinTemplate: vi.fn(),
   summaryFields: [],
   setSummaryFields: vi.fn(),
+  submitFields: [],
+  setSubmitFields: vi.fn(),
   ...overrides
 });
 
