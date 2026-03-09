@@ -7,6 +7,7 @@ import { ROUTES } from 'routes/routes';
 import { Mock } from 'vitest';
 import { StoreProvider } from 'store/GlobalStore';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import appStore from 'store/appStore';
 
 // Mocking external dependencies
 vi.mock('react-router-dom', () => ({
@@ -74,6 +75,30 @@ describe('Header component', () => {
     const button = screen.getByText('ui.header.help');
     fireEvent.click(button);
     expect(onAssistanceClik).toHaveBeenCalledTimes(1);
+  });
+
+  it('should open the assistance link from brokerInfo when no onAssistanceClick is provided', () => {
+    const mockOpen = vi.spyOn(window, 'open').mockImplementation(() => null);
+
+    appStore.value = {
+      ...appStore.value,
+      brokerInfo: {
+        brokerId: 1,
+        externalId: 'test',
+        brokerName: 'Test Broker',
+        brokerFiscalCode: '00000000000',
+        config: {
+          translation: {},
+          assistanceLink: 'https://assistenza.pagopa.gov.it/hc/it/faq'
+        }
+      }
+    };
+
+    render(<WrappedHeader />);
+    const button = screen.getByText('ui.header.help');
+    fireEvent.click(button);
+    expect(mockOpen).toHaveBeenCalledWith('https://assistenza.pagopa.gov.it/hc/it/faq', '_blank');
+    mockOpen.mockRestore();
   });
 
   it('should navigate to user when profile is clicked', () => {

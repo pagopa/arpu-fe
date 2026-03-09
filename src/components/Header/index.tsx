@@ -15,10 +15,14 @@ export interface HeaderProps {
 }
 
 export const Header = (props: HeaderProps) => {
-  /* istanbul ignore next */
-  const { onAssistanceClick = () => null } = props;
   const navigate = useNavigate();
   const { t } = useTranslation();
+
+  const assistanceLink = appStore.value.brokerInfo?.config?.assistanceLink;
+
+  const onAssistanceClick =
+    props.onAssistanceClick ??
+    (assistanceLink ? () => window.open(assistanceLink, '_blank') : () => undefined);
 
   async function logoutUser() {
     try {
