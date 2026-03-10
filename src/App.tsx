@@ -53,8 +53,7 @@ const courtesyPageLoader = ({ params, request }: LoaderFunctionArgs) => {
   if (needsParams) {
     const nav = url.searchParams.get('nav');
     const orgFiscalCode = url.searchParams.get('org_fiscal_code');
-    const installmentId = url.searchParams.get('installment_id');
-    if (!nav || !orgFiscalCode || !installmentId) {
+    if (!nav || !orgFiscalCode) {
       throw new Error('Missing required query params');
     }
   }

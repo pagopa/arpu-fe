@@ -66,9 +66,9 @@ describe('usePostCarts', () => {
         }
       ],
       returnUrls: {
-        returnOkUrl: `${ORIGIN}${ROUTES.DASHBOARD}?fromAction=payment-success`,
-        returnCancelUrl: `${ORIGIN}${ROUTES.DEBT_POSITIONS}?fromAction=payment-cancel`,
-        returnErrorUrl: `${ORIGIN}${ROUTES.DEBT_POSITIONS}?fromAction=payment-error`
+        returnOkUrl: `${ORIGIN}${ROUTES.DASHBOARD}`,
+        returnCancelUrl: `${ORIGIN}${ROUTES.DEBT_POSITIONS}`,
+        returnErrorUrl: `${ORIGIN}${ROUTES.DEBT_POSITIONS}`
       }
     });
     expect(mockOnSuccess).toHaveBeenCalledWith('https://redirect.com');

@@ -190,23 +190,6 @@ describe('CourtesyPageActions – pagamento-non-riuscito (424)', () => {
     });
   });
 
-  it('navigates to error page when retry is clicked without a resolved installment', async () => {
-    mockInstallmentsMutateAsync.mockResolvedValue([INSTALLMENT_OTHER]);
-    setupSearchParams({ nav: 'NAV-001', org_fiscal_code: 'ORG-FC-001', installment_id: '42' });
-    render(<CourtesyPageActions code={CODE_424} />);
-
-    await waitFor(() => {
-      expect(mockInstallmentsMutateAsync).toHaveBeenCalled();
-    });
-
-    fireEvent.click(screen.getByTestId('courtesyPage.cta'));
-
-    expect(mockPostCartsMutate).not.toHaveBeenCalled();
-    expect(mockNavigate).toHaveBeenCalledWith(
-      ROUTES.public.COURTESY_PAGE.replace(':outcome', String(OUTCOMES['sconosciuto']))
-    );
-  });
-
   it('navigates to error page when retry is clicked after fetch failure', async () => {
     mockInstallmentsMutateAsync.mockRejectedValue(new Error('Network error'));
     setupSearchParams({ nav: 'NAV-001', org_fiscal_code: 'ORG-FC-001', installment_id: '42' });

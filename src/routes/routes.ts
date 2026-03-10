@@ -1,3 +1,4 @@
+import { generatePath } from 'react-router-dom';
 import config from 'utils/config';
 
 const rootPrefix = `${config.deployPath}/${config.brokerCode}`;
