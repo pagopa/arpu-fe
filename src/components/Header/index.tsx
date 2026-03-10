@@ -15,10 +15,18 @@ export interface HeaderProps {
 }
 
 export const Header = (props: HeaderProps) => {
-  /* istanbul ignore next */
-  const { onAssistanceClick = () => null } = props;
   const navigate = useNavigate();
   const { t } = useTranslation();
+
+  const assistanceLink = appStore.value.brokerInfo?.config?.assistanceLink;
+
+  const handleAssistanceClick = () => {
+    if (props.onAssistanceClick) {
+      props.onAssistanceClick();
+    } else if (assistanceLink) {
+      window.open(assistanceLink, '_blank');
+    }
+  };
 
   async function logoutUser() {
     try {
@@ -72,7 +80,8 @@ export const Header = (props: HeaderProps) => {
         <HeaderAccount
           rootLink={rootLink}
           enableDropdown
-          onAssistanceClick={onAssistanceClick}
+          enableAssistanceButton
+          onAssistanceClick={handleAssistanceClick}
           loggedUser={jwtUser}
           userActions={userActions}
           translationsMap={{ assistance: t('ui.header.help') }}

@@ -68,6 +68,17 @@ describe('brokerconfig', () => {
       expect(console.warn).not.toHaveBeenCalled();
       expect(result.a11yLink).toBe('https://test.it');
     });
+
+    it('parses assistanceLink when present', () => {
+      const validConfig = {
+        translation: { en: { greeting: 'Hello' } },
+        assistanceLink: 'https://demo.it/faq'
+      };
+
+      const result = parseBrokerConfig(JSON.stringify(validConfig));
+
+      expect(result.assistanceLink).toBe('https://demo.it/faq');
+    });
   });
 
   describe('applyBrokerTranslations', () => {

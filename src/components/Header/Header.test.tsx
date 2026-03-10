@@ -7,6 +7,7 @@ import { ROUTES } from 'routes/routes';
 import { Mock } from 'vitest';
 import { StoreProvider } from 'store/GlobalStore';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import appStore from 'store/appStore';
 
 // Mocking external dependencies
 vi.mock('react-router-dom', () => ({
@@ -43,12 +44,15 @@ describe('Header component', () => {
   const mockNavigate = vi.fn();
   const mockOnAssistanceClick = vi.fn();
 
+  const defaultStoreValue = { ...appStore.value };
+
   beforeAll(() => {
     (useNavigate as Mock).mockReturnValue(mockNavigate);
   });
 
   afterEach(() => {
     vi.clearAllMocks();
+    appStore.value = defaultStoreValue;
   });
 
   it('should render as expected', () => {
@@ -68,12 +72,46 @@ describe('Header component', () => {
     expect(product).toBeInTheDocument();
   });
 
-  it('should call onAssistanceClick assistance button click', () => {
+  it('should call onAssistanceClick prop when provided', () => {
     const onAssistanceClik = vi.fn();
     render(<WrappedHeader onAssistanceClick={onAssistanceClik} />);
     const button = screen.getByText('ui.header.help');
     fireEvent.click(button);
     expect(onAssistanceClik).toHaveBeenCalledTimes(1);
+  });
+
+  it('should open the assistance link from brokerInfo when no onAssistanceClick prop is provided', () => {
+    const mockOpen = vi.spyOn(window, 'open').mockImplementation(() => null);
+
+    appStore.value = {
+      ...appStore.value,
+      brokerInfo: {
+        brokerId: 1,
+        externalId: 'test',
+        brokerName: 'Test Broker',
+        brokerFiscalCode: '00000000000',
+        config: {
+          translation: {},
+          assistanceLink: 'https://assistenza.pagopa.gov.it/hc/it/faq'
+        }
+      }
+    };
+
+    render(<WrappedHeader />);
+    const button = screen.getByText('ui.header.help');
+    fireEvent.click(button);
+    expect(mockOpen).toHaveBeenCalledWith('https://assistenza.pagopa.gov.it/hc/it/faq', '_blank');
+    mockOpen.mockRestore();
+  });
+
+  it('should not call window.open when no onAssistanceClick prop and no assistanceLink in store', () => {
+    const mockOpen = vi.spyOn(window, 'open').mockImplementation(() => null);
+
+    render(<WrappedHeader />);
+    const button = screen.getByText('ui.header.help');
+    fireEvent.click(button);
+    expect(mockOpen).not.toHaveBeenCalled();
+    mockOpen.mockRestore();
   });
 
   it('should navigate to user when profile is clicked', () => {
