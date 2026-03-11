@@ -18,6 +18,7 @@ import {
 } from 'models/PaymentNotice';
 import { CartItem } from 'models/Cart';
 import { ROUTES } from 'routes/routes';
+import { generatePath } from 'react-router-dom';
 
 // This high order function is useful to 'decorate' existing function to add
 // the functionality to manage undefined (not optional) parameters and output a global character instead
@@ -164,9 +165,32 @@ const normalizePaymentNotice = (paymentNotice: PaymentNoticeDTO): PaymentNoticeT
   }
 };
 
+const getPaymentOutcomes = (carts: CartItem[]) => {
+  const search = `?nav=${carts[0].nav}&org_fiscal_code=${carts[0].paTaxCode}`;
+
+  const OK = generatePath(ROUTES.public.COURTESY_PAGE, {
+    outcome: 'pagamento-avviso-completato'
+  });
+
+  const KO = generatePath(ROUTES.public.COURTESY_PAGE, {
+    outcome: 'pagamento-non-riuscito'
+  });
+
+  const CANCEL = generatePath(ROUTES.public.COURTESY_PAGE, {
+    outcome: 'pagamento-annullato'
+  });
+
+  return {
+    OK,
+    KO: `${KO}${search}`,
+    CANCEL: `${CANCEL}${search}`
+  };
+};
+
 const cartItemsToCartsRequest = (cartItems: CartItem[]) => {
   const ORIGIN = window.location.origin;
   const isAnonymous = utils.storage.user.isAnonymous();
+  const COURTESY = getPaymentOutcomes(cartItems);
 
   return {
     paymentNotices: cartItems.map((item) => ({
@@ -176,10 +200,11 @@ const cartItemsToCartsRequest = (cartItems: CartItem[]) => {
       fiscalCode: item.paTaxCode,
       noticeNumber: item.nav
     })),
+
     returnUrls: {
-      returnOkUrl: `${ORIGIN}${isAnonymous ? ROUTES.LOGIN : ROUTES.DASHBOARD}?fromAction=payment-success`,
-      returnCancelUrl: `${ORIGIN}${isAnonymous ? ROUTES.LOGIN : ROUTES.DEBT_POSITIONS}?fromAction=payment-cancel`,
-      returnErrorUrl: `${ORIGIN}${isAnonymous ? ROUTES.LOGIN : ROUTES.DEBT_POSITIONS}?fromAction=payment-error`
+      returnOkUrl: `${ORIGIN}${isAnonymous ? COURTESY.OK : ROUTES.DASHBOARD}`,
+      returnCancelUrl: `${ORIGIN}${isAnonymous ? COURTESY.CANCEL : ROUTES.DEBT_POSITIONS}`,
+      returnErrorUrl: `${ORIGIN}${isAnonymous ? COURTESY.KO : ROUTES.DEBT_POSITIONS}`
     }
   };
 };

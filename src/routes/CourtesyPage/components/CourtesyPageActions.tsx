@@ -72,7 +72,10 @@ export const CourtesyPageActions: React.FC<CourtesyPageActionsProps> = ({ code }
         });
 
         const installments = data as InstallmentInfo[];
-        const match = installments.find((i) => i.installmentId === Number(installmentId));
+        const match =
+          installments?.length === 1
+            ? installments[0]
+            : installments.find((i) => i.installmentId === Number(installmentId));
 
         setInstallment(match ?? null);
       } catch {
