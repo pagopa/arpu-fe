@@ -16,7 +16,6 @@ describe('Configuration Tests', () => {
     process.env.CHECKOUT_HOST = 'https://dev.checkout.pagopa.it';
     process.env.LOGIN_URL = 'https://api.dev.cittadini-p4pa.pagopa.it/arc/v1/login/oneidentity';
     process.env.CHECKOUT_PLATFORM_URL = 'https://api.dev.platform.pagopa.it/checkout/ec/v1';
-    process.env.PAYMENT_RETURN_URL = 'http://localhost:1234';
     process.env.DEPLOY_PATH = '/cittadini';
     process.env.VERSION = '1.0.0';
     process.env.RESOURCES_URL =
