@@ -10,35 +10,37 @@ import { useTranslation } from 'react-i18next';
 import utils from 'utils'; // Adjust the import path as necessary
 import { useStore } from 'store/GlobalStore';
 import { Badge } from '@mui/material';
+import appStore from 'store/appStore';
+
+const Cart = () => {
+  const { t } = useTranslation();
+  const { state } = useStore();
+  return (
+    <Button
+      variant="naked"
+      sx={{ gap: 1 }}
+      onClick={toggleCartDrawer}
+      aria-label={t('ui.a11y.cart')}
+      name="CartButton">
+      <Typography variant="inherit" aria-hidden="true" id="header-cart-amount">
+        {utils.converters.toEuro(state.cart.amount)}
+      </Typography>
+      <Badge
+        badgeContent={state.cart.items.length}
+        anchorOrigin={{
+          vertical: 'bottom',
+          horizontal: 'right'
+        }}
+        color="primary">
+        <ShoppingCartIcon fontSize="small" aria-hidden="true" />
+      </Badge>
+    </Button>
+  );
+};
 
 export const SubHeader = ({ product }: { product: ReactNode }) => {
   const { spacing } = useTheme();
-  const { t } = useTranslation();
-  const { state } = useStore();
-
-  const Cart = () => {
-    return (
-      <Button
-        variant="naked"
-        sx={{ gap: 1 }}
-        onClick={toggleCartDrawer}
-        aria-label={t('ui.a11y.cart')}
-        name="CartButton">
-        <Typography variant="inherit" aria-hidden="true" id="header-cart-amount">
-          {utils.converters.toEuro(state.cart.amount)}
-        </Typography>
-        <Badge
-          badgeContent={state.cart.items.length}
-          anchorOrigin={{
-            vertical: 'bottom',
-            horizontal: 'right'
-          }}
-          color="primary">
-          <ShoppingCartIcon fontSize="small" aria-hidden="true" />
-        </Badge>
-      </Button>
-    );
-  };
+  const useCart = appStore.value.brokerInfo?.config?.useCart;
 
   return (
     <Box
@@ -56,7 +58,7 @@ export const SubHeader = ({ product }: { product: ReactNode }) => {
         pb={2}
         width="100%">
         {product}
-        {utils.config.showNotices && <Cart />}
+        {useCart && <Cart />}
       </Stack>
     </Box>
   );

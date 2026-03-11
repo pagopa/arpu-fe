@@ -8,7 +8,7 @@ import { useTheme } from '@mui/material';
 import { ButtonNaked } from '@pagopa/mui-italia';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
-import { ArcRoutes } from 'routes/routes';
+import { ROUTES } from 'routes/routes';
 import { installmentsDrawerStyles } from './InstallmentsDrawer.styles';
 import { useStore } from 'store/GlobalStore';
 import { usePostCarts } from 'hooks/usePostCarts';
@@ -22,6 +22,7 @@ import { addItem, toggleCartDrawer, setCartEmail } from 'store/CartStore';
 import utils from 'utils';
 import { CartItem } from 'models/Cart';
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
+import appStore from 'store/appStore';
 
 const InstallmentsDrawer = () => {
   const [addedInstallments, setAddedInstallments] = React.useState<InstallmentDrawerItem[]>([]);
@@ -35,7 +36,7 @@ const InstallmentsDrawer = () => {
     onSuccess: (url) => {
       window.location.replace(url);
     },
-    onError: (error: string) => navigate(ArcRoutes.COURTESY_PAGE.replace(':error', error))
+    onError: (error: string) => navigate(ROUTES.COURTESY_PAGE.replace(':error', error))
   });
 
   const email = useUserEmail();
@@ -237,14 +238,15 @@ const InstallmentsDrawer = () => {
 
           {/* Action Button */}
           <Stack justifyContent="center" spacing={2}>
-            <Button
-              startIcon={<ShoppingCartIcon />}
-              variant="outlined"
-              size="large"
-              onClick={addToCart}>
-              {t('app.installmentsDrawer.actions.add', { count: addedInstallments.length })}
-            </Button>
-
+            {appStore.value.brokerInfo?.config?.useCart && (
+              <Button
+                startIcon={<ShoppingCartIcon />}
+                variant="outlined"
+                size="large"
+                onClick={addToCart}>
+                {t('app.installmentsDrawer.actions.add', { count: addedInstallments.length })}
+              </Button>
+            )}
             <Button
               variant="contained"
               size="large"

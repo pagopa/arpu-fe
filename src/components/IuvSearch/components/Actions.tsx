@@ -1,4 +1,4 @@
-import { ArcRoutes } from 'routes/routes';
+import { ROUTES } from 'routes/routes';
 import Button from '@mui/material/Button';
 import Download from '@mui/icons-material/Download';
 import { generatePath, useNavigate } from 'react-router-dom';
@@ -34,7 +34,7 @@ export const Actions = ({ installment }: ActionsProps) => {
     onSuccess: (url) => {
       window.location.replace(url);
     },
-    onError: (error: string) => navigate(ArcRoutes.COURTESY_PAGE.replace(':error', error))
+    onError: (error: string) => navigate(ROUTES.public.COURTESY_PAGE.replace(':error', error))
   });
 
   const receiptPdf = isAnonymous
@@ -42,10 +42,10 @@ export const Actions = ({ installment }: ActionsProps) => {
     : loaders.useDownloadReceipt({ brokerId });
 
   const downloadRoute = isAnonymous
-    ? ArcRoutes.public.DEBT_POSITION_DOWNLOAD
-    : ArcRoutes.DEBT_POSITION_DOWNLOAD;
+    ? ROUTES.public.DEBT_POSITION_DOWNLOAD
+    : ROUTES.DEBT_POSITION_DOWNLOAD;
 
-  const detailRoute = isAnonymous ? ArcRoutes.public.RECEIPT : ArcRoutes.RECEIPT;
+  const detailRoute = isAnonymous ? ROUTES.public.RECEIPT : ROUTES.RECEIPT;
 
   const onDownloadPaymentNotice = () => {
     if (installment?.iuv && installment?.organizationId && installment?.debtor?.fiscalCode) {

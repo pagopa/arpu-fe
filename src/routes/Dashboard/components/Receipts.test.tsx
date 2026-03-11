@@ -72,7 +72,7 @@ vi.mock('react-router-dom', async () => {
 
 // Mock routes
 vi.mock('routes/routes', () => ({
-  ArcRoutes: {
+  ROUTES: {
     RECEIPTS: '/receipts'
   }
 }));

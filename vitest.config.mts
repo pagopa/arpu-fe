@@ -29,8 +29,7 @@ export default defineConfig({
         'src/global.d.ts',
         'src/components/Layout.tsx',
         'src/utils/style.tsx',
-        'src/models/',
-        'src/components/Spontanei' // Spontanei is WIP section, please remove this line when the functionality is read
+        'src/models/'
       ],
       include: ['src/**/*.ts?(x)'],
       thresholds: {

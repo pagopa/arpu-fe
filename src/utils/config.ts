@@ -10,13 +10,14 @@ const {
   ENV = 'LOCAL',
   APIHOST = 'http://localhost:1234/api',
   API_TIMEOUT = '10000',
-  CHECKOUT_HOST = 'https://dev.checkout.pagopa.it',
-  CHECKOUT_PLATFORM_URL = 'https://api.dev.platform.pagopa.it/checkout/ec/v1',
+  CHECKOUT_HOST = 'https://uat.checkout.pagopa.it',
+  CHECKOUT_PLATFORM_URL = 'https://api.uat.platform.pagopa.it/checkout/ec/v1',
   DEPLOY_PATH = '/cittadini',
   ENTITIES_LOGO_CDN,
   LOGIN_URL = 'https://api.dev.cittadini-p4pa.pagopa.it/arc/v1/login/oneidentity',
   VERSION = '',
-  SHOW_NOTICES = '1'
+  SHOW_NOTICES = '1',
+  RESOURCES_URL = '/cittadini-legaldocs/{BROKER_EXTERNAL_ID}/{DOCUMENT_TYPE}/{DOC_LANGUAGE}_{DOCUMENT_TYPE}.md'
 } = process.env;
 
 const PARSED_API_TIMEOUT = Number.parseInt(API_TIMEOUT, 10);
@@ -35,6 +36,7 @@ const ENTITIES_LOGO_CDN_schema = z.string().url();
 const LOGIN_URL_schema = z.string().url();
 const VERSION_schema = z.string();
 const SHOW_NOTICES_schema = z.enum(['0', '1']);
+const RESOURCES_URL_schema = z.string().min(1);
 
 try {
   ENV_Schema.parse(process.env.ENV);
@@ -47,6 +49,7 @@ try {
   LOGIN_URL_schema.parse(process.env.LOGIN_URL);
   VERSION_schema.parse(process.env.VERSION);
   SHOW_NOTICES_schema.parse(process.env.SHOW_NOTICES);
+  RESOURCES_URL_schema.parse(process.env.RESOURCES_URL);
 } catch (e) {
   console.error('ENV variables validation failed', (e as ZodError).issues);
 }
@@ -66,8 +69,12 @@ type Config = {
   tokenHeaderExcludePaths: string[];
   version: string;
   brokerId: string | null;
+  /** The broker's external identifier (human-readable), used in URLs */
+  brokerCode: string | null;
   showNotices: boolean;
   paramsSerializer: CustomParamsSerializer;
+  /** Template URL for legal resources (PP, ToS). */
+  resourcesUrl: string;
 };
 
 const assistanceLink: string = 'nomeprodotto@assistenza.pagopa.it';
@@ -110,6 +117,8 @@ const config: Config = {
   /** Running version, usually valued by pipelines */
   version: VERSION,
   brokerId: storage.app.getBrokerId(),
+  /** The broker code is extracted from the URL path, with localStorage as fallback (see storage.ts) */
+  brokerCode: storage.app.getBrokerCode(),
   showNotices: PARSED_SHOW_NOTICES,
   /** A global custom parameters serializer:
    * - null value and empty string parameters are strippef off.
@@ -133,7 +142,8 @@ const config: Config = {
       skipNull: true,
       arrayFormat: 'comma',
       skipEmptyString: true
-    })
+    }),
+  resourcesUrl: RESOURCES_URL
 };
 
 export default config;

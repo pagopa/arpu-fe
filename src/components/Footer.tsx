@@ -2,14 +2,13 @@ import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { useLanguage } from 'hooks/useLanguage';
 import { Divider, Link, Stack, Typography } from '@mui/material';
-import { ArcRoutes } from 'routes/routes';
+import { ROUTES } from 'routes/routes';
 import { ProductLogo } from './ProductLogo';
 import appStore from 'store/appStore';
+import { LangSwitch } from '@pagopa/mui-italia';
+import { languages } from 'translations/languages';
 
-const LINK_PERSONAL_DATA_PROTECTION =
-  'https://privacyportal-de.onetrust.com/webform/77f17844-04c3-4969-a11d-462ee77acbe1/9ab6533d-be4a-482e-929a-0d8d2ab29df8';
-
-const LINK_A11Y = 'https://www.w3.org/WAI/standards-guidelines/wai-aria/';
+const DEFAULT_LINK_A11Y = 'https://www.w3.org/WAI/standards-guidelines/wai-aria/';
 
 const FooterLink = ({ href, children }: { href: string; children: string }) => {
   return (
@@ -26,7 +25,10 @@ const FooterLink = ({ href, children }: { href: string; children: string }) => {
 
 export const Footer = () => {
   const { t } = useTranslation();
-  useLanguage();
+  const { language, changeLanguage } = useLanguage();
+
+  const { brokerInfo } = appStore.value;
+  const a11yLink = brokerInfo?.config?.a11yLink ?? DEFAULT_LINK_A11Y;
 
   return (
     <Stack
@@ -42,23 +44,30 @@ export const Footer = () => {
         padding={3}
         minHeight={50}>
         <ProductLogo />
-        <Stack direction="row" gap={2} alignItems="center" component="nav">
-          <FooterLink href={ArcRoutes.PRIVACY_POLICY}>{t('ui.footer.privacy')}</FooterLink>
-          <FooterLink href={ArcRoutes.TOS}>{t('ui.footer.termsAndConditions')}</FooterLink>
-          <FooterLink href={LINK_A11Y}>{t('ui.footer.a11y')}</FooterLink>
-          <FooterLink href={LINK_PERSONAL_DATA_PROTECTION}>
-            {t('ui.footer.personalData')}
-          </FooterLink>
+        <Stack alignItems="flex-end">
+          <Stack direction="row" gap={2} alignItems="center" component="nav">
+            <FooterLink href={ROUTES.PRIVACY_POLICY}>{t('ui.footer.privacy')}</FooterLink>
+            <FooterLink href={ROUTES.TOS}>{t('ui.footer.termsAndConditions')}</FooterLink>
+            <FooterLink href={a11yLink}>{t('ui.footer.a11y')}</FooterLink>
+            <FooterLink href="#">{t('ui.footer.personalData')}</FooterLink>
+            <LangSwitch
+              currentLangCode={language}
+              onLanguageChanged={changeLanguage}
+              languages={languages}
+            />
+          </Stack>
         </Stack>
       </Stack>
-      <Stack>
-        <Divider />
-        <Stack alignItems="center" justifyContent="center" height={60}>
-          <Typography component="span" fontWeight={600} fontSize={14}>
-            {appStore.value.brokerInfo?.brokerName}
-          </Typography>
+      {brokerInfo?.brokerName ? (
+        <Stack>
+          <Divider />
+          <Stack alignItems="center" justifyContent="center" height={60}>
+            <Typography component="span" fontWeight={600} fontSize={14}>
+              {brokerInfo.brokerName}
+            </Typography>
+          </Stack>
         </Stack>
-      </Stack>
+      ) : null}
     </Stack>
   );
 };

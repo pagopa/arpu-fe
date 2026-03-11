@@ -1,6 +1,7 @@
 import React from 'react';
 import * as z from 'zod';
 import { SpontaneousFormField } from '../../../../generated/data-contracts';
+import { Option } from './FieldBeans/withDinamicValues';
 
 // SANDBOX
 import sand from '@nyariv/sandboxjs';
@@ -12,11 +13,14 @@ import SINGLESELECT from './FieldBeans/SINGLESELECT';
 import MULTISELECT from './FieldBeans/MULTISELECT';
 import DATEPICKER from './FieldBeans/DATE';
 import TEXT from './FieldBeans/TEXT';
-import CURRENCYLABEL from './FieldBeans/CURRENCYLABEL';
+import CURRENCY_LABEL from './FieldBeans/CURRENCY_LABEL';
 import MULTIFIELD from './FieldBeans/MULTIFIELD';
 import NONE from './FieldBeans/NONE';
 import TAB from './FieldBeans/TAB';
+import DYNAMIC_SELECT from './FieldBeans/DYNAMIC_SELECT';
+import DYNAMIC_AMOUNTLABEL from './FieldBeans/DYNAMIC_AMOUNT_LABEL';
 import { RenderType } from '../../../../generated/apiClient';
+import CURRENCY from './FieldBeans/CURRENCY';
 
 export type FieldName = SpontaneousFormField['name'];
 
@@ -35,6 +39,13 @@ export const getErrorMessage = (issues: z.ZodIssue[], fieldName: string) =>
     .map(({ message }) => message)
     .toString();
 
+/** Extrae placeholders from a string */
+export const getPlaceholders = (template: string): string[] => {
+  const regex = /[$]?{([^{}]*)}/g;
+  const matches = template.matchAll(regex);
+  return Array.from(new Set(Array.from(matches, (match) => match[1])));
+};
+
 function formatString(formatString: string, dataObject: { [key: string]: unknown }): string {
   return formatString.replace(/[$]?{([^{}]*)}/g, (match, key) => {
     /*eslint no-prototype-builtins: "off"*/
@@ -44,6 +55,15 @@ function formatString(formatString: string, dataObject: { [key: string]: unknown
     return match;
   });
 }
+
+export const flattenObject = (obj, delimiter = '.', prefix = ''): Record<string, string | number> =>
+  Object.keys(obj).reduce((acc, k) => {
+    const pre = prefix.length ? `${prefix}${delimiter}` : '';
+    if (typeof obj[k] === 'object' && obj[k] !== null && Object.keys(obj[k]).length > 0)
+      Object.assign(acc, flattenObject(obj[k], delimiter, pre + k));
+    else acc[pre + k] = obj[k];
+    return acc;
+  }, {});
 
 /** usata per la causale */
 export const buildDinamicValue = (
@@ -66,7 +86,10 @@ export const buildDinamicValue = (
   return formatString(stringTemplate, { ...templateVars, ...updatedFields });
 };
 
-export const computeValue = (code: string, scope = {}) => sandbox.compile(code)(scope).run();
+export function computeValue<T>(code: string, scope = {}) {
+  return sandbox.compile(code)(scope).run() as T;
+}
+
 /** set the form schema for validation */
 let schemaObject = {};
 export const BuildFormSchema = (fields: Array<SpontaneousFormField>) => {
@@ -76,10 +99,23 @@ export const BuildFormSchema = (fields: Array<SpontaneousFormField>) => {
     const isRequired = field.required;
     const regex = field.regex;
     const type = field.htmlRender;
-    const errorMessage = field.extraAttr?.error_message;
-
+    const errorMessage = field.extraAttr?.error_messag;
+    const isAmountField =
+      type === RenderType.CURRENCY ||
+      type === RenderType.DYNAMIC_AMOUNT_LABEL ||
+      type === RenderType.CURRENCY_LABEL;
     let fieldSchema;
-    if (type === 'MULTISELECT') {
+    if (isAmountField) {
+      fieldSchema = isRequired ? z.number().min(0, errorMessage) : z.number();
+    } else if (type === RenderType.SINGLESELECT || type === RenderType.DYNAMIC_SELECT) {
+      fieldSchema = z
+        .object({
+          label: z.string(),
+          value: z.string()
+        })
+        .nullable()
+        .refine((option) => isRequired && option !== null, errorMessage);
+    } else if (type === RenderType.MULTISELECT) {
       fieldSchema = isRequired ? z.array(z.string()).min(1, errorMessage) : z.array(z.string());
     } else {
       fieldSchema = isRequired ? z.string().min(1, errorMessage) : z.string();
@@ -92,9 +128,24 @@ export const BuildFormSchema = (fields: Array<SpontaneousFormField>) => {
   return z.object(schemaObject);
 };
 
+export interface CustomFormValues {
+  [key: string]: string | string[] | number | number[] | Option | undefined;
+  debtPositionTypeOrgCode?: string;
+  debtPositionTypeOrgId?: number;
+  debtPositionTypeOrgDescription?: string;
+  organizationId?: number;
+  organizationName?: string;
+  orgFiscalCode?: string;
+  ipaCode?: string;
+  fullName?: string;
+  email?: string;
+  fiscalCode?: string;
+  description?: string;
+}
+
 /** set the form state considering the initial value */
-let intialState = {};
-export const BuildFormState = (fields: Array<SpontaneousFormField>) => {
+let intialState: CustomFormValues = {};
+export const BuildFormState = (fields: Array<SpontaneousFormField>): CustomFormValues => {
   fields.forEach(({ name, defaultValue, subfields, htmlRender }) => {
     if (subfields) BuildFormState(subfields);
     /* I fields MULTFIELD sono solo contenitori di altri fields
@@ -102,12 +153,12 @@ export const BuildFormState = (fields: Array<SpontaneousFormField>) => {
       necessario tenere tracciao dello stato
       probabilmente anche altri tipi di fields non necessitano
       di stato  */
-    if (htmlRender !== 'MULTIFIELD') {
+    if (htmlRender !== RenderType.MULTIFIELD) {
       // Una multiselect usa un array di valori
       // TODO: gestire un eventuale valore
       // iniziale. In questo caso è più complesso
       // perchè defaultValue dovrebbe essere un array di valori
-      if (htmlRender == 'MULTISELECT') {
+      if (htmlRender == RenderType.MULTISELECT) {
         intialState = { ...intialState, [name]: [] };
       } else {
         intialState = { ...intialState, [name]: defaultValue };
@@ -118,35 +169,50 @@ export const BuildFormState = (fields: Array<SpontaneousFormField>) => {
 };
 
 /** Render a single input */
-export const BuildInput = (element: SpontaneousFormField, allElements?: SpontaneousFormField[]) => {
+export const BuildInput = (
+  element: SpontaneousFormField,
+  allElements?: SpontaneousFormField[],
+  amountFieldName = 'importo'
+) => {
   switch (element.htmlRender) {
-    case 'TAB':
+    case RenderType.TAB:
       return <TAB input={element} />;
-    case 'SINGLESELECT':
-      return <SINGLESELECT input={element} />;
-    case 'MULTISELECT':
-      return <MULTISELECT input={element} />;
-    case 'DATE':
-      return <DATEPICKER input={element} />;
-    case 'NONE':
-      return <NONE input={element} allFields={allElements || []} />;
-    case 'CURRENCY':
-    case 'TEXT':
-      return <TEXT input={element} />;
-    case 'CURRENCY_LABEL':
-      return <CURRENCYLABEL input={element} />;
-    case 'MULTIFIELD':
+    case RenderType.SINGLESELECT:
+      return <SINGLESELECT {...element} />;
+    case RenderType.DYNAMIC_SELECT:
+      return <DYNAMIC_SELECT {...element} />;
+    case RenderType.MULTISELECT:
+      return <MULTISELECT {...element} />;
+    case RenderType.DATE:
+      return <DATEPICKER {...element} />;
+    case RenderType.NONE:
+      return <NONE {...element} allFields={allElements} />;
+    case RenderType.TEXT:
+      return <TEXT {...element} />;
+    case RenderType.MULTIFIELD:
       return <MULTIFIELD input={element} />;
+    // amount
+    case RenderType.CURRENCY:
+      return <CURRENCY {...element} amountFieldName={amountFieldName} />;
+    // readonly amount
+    case RenderType.CURRENCY_LABEL:
+      return <CURRENCY_LABEL {...element} amountFieldName={amountFieldName} />;
+    // dynamic readonly amount (amount that changes based on other fields and an API call)
+    case RenderType.DYNAMIC_AMOUNT_LABEL:
+      return <DYNAMIC_AMOUNTLABEL {...element} amountFieldName={amountFieldName} />;
     default:
       return null;
   }
 };
 
 /** Render a group of inputs */
-export const BuildFormInputs = (elements: Array<SpontaneousFormField>, addTotaleField = false) => {
+export const BuildFormInputs = (
+  elements: Array<SpontaneousFormField>,
+  amountFieldName?: string
+) => {
   const fields = elements;
 
-  if (addTotaleField) {
+  if (!amountFieldName) {
     fields.push({
       name: 'importo',
       required: true,
@@ -172,7 +238,7 @@ export const BuildFormInputs = (elements: Array<SpontaneousFormField>, addTotale
 
   return fields
     .sort((a, b) => a.renderableOrder - b.renderableOrder)
-    .map((element) => BuildInput(element, elements));
+    .map((element) => BuildInput(element, elements, amountFieldName));
 };
 
 export type FieldBeanPros = {

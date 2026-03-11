@@ -5,25 +5,33 @@ import { useTranslation } from 'react-i18next';
 import FormContext, { FormContextType } from './FormContext';
 import { useNavigate } from 'react-router-dom';
 
-type HideContinue = {
+export type HideContinue = {
   hideContinue: true;
 };
 
-type ShouldContinue = {
+export type ShouldContinue = {
   hideContinue?: false;
   shouldContinue: () => Promise<boolean>;
 };
 
-type Props = HideContinue | ShouldContinue;
+export type ControlsProps = HideContinue | ShouldContinue;
 
-const Controls = (props: Props) => {
+/**
+ * Controls component buttons for the spontaneous form.
+ * @param props hideContinue: boolean, shouldContinue: () => Promise<boolean>
+ * @returns JSX.Element
+ */
+const Controls = (props: ControlsProps) => {
   const { t } = useTranslation();
   const context = useContext<FormContextType | null>(FormContext);
   const step = context?.step || 0;
+  const omitFirstStep = context?.omitFirstStep || false;
+  // If the first step is omitted, the back button should navigate to the previous page instead of the first step
+  const backButtonWithOmitFirstStep = step === 1 && omitFirstStep;
   const navigate = useNavigate();
 
   const onBack = () => {
-    if (!step || step < 1) {
+    if (!step || step < 1 || backButtonWithOmitFirstStep) {
       navigate(-1);
     } else {
       context?.setStep(step - 1);
@@ -38,12 +46,26 @@ const Controls = (props: Props) => {
   };
 
   return (
-    <Stack direction="row" justifyContent={'space-between'}>
-      <Button size="large" variant="outlined" onClick={onBack} startIcon={<ArrowBack />}>
-        {step === 0 ? t('spontanei.form.abort') : t('spontanei.form.back')}
+    <Stack
+      direction="row"
+      justifyContent={'space-between'}
+      data-testid="spontanei-controls-container">
+      <Button
+        size="large"
+        variant="outlined"
+        onClick={onBack}
+        startIcon={<ArrowBack />}
+        data-testid="spontanei-controls-back-button">
+        {step === 0 || backButtonWithOmitFirstStep
+          ? t('spontanei.form.abort')
+          : t('spontanei.form.back')}
       </Button>
       {!props.hideContinue && (
-        <Button size="large" variant="contained" onClick={onContinue}>
+        <Button
+          size="large"
+          variant="contained"
+          onClick={onContinue}
+          data-testid="spontanei-controls-continue-button">
           {step === 4 ? t('spontanei.form.confirm') : t('spontanei.form.continue')}
         </Button>
       )}

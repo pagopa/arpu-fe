@@ -1,33 +1,47 @@
 import React from 'react';
-import FormControl from '@mui/material/FormControl';
-import { FormHelperText, InputLabel, MenuItem, Select } from '@mui/material';
-import { FieldBeanPros } from '../config';
+import { FormControl } from '@mui/material';
+import { computedPROPS } from './withDinamicValues';
+import { Autocomplete, TextField } from '@mui/material';
+import { Option } from './withDinamicValues';
 import { useField } from 'formik';
 
-const SELECT = (props: FieldBeanPros & { multiple?: boolean }) => {
-  const { input, multiple = false } = props;
-  const { name, htmlLabel, required, extraAttr } = input;
-  const [field, meta] = useField(name);
-  const value = field.value;
-  const hasError = meta.touched && Boolean(meta.error);
+const SELECT = (props: computedPROPS & { multiple?: boolean }) => {
+  const { name, onBlur, htmlLabel, hasError, required, errorMessage, options = [] } = props;
+
+  const [fieldValue, , helpers] = useField<Option | null>(name);
+
+  const handleChange = (
+    _event: React.SyntheticEvent<Element, Event>,
+    option: Option | string | null
+  ) => {
+    if (!option || typeof option === 'string') {
+      helpers.setValue(null);
+    } else {
+      const selectedOption = options?.find((o) => o.value === option?.value) || null;
+      helpers.setValue(selectedOption);
+    }
+  };
 
   return (
     <FormControl fullWidth error={hasError} required={required}>
-      {htmlLabel && <InputLabel>{htmlLabel}</InputLabel>}
-      <Select
-        multiple={multiple}
-        name={name}
-        onChange={field.onChange}
-        onBlur={field.onBlur}
-        label={htmlLabel}
-        value={value}>
-        {input.enumerationList?.map((option) => (
-          <MenuItem key={option} value={option}>
-            {option}
-          </MenuItem>
-        ))}
-      </Select>
-      {hasError && <FormHelperText>{extraAttr?.error_message}</FormHelperText>}
+      <Autocomplete
+        options={options}
+        onChange={handleChange}
+        onBlur={onBlur}
+        freeSolo
+        value={fieldValue.value}
+        getOptionKey={(opt) => (opt as Option).value}
+        getOptionLabel={(org) => (org as Option).label}
+        renderInput={(params) => (
+          <TextField
+            {...params}
+            label={htmlLabel}
+            name={name}
+            error={hasError}
+            helperText={hasError && errorMessage}
+          />
+        )}
+      />
     </FormControl>
   );
 };

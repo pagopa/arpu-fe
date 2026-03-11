@@ -5,14 +5,13 @@ import { render, screen } from '__tests__/renderers';
 import { Footer } from './Footer';
 
 vi.mock('hooks/useLanguage', () => ({
-  useLanguage: vi.fn()
+  useLanguage: vi.fn(() => ({ language: 'test', changeLanguage: vi.fn() }))
 }));
 
 vi.mock('./ProductLogo', () => ({
   ProductLogo: () => <div data-testid="product-logo">Logo</div>
 }));
 
-import { ArcRoutes } from 'routes/routes';
 import { resetAppStore, setBrokerInfo } from 'store/appStore';
 
 describe('Footer', () => {
@@ -40,26 +39,6 @@ describe('Footer', () => {
     expect(screen.getByText('ui.footer.personalData')).toBeInTheDocument();
   });
 
-  it('renders links with correct href attributes', () => {
-    render(<Footer />);
-
-    const privacyLink = screen.getByText('ui.footer.privacy').closest('a');
-    const tosLink = screen.getByText('ui.footer.termsAndConditions').closest('a');
-    const a11yLink = screen.getByText('ui.footer.a11y').closest('a');
-    const personalDataLink = screen.getByText('ui.footer.personalData').closest('a');
-
-    expect(privacyLink).toHaveAttribute('href', ArcRoutes.PRIVACY_POLICY);
-    expect(tosLink).toHaveAttribute('href', ArcRoutes.TOS);
-    expect(a11yLink).toHaveAttribute(
-      'href',
-      'https://www.w3.org/WAI/standards-guidelines/wai-aria/'
-    );
-    expect(personalDataLink).toHaveAttribute(
-      'href',
-      'https://privacyportal-de.onetrust.com/webform/77f17844-04c3-4969-a11d-462ee77acbe1/9ab6533d-be4a-482e-929a-0d8d2ab29df8'
-    );
-  });
-
   it('renders external links with target blank and rel attributes', () => {
     render(<Footer />);
 
@@ -72,8 +51,46 @@ describe('Footer', () => {
     expect(personalDataLink).toHaveAttribute('rel', 'noopener noreferrer');
   });
 
+  it('renders default a11y link when brokerInfo has no a11yLink', () => {
+    render(<Footer />);
+
+    const a11yLink = screen.getByText('ui.footer.a11y').closest('a');
+    expect(a11yLink).toHaveAttribute(
+      'href',
+      'https://www.w3.org/WAI/standards-guidelines/wai-aria/'
+    );
+  });
+
+  it('renders a11y link from brokerInfo config when available', () => {
+    setBrokerInfo(
+      {
+        brokerName: 'Test Broker S.p.A.',
+        brokerFiscalCode: 'ABC',
+        config: {
+          a11yLink: 'https://custom-a11y.example.com',
+          translation: {}
+        },
+        brokerId: 0,
+        externalId: ''
+      },
+      'test-broker'
+    );
+    render(<Footer />);
+
+    const a11yLink = screen.getByText('ui.footer.a11y').closest('a');
+    expect(a11yLink).toHaveAttribute('href', 'https://custom-a11y.example.com');
+  });
+
   it('renders broker name', () => {
-    setBrokerInfo({ brokerName: 'Test Broker S.p.A.', brokerFiscalCode: 'ABC' });
+    setBrokerInfo(
+      {
+        brokerName: 'Test Broker S.p.A.',
+        brokerFiscalCode: 'ABC',
+        brokerId: 0,
+        externalId: ''
+      },
+      'test-broker'
+    );
     render(<Footer />);
 
     expect(screen.getByText('Test Broker S.p.A.')).toBeInTheDocument();

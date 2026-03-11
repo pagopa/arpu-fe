@@ -2,7 +2,7 @@ import React from 'react';
 import { useMediaQuery } from '@mui/material';
 import { generatePath } from 'react-router-dom';
 import { theme } from '@pagopa/mui-italia';
-import { ArcRoutes } from 'routes/routes';
+import { ROUTES } from 'routes/routes';
 import { PayeeIcon } from 'components/PayeeIcon';
 import {
   formatDateOrMissingValue,
@@ -31,7 +31,7 @@ export const ReceiptItem = ({
   const { t } = useTranslation();
   const smUp = useMediaQuery(theme.breakpoints.up('sm'));
 
-  const detailPath = generatePath(ArcRoutes.RECEIPT, { receiptId, organizationId });
+  const detailPath = generatePath(ROUTES.RECEIPT, { receiptId, organizationId });
 
   return (
     <ListItem

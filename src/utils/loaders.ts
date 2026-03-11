@@ -5,6 +5,7 @@ import * as zodSchema from '../../generated/zod-schema';
 import { DebtPositionRequestDTO, InstallmentStatus } from '../../generated/data-contracts';
 import { FilteredRequest } from 'models/Filters';
 import { STATE } from 'store/types';
+import { getResourceUrl, ResourceType } from './resources';
 
 const parseAndLog = <T>(schema: ZodSchema, data: T, throwError: boolean = true): void | never => {
   const result = schema.safeParse(data);
@@ -103,7 +104,7 @@ export const createPublicSpontaneousDebtPosition = (
 
 export const getOrganizationsWithSpontaneous = (brokerId: number) =>
   useQuery({
-    queryKey: ['getOrganizationsWithSpontaneous'],
+    queryKey: ['getOrganizationsWithSpontaneous', brokerId],
     queryFn: async () => {
       const { data } = await utils.apiClient.brokers.getOrganizationsWithSpontaneous(brokerId);
       return data;
@@ -376,7 +377,8 @@ const usePagedUnpaidDebtPositions = (brokerId: number) =>
 
 type InstallmentsByIuvOrNavArgs = {
   iuvOrNav: string;
-  fiscalCode: string;
+  fiscalCode?: string;
+  orgFiscalCode?: string;
   statuses?: InstallmentStatus[];
 };
 
@@ -391,8 +393,8 @@ const usePublicInstallmentsByIuvOrNav = (brokerId: number) =>
     mutationFn: async (args: InstallmentsByIuvOrNavArgs) => {
       const { data } = await utils.apiClient.public.getPublicInstallmentsByIuvOrNav(
         brokerId,
-        { iuvOrNav: args.iuvOrNav, statuses: args.statuses },
-        { headers: { 'X-fiscal-code': args.fiscalCode } }
+        { iuvOrNav: args.iuvOrNav, orgFiscalCode: args.orgFiscalCode, statuses: args.statuses },
+        args.fiscalCode ? { headers: { 'X-fiscal-code': args.fiscalCode } } : {}
       );
       return data;
     }
@@ -432,7 +434,8 @@ const getDebtorReceipts = (
 
 const getMostUsedSpontaneousDebtPositionTypeOrgsForCurrentYear = (
   brokerId: number,
-  organizationId: number
+  organizationId: number,
+  shouldShowMostUsedDebtTypes?: boolean
 ) =>
   useQuery({
     queryKey: [
@@ -448,13 +451,14 @@ const getMostUsedSpontaneousDebtPositionTypeOrgsForCurrentYear = (
         );
       return data;
     },
-    enabled: brokerId != null && organizationId != null,
+    enabled: shouldShowMostUsedDebtTypes && brokerId != null && organizationId != null,
     staleTime: Infinity
   });
 
 const getPublicMostUsedSpontaneousDebtPositionTypeOrgsForCurrentYear = (
   brokerId: number,
-  organizationId: number
+  organizationId: number,
+  shouldShowMostUsedDebtTypes?: boolean
 ) =>
   useQuery({
     queryKey: [
@@ -470,7 +474,32 @@ const getPublicMostUsedSpontaneousDebtPositionTypeOrgsForCurrentYear = (
         );
       return data;
     },
-    enabled: brokerId != null && organizationId != null,
+    enabled: shouldShowMostUsedDebtTypes && brokerId != null && organizationId != null,
+    staleTime: Infinity
+  });
+
+/**
+ * Fetches legal resource content (ToS or PP) from a static URL.
+ * The URL is resolved via getResourceUrl by interpolating brokerCode, language and type.
+ *
+ * @param type - The resource type: 'tos' or 'pp'
+ * @param lang - The language code (defaults to 'it')
+ */
+const useResourceContent = (type: ResourceType, lang: string = 'it') =>
+  useQuery({
+    queryKey: ['resourceContent', type, lang],
+    queryFn: async () => {
+      const url = getResourceUrl(type, lang);
+      const response = await fetch(url);
+      if (!response.ok) throw new Error('HTTP error: ' + response.status);
+
+      const contentType = response.headers.get('content-type') || '';
+      if (contentType.includes('text/html')) {
+        throw new Error('Unexpected content-type: ' + contentType);
+      }
+
+      return response.text();
+    },
     staleTime: Infinity
   });
 
@@ -490,6 +519,7 @@ export default {
   getDebtPositionDetail,
   getDebtorReceipts,
   getMostUsedSpontaneousDebtPositionTypeOrgsForCurrentYear,
+  useResourceContent,
   public: {
     createPublicSpontaneousDebtPosition,
     getPublicDebtPositionTypeOrgsWithSpontaneous,

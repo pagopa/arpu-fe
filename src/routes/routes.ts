@@ -1,12 +1,12 @@
 import config from 'utils/config';
 
-const rootPrefix = `${config.deployPath}/${config.brokerId}`;
+const rootPrefix = `${config.deployPath}/${config.brokerCode}`;
 
 export const ExternalRoutes = {
   PAYMENT_LINKS: `https://www.pagopa.gov.it/it/cittadini/dove-pagare/`
 };
 
-export const ArcRoutes = {
+export const ROUTES = {
   LOGIN: `${rootPrefix}/accesso`,
   AUTH_CALLBACK: `${config.deployPath}/auth-callback`,
   DASHBOARD: rootPrefix,
@@ -16,7 +16,7 @@ export const ArcRoutes = {
   DEBT_POSITION: `${rootPrefix}/posizioni-debitorie/:debtPositionId/:organizationId`,
   DEBT_POSITIONS: `${rootPrefix}/posizioni-debitorie`,
   USER: `${rootPrefix}/profilo`,
-  COURTESY_PAGE: `${rootPrefix}/errore/:error`,
+  COURTESY_PAGE: `${rootPrefix}/esito/:outcome`,
   ASSISTANCE: `${rootPrefix}/assistenza`,
   TOS: `${rootPrefix}/termini-di-servizio`,
   PRIVACY_POLICY: `${rootPrefix}/informativa-privacy`,
@@ -25,6 +25,7 @@ export const ArcRoutes = {
   public: {
     PAYMENTS_ON_THE_FLY: `${rootPrefix}/public/spontanei`,
     PAYMENTS_ON_THE_FLY_DOWNLOAD: `${rootPrefix}/public/spontanei/download/:orgId/:iuv`,
+    COURTESY_PAGE: `${rootPrefix}/public/esito/:outcome`,
     RECEIPTS_SEARCH: `${rootPrefix}/public/ricevute/ricerca`,
     RECEIPT: `${rootPrefix}/public/ricevute/:receiptId/:organizationId`,
     DEBT_POSITION_DOWNLOAD: `${rootPrefix}/public/posizioni-debitorie/download/:iuv/:organizationId`,
@@ -32,7 +33,7 @@ export const ArcRoutes = {
   }
 };
 
-export enum ArcErrors {
+export enum OUTCOMES {
   /** generic error */
   'sconosciuto' = 400,
   'sessione-scaduta' = 401,
@@ -43,7 +44,10 @@ export enum ArcErrors {
   /** something went wrong with the login */
   'accesso-non-riuscito' = 408,
   'broker-non-trovato' = 410,
+  'pagamento-avviso-completato' = 420,
   'avviso-non-pagabile' = 422,
   'avvio-pagamento' = 423,
+  'pagamento-non-riuscito' = 424,
+  'pagamento-annullato' = 425,
   'errore-server' = 500
 }

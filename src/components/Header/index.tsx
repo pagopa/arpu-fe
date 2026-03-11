@@ -4,11 +4,9 @@ import utils from 'utils';
 import SettingsIcon from '@mui/icons-material/Settings';
 import LogoutRoundedIcon from '@mui/icons-material/LogoutRounded';
 import { useNavigate } from 'react-router-dom';
-import { ArcRoutes } from 'routes/routes';
+import { ROUTES } from 'routes/routes';
 import { useUserInfo } from 'hooks/useUserInfo';
-import { SubHeader } from './SubHeader';
 import { useTranslation } from 'react-i18next';
-import { ProductLogo } from 'components/ProductLogo';
 import { Box } from '@mui/system';
 import appStore from 'store/appStore';
 
@@ -17,10 +15,18 @@ export interface HeaderProps {
 }
 
 export const Header = (props: HeaderProps) => {
-  /* istanbul ignore next */
-  const { onAssistanceClick = () => null } = props;
   const navigate = useNavigate();
   const { t } = useTranslation();
+
+  const assistanceLink = appStore.value.brokerInfo?.config?.assistanceLink;
+
+  const handleAssistanceClick = () => {
+    if (props.onAssistanceClick) {
+      props.onAssistanceClick();
+    } else if (assistanceLink) {
+      window.open(assistanceLink, '_blank');
+    }
+  };
 
   async function logoutUser() {
     try {
@@ -29,7 +35,7 @@ export const Header = (props: HeaderProps) => {
       console.warn(e);
     } finally {
       utils.storage.user.logOut();
-      navigate(ArcRoutes.LOGIN);
+      navigate(ROUTES.LOGIN);
     }
   }
 
@@ -37,7 +43,7 @@ export const Header = (props: HeaderProps) => {
 
   const rootLink: RootLinkType = {
     label: appStore.value.brokerInfo?.brokerName || '',
-    href: ArcRoutes.DASHBOARD,
+    href: ROUTES.DASHBOARD,
     ariaLabel: appStore.value.brokerInfo?.brokerName || '',
     title: appStore.value.brokerInfo?.brokerName || ''
   };
@@ -56,7 +62,7 @@ export const Header = (props: HeaderProps) => {
       id: 'profile',
       label: t('ui.header.profile'),
       onClick: () => {
-        navigate(ArcRoutes.USER);
+        navigate(ROUTES.USER);
       },
       icon: <SettingsIcon fontSize="small" color="inherit" />
     },
@@ -74,12 +80,12 @@ export const Header = (props: HeaderProps) => {
         <HeaderAccount
           rootLink={rootLink}
           enableDropdown
-          onAssistanceClick={onAssistanceClick}
+          enableAssistanceButton
+          onAssistanceClick={handleAssistanceClick}
           loggedUser={jwtUser}
           userActions={userActions}
           translationsMap={{ assistance: t('ui.header.help') }}
         />
-        <SubHeader product={<ProductLogo />} />
       </Box>
     </>
   );

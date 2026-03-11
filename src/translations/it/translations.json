@@ -1,6 +1,6 @@
 {
   "app": {
-    "title": "Area riservata pagoPA",
+    "title": "Area Riservata Piattaforma Unitaria",
     "info": "Informazioni",
     "modal": {
       "close": "Chiudi modale"
@@ -166,8 +166,8 @@
       "paid": "Pagato",
       "viewDetail": "Visualizza il dettaglio per la transazione",
       "empty": {
-        "title": "Il download dell’avviso è in corso",
-        "subtitle": "Se non parte automaticamente, clicca qui. ",
+        "title": "Qui vedrai le tue ricevute",
+        "subtitle": "Le troverai qui dopo aver pagato una posizione debitoria presso un qualsiasi canale abilitato.",
         "back": "Torna al tuo profilo",
         "link": "Fai un pagamento"
       }
@@ -415,6 +415,7 @@
     "expand": "Espandi il menu"
   },
   "errors": {
+    "resourceNotAvailable": "Risorsa non disponibile",
     "form": {
       "required": "Questo campo non puoi essere vuoto."
     },
@@ -475,10 +476,27 @@
       "body": "Si è verificato un problema durante l'accesso. Riprova tra qualche minuto.",
       "cta": "Riprova"
     },
+    "420": {
+      "title": "Pagamento completato",
+      "body": "Il tuo pagamento è stato ricevuto con successo.",
+      "cta": "Torna alla home"
+    },
     "422": {
       "title": "Non possiamo procedere con il pagamento",
       "body": "Per avere maggiori informazioni sull’avviso contatta l’Ente Creditore.",
       "cta": "Chiudi"
+    },
+    "424": {
+      "title": "Il pagamento non è andato a buon fine",
+      "body": "Puoi riprovare oppure scaricare l'avviso pagoPA e pagare presso tutti i canali abilitati.",
+      "cta": "Riprova",
+      "downloadCta": "Scarica l'avviso"
+    },
+    "425": {
+      "title": "Hai annullato il pagamento",
+      "body": "Se lo desideri, puoi scaricare l'avviso pagoPA e pagare presso tutti i canali abilitati.",
+      "cta": "Torna alla home",
+      "downloadCta": "Scarica l'avviso"
     },
     "423": {
       "title": "Non siamo riusciti ad avviare il pagamento",
@@ -506,7 +524,10 @@
     "receiptsSearch": "Recupera una ricevuta",
     "receiptsList": "Lista ricevute",
     "spontanei": "Pagamenti spontanei",
-    "assistance": "Assistenza"
+    "assistance": "Assistenza",
+    "paymentOutcomeOk": "Pagamento completato",
+    "pp": "Privacy Policy",
+    "tos": "Termini di servizio"
   },
   "spontanei": {
     "drawer": {

@@ -5,7 +5,7 @@ import utils from 'utils';
 import React, { ReactNode } from 'react';
 
 import { AxiosResponse } from 'axios';
-import { ArcRoutes } from 'routes/routes';
+import { ROUTES } from 'routes/routes';
 import { CartItem } from 'models/Cart';
 
 const mockCartItems: CartItem[] = [
@@ -66,9 +66,9 @@ describe('usePostCarts', () => {
         }
       ],
       returnUrls: {
-        returnOkUrl: `${ORIGIN}${ArcRoutes.DASHBOARD}?fromAction=payment-success`,
-        returnCancelUrl: `${ORIGIN}${ArcRoutes.DEBT_POSITIONS}?fromAction=payment-cancel`,
-        returnErrorUrl: `${ORIGIN}${ArcRoutes.DEBT_POSITIONS}?fromAction=payment-error`
+        returnOkUrl: `${ORIGIN}${ROUTES.DASHBOARD}`,
+        returnCancelUrl: `${ORIGIN}${ROUTES.DEBT_POSITIONS}`,
+        returnErrorUrl: `${ORIGIN}${ROUTES.DEBT_POSITIONS}`
       }
     });
     expect(mockOnSuccess).toHaveBeenCalledWith('https://redirect.com');

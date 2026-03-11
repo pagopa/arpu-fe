@@ -2,7 +2,7 @@ import { useMutation } from '@tanstack/react-query';
 import utils from 'utils';
 import { CartItem } from 'models/Cart';
 import { AxiosError } from 'axios';
-import { ArcErrors } from 'routes/routes';
+import { OUTCOMES } from 'routes/routes';
 
 const getRedirect = (data: string) => {
   const re = /URL=([^"]+)/;
@@ -31,9 +31,9 @@ export const usePostCarts = ({
     onError: (error: AxiosError) => {
       if (!onError) return;
       if (error.code == 'ERR_BAD_REQUEST' && error.response?.status === 422) {
-        return onError(ArcErrors['422']);
+        return onError(OUTCOMES['422']);
       }
-      onError(ArcErrors['423']);
+      onError(OUTCOMES['423']);
     }
   });
 

@@ -1,18 +1,11 @@
-import { Box } from '@mui/material';
 import React from 'react';
 import appStore from 'store/appStore';
 
-export const ProductLogo = () => {
-  return (
-    <Box>
-      {appStore.value.brokerInfo?.brokerLogo ? (
-        <img
-          data-testid="header-product-logo"
-          src={appStore.value.brokerInfo?.brokerLogo ?? ''}
-          alt={`${appStore.value.brokerInfo?.brokerName} logo`}
-          width="56"
-        />
-      ) : null}
-    </Box>
-  );
-};
+export const ProductLogo = () => (
+  <img
+    data-testid="header-product-logo"
+    src={appStore.value.brokerInfo?.brokerLogo ?? ''}
+    alt={appStore.value.brokerInfo?.brokerName ?? ''}
+    width="56px"
+  />
+);

@@ -1,5 +1,5 @@
 import { Button, Card, Stack, Typography } from '@mui/material';
-import React, { useContext } from 'react';
+import React, { useContext, useMemo } from 'react';
 import Controls from '../Controls';
 import { useTranslation } from 'react-i18next';
 import { addItem, isItemInCart, setCartEmail, toggleCartDrawer } from 'store/CartStore';
@@ -8,14 +8,16 @@ import { useStore } from 'store/GlobalStore';
 import utils from 'utils';
 import { generatePath, useNavigate } from 'react-router-dom';
 import { DebtPositionRequestDTO, FormTypeEnum } from '../../../../generated/data-contracts';
-import { useField } from 'formik';
+import { useField, useFormikContext } from 'formik';
 import { PaymentNoticeInfo } from '..';
 import FormContext, { FormContextType } from '../FormContext';
 import { usePostCarts } from 'hooks/usePostCarts';
-import { ArcRoutes } from 'routes/routes';
+import { ROUTES } from 'routes/routes';
 import { CartItem } from 'models/Cart';
 import FileDownloadIcon from '@mui/icons-material/FileDownload';
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
+import appStore from 'store/appStore';
+import { flattenObject } from '../DinamicForm/config';
 
 /**
  * This component is responsible for rendering the payment step of the form.
@@ -23,6 +25,10 @@ import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
  */
 const Payment = () => {
   const context = useContext<FormContextType | null>(FormContext);
+  const { submitFields } = context || {};
+
+  const { values } = useFormikContext<PaymentNoticeInfo>();
+  const flattenedValues = flattenObject(values);
 
   const [fullName] = useField<PaymentNoticeInfo['fullName']>('fullName');
   const [amount] = useField<PaymentNoticeInfo['amount']>('amount');
@@ -46,6 +52,18 @@ const Payment = () => {
     throw new Error('Missing required parameters');
   }
 
+  const fieldValues: DebtPositionRequestDTO['fieldValues'] = useMemo(
+    () =>
+      submitFields?.reduce((acc, field) => {
+        if (!field.key || !field.name || !flattenedValues[field.key]) return acc;
+        return {
+          ...acc,
+          [field.name]: flattenedValues[field.key]
+        };
+      }, {}),
+    [flattenedValues, submitFields]
+  );
+
   const { t } = useTranslation();
 
   const {
@@ -57,10 +75,10 @@ const Payment = () => {
     debtPositionTypeOrgId: debtPositionTypeOrgId,
     paymentOptions: [
       {
-        totalAmountCents: amount.value * 100,
+        totalAmountCents: amount.value,
         installments: [
           {
-            amountCents: amount.value * 100,
+            amountCents: amount.value,
             remittanceInformation: description.value,
             userRemittanceInformation:
               formType !== FormTypeEnum.CUSTOM ? description.value : userDescription,
@@ -73,7 +91,8 @@ const Payment = () => {
           }
         ]
       }
-    ]
+    ],
+    fieldValues
   };
 
   const { data: debtPositionResponse } = isAnonymous
@@ -103,7 +122,7 @@ const Payment = () => {
     onSuccess: (url) => {
       window.location.replace(url);
     },
-    onError: (error: string) => navigate(ArcRoutes.COURTESY_PAGE.replace(':error', error))
+    onError: (error: string) => navigate(ROUTES.COURTESY_PAGE.replace(':error', error))
   });
 
   const pay = () => {
@@ -128,20 +147,20 @@ const Payment = () => {
     const { iuv } = paymentDetails;
     if (!iuv) return;
     isAnonymous
-      ? navigate(generatePath(ArcRoutes.public.PAYMENTS_ON_THE_FLY_DOWNLOAD, { orgId, iuv }), {
+      ? navigate(generatePath(ROUTES.public.PAYMENTS_ON_THE_FLY_DOWNLOAD, { orgId, iuv }), {
           state: { debtorFiscalCode: fiscalCode.value }
         })
-      : navigate(generatePath(ArcRoutes.PAYMENTS_ON_THE_FLY_DOWNLOAD, { orgId, iuv }));
+      : navigate(generatePath(ROUTES.PAYMENTS_ON_THE_FLY_DOWNLOAD, { orgId, iuv }));
   };
 
   return (
     <>
-      <Card variant="outlined">
+      <Card variant="outlined" data-testid="spontanei-step4-payment-container">
         <Stack spacing={2} padding={4}>
           <Typography variant="h6">{t('spontanei.form.steps.step5.title')}</Typography>
           <Typography>{t('spontanei.form.steps.step5.description')}</Typography>
 
-          <Card variant="outlined">
+          <Card variant="outlined" data-testid="payment-methods-card">
             <Stack spacing={2} padding={4} direction="row" justifyContent="space-between">
               <Stack>
                 <Typography fontSize="18px" fontWeight="600">
@@ -152,17 +171,23 @@ const Payment = () => {
                 </Typography>
               </Stack>
               <Stack direction="row" spacing={2}>
-                <Button variant="text" onClick={addToCart} startIcon={<ShoppingCartIcon />}>
-                  {t('spontanei.form.steps.step5.pay.addItemToCartButton')}
-                </Button>
-                <Button variant="contained" onClick={pay}>
+                {appStore.value.brokerInfo?.config?.useCart && (
+                  <Button
+                    variant="text"
+                    onClick={addToCart}
+                    startIcon={<ShoppingCartIcon />}
+                    data-testid="add-to-cart-button">
+                    {t('spontanei.form.steps.step5.pay.addItemToCartButton')}
+                  </Button>
+                )}
+                <Button variant="contained" onClick={pay} data-testid="pay-button">
                   {t('spontanei.form.steps.step5.pay.payButton')}
                 </Button>
               </Stack>
             </Stack>
           </Card>
 
-          <Card variant="outlined">
+          <Card variant="outlined" data-testid="download-notice-card">
             <Stack spacing={2} padding={4} direction="row" justifyContent="space-between">
               <Stack>
                 <Typography fontSize="18px" fontWeight="600">
@@ -175,7 +200,8 @@ const Payment = () => {
               <Button
                 variant="text"
                 startIcon={<FileDownloadIcon />}
-                onClick={goToDownloadPaymentNoticePage}>
+                onClick={goToDownloadPaymentNoticePage}
+                data-testid="download-notice-button">
                 {t('spontanei.form.steps.step5.download.downloadButton')}
               </Button>
             </Stack>

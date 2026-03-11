@@ -1,11 +1,13 @@
 import { Card, Stack, Typography } from '@mui/material';
-import React, { useRef } from 'react';
+import React from 'react';
 import { useTranslation } from 'react-i18next';
 import DinamicForm from '../DinamicForm';
-import { SpontaneousFormField } from '../../../../generated/data-contracts';
+import { PersonEntityType, SpontaneousFormField } from '../../../../generated/data-contracts';
 import StaticFormSection from '../DebtorSection';
 import Controls from '../Controls';
 import { useFormikContext } from 'formik';
+import { BuildFormSchema, CustomFormValues } from './config';
+import * as z from 'zod';
 
 function isEmpty(obj) {
   for (const prop in obj) {
@@ -16,17 +18,35 @@ function isEmpty(obj) {
   return true;
 }
 
-const CustomForm = (props: { fields: SpontaneousFormField[]; amountFieldName?: string }) => {
+interface CustomFormProps {
+  fields: SpontaneousFormField[];
+  hasFlagAnonymousFiscalCode?: boolean;
+  allowedEntityType?: PersonEntityType;
+  amountFieldName?: string;
+}
+
+const CustomForm = (props: CustomFormProps) => {
+  const { fields, amountFieldName, hasFlagAnonymousFiscalCode = false } = props;
   const { t } = useTranslation();
-  const { validateForm, submitForm } = useFormikContext();
-  const formikRef = useRef(null);
+  const { values, validateForm, submitForm, setErrors } = useFormikContext();
+
+  const customFormValuesSchema = BuildFormSchema(fields);
+
+  const validate = (values: CustomFormValues) => {
+    const errors: Record<string | number, string> = {};
+    const result = customFormValuesSchema.safeParse(values);
+    if (!result.success) {
+      result.error.issues.forEach((issue: z.ZodIssue) => (errors[issue.path[0]] = issue.message));
+    }
+    return errors;
+  };
 
   const shouldContinue = async () => {
     await submitForm();
     const globalFormErrors = await validateForm();
-    await formikRef.current?.submitForm();
-    const localFormErrors = await formikRef.current?.validateForm();
-    return isEmpty(globalFormErrors || {}) && isEmpty(localFormErrors || {});
+    const customFormErrors = validate(values);
+    setErrors({ ...globalFormErrors, ...customFormErrors });
+    return isEmpty(globalFormErrors || {}) && isEmpty(customFormErrors || {});
   };
 
   return (
@@ -36,12 +56,11 @@ const CustomForm = (props: { fields: SpontaneousFormField[]; amountFieldName?: s
           <Typography variant="h6">{t('spontanei.form.steps.step3.title')}</Typography>
           <Typography>{t('spontanei.form.steps.step3.description')}</Typography>
           <Stack direction="column" justifyContent={'space-between'} spacing={2}>
-            <DinamicForm
-              fieldBeans={props.fields}
-              campoTotaleInclusoInXSD={props.amountFieldName}
-              formikRef={formikRef}
+            <StaticFormSection
+              allowedEntityType={props.allowedEntityType}
+              hasFlagAnonymousFiscalCode={hasFlagAnonymousFiscalCode}
             />
-            <StaticFormSection />
+            <DinamicForm fieldBeans={fields} amountFieldName={amountFieldName} />
           </Stack>
         </Stack>
       </Card>

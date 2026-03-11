@@ -5,7 +5,7 @@ import AssistanceBackModal from './AssistanceBackModal';
 import PullPaymentsModal from './PullPaymentsModal';
 import DetailNoticeInfoModal from './DetailNoticeInfoModal';
 import { ModalSystem } from './';
-import { ArcRoutes } from 'routes/routes';
+import { ROUTES } from 'routes/routes';
 import '@testing-library/jest-dom';
 import utils from 'utils';
 import { ModalId } from 'utils/modal';
@@ -97,7 +97,7 @@ describe('Modals: ', () => {
     );
   });
 
-  it('Pull Payments Modal Back (opt-in) should render navigate to ArcRoutes.PAYMENT_NOTICES on consent button click', () => {
+  it('Pull Payments Modal Back (opt-in) should render navigate to ROUTES.PAYMENT_NOTICES on consent button click', () => {
     render(
       <ModalWithRouter>
         <PullPaymentsModal open />
@@ -106,7 +106,7 @@ describe('Modals: ', () => {
     const button = screen.getByText('test agree');
     fireEvent.click(button);
     expect(mockedUsedNavigate).toHaveBeenCalledTimes(1);
-    expect(mockedUsedNavigate).toHaveBeenCalledWith(ArcRoutes.PAYMENT_NOTICES);
+    expect(mockedUsedNavigate).toHaveBeenCalledWith(ROUTES.LOGIN);
   });
 
   it('Pull Payments Modal Back (opt-in) should render nothing as expected when closed', () => {

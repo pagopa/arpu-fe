@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import {
   Card,
   Checkbox,
@@ -20,7 +20,12 @@ import { useUserInfo } from 'hooks/useUserInfo';
 import { useUserEmail } from 'hooks/useUserEmail';
 import { useUserFiscalCode } from 'hooks/useUserFiscalCode';
 
-const DebtorSection = ({ hasFlagAnonymousFiscalCode }: { hasFlagAnonymousFiscalCode: boolean }) => {
+type DebtorSectionProps = {
+  hasFlagAnonymousFiscalCode?: boolean;
+  allowedEntityType?: PersonEntityType;
+};
+
+const DebtorSection = ({ allowedEntityType, hasFlagAnonymousFiscalCode }: DebtorSectionProps) => {
   const [fullName, fullNameMeta, fullNameHelper] =
     useField<PaymentNoticeInfo['fullName']>('fullName');
   const [fiscalCode, fiscalCodeMeta, fiscalCodeHelper] =
@@ -29,6 +34,12 @@ const DebtorSection = ({ hasFlagAnonymousFiscalCode }: { hasFlagAnonymousFiscalC
   const [entityType, , entityTypeHelper] = useField<PaymentNoticeInfo['entityType']>('entityType');
   const [isFlagNoFiscalCodeChecked, setIsFlagNoFiscalCodeChecked] = React.useState(false);
   const { t } = useTranslation();
+
+  useEffect(() => {
+    if (allowedEntityType) {
+      entityTypeHelper.setValue(allowedEntityType);
+    }
+  }, [allowedEntityType]);
 
   const isAnonymous = utils.storage.user.isAnonymous();
   // Get user info if not anonymous
@@ -77,25 +88,27 @@ const DebtorSection = ({ hasFlagAnonymousFiscalCode }: { hasFlagAnonymousFiscalC
 
   return (
     <>
-      <FormControl sx={{ my: 3 }}>
-        <RadioGroup
-          row
-          onChange={handleEntityTypeChange}
-          aria-labelledby="entityType-radio-buttons-group-label"
-          defaultValue="F"
-          name="entityType">
-          <FormControlLabel
-            value="F"
-            control={<Radio />}
-            label={t('spontanei.form.steps.step3.debtor.F.title')}
-          />
-          <FormControlLabel
-            value="G"
-            control={<Radio />}
-            label={t('spontanei.form.steps.step3.debtor.G.title')}
-          />
-        </RadioGroup>
-      </FormControl>
+      {allowedEntityType ? null : (
+        <FormControl sx={{ my: 3 }}>
+          <RadioGroup
+            row
+            onChange={handleEntityTypeChange}
+            aria-labelledby="entityType-radio-buttons-group-label"
+            defaultValue="F"
+            name="entityType">
+            <FormControlLabel
+              value="F"
+              control={<Radio />}
+              label={t('spontanei.form.steps.step3.debtor.F.title')}
+            />
+            <FormControlLabel
+              value="G"
+              control={<Radio />}
+              label={t('spontanei.form.steps.step3.debtor.G.title')}
+            />
+          </RadioGroup>
+        </FormControl>
+      )}
       <Card variant="outlined" sx={{ padding: 3 }}>
         <Stack gap={2}>
           <Typography variant="h6">{t('spontanei.form.steps.step3.debtor.title')}</Typography>
@@ -144,6 +157,7 @@ const DebtorSection = ({ hasFlagAnonymousFiscalCode }: { hasFlagAnonymousFiscalC
               }
               variant="outlined"
               type="email"
+              required
               {...email}
               error={emailMeta.touched && Boolean(emailMeta.error)}
               helperText={emailMeta.touched && emailMeta.error}

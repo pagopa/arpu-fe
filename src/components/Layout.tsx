@@ -18,7 +18,7 @@ import { Outlet, useMatches } from 'react-router-dom';
 import { RouteHandleObject } from 'models/Breadcrumbs';
 import { Header } from './Header';
 import { BackButton } from './BackButton';
-import { ArcRoutes } from 'routes/routes';
+import { ROUTES } from 'routes/routes';
 import { ModalSystem } from './Modals';
 import utils from 'utils';
 import { useStore } from 'store/GlobalStore';
@@ -30,14 +30,12 @@ import { ProductLogo } from 'components/ProductLogo';
 import { HeaderAccount, RootLinkType } from '@pagopa/mui-italia';
 import { PageTitleProvider } from './PageTitleProvider';
 import { t } from 'i18next';
-import '../styles.css';
 import appStore from 'store/appStore';
+import { StorageItems } from 'utils/storage';
+import { RouteGuard } from './RouteGuard';
+import '../styles.css';
 
-const defaultRouteHandle: RouteHandleObject = {
-  sidebar: { visible: true },
-  crumbs: { routeName: '', elements: [] },
-  backButton: false
-};
+const defaultRouteHandle: RouteHandleObject = {};
 
 export function Layout(props: { anonymous?: boolean }) {
   const matches = useMatches();
@@ -52,21 +50,26 @@ export function Layout(props: { anonymous?: boolean }) {
 
   document.body.style.overflow = modalOpen || cart.isOpen || overlay ? 'hidden' : 'auto';
 
-  const { crumbs, sidebar, backButton, backButtonText, backButtonFunction } = {
-    ...defaultRouteHandle,
-    ...(matches.find((match) => Boolean(match.handle))?.handle || {})
-  } as RouteHandleObject;
+  const mergeHandles = matches
+    .map((match) => match.handle || defaultRouteHandle)
+    .reduce((prev, match) => ({ ...prev, ...match }), {});
+
+  const { crumbs, sidebar, backButton, backButtonText, backButtonFunction, subHeader, gutters } =
+    mergeHandles as RouteHandleObject;
 
   const rootLink: RootLinkType = {
     label: appStore.value.brokerInfo?.brokerName || '',
-    href: ArcRoutes.DASHBOARD,
+    href: ROUTES.DASHBOARD,
     ariaLabel: appStore.value.brokerInfo?.brokerName || '',
     title: appStore.value.brokerInfo?.brokerName || ''
   };
 
-  const ASSISTANCE_MAIL = utils.config.assistanceLink;
+  const assistanceLink = appStore.value.brokerInfo?.config?.assistanceLink;
+
   const onAssistanceClick = () => {
-    window.open(`mailto:${ASSISTANCE_MAIL}`);
+    if (assistanceLink) {
+      window.open(assistanceLink, '_blank');
+    }
   };
 
   const skipToContent = () => {
@@ -97,26 +100,33 @@ export function Layout(props: { anonymous?: boolean }) {
           {t('ui.header.skipToContent')}
         </Button>
         {!props.anonymous ? (
-          <Header onAssistanceClick={() => window.open(ArcRoutes.ASSISTANCE, '_blank')} />
+          <Header />
         ) : (
-          <>
-            <HeaderAccount
-              rootLink={rootLink}
-              onAssistanceClick={onAssistanceClick}
-              enableLogin={false}
-            />
-            <SubHeader product={<ProductLogo />} />
-          </>
+          <HeaderAccount
+            rootLink={rootLink}
+            onAssistanceClick={onAssistanceClick}
+            enableLogin={false}
+          />
         )}
+        {subHeader && <SubHeader product={<ProductLogo />} />}
         <Stack direction={lg ? 'row' : 'column'} bgcolor={grey['100']}>
-          {sidebar?.visible ? <Sidebar /> : null}
-
-          <Box padding={3} width={'100%'} component="main" id="main-content" tabIndex={-1}>
-            {backButton && <BackButton onClick={backButtonFunction} text={backButtonText} />}
-            {crumbs && (
-              <Breadcrumbs crumbs={crumbs} separator={<NavigateNext fontSize="small" />} />
+          {sidebar ? <Sidebar /> : null}
+          <Box width={'100%'} component="main" id="main-content" tabIndex={-1}>
+            {backButton || crumbs ? (
+              <Container sx={{ mt: 3 }}>
+                {backButton && <BackButton onClick={backButtonFunction} text={backButtonText} />}
+                {crumbs && (
+                  <Breadcrumbs crumbs={crumbs} separator={<NavigateNext fontSize="small" />} />
+                )}
+              </Container>
+            ) : null}
+            {gutters ? (
+              <Container sx={{ my: 3 }} maxWidth={sidebar ? false : 'lg'}>
+                <Outlet />
+              </Container>
+            ) : (
+              <Outlet />
             )}
-            <Outlet />
           </Box>
         </Stack>
         <Footer />
@@ -127,3 +137,12 @@ export function Layout(props: { anonymous?: boolean }) {
     </>
   );
 }
+
+const withGuard = (Component: () => React.JSX.Element) => (
+  <RouteGuard itemKeys={[StorageItems.TOKEN]} storage={window.localStorage}>
+    <Component />
+  </RouteGuard>
+);
+
+export const AuthLayout = () => withGuard(() => <Layout />);
+export const PublicLayout = () => <Layout anonymous={true} />;

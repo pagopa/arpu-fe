@@ -11,8 +11,9 @@ import utils from 'utils';
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 import { usePostCarts } from 'hooks/usePostCarts';
 import { useNavigate } from 'react-router-dom';
-import { ArcRoutes } from 'routes/routes';
+import { ROUTES } from 'routes/routes';
 import { useUserEmail } from 'hooks/useUserEmail';
+import appStore from 'store/appStore';
 
 interface paymentOptionsActionProps {
   selectPaymentOptionType: PaymentOptionType;
@@ -40,7 +41,7 @@ const PaymentOptionsActions = (props: paymentOptionsActionProps) => {
     onSuccess: (url) => {
       window.location.replace(url);
     },
-    onError: (error: string) => navigate(ArcRoutes.COURTESY_PAGE.replace(':error', error))
+    onError: (error: string) => navigate(ROUTES.public.COURTESY_PAGE.replace(':error', error))
   });
 
   const singleInstallmentItemId = installments[0].iuv;
@@ -127,7 +128,8 @@ const PaymentOptionsActions = (props: paymentOptionsActionProps) => {
 
   return (
     <Stack direction="row" spacing={2} marginTop={2} justifyContent="flex-end">
-      {selectPaymentOptionType === PaymentOptionType.SINGLE_INSTALLMENT &&
+      {appStore.value.brokerInfo?.config?.useCart &&
+        selectPaymentOptionType === PaymentOptionType.SINGLE_INSTALLMENT &&
         !isItemInCart(singleInstallmentItemId) && (
           <Button
             startIcon={<ShoppingCartIcon />}

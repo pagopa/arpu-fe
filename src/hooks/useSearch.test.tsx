@@ -52,7 +52,7 @@ describe('useSearch', () => {
 
     expect(mutateAsyncMock).toHaveBeenCalledWith({
       filters: { foo: 'bar' },
-      pagination: { size: 5, page: 1 },
+      pagination: { size: 5, page: 0 },
       sort: []
     });
   });
@@ -72,12 +72,12 @@ describe('useSearch', () => {
 
     expect(mutateAsyncMock).toHaveBeenCalledWith({
       filters: { foo: 'bar' },
-      pagination: { size: 10, page: 2 },
+      pagination: { size: 10, page: 1 },
       sort: ['createdAt,desc']
     });
   });
 
-  it('falls back to default pagination (page=0, size=5) and empty sort when nothing is provided', () => {
+  it('falls back to default pagination (page=1, size=5) and empty sort when nothing is provided', () => {
     mockUseHashParamsListener.mockReturnValue({});
 
     renderHook(() =>
@@ -99,7 +99,7 @@ describe('useSearch', () => {
 
     expect(mutateAsyncMock).toHaveBeenCalledWith({
       filters: { foo: 'bar' },
-      pagination: { size: 20, page: 2 },
+      pagination: { size: 20, page: 1 },
       sort: ['name,asc']
     });
   });
@@ -115,7 +115,7 @@ describe('useSearch', () => {
     expect(mutateAsyncMock).toHaveBeenCalledTimes(2);
     expect(mutateAsyncMock).toHaveBeenLastCalledWith({
       filters: { foo: 'bar' },
-      pagination: { size: 5, page: 3 },
+      pagination: { size: 5, page: 2 },
       sort: []
     });
   });
@@ -131,7 +131,7 @@ describe('useSearch', () => {
     expect(mutateAsyncMock).toHaveBeenCalledTimes(2);
     expect(mutateAsyncMock).toHaveBeenLastCalledWith({
       filters: { foo: 'bar' },
-      pagination: { size: 25, page: 1 },
+      pagination: { size: 25, page: 0 },
       sort: []
     });
   });
@@ -158,13 +158,13 @@ describe('useSearch', () => {
     });
   });
 
-  it('applyFilters uses initialPagination as reset target when provided', () => {
+  it('applyFilters uses initialPage as reset target when provided', () => {
     mockUseHashParamsListener.mockReturnValue({ page: 3, size: 20, sort: [] });
 
     const { result } = renderHook(() =>
       useSearch({
         filters: { foo: 'bar' },
-        initialPagination: { page: 0, size: 10 },
+        initialPagination: { page: 1, size: 10 },
         query: { mutateAsync: mutateAsyncMock } as any
       })
     );
@@ -175,7 +175,7 @@ describe('useSearch', () => {
 
     expect(mutateAsyncMock).toHaveBeenLastCalledWith({
       filters: { foo: 'baz' },
-      pagination: { size: 10, page: 0 },
+      pagination: { size: 20, page: 0 },
       sort: []
     });
   });

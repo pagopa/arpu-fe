@@ -1,63 +1,53 @@
-import React from 'react';
-import { Formik, Form, useField } from 'formik';
-import { BuildFormInputs, BuildFormSchema, BuildFormState } from './config';
-import { Stack } from '@mui/material';
-import { FormServizioDimaico } from './mockServiziDinamici';
+import React, { useEffect } from 'react';
+import { Form, useFormikContext } from 'formik';
+import { BuildFormInputs, BuildFormState, CustomFormValues } from './config';
+import { Card, Stack, Typography } from '@mui/material';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers';
-
 import 'dayjs/locale/it';
 import { PaymentNoticeInfo } from '..';
+import { useTranslation } from 'react-i18next';
+import { SpontaneousFormField } from '../../../../generated/data-contracts';
 
-type DinamicFormProps = FormServizioDimaico;
+export type CustomFormProps = {
+  fieldBeans: SpontaneousFormField[];
+  amountFieldName?: string;
+};
 
-const DinamicForm = ({ fieldBeans, campoTotaleInclusoInXSD, formikRef }: DinamicFormProps) => {
-  const [, , amountHelpers] = useField<PaymentNoticeInfo['amount']>('amount');
-  const [, , descriptionHelpers] = useField<PaymentNoticeInfo['description']>('description');
+const CustomForm = ({ fieldBeans, amountFieldName }: CustomFormProps) => {
+  const { t } = useTranslation();
 
-  const hasCustomImportField =
-    fieldBeans.some((field) => field.name === 'importo') || Boolean(campoTotaleInclusoInXSD);
-  const fields = BuildFormInputs(fieldBeans, !hasCustomImportField);
-  const schema = BuildFormSchema(fieldBeans);
+  const { setFormikState } = useFormikContext<PaymentNoticeInfo>();
 
-  const validate = (values) => {
-    // causale update
-    const { sys_type } = values;
-    descriptionHelpers.setValue(sys_type);
-    // importo update
-    let amount;
-    if (hasCustomImportField && campoTotaleInclusoInXSD) {
-      amount = values[campoTotaleInclusoInXSD];
-    } else {
-      amount = values.importo;
-    }
-    if (amount) {
-      amountHelpers.setValue(parseFloat(amount));
-    }
+  const fields = BuildFormInputs(fieldBeans, amountFieldName);
+  const initialValues: CustomFormValues = BuildFormState(fieldBeans);
 
-    const errors = {};
-    const result = schema.safeParse(values);
-    if (!result.success) {
-      result.error.issues.forEach((issue) => (errors[issue.path[0]] = issue.message));
-    }
-    return errors;
-  };
+  useEffect(() => {
+    setFormikState((state) => {
+      return {
+        ...state,
+        values: {
+          ...initialValues,
+          ...state.values
+        }
+      };
+    });
+  }, []);
 
   return (
     <>
       <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale="it">
-        <Formik
-          innerRef={formikRef}
-          onSubmit={console.log}
-          initialValues={BuildFormState(fieldBeans)}
-          validate={validate}>
+        <Card variant="outlined" sx={{ padding: 3 }}>
+          <Typography variant="h6" mb={2}>
+            {t('spontanei.form.steps.step3.custom.title')}
+          </Typography>
           <Form>
             <Stack gap={2}>{fields}</Stack>
           </Form>
-        </Formik>
+        </Card>
       </LocalizationProvider>
     </>
   );
 };
 
-export default DinamicForm;
+export default CustomForm;
