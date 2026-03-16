@@ -86,7 +86,8 @@ vi.mock('routes/routes', () => ({
     COURTESY_PAGE: '/courtesy/:error',
     public: {
       RECEIPT: '/public/receipt/:organizationId/:receiptId',
-      DEBT_POSITION_DOWNLOAD: '/public/download/:nav/:organizationId'
+      DEBT_POSITION_DOWNLOAD: '/public/download/:nav/:organizationId',
+      COURTESY_PAGE: '/public/courtesy/:error'
     }
   }
 }));
@@ -143,6 +144,13 @@ const mockIncompleteInstallment = {
   status: 'PAID'
 } as InstallmentDebtorExtendedDTO;
 
+const clickCartButton = () => {
+  const cartButton = screen
+    .getAllByRole('button')
+    .find((btn) => btn.querySelector('svg[data-testid="ShoppingCartIcon"]'));
+  fireEvent.click(cartButton!);
+};
+
 describe('Actions', () => {
   beforeEach(() => {
     vi.clearAllMocks();
@@ -155,6 +163,22 @@ describe('Actions', () => {
     });
     mockReceiptPdf.mockReturnValue({ mutateAsync: mockMutateAsync });
     mockPublicReceiptPdf.mockReturnValue({ mutateAsync: mockMutateAsync });
+  });
+
+  describe('brokerId guard', () => {
+    it('throws when brokerId is null', () => {
+      mockGetBrokerId.mockReturnValue(null);
+      expect(() => render(<Actions installment={mockPaidInstallment} />)).toThrow(
+        'Missing required parameters'
+      );
+    });
+
+    it('throws when brokerId is undefined', () => {
+      mockGetBrokerId.mockReturnValue(undefined);
+      expect(() => render(<Actions installment={mockPaidInstallment} />)).toThrow(
+        'Missing required parameters'
+      );
+    });
   });
 
   describe('Rendering based on status', () => {
@@ -252,6 +276,36 @@ describe('Actions', () => {
       await waitFor(() => {
         expect(mockNotifyEmit).toHaveBeenCalledWith('app.receiptDetail.downloadError');
         expect(mockDownloadBlob).not.toHaveBeenCalled();
+      });
+    });
+
+    it('emits downloadError when receiptId is missing', async () => {
+      render(<Actions installment={{ ...mockPaidInstallment, receiptId: undefined } as any} />);
+      fireEvent.click(screen.getByLabelText('actions.download'));
+
+      await waitFor(() => {
+        expect(mockNotifyEmit).toHaveBeenCalledWith('app.receiptDetail.downloadError');
+        expect(mockMutateAsync).not.toHaveBeenCalled();
+      });
+    });
+
+    it('emits downloadError when organizationId is missing', async () => {
+      render(
+        <Actions installment={{ ...mockPaidInstallment, organizationId: undefined } as any} />
+      );
+      fireEvent.click(screen.getByLabelText('actions.download'));
+
+      await waitFor(() => {
+        expect(mockNotifyEmit).toHaveBeenCalledWith('app.receiptDetail.downloadError');
+      });
+    });
+
+    it('emits downloadError when debtor.fiscalCode is missing', async () => {
+      render(<Actions installment={{ ...mockPaidInstallment, debtor: {} } as any} />);
+      fireEvent.click(screen.getByLabelText('actions.download'));
+
+      await waitFor(() => {
+        expect(mockNotifyEmit).toHaveBeenCalledWith('app.receiptDetail.downloadError');
       });
     });
   });
@@ -377,8 +431,34 @@ describe('Actions', () => {
         });
       });
 
+      it('navigates to public download route for anonymous user', () => {
+        mockIsAnonymous.mockReturnValue(true);
+        render(<Actions installment={mockUnpaidInstallment} />);
+        fireEvent.click(screen.getByLabelText('actions.download'));
+
+        expect(mockNavigate).toHaveBeenCalledWith('/public/download/NAV003/654', {
+          state: { fiscalCode: 'RSSMRA80A01H501U' }
+        });
+      });
+
       it('emits default error when nav is missing', () => {
         render(<Actions installment={{ ...mockUnpaidInstallment, nav: undefined } as any} />);
+        fireEvent.click(screen.getByLabelText('actions.download'));
+
+        expect(mockNotifyEmit).toHaveBeenCalledWith('errors.toast.default');
+      });
+
+      it('emits default error when organizationId is missing', () => {
+        render(
+          <Actions installment={{ ...mockUnpaidInstallment, organizationId: undefined } as any} />
+        );
+        fireEvent.click(screen.getByLabelText('actions.download'));
+
+        expect(mockNotifyEmit).toHaveBeenCalledWith('errors.toast.default');
+      });
+
+      it('emits default error when fiscalCode is missing', () => {
+        render(<Actions installment={{ ...mockUnpaidInstallment, debtor: {} } as any} />);
         fireEvent.click(screen.getByLabelText('actions.download'));
 
         expect(mockNotifyEmit).toHaveBeenCalledWith('errors.toast.default');
@@ -388,11 +468,7 @@ describe('Actions', () => {
     describe('addToCart', () => {
       it('calls addItem with correct cart item', () => {
         render(<Actions installment={mockUnpaidInstallment} />);
-        const iconButtons = screen.getAllByRole('button');
-        const cartButton = iconButtons.find((btn) =>
-          btn.querySelector('svg[data-testid="ShoppingCartIcon"]')
-        );
-        fireEvent.click(cartButton!);
+        clickCartButton();
 
         expect(cartState.value.items).toHaveLength(1);
         expect(cartState.value.items[0]).toMatchObject({
@@ -409,11 +485,33 @@ describe('Actions', () => {
 
       it('emits drawer error when nav is missing', () => {
         render(<Actions installment={{ ...mockUnpaidInstallment, nav: undefined } as any} />);
-        const iconButtons = screen.getAllByRole('button');
-        const cartButton = iconButtons.find((btn) =>
-          btn.querySelector('svg[data-testid="ShoppingCartIcon"]')
+        clickCartButton();
+
+        expect(mockNotifyEmit).toHaveBeenCalledWith('errors.toast.drawer');
+        expect(cartState.value.items).toHaveLength(0);
+      });
+
+      it('emits drawer error when iuv is missing', () => {
+        render(<Actions installment={{ ...mockUnpaidInstallment, iuv: undefined } as any} />);
+        clickCartButton();
+
+        expect(mockNotifyEmit).toHaveBeenCalledWith('errors.toast.drawer');
+        expect(cartState.value.items).toHaveLength(0);
+      });
+
+      it('emits drawer error when amountCents is missing', () => {
+        render(
+          <Actions installment={{ ...mockUnpaidInstallment, amountCents: undefined } as any} />
         );
-        fireEvent.click(cartButton!);
+        clickCartButton();
+
+        expect(mockNotifyEmit).toHaveBeenCalledWith('errors.toast.drawer');
+        expect(cartState.value.items).toHaveLength(0);
+      });
+
+      it('emits drawer error when orgName is missing', () => {
+        render(<Actions installment={{ ...mockUnpaidInstallment, orgName: undefined } as any} />);
+        clickCartButton();
 
         expect(mockNotifyEmit).toHaveBeenCalledWith('errors.toast.drawer');
         expect(cartState.value.items).toHaveLength(0);
@@ -423,11 +521,7 @@ describe('Actions', () => {
         render(
           <Actions installment={{ ...mockUnpaidInstallment, orgFiscalCode: undefined } as any} />
         );
-        const iconButtons = screen.getAllByRole('button');
-        const cartButton = iconButtons.find((btn) =>
-          btn.querySelector('svg[data-testid="ShoppingCartIcon"]')
-        );
-        fireEvent.click(cartButton!);
+        clickCartButton();
 
         expect(mockNotifyEmit).toHaveBeenCalledWith('errors.toast.drawer');
       });
@@ -454,7 +548,7 @@ describe('Actions', () => {
         });
       });
 
-      it('falls back to empty string when debtor email is missing', () => {
+      it('falls back to undefined when debtor email is missing', () => {
         render(
           <Actions
             installment={
@@ -469,6 +563,32 @@ describe('Actions', () => {
 
       it('emits payment error when nav is missing', () => {
         render(<Actions installment={{ ...mockUnpaidInstallment, nav: undefined } as any} />);
+        fireEvent.click(screen.getByText('actions.payNow'));
+
+        expect(mockNotifyEmit).toHaveBeenCalledWith('errors.toast.payment');
+        expect(mockCartsMutate).not.toHaveBeenCalled();
+      });
+
+      it('emits payment error when iuv is missing', () => {
+        render(<Actions installment={{ ...mockUnpaidInstallment, iuv: undefined } as any} />);
+        fireEvent.click(screen.getByText('actions.payNow'));
+
+        expect(mockNotifyEmit).toHaveBeenCalledWith('errors.toast.payment');
+        expect(mockCartsMutate).not.toHaveBeenCalled();
+      });
+
+      it('emits payment error when amountCents is missing', () => {
+        render(
+          <Actions installment={{ ...mockUnpaidInstallment, amountCents: undefined } as any} />
+        );
+        fireEvent.click(screen.getByText('actions.payNow'));
+
+        expect(mockNotifyEmit).toHaveBeenCalledWith('errors.toast.payment');
+        expect(mockCartsMutate).not.toHaveBeenCalled();
+      });
+
+      it('emits payment error when orgName is missing', () => {
+        render(<Actions installment={{ ...mockUnpaidInstallment, orgName: undefined } as any} />);
         fireEvent.click(screen.getByText('actions.payNow'));
 
         expect(mockNotifyEmit).toHaveBeenCalledWith('errors.toast.payment');

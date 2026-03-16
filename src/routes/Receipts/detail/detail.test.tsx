@@ -35,6 +35,9 @@ const mockUsePublicReceiptDetail = vi.fn();
 
 vi.mock('utils', () => ({
   default: {
+    config: {
+      missingValue: '-'
+    },
     storage: {
       user: {
         isAnonymous: () => mockIsAnonymous()
@@ -184,7 +187,6 @@ describe('ReceiptDetail', () => {
     it('does not render bottom action buttons for authenticated user', () => {
       render(<ReceiptDetail />);
       const downloadButtons = screen.getAllByRole('button', { name: 'app.receiptDetail.download' });
-      // Should only have one download button at the top
       expect(downloadButtons).toHaveLength(1);
     });
   });
@@ -207,7 +209,6 @@ describe('ReceiptDetail', () => {
     it('renders download button at bottom for anonymous user', () => {
       render(<ReceiptDetail />);
       const downloadButtons = screen.getAllByRole('button', { name: 'app.receiptDetail.download' });
-      // Should only have one download button at the bottom
       expect(downloadButtons).toHaveLength(1);
     });
 
@@ -343,7 +344,6 @@ describe('ReceiptDetail', () => {
     it('renders payment amount correctly', () => {
       render(<ReceiptDetail />);
       const dataRows = screen.getAllByTestId('data-row');
-      // First row should be amount
       expect(dataRows[0]).toBeInTheDocument();
     });
 
@@ -386,6 +386,117 @@ describe('ReceiptDetail', () => {
 
     it('renders IUD with copy functionality', () => {
       render(<ReceiptDetail />);
+      expect(screen.getByText('app.receiptDetail.iud')).toBeInTheDocument();
+    });
+  });
+
+  describe('onDownload edge cases', () => {
+    it('does not navigate when data.nav is undefined', () => {
+      mockUseReceiptDetail.mockReturnValue({
+        data: { ...mockReceiptData, nav: undefined },
+        isLoading: false,
+        isError: false
+      });
+
+      render(<ReceiptDetail />);
+
+      const downloadButton = screen.getByRole('button', { name: 'app.receiptDetail.download' });
+      fireEvent.click(downloadButton);
+
+      expect(mockNavigate).not.toHaveBeenCalled();
+    });
+
+    it('does not navigate when data.nav is null', () => {
+      mockUseReceiptDetail.mockReturnValue({
+        data: { ...mockReceiptData, nav: null },
+        isLoading: false,
+        isError: false
+      });
+
+      render(<ReceiptDetail />);
+
+      const downloadButton = screen.getByRole('button', { name: 'app.receiptDetail.download' });
+      fireEvent.click(downloadButton);
+
+      expect(mockNavigate).not.toHaveBeenCalled();
+    });
+
+    it('does not navigate when data is undefined', () => {
+      mockUseReceiptDetail.mockReturnValue({
+        data: undefined,
+        isLoading: false,
+        isError: false
+      });
+
+      render(<ReceiptDetail />);
+
+      const downloadButton = screen.getByRole('button', { name: 'app.receiptDetail.download' });
+      fireEvent.click(downloadButton);
+
+      expect(mockNavigate).not.toHaveBeenCalled();
+    });
+  });
+
+  describe('loading / empty data', () => {
+    it('renders title when data is still loading', () => {
+      mockUseReceiptDetail.mockReturnValue({
+        data: undefined,
+        isLoading: true,
+        isError: false
+      });
+
+      render(<ReceiptDetail />);
+
+      expect(screen.getByText('app.receiptDetail.title')).toBeInTheDocument();
+    });
+  });
+
+  describe('data display with missing optional fields', () => {
+    it('renders with missing debtor.fullName', () => {
+      mockUseReceiptDetail.mockReturnValue({
+        data: {
+          ...mockReceiptData,
+          debtor: { ...mockReceiptData.debtor, fullName: undefined }
+        },
+        isLoading: false,
+        isError: false
+      });
+
+      render(<ReceiptDetail />);
+      expect(screen.getByText('app.receiptDetail.debtor')).toBeInTheDocument();
+    });
+
+    it('renders with missing pspCompanyName', () => {
+      mockUseReceiptDetail.mockReturnValue({
+        data: { ...mockReceiptData, pspCompanyName: undefined },
+        isLoading: false,
+        isError: false
+      });
+
+      render(<ReceiptDetail />);
+      expect(screen.getByText('app.receiptDetail.psp')).toBeInTheDocument();
+    });
+
+    it('renders with missing remittanceInformation', () => {
+      mockUseReceiptDetail.mockReturnValue({
+        data: { ...mockReceiptData, remittanceInformation: undefined },
+        isLoading: false,
+        isError: false
+      });
+
+      render(<ReceiptDetail />);
+      expect(screen.getByText('app.receiptDetail.remittanceInformation')).toBeInTheDocument();
+    });
+
+    it('renders with missing iur and iud', () => {
+      mockUseReceiptDetail.mockReturnValue({
+        data: { ...mockReceiptData, iur: undefined, iud: undefined },
+        isLoading: false,
+        isError: false
+      });
+
+      render(<ReceiptDetail />);
+      expect(screen.getByText('app.receiptDetail.iur')).toBeInTheDocument();
       expect(screen.getByText('app.receiptDetail.iud')).toBeInTheDocument();
     });
   });
