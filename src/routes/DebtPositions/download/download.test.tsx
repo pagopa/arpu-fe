@@ -57,7 +57,7 @@ vi.mock('react-router-dom', async () => {
   return {
     ...actual,
     useParams: vi.fn(() => ({
-      iuv: 'IUV123',
+      nav: 'NAV123',
       organizationId: '456'
     })),
     useLocation: vi.fn(() => ({
@@ -137,7 +137,7 @@ describe('DebtPositionDownload', () => {
         expect(mockGetPaymentNotice).toHaveBeenCalledWith(
           999,
           456,
-          { iuv: 'IUV123' },
+          { nav: 'NAV123' },
           'RSSMRA80A01H501U'
         );
         expect(mockMutateAsync).toHaveBeenCalledWith();
@@ -153,7 +153,7 @@ describe('DebtPositionDownload', () => {
         expect(mockGetPublicPaymentNotice).toHaveBeenCalledWith(
           999,
           456,
-          { iuv: 'IUV123' },
+          { nav: 'NAV123' },
           'RSSMRA80A01H501U'
         );
         expect(mockMutateAsync).toHaveBeenCalledWith();
@@ -170,7 +170,7 @@ describe('DebtPositionDownload', () => {
       render(<DebtPositionDownload />);
 
       await waitFor(() => {
-        expect(mockDownloadBlob).toHaveBeenCalledWith(expect.any(Blob), 'IUV123.pdf');
+        expect(mockDownloadBlob).toHaveBeenCalledWith(expect.any(Blob), 'NAV123.pdf');
       });
     });
 
@@ -189,16 +189,16 @@ describe('DebtPositionDownload', () => {
   describe('Required parameters guard', () => {
     it('throws when organizationId is missing', () => {
       vi.spyOn(ReactRouterDom, 'useParams').mockReturnValue({
-        iuv: 'IUV123',
+        nav: 'NAV123',
         organizationId: undefined
       });
 
       expect(() => render(<DebtPositionDownload />)).toThrow('Missing required parameters');
     });
 
-    it('throws when iuv is missing', () => {
+    it('throws when nav is missing', () => {
       vi.spyOn(ReactRouterDom, 'useParams').mockReturnValue({
-        iuv: undefined,
+        nav: undefined,
         organizationId: '456'
       });
 

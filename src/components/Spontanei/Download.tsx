@@ -9,24 +9,24 @@ import storage from 'utils/storage';
 
 const Download = () => {
   const { t } = useTranslation();
-  const { orgId, iuv } = useParams();
+  const { orgId, nav } = useParams();
   const brokerId = storage.app.getBrokerId();
 
   const navigate = useNavigate();
   const location = useLocation();
 
-  if (!orgId || !iuv || !brokerId) {
+  if (!orgId || !nav || !brokerId) {
     throw new Error('Missing required parameters');
   }
 
   const parsedOrgId = parseInt(orgId, 10);
 
-  const mutation = utils.loaders.getPaymentNotice(brokerId, parsedOrgId, { iuv });
+  const mutation = utils.loaders.getPaymentNotice(brokerId, parsedOrgId, { nav });
 
   const anonymousMutation = utils.loaders.public.getPublicPaymentNotice(
     brokerId,
     parsedOrgId,
-    { iuv },
+    { nav },
     location.state?.debtorFiscalCode || ''
   );
 
@@ -36,11 +36,11 @@ const Download = () => {
     try {
       if (isAnonymous) {
         const { data, filename } = await anonymousMutation.mutateAsync();
-        utils.files.downloadBlob(data, filename || `${iuv}.pdf`);
+        utils.files.downloadBlob(data, filename || `${nav}.pdf`);
         return;
       }
       const { data, filename } = await mutation.mutateAsync();
-      utils.files.downloadBlob(data, filename || `${iuv}.pdf`);
+      utils.files.downloadBlob(data, filename || `${nav}.pdf`);
     } catch {
       utils.notify.emit('qualcosa è andato storto');
     }

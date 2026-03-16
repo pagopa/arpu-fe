@@ -17,11 +17,11 @@ export const DebtPositionDownload = () => {
   const location = useLocation() as Location<{ fiscalCode: string }>;
   const fiscalCode = location?.state?.fiscalCode;
 
-  const params = useParams<{ iuv: string; organizationId: string }>();
-  const iuv = params?.iuv;
+  const params = useParams<{ nav: string; organizationId: string }>();
+  const nav = params?.nav;
   const organizationId = Number(params?.organizationId);
 
-  if (isNaN(organizationId) || !iuv || !brokerId || !fiscalCode) {
+  if (isNaN(organizationId) || !nav || !brokerId || !fiscalCode) {
     throw new Error('Missing required parameters');
   }
 
@@ -29,12 +29,12 @@ export const DebtPositionDownload = () => {
     ? loaders.public.getPublicPaymentNotice
     : loaders.getPaymentNotice;
 
-  const paymentNotice = noticeLoader(brokerId, organizationId, { iuv }, fiscalCode);
+  const paymentNotice = noticeLoader(brokerId, organizationId, { nav }, fiscalCode);
 
   const onDownload = async () => {
     try {
       const { data, filename } = await paymentNotice.mutateAsync();
-      files.downloadBlob(data, filename || `${iuv}.pdf`);
+      files.downloadBlob(data, filename || `${nav}.pdf`);
     } catch {
       notify.emit(t('app.receiptDetail.downloadError'));
     }

@@ -116,17 +116,17 @@ export const CourtesyPageActions: React.FC<CourtesyPageActionsProps> = ({ code }
   const downloadMutation = loaders.public.getPublicPaymentNotice(
     brokerId!,
     installment?.organizationId ?? 0,
-    { iuv: installment?.iuv },
+    { nav: installment?.nav ?? '' },
     installment?.debtor?.fiscalCode ?? ''
   );
 
   const handleDownload = useCallback(async () => {
     try {
-      if (!installment?.organizationId || !installment?.iuv || !brokerId) {
+      if (!installment?.organizationId || !installment?.nav || !brokerId) {
         throw new Error('Missing required data for download');
       }
       const { data, filename } = await downloadMutation.mutateAsync();
-      files.downloadBlob(data, filename || `${installment.iuv}.pdf`);
+      files.downloadBlob(data, filename || `${installment.nav}.pdf`);
     } catch {
       notify.emit(t('app.receiptDetail.downloadError'));
     }

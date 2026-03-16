@@ -30,6 +30,10 @@ export const Actions = ({ installment }: ActionsProps) => {
 
   const isAnonymous = storage.user.isAnonymous();
 
+  if (!brokerId) {
+    throw new Error('Missing required parameters');
+  }
+
   const carts = usePostCarts({
     onSuccess: (url) => {
       window.location.replace(url);
@@ -48,9 +52,9 @@ export const Actions = ({ installment }: ActionsProps) => {
   const detailRoute = isAnonymous ? ROUTES.public.RECEIPT : ROUTES.RECEIPT;
 
   const onDownloadPaymentNotice = () => {
-    if (installment?.iuv && installment?.organizationId && installment?.debtor?.fiscalCode) {
+    if (installment?.nav && installment?.organizationId && installment?.debtor?.fiscalCode) {
       const path = generatePath(downloadRoute, {
-        iuv: installment.iuv,
+        nav: installment.nav,
         organizationId: installment.organizationId
       });
 
