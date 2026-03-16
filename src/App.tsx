@@ -113,7 +113,7 @@ const router = createBrowserRouter([
                 } as RouteHandleObject
               },
               {
-                path: 'download/:orgId/:iuv',
+                path: 'download/:orgId/:nav',
                 element: <Download />,
                 handle: {
                   titleKey: 'pageTitles.spontanei'
@@ -248,7 +248,7 @@ const router = createBrowserRouter([
                 } as RouteHandleObject
               },
               {
-                path: 'download/:orgId/:iuv',
+                path: 'download/:orgId/:nav',
                 element: <Download />,
                 handle: {
                   backButton: false,

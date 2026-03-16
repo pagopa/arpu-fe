@@ -229,9 +229,7 @@ export const getPublicDebtPositionTypeOrgsWithSpontaneousDetail = (
 
 type GetPaymentNoticeQueryParam = {
   /** @format int64 */
-  installmentId?: number;
-  iuv?: string;
-  iud?: string;
+  nav: string;
 };
 
 export const getPaymentNotice = (

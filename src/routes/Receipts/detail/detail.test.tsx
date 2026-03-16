@@ -76,9 +76,7 @@ vi.mock('react-router-dom', async () => {
     })),
     useNavigate: () => mockNavigate,
     generatePath: vi.fn((path: string, params: any) => {
-      return path
-        .replace(':receiptId', params.receiptId)
-        .replace(':organizationId', params.organizationId);
+      return path.replace(':nav', params.nav).replace(':organizationId', params.organizationId);
     }),
     useMatches: vi.fn(() => [])
   };
@@ -86,9 +84,9 @@ vi.mock('react-router-dom', async () => {
 
 vi.mock('routes/routes', () => ({
   ROUTES: {
-    DEBT_POSITION_DOWNLOAD: '/receipt/:organizationId/:receiptId/download',
+    DEBT_POSITION_DOWNLOAD: '/receipt/:organizationId/:nav/download',
     public: {
-      DEBT_POSITION_DOWNLOAD: '/public/receipt/:organizationId/:receiptId/download'
+      DEBT_POSITION_DOWNLOAD: '/public/receipt/:organizationId/:nav/download'
     }
   }
 }));
@@ -178,7 +176,7 @@ describe('ReceiptDetail', () => {
       const downloadButton = screen.getByRole('button', { name: 'app.receiptDetail.download' });
       fireEvent.click(downloadButton);
 
-      expect(mockNavigate).toHaveBeenCalledWith('/receipt/456/123/download', {
+      expect(mockNavigate).toHaveBeenCalledWith('/receipt/456/30123456789012345678/download', {
         state: { fiscalCode: 'RSSMRA80A01H501U' }
       });
     });
@@ -225,9 +223,12 @@ describe('ReceiptDetail', () => {
       const downloadButton = screen.getByRole('button', { name: 'app.receiptDetail.download' });
       fireEvent.click(downloadButton);
 
-      expect(mockNavigate).toHaveBeenCalledWith('/public/receipt/456/123/download', {
-        state: { fiscalCode: 'RSSMRA80A01H501U' }
-      });
+      expect(mockNavigate).toHaveBeenCalledWith(
+        '/public/receipt/456/30123456789012345678/download',
+        {
+          state: { fiscalCode: 'RSSMRA80A01H501U' }
+        }
+      );
     });
 
     it('navigates back when back button is clicked', () => {

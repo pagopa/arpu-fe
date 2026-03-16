@@ -210,7 +210,7 @@ describe('Payment Notices API', () => {
       headers: { 'content-disposition': "attachment; filename='test.pdf'" }
     } as unknown as AxiosResponse);
 
-    const mutation = renderHook(() => loaders.getPaymentNotice(1, 3, { iuv: '1' }, 'FISCALCODE'), {
+    const mutation = renderHook(() => loaders.getPaymentNotice(1, 3, { nav: '1' }, 'FISCALCODE'), {
       wrapper
     });
 
@@ -220,7 +220,7 @@ describe('Payment Notices API', () => {
       expect(apiMock).toHaveBeenCalledWith(
         1,
         3,
-        { iuv: '1' },
+        { nav: '1' },
         { format: 'blob', headers: { 'X-fiscal-code': 'FISCALCODE' } }
       );
       expect(mutation.result.current.isSuccess).toBeTruthy();
@@ -317,7 +317,7 @@ describe('Payment Notices API', () => {
     } as unknown as AxiosResponse);
 
     const mutation = renderHook(
-      () => loaders.public.getPublicPaymentNotice(1, 3, { iuv: '1' }, 'FISCALCODE'),
+      () => loaders.public.getPublicPaymentNotice(1, 3, { nav: '1' }, 'FISCALCODE'),
       {
         wrapper
       }
@@ -329,7 +329,7 @@ describe('Payment Notices API', () => {
       expect(apiMock).toHaveBeenCalledWith(
         1,
         3,
-        { iuv: '1' },
+        { nav: '1' },
         { format: 'blob', headers: { 'X-fiscal-code': 'FISCALCODE' } }
       );
       expect(mutation.result.current.isSuccess).toBeTruthy();

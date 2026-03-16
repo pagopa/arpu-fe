@@ -72,7 +72,7 @@ vi.mock('react-router-dom', async () => {
     useNavigate: () => mockNavigate,
     generatePath: vi.fn((path: string, params: any) =>
       path
-        .replace(':iuv', params.iuv)
+        .replace(':nav', params.nav)
         .replace(':receiptId', params.receiptId)
         .replace(':organizationId', params.organizationId)
     )
@@ -82,11 +82,11 @@ vi.mock('react-router-dom', async () => {
 vi.mock('routes/routes', () => ({
   ROUTES: {
     RECEIPT: '/receipt/:organizationId/:receiptId',
-    DEBT_POSITION_DOWNLOAD: '/download/:organizationId/:iuv',
+    DEBT_POSITION_DOWNLOAD: '/download/:nav/:organizationId',
     COURTESY_PAGE: '/courtesy/:error',
     public: {
       RECEIPT: '/public/receipt/:organizationId/:receiptId',
-      DEBT_POSITION_DOWNLOAD: '/public/download/:organizationId/:iuv'
+      DEBT_POSITION_DOWNLOAD: '/public/download/:nav/:organizationId'
     }
   }
 }));
@@ -257,11 +257,11 @@ describe('Actions', () => {
   });
 
   describe('onDownloadPaymentNotice (EXPIRED download button)', () => {
-    it('navigates to download route with iuv for authenticated user', () => {
+    it('navigates to download route with nav for authenticated user', () => {
       render(<Actions installment={mockExpiredInstallment} />);
       fireEvent.click(screen.getByLabelText('actions.download'));
 
-      expect(mockNavigate).toHaveBeenCalledWith('/download/321/111111111111111111', {
+      expect(mockNavigate).toHaveBeenCalledWith('/download/NAV002/321', {
         state: { fiscalCode: 'RSSMRA80A01H501U' }
       });
     });
@@ -271,13 +271,13 @@ describe('Actions', () => {
       render(<Actions installment={mockExpiredInstallment} />);
       fireEvent.click(screen.getByLabelText('actions.download'));
 
-      expect(mockNavigate).toHaveBeenCalledWith('/public/download/321/111111111111111111', {
+      expect(mockNavigate).toHaveBeenCalledWith('/public/download/NAV002/321', {
         state: { fiscalCode: 'RSSMRA80A01H501U' }
       });
     });
 
-    it('emits default error when iuv is missing', () => {
-      render(<Actions installment={{ ...mockExpiredInstallment, iuv: undefined } as any} />);
+    it('emits default error when nav is missing', () => {
+      render(<Actions installment={{ ...mockExpiredInstallment, nav: undefined } as any} />);
       fireEvent.click(screen.getByLabelText('actions.download'));
 
       expect(mockNotifyEmit).toHaveBeenCalledWith('errors.toast.default');
@@ -368,17 +368,17 @@ describe('Actions', () => {
 
   describe('UNPAID actions', () => {
     describe('onDownloadPaymentNotice', () => {
-      it('navigates to download route with iuv', () => {
+      it('navigates to download route with nav', () => {
         render(<Actions installment={mockUnpaidInstallment} />);
         fireEvent.click(screen.getByLabelText('actions.download'));
 
-        expect(mockNavigate).toHaveBeenCalledWith('/download/654/222222222222222222', {
+        expect(mockNavigate).toHaveBeenCalledWith('/download/NAV003/654', {
           state: { fiscalCode: 'RSSMRA80A01H501U' }
         });
       });
 
-      it('emits default error when iuv is missing', () => {
-        render(<Actions installment={{ ...mockUnpaidInstallment, iuv: undefined } as any} />);
+      it('emits default error when nav is missing', () => {
+        render(<Actions installment={{ ...mockUnpaidInstallment, nav: undefined } as any} />);
         fireEvent.click(screen.getByLabelText('actions.download'));
 
         expect(mockNotifyEmit).toHaveBeenCalledWith('errors.toast.default');

@@ -144,13 +144,13 @@ const Payment = () => {
   const goToDownloadPaymentNoticePage = () => {
     if (!debtPositionResponse) return;
     const { organizationId: orgId, paymentDetails } = debtPositionResponse;
-    const { iuv } = paymentDetails;
-    if (!iuv) return;
+    const { nav } = paymentDetails;
+    if (!nav) return;
     isAnonymous
-      ? navigate(generatePath(ROUTES.public.PAYMENTS_ON_THE_FLY_DOWNLOAD, { orgId, iuv }), {
+      ? navigate(generatePath(ROUTES.public.PAYMENTS_ON_THE_FLY_DOWNLOAD, { orgId, nav }), {
           state: { debtorFiscalCode: fiscalCode.value }
         })
-      : navigate(generatePath(ROUTES.PAYMENTS_ON_THE_FLY_DOWNLOAD, { orgId, iuv }));
+      : navigate(generatePath(ROUTES.PAYMENTS_ON_THE_FLY_DOWNLOAD, { orgId, nav }));
   };
 
   return (

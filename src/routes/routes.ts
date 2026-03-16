@@ -11,7 +11,7 @@ export const ROUTES = {
   AUTH_CALLBACK: `${config.deployPath}/auth-callback`,
   DASHBOARD: rootPrefix,
   RECEIPT: `${rootPrefix}/ricevute/:receiptId/:organizationId`,
-  DEBT_POSITION_DOWNLOAD: `${rootPrefix}/posizioni-debitorie/download/:iuv/:organizationId`,
+  DEBT_POSITION_DOWNLOAD: `${rootPrefix}/posizioni-debitorie/download/:nav/:organizationId`,
   RECEIPTS: `${rootPrefix}/ricevute`,
   DEBT_POSITION: `${rootPrefix}/posizioni-debitorie/:debtPositionId/:organizationId`,
   DEBT_POSITIONS: `${rootPrefix}/posizioni-debitorie`,
@@ -21,14 +21,14 @@ export const ROUTES = {
   TOS: `${rootPrefix}/termini-di-servizio`,
   PRIVACY_POLICY: `${rootPrefix}/informativa-privacy`,
   PAYMENTS_ON_THE_FLY: `${rootPrefix}/spontanei`,
-  PAYMENTS_ON_THE_FLY_DOWNLOAD: `${rootPrefix}/spontanei/download/:orgId/:iuv`,
+  PAYMENTS_ON_THE_FLY_DOWNLOAD: `${rootPrefix}/spontanei/download/:orgId/:nav`,
   public: {
     PAYMENTS_ON_THE_FLY: `${rootPrefix}/public/spontanei`,
-    PAYMENTS_ON_THE_FLY_DOWNLOAD: `${rootPrefix}/public/spontanei/download/:orgId/:iuv`,
+    PAYMENTS_ON_THE_FLY_DOWNLOAD: `${rootPrefix}/public/spontanei/download/:orgId/:nav`,
     COURTESY_PAGE: `${rootPrefix}/public/esito/:outcome`,
     RECEIPTS_SEARCH: `${rootPrefix}/public/ricevute/ricerca`,
     RECEIPT: `${rootPrefix}/public/ricevute/:receiptId/:organizationId`,
-    DEBT_POSITION_DOWNLOAD: `${rootPrefix}/public/posizioni-debitorie/download/:iuv/:organizationId`,
+    DEBT_POSITION_DOWNLOAD: `${rootPrefix}/public/posizioni-debitorie/download/:nav/:organizationId`,
     DEBT_POSITION_SEARCH: `${rootPrefix}/public/posizioni-debitorie/ricerca`
   }
 };
