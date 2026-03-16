@@ -38,14 +38,11 @@ describe('Controls Component', () => {
     vi.clearAllMocks();
   });
 
-  it('renders step 0 correctly: shows Abort and calls navigate(-1)', () => {
+  it('renders step 0 correctly: test if back button is hidden', () => {
     renderWithContext({ shouldContinue: vi.fn() }, { step: 0 });
 
-    const backButton = screen.getByTestId('spontanei-controls-back-button');
-    expect(backButton).toBeInTheDocument();
-
-    fireEvent.click(backButton);
-    expect(mockNavigate).toHaveBeenCalledWith(-1);
+    const backButton = screen.queryByTestId('spontanei-controls-back-button');
+    expect(backButton).not.toBeInTheDocument();
   });
 
   it('renders step 1 correctly: shows Back and calls setStep(0)', () => {
@@ -59,14 +56,11 @@ describe('Controls Component', () => {
     expect(setStep).toHaveBeenCalledWith(0);
   });
 
-  it('handles omitFirstStep: back button on step 1 should show Abort and call navigate(-1)', () => {
+  it('handles omitFirstStep: back button on step 1 hidden', () => {
     renderWithContext({ shouldContinue: vi.fn() }, { step: 1, omitFirstStep: true });
 
-    const backButton = screen.getByTestId('spontanei-controls-back-button');
-    expect(backButton).toBeInTheDocument();
-
-    fireEvent.click(backButton);
-    expect(mockNavigate).toHaveBeenCalledWith(-1);
+    const backButton = screen.queryByTestId('spontanei-controls-back-button');
+    expect(backButton).not.toBeInTheDocument();
   });
 
   it('renders confirm button on step 4', () => {

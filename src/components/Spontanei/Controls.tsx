@@ -30,6 +30,8 @@ const Controls = (props: ControlsProps) => {
   const backButtonWithOmitFirstStep = step === 1 && omitFirstStep;
   const navigate = useNavigate();
 
+  const showBackButton = omitFirstStep ? step > 1 : step > 0;
+
   const onBack = () => {
     if (!step || step < 1 || backButtonWithOmitFirstStep) {
       navigate(-1);
@@ -48,18 +50,18 @@ const Controls = (props: ControlsProps) => {
   return (
     <Stack
       direction="row"
-      justifyContent={'space-between'}
+      justifyContent={showBackButton ? 'space-between' : 'flex-end'}
       data-testid="spontanei-controls-container">
-      <Button
-        size="large"
-        variant="outlined"
-        onClick={onBack}
-        startIcon={<ArrowBack />}
-        data-testid="spontanei-controls-back-button">
-        {step === 0 || backButtonWithOmitFirstStep
-          ? t('spontanei.form.abort')
-          : t('spontanei.form.back')}
-      </Button>
+      {showBackButton && (
+        <Button
+          size="large"
+          variant="outlined"
+          onClick={onBack}
+          startIcon={<ArrowBack />}
+          data-testid="spontanei-controls-back-button">
+          {t('spontanei.form.back')}
+        </Button>
+      )}
       {!props.hideContinue && (
         <Button
           size="large"
