@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { Button, Stack } from '@mui/material';
-import { Link, useNavigate, useSearchParams } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { Download } from '@mui/icons-material';
 import { useTranslation } from 'react-i18next';
 import { usePostCarts } from 'hooks/usePostCarts';
