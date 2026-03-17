@@ -84,8 +84,8 @@ export const CourtesyPage = () => {
         ) : (
           i18next.exists(`courtesyPage.${code}.cta`) && (
             <Button
-              component={Link}
-              to={routes.LOGIN}
+              component="a"
+              href={routes.LOGIN}
               variant="contained"
               size="large"
               color="primary"
