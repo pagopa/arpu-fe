@@ -342,14 +342,14 @@ describe('CourtesyPageActions – pagamento-non-riuscito (424)', () => {
 describe('CourtesyPageActions – pagamento-annullato (425)', () => {
   afterEach(() => vi.clearAllMocks());
 
-  it('renders "Back to home" CTA as a link to DASHBOARD', () => {
+  it('renders "Back to home" CTA as a link to login', () => {
     mockInstallmentsMutateAsync.mockResolvedValue([INSTALLMENT_MATCH]);
     setupSearchParams({ nav: 'NAV-001', org_fiscal_code: 'ORG-FC-001', installment_id: '42' });
     render(<CourtesyPageActions code={CODE_425} />);
 
     const cta = screen.getByTestId('courtesyPage.cta');
     expect(cta).toHaveTextContent('Back to home');
-    expect(cta).toHaveAttribute('href', ROUTES.DASHBOARD);
+    expect(cta).toHaveAttribute('href', ROUTES.LOGIN);
   });
 
   it('renders the download button', () => {
