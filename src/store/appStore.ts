@@ -2,7 +2,6 @@ import { signal } from '@preact/signals-react';
 import { BrokerInfoDTO } from '../../generated/data-contracts';
 import storage from 'utils/storage';
 import { BrokerConfig, defaultBrokerConfig } from 'utils/brokerconfig';
-import { ROUTES } from 'routes/routes';
 
 interface ParsedConfig extends Omit<BrokerInfoDTO, 'config'> {
   config?: BrokerConfig;
