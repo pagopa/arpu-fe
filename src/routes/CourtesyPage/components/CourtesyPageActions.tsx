@@ -141,7 +141,7 @@ export const CourtesyPageActions: React.FC<CourtesyPageActionsProps> = ({ code }
       {isCancelled ? (
         <Button
           component={Link}
-          to={routes.DASHBOARD}
+          to={routes.LOGIN}
           variant="contained"
           size="large"
           color="primary"
