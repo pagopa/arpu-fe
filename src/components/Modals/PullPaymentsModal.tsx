@@ -9,14 +9,16 @@ import {
   useTheme,
   alpha
 } from '@mui/material';
+import { useAppRoutes } from 'hooks/useAppRoutes';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
-import { ROUTES } from 'routes/routes';
 import utils from 'utils';
 
 const PullPaymentsModal = (props: { open: boolean }) => {
   const navigate = useNavigate();
+  const { routes } = useAppRoutes();
+
   const theme = useTheme();
   const { t } = useTranslation();
   return (
@@ -60,7 +62,7 @@ const PullPaymentsModal = (props: { open: boolean }) => {
                   id="pull-payments-modal-ok"
                   onClick={() => {
                     if (utils.storage.pullPaymentsOptIn.set()) {
-                      navigate(ROUTES.LOGIN);
+                      navigate(routes.LOGIN);
                     } else {
                       console.warn('Something went wrong trying to set a session storage item');
                     }

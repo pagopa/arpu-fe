@@ -5,11 +5,12 @@ import { Download } from '@mui/icons-material';
 import { useTranslation } from 'react-i18next';
 import { usePostCarts } from 'hooks/usePostCarts';
 import { CartItem } from 'models/Cart';
-import { OUTCOMES, ROUTES } from '../../../routes/routes';
+import { OUTCOMES } from '../../../routes/routes';
 import storage from 'utils/storage';
 import loaders from 'utils/loaders';
 import files from 'utils/files';
 import notify from 'utils/notify';
+import { useAppRoutes } from 'hooks/useAppRoutes';
 
 /**
  * Expected query params on the courtesy-page URL:
@@ -45,6 +46,7 @@ interface CourtesyPageActionsProps {
 export const CourtesyPageActions: React.FC<CourtesyPageActionsProps> = ({ code }) => {
   const { t } = useTranslation();
   const navigate = useNavigate();
+  const { routes } = useAppRoutes();
   const [searchParams] = useSearchParams();
 
   const nav = searchParams.get('nav');
@@ -97,7 +99,7 @@ export const CourtesyPageActions: React.FC<CourtesyPageActionsProps> = ({ code }
 
   const handleRetry = useCallback(() => {
     if (!installment) {
-      navigate(ROUTES.public.COURTESY_PAGE.replace(':outcome', String(OUTCOMES['sconosciuto'])));
+      navigate(routes.public.COURTESY_PAGE.replace(':outcome', String(OUTCOMES['sconosciuto'])));
       return;
     }
 
@@ -139,7 +141,7 @@ export const CourtesyPageActions: React.FC<CourtesyPageActionsProps> = ({ code }
       {isCancelled ? (
         <Button
           component={Link}
-          to={ROUTES.DASHBOARD}
+          to={routes.LOGIN}
           variant="contained"
           size="large"
           color="primary"
