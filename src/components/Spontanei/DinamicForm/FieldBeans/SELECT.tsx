@@ -4,11 +4,13 @@ import { computedPROPS } from './withDinamicValues';
 import { Autocomplete, TextField } from '@mui/material';
 import { Option } from './withDinamicValues';
 import { useField } from 'formik';
+import { normalizeSelectValue } from '../config';
 
 const SELECT = (props: computedPROPS & { multiple?: boolean }) => {
   const { name, onBlur, htmlLabel, hasError, required, errorMessage, options = [] } = props;
 
   const [fieldValue, , helpers] = useField<Option | null>(name);
+  const normalizedValue = normalizeSelectValue(fieldValue.value, options);
 
   const handleChange = (
     _event: React.SyntheticEvent<Element, Event>,
@@ -29,9 +31,12 @@ const SELECT = (props: computedPROPS & { multiple?: boolean }) => {
         onChange={handleChange}
         onBlur={onBlur}
         freeSolo
-        value={fieldValue.value}
+        value={normalizedValue}
         getOptionKey={(opt) => (opt as Option).value}
-        getOptionLabel={(org) => (org as Option).label}
+        isOptionEqualToValue={(option, value) => option.value === value.value}
+        getOptionLabel={(option) =>
+          typeof option === 'string' ? option : (option as Option | null)?.label || ''
+        }
         renderInput={(params) => (
           <TextField
             {...params}
