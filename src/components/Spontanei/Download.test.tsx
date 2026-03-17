@@ -28,6 +28,18 @@ vi.mock('react-router-dom', async () => {
   };
 });
 
+vi.mock('hooks/useAppRoutes', () => ({
+  useAppRoutes: () => ({
+    routes: {
+      LOGIN: ROUTES.LOGIN,
+      DASHBOARD: ROUTES.DASHBOARD
+    },
+    externalRoutes: {
+      PAYMENT_LINKS: 'https://www.pagopa.gov.it/it/cittadini/dove-pagare/'
+    }
+  })
+}));
+
 vi.mock('utils', () => ({
   default: {
     loaders: {
@@ -77,7 +89,7 @@ describe('Download', () => {
     render(<Download />);
 
     expect(screen.getByText('Download in progress')).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: 'Close' })).toBeInTheDocument();
+    expect(screen.getByRole('link', { name: 'Close' })).toBeInTheDocument();
     expect(screen.getByRole('link', { name: 'Where to pay' })).toBeInTheDocument();
   });
 
@@ -138,25 +150,25 @@ describe('Download', () => {
     });
   });
 
-  it('navigates to DASHBOARD when authenticated user clicks close', () => {
+  it('close link navigates to DASHBOARD for authenticated user', () => {
     render(<Download />);
 
-    fireEvent.click(screen.getByRole('button', { name: 'Close' }));
+    const closeLink = screen.getByRole('link', { name: 'Close' });
 
-    expect(mockNavigate).toHaveBeenCalledWith(ROUTES.DASHBOARD);
+    expect(closeLink).toHaveAttribute('href', ROUTES.DASHBOARD);
   });
 
-  it('navigates to LOGIN when anonymous user clicks close', () => {
+  it('close link navigates to LOGIN for anonymous user', () => {
     (utils.storage.user.isAnonymous as ReturnType<typeof vi.fn>).mockReturnValue(true);
 
     render(<Download />);
 
-    fireEvent.click(screen.getByRole('button', { name: 'Close' }));
+    const closeLink = screen.getByRole('link', { name: 'Close' });
 
-    expect(mockNavigate).toHaveBeenCalledWith(ROUTES.LOGIN);
+    expect(closeLink).toHaveAttribute('href', ROUTES.LOGIN);
   });
 
-  it('info button links to pagopa.gov.it', () => {
+  it('info link points to pagopa.gov.it', () => {
     render(<Download />);
 
     const infoLink = screen.getByRole('link', { name: 'Where to pay' });
