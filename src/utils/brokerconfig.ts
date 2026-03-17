@@ -15,7 +15,8 @@ const BrokerConfigSchema = z.object({
   translation: ResourceSchema,
   useCart: z.boolean().optional(),
   assistanceLink: z.string().url().optional(),
-  a11yLink: z.string().optional()
+  a11yLink: z.string().optional(),
+  externalLoginUrl: z.string().url().optional()
 });
 
 export type BrokerConfig = z.infer<typeof BrokerConfigSchema>;

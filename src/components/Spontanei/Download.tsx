@@ -4,10 +4,11 @@ import { Trans, useTranslation } from 'react-i18next';
 import IllusHourGlass from './IllusHourGlass';
 import utils from 'utils';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
-import { ROUTES } from 'routes/routes';
 import storage from 'utils/storage';
+import { useAppRoutes } from 'hooks/useAppRoutes';
 
 const Download = () => {
+  const { routes } = useAppRoutes();
   const { t } = useTranslation();
   const { orgId, nav } = useParams();
   const brokerId = storage.app.getBrokerId();
@@ -48,9 +49,9 @@ const Download = () => {
 
   const close = () => {
     if (isAnonymous) {
-      navigate(ROUTES.LOGIN);
+      navigate(routes.LOGIN);
     } else {
-      navigate(ROUTES.DASHBOARD);
+      navigate(routes.DASHBOARD);
     }
   };
 
