@@ -30,7 +30,7 @@ describe('useAppRoutes', () => {
     expect(result.current.externalRoutes).toBe(ExternalRoutes);
   });
 
-  it('returns default ROUTES when config has no externalLoginUrl', () => {
+  it('returns default ROUTES when config has no homeLink', () => {
     appStore.value = {
       brokerInfo: { config: { useCart: false, translation: {} } }
     } as any;
@@ -40,15 +40,15 @@ describe('useAppRoutes', () => {
     expect(result.current.routes.LOGIN).toBe(ROUTES.LOGIN);
   });
 
-  it('overrides LOGIN when externalLoginUrl is present', () => {
-    const externalLoginUrl = 'https://broker.com/login';
+  it('overrides LOGIN when homeLink is present', () => {
+    const homeLink = 'https://broker.com/login';
     appStore.value = {
-      brokerInfo: { config: { externalLoginUrl } }
+      brokerInfo: { config: { homeLink } }
     } as any;
 
     const { result } = renderHook(() => useAppRoutes());
 
-    expect(result.current.routes.LOGIN).toBe(externalLoginUrl);
+    expect(result.current.routes.LOGIN).toBe(homeLink);
   });
 
   it('preserves public routes', () => {

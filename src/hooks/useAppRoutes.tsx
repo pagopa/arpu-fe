@@ -10,7 +10,7 @@ export const useAppRoutes = () =>
       externalRoutes: ExternalRoutes,
       routes: {
         ...ROUTES,
-        ...(config?.externalLoginUrl && { LOGIN: config.externalLoginUrl }),
+        ...(config?.homeLink && { LOGIN: config.homeLink }),
         public: { ...ROUTES.public }
       }
     };

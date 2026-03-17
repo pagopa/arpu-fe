@@ -42,7 +42,7 @@ export function setBrokerInfo(parsedConfig: ParsedConfig, brokerCode: string) {
         useCart: parsedConfig.config?.useCart ?? defaultBrokerConfig.useCart,
         assistanceLink: parsedConfig.config?.assistanceLink,
         a11yLink: parsedConfig.config?.a11yLink ?? defaultBrokerConfig.a11yLink,
-        externalLoginUrl: parsedConfig.config?.externalLoginUrl
+        homeLink: parsedConfig.config?.homeLink
       }
     },
     brokerCode
