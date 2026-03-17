@@ -1,32 +1,32 @@
-import { Button, Container, Link, Stack, Typography } from '@mui/material';
+import { Button, Container, Link as MuiLink, Stack, Typography } from '@mui/material';
 import React, { useEffect } from 'react';
 import { Trans, useTranslation } from 'react-i18next';
 import IllusHourGlass from './IllusHourGlass';
 import utils from 'utils';
-import { useLocation, useNavigate, useParams } from 'react-router-dom';
-import { ROUTES } from 'routes/routes';
+import { Link, useLocation, useParams } from 'react-router-dom';
 import storage from 'utils/storage';
+import { useAppRoutes } from 'hooks/useAppRoutes';
 
 const Download = () => {
+  const { routes, externalRoutes } = useAppRoutes();
   const { t } = useTranslation();
-  const { orgId, iuv } = useParams();
+  const { orgId, nav } = useParams();
   const brokerId = storage.app.getBrokerId();
 
-  const navigate = useNavigate();
   const location = useLocation();
 
-  if (!orgId || !iuv || !brokerId) {
+  if (!orgId || !nav || !brokerId) {
     throw new Error('Missing required parameters');
   }
 
   const parsedOrgId = parseInt(orgId, 10);
 
-  const mutation = utils.loaders.getPaymentNotice(brokerId, parsedOrgId, { iuv });
+  const mutation = utils.loaders.getPaymentNotice(brokerId, parsedOrgId, { nav });
 
   const anonymousMutation = utils.loaders.public.getPublicPaymentNotice(
     brokerId,
     parsedOrgId,
-    { iuv },
+    { nav },
     location.state?.debtorFiscalCode || ''
   );
 
@@ -36,21 +36,13 @@ const Download = () => {
     try {
       if (isAnonymous) {
         const { data, filename } = await anonymousMutation.mutateAsync();
-        utils.files.downloadBlob(data, filename || `${iuv}.pdf`);
+        utils.files.downloadBlob(data, filename || `${nav}.pdf`);
         return;
       }
       const { data, filename } = await mutation.mutateAsync();
-      utils.files.downloadBlob(data, filename || `${iuv}.pdf`);
+      utils.files.downloadBlob(data, filename || `${nav}.pdf`);
     } catch {
       utils.notify.emit('qualcosa è andato storto');
-    }
-  };
-
-  const close = () => {
-    if (isAnonymous) {
-      navigate(ROUTES.LOGIN);
-    } else {
-      navigate(ROUTES.DASHBOARD);
     }
   };
 
@@ -68,15 +60,19 @@ const Download = () => {
             <Trans
               i18nKey={t('spontanei.download.help')}
               components={{
-                link1: <Link onClick={download} fontWeight={800} />
+                link1: <MuiLink onClick={download} fontWeight={800} />
               }}
             />
           </Typography>
         </Stack>
-        <Button variant="contained" size="large" onClick={close}>
+        <Button
+          component={Link}
+          to={isAnonymous ? routes.LOGIN : routes.DASHBOARD}
+          variant="contained"
+          size="large">
           {t('spontanei.download.close')}
         </Button>
-        <Button href="https://www.pagopa.gov.it/it/cittadini/dove-pagare/" target="_blank">
+        <Button component={Link} to={externalRoutes.PAYMENT_LINKS} target="_blank">
           {t('spontanei.download.info')}
         </Button>
       </Stack>

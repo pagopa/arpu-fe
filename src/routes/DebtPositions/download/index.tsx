@@ -1,15 +1,16 @@
 import React, { useEffect } from 'react';
 import { Link, useLocation, useParams, Location } from 'react-router-dom';
 import { Stack, Typography, Button, Link as MuiLink } from '@mui/material';
-import { ROUTES, ExternalRoutes } from 'routes/routes';
 import { Trans, useTranslation } from 'react-i18next';
 import loaders from 'utils/loaders';
 import storage from 'utils/storage';
 import files from 'utils/files';
 import notify from 'utils/notify';
+import { useAppRoutes } from 'hooks/useAppRoutes';
 
 export const DebtPositionDownload = () => {
   const { t } = useTranslation();
+  const { routes, externalRoutes } = useAppRoutes();
 
   const brokerId = storage.app.getBrokerId();
   const isAnonymous = storage.user.isAnonymous();
@@ -17,11 +18,11 @@ export const DebtPositionDownload = () => {
   const location = useLocation() as Location<{ fiscalCode: string }>;
   const fiscalCode = location?.state?.fiscalCode;
 
-  const params = useParams<{ iuv: string; organizationId: string }>();
-  const iuv = params?.iuv;
+  const params = useParams<{ nav: string; organizationId: string }>();
+  const nav = params?.nav;
   const organizationId = Number(params?.organizationId);
 
-  if (isNaN(organizationId) || !iuv || !brokerId || !fiscalCode) {
+  if (isNaN(organizationId) || !nav || !brokerId || !fiscalCode) {
     throw new Error('Missing required parameters');
   }
 
@@ -29,12 +30,12 @@ export const DebtPositionDownload = () => {
     ? loaders.public.getPublicPaymentNotice
     : loaders.getPaymentNotice;
 
-  const paymentNotice = noticeLoader(brokerId, organizationId, { iuv }, fiscalCode);
+  const paymentNotice = noticeLoader(brokerId, organizationId, { nav }, fiscalCode);
 
   const onDownload = async () => {
     try {
       const { data, filename } = await paymentNotice.mutateAsync();
-      files.downloadBlob(data, filename || `${iuv}.pdf`);
+      files.downloadBlob(data, filename || `${nav}.pdf`);
     } catch {
       notify.emit(t('app.receiptDetail.downloadError'));
     }
@@ -64,10 +65,10 @@ export const DebtPositionDownload = () => {
         variant="contained"
         size="large"
         component={Link}
-        to={isAnonymous ? ROUTES.LOGIN : ROUTES.DASHBOARD}>
+        to={isAnonymous ? routes.LOGIN : routes.DASHBOARD}>
         {t('actions.close')}
       </Button>
-      <Link to={ExternalRoutes.PAYMENT_LINKS} target="_blank">
+      <Link to={externalRoutes.PAYMENT_LINKS} target="_blank">
         {t('app.debtPositions.download.link')}
       </Link>
     </Stack>

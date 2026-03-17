@@ -1,10 +1,11 @@
 import React from 'react';
 import { Button, Typography, Container, Box } from '@mui/material';
-import { Link, useParams } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { OUTCOMES, ROUTES } from '../../routes/routes';
+import { OUTCOMES } from '../../routes/routes';
 import i18next from 'i18next';
 import { CourtesyPageActions } from './components/CourtesyPageActions';
+import { useAppRoutes } from 'hooks/useAppRoutes';
 
 interface ErrorIconComponentProps {
   code?: OUTCOMES;
@@ -44,6 +45,7 @@ export const ErrorIconComponent: React.FC<ErrorIconComponentProps> = ({ code }) 
 
 export const CourtesyPage = () => {
   const { t } = useTranslation();
+  const { routes } = useAppRoutes();
   const params = useParams();
   const outcome = params?.outcome as keyof typeof OUTCOMES;
   const code = OUTCOMES[outcome];
@@ -82,8 +84,8 @@ export const CourtesyPage = () => {
         ) : (
           i18next.exists(`courtesyPage.${code}.cta`) && (
             <Button
-              component={Link}
-              to={ROUTES.LOGIN}
+              component="a"
+              href={routes.LOGIN}
               variant="contained"
               size="large"
               color="primary"

@@ -175,7 +175,8 @@ describe('Payment Component', () => {
       config: {
         translation: {},
         useCart: true
-      }
+      },
+      externalId: ''
     },
     'test'
   );
@@ -234,7 +235,7 @@ describe('Payment Component', () => {
     fireEvent.click(downloadButton);
 
     expect(mockNavigate).toHaveBeenCalledWith(
-      ROUTES.public.PAYMENTS_ON_THE_FLY_DOWNLOAD.replace(':orgId', '123').replace(':iuv', 'IUV123'),
+      ROUTES.public.PAYMENTS_ON_THE_FLY_DOWNLOAD.replace(':orgId', '123').replace(':nav', 'NAV123'),
       { state: { debtorFiscalCode: 'RSSMRA80A01H501U' } }
     );
   });
@@ -247,7 +248,7 @@ describe('Payment Component', () => {
     fireEvent.click(downloadButton);
 
     expect(mockNavigate).toHaveBeenCalledWith(
-      ROUTES.PAYMENTS_ON_THE_FLY_DOWNLOAD.replace(':orgId', '123').replace(':iuv', 'IUV123')
+      ROUTES.PAYMENTS_ON_THE_FLY_DOWNLOAD.replace(':orgId', '123').replace(':nav', 'NAV123')
     );
   });
 

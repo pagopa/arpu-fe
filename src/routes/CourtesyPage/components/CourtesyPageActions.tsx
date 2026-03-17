@@ -1,15 +1,16 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { Button, Stack } from '@mui/material';
-import { Link, useNavigate, useSearchParams } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { Download } from '@mui/icons-material';
 import { useTranslation } from 'react-i18next';
 import { usePostCarts } from 'hooks/usePostCarts';
 import { CartItem } from 'models/Cart';
-import { OUTCOMES, ROUTES } from '../../../routes/routes';
+import { OUTCOMES } from '../../../routes/routes';
 import storage from 'utils/storage';
 import loaders from 'utils/loaders';
 import files from 'utils/files';
 import notify from 'utils/notify';
+import { useAppRoutes } from 'hooks/useAppRoutes';
 
 /**
  * Expected query params on the courtesy-page URL:
@@ -45,6 +46,7 @@ interface CourtesyPageActionsProps {
 export const CourtesyPageActions: React.FC<CourtesyPageActionsProps> = ({ code }) => {
   const { t } = useTranslation();
   const navigate = useNavigate();
+  const { routes } = useAppRoutes();
   const [searchParams] = useSearchParams();
 
   const nav = searchParams.get('nav');
@@ -97,7 +99,7 @@ export const CourtesyPageActions: React.FC<CourtesyPageActionsProps> = ({ code }
 
   const handleRetry = useCallback(() => {
     if (!installment) {
-      navigate(ROUTES.public.COURTESY_PAGE.replace(':outcome', String(OUTCOMES['sconosciuto'])));
+      navigate(routes.public.COURTESY_PAGE.replace(':outcome', String(OUTCOMES['sconosciuto'])));
       return;
     }
 
@@ -116,17 +118,17 @@ export const CourtesyPageActions: React.FC<CourtesyPageActionsProps> = ({ code }
   const downloadMutation = loaders.public.getPublicPaymentNotice(
     brokerId!,
     installment?.organizationId ?? 0,
-    { iuv: installment?.iuv },
+    { nav: installment?.nav ?? '' },
     installment?.debtor?.fiscalCode ?? ''
   );
 
   const handleDownload = useCallback(async () => {
     try {
-      if (!installment?.organizationId || !installment?.iuv || !brokerId) {
+      if (!installment?.organizationId || !installment?.nav || !brokerId) {
         throw new Error('Missing required data for download');
       }
       const { data, filename } = await downloadMutation.mutateAsync();
-      files.downloadBlob(data, filename || `${installment.iuv}.pdf`);
+      files.downloadBlob(data, filename || `${installment.nav}.pdf`);
     } catch {
       notify.emit(t('app.receiptDetail.downloadError'));
     }
@@ -138,8 +140,8 @@ export const CourtesyPageActions: React.FC<CourtesyPageActionsProps> = ({ code }
     <Stack gap={2} alignItems="center">
       {isCancelled ? (
         <Button
-          component={Link}
-          to={ROUTES.DASHBOARD}
+          component="a"
+          href={routes.LOGIN}
           variant="contained"
           size="large"
           color="primary"
