@@ -140,8 +140,8 @@ export const CourtesyPageActions: React.FC<CourtesyPageActionsProps> = ({ code }
     <Stack gap={2} alignItems="center">
       {isCancelled ? (
         <Button
-          component={Link}
-          to={routes.LOGIN}
+          component="a"
+          href={routes.LOGIN}
           variant="contained"
           size="large"
           color="primary"

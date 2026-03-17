@@ -1,6 +1,6 @@
 import React from 'react';
 import { Button, Typography, Container, Box } from '@mui/material';
-import { Link, useParams } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { OUTCOMES } from '../../routes/routes';
 import i18next from 'i18next';
