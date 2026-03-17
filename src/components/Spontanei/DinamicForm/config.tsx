@@ -116,6 +116,9 @@ export const BuildFormSchema = (fields: Array<SpontaneousFormField>) => {
       const isRequired = field.required;
       const regex = field.regex;
       const type = field.htmlRender;
+      if (type === RenderType.MULTIFIELD) {
+        return;
+      }
       const errorMessage = field.extraAttr?.error_messag;
       const isAmountField =
         type === RenderType.CURRENCY ||
@@ -131,7 +134,7 @@ export const BuildFormSchema = (fields: Array<SpontaneousFormField>) => {
             value: z.string()
           })
           .nullable()
-          .refine((option) => isRequired && option !== null, errorMessage);
+          .refine((option) => !isRequired || option !== null, errorMessage);
       } else if (type === RenderType.MULTISELECT) {
         fieldSchema = isRequired ? z.array(z.string()).min(1, errorMessage) : z.array(z.string());
       } else {
@@ -272,7 +275,7 @@ export const BuildFormInputs = (
   elements: Array<SpontaneousFormField>,
   amountFieldName?: string
 ) => {
-  const fields = elements;
+  const fields = [...elements];
 
   if (!amountFieldName) {
     fields.push({
