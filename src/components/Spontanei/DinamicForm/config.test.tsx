@@ -278,7 +278,7 @@ describe('Spontanei dynamic form config', () => {
     supportedRenderTypes.forEach((renderType, index) => {
       const element = BuildInput(
         createField({
-          name: `field-${index}`,
+          name: 'field-' + String(index),
           htmlRender: renderType
         }),
         [],
