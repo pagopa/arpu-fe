@@ -426,6 +426,9 @@
       "default": "Si è verificato un errore imprevisto. Riprova più tardi.",
       "drawer": "Errore durante l'aggiunta all'carrello dei pagamenti. Riprova più tardi.",
       "payment": "Errore durante il pagamento. Riprova più tardi."
+    },
+    "empty": {
+      "search": "Nessun risultato trovato."
     }
   },
   "ui": {

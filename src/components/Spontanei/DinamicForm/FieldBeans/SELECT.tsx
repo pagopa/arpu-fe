@@ -4,8 +4,10 @@ import { computedPROPS } from './withDinamicValues';
 import { Autocomplete, TextField } from '@mui/material';
 import { Option } from './withDinamicValues';
 import { useField } from 'formik';
+import { useTranslation } from 'react-i18next';
 
 const SELECT = (props: computedPROPS & { multiple?: boolean }) => {
+  const { t } = useTranslation();
   const { name, onBlur, htmlLabel, hasError, required, errorMessage, options = [] } = props;
 
   const [fieldValue, , helpers] = useField<Option | null>(name);
@@ -28,7 +30,7 @@ const SELECT = (props: computedPROPS & { multiple?: boolean }) => {
         options={options}
         onChange={handleChange}
         onBlur={onBlur}
-        freeSolo
+        noOptionsText={t('errors.empty.search')}
         value={fieldValue.value}
         getOptionKey={(opt) => (opt as Option).value}
         getOptionLabel={(org) => (org as Option).label}
