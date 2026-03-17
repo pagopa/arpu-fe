@@ -20,6 +20,8 @@ import {
 const getElementName = (element: React.ReactNode): string | undefined =>
   React.isValidElement<{ name?: string }>(element) ? element.props.name : undefined;
 
+const placeholder = (name: string) => '$' + '{' + name + '}';
+
 const createField = (overrides: Partial<SpontaneousFormField> = {}): SpontaneousFormField =>
   ({
     name: 'field',
@@ -57,7 +59,11 @@ describe('Spontanei dynamic form config', () => {
   });
 
   it('extracts unique placeholders from templates', () => {
-    expect(getPlaceholders('Ciao ${name}, paga {amount} per ${name}')).toEqual(['name', 'amount']);
+    const namePlaceholder = placeholder('name');
+
+    expect(
+      getPlaceholders('Ciao ' + namePlaceholder + ', paga {amount} per ' + namePlaceholder)
+    ).toEqual(['name', 'amount']);
   });
 
   it('flattens nested objects preserving primitive values', () => {
@@ -77,9 +83,11 @@ describe('Spontanei dynamic form config', () => {
 
   it('computes sandboxed expressions and injects dynamic placeholders', () => {
     expect(computeValue<number>('return amount * 2', { amount: 6 })).toBe(12);
+    const fullNamePlaceholder = placeholder('fullName');
+    const causalePlaceholder = placeholder('causale');
 
     const result = buildDinamicValue(
-      'Pagamento ${fullName} - ${causale}',
+      'Pagamento ' + fullNamePlaceholder + ' - ' + causalePlaceholder,
       { fullName: 'Mario Rossi' },
       [
         createField({
@@ -93,9 +101,14 @@ describe('Spontanei dynamic form config', () => {
   });
 
   it('keeps unknown placeholders unchanged in dynamic templates', () => {
-    expect(buildDinamicValue('Pagamento ${known} - ${missing}', { known: 'OK' })).toBe(
-      'Pagamento OK - ${missing}'
-    );
+    const knownPlaceholder = placeholder('known');
+    const missingPlaceholder = placeholder('missing');
+
+    expect(
+      buildDinamicValue('Pagamento ' + knownPlaceholder + ' - ' + missingPlaceholder, {
+        known: 'OK'
+      })
+    ).toBe('Pagamento OK - ' + missingPlaceholder);
   });
 
   it('normalizes select values from different sources', () => {
