@@ -85,6 +85,34 @@ describe('setupInterceptors', () => {
     );
   });
 
+  it('should redirect public broker lookup errors to broker-not-found and clear broker info', () => {
+    const replaceMock = vi.fn();
+    const error = {
+      response: { status: 401 },
+      config: {
+        url: '/public/brokers',
+        params: { externalId: 'pippo' }
+      }
+    };
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    vi.spyOn(global as any, 'window', 'get').mockImplementationOnce(() => ({
+      location: {
+        replace: replaceMock
+      }
+    }));
+
+    setupInterceptors(client);
+    const responseInterceptor = (client.instance.interceptors.response.use as Mock).mock
+      .calls[0][1];
+    responseInterceptor(error);
+
+    expect(storage.app.clearBrokerInfo).toHaveBeenCalledTimes(1);
+    expect(storage.user.logOut).not.toHaveBeenCalled();
+    expect(replaceMock).toBeCalledWith(
+      ROUTES.public.COURTESY_PAGE.replace(':outcome', OUTCOMES['410'])
+    );
+  });
+
   it('should emit an error toast notification (403)', () => {
     const error = { response: { status: 403 } };
 

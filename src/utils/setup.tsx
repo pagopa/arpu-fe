@@ -38,7 +38,8 @@ const setupOrError = async () => {
     }
     return false;
   } catch {
-    const toUrl = ROUTES.COURTESY_PAGE.replace(':outcome', OUTCOMES[410]);
+    utils.storage.app.clearBrokerInfo();
+    const toUrl = ROUTES.public.COURTESY_PAGE.replace(':outcome', OUTCOMES[410]);
     window.location.replace(toUrl);
     return false;
   } finally {
