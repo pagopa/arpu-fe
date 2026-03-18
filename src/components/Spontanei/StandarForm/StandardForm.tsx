@@ -52,14 +52,22 @@ const StandardForm = ({
             hasFlagAnonymousFiscalCode={hasFlagAnonymousFiscalCode}
             allowedEntityType={allowedEntityType}
           />
-          <Card variant="outlined" sx={{ padding: 3 }}>
+          <Card
+            variant="outlined"
+            sx={{
+              padding: { xs: 0, sm: 3 },
+              borderWidth: { xs: 0, sm: '1px' },
+              borderRadius: { xs: 0, sm: '5px' }
+            }}>
             <Stack gap={2}>
               <Typography variant="h6">
                 {t('spontanei.form.steps.step3.paymentData.title')}
               </Typography>
-              <Stack direction="row" justifyContent={'space-between'} spacing={2}>
+              <Stack
+                direction={{ xs: 'column', sm: 'row' }}
+                justifyContent={'space-between'}
+                spacing={2}>
                 <TextField
-                  size="small"
                   label={t('spontanei.form.steps.step3.paymentData.amount')}
                   variant="outlined"
                   required
@@ -80,7 +88,6 @@ const StandardForm = ({
                   helperText={amountMeta.touched && amountMeta.error}
                 />
                 <TextField
-                  size="small"
                   label={t('spontanei.form.steps.step3.paymentData.description')}
                   variant="outlined"
                   required

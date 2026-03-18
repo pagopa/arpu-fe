@@ -102,7 +102,6 @@ export const ReceiptsList = () => {
             label="Codice Avviso"
             value={searchCode}
             onChange={(e) => setSearchCode(e.target.value)}
-            size="small"
             InputProps={{
               endAdornment: (
                 <InputAdornment position="end">

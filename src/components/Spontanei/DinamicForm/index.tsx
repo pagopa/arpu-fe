@@ -37,7 +37,13 @@ const CustomForm = ({ fieldBeans, amountFieldName }: CustomFormProps) => {
   return (
     <>
       <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale="it">
-        <Card variant="outlined" sx={{ padding: 3 }}>
+        <Card
+          variant="outlined"
+          sx={{
+            padding: { xs: 0, sm: 3 },
+            borderWidth: { xs: 0, sm: '1px' },
+            borderRadius: { xs: 0, sm: '5px' }
+          }}>
           <Typography variant="h6" mb={2}>
             {t('spontanei.form.steps.step3.custom.title')}
           </Typography>

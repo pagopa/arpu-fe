@@ -161,7 +161,12 @@ const Payment = () => {
           <Typography>{t('spontanei.form.steps.step5.description')}</Typography>
 
           <Card variant="outlined" data-testid="payment-methods-card">
-            <Stack spacing={2} padding={4} direction="row" justifyContent="space-between">
+            <Stack
+              spacing={2}
+              padding={4}
+              direction={{ xs: 'column', sm: 'row' }}
+              textAlign={{ xs: 'center', sm: 'left' }}
+              justifyContent={{ xs: 'center', sm: 'space-between' }}>
               <Stack>
                 <Typography fontSize="18px" fontWeight="600">
                   {t('spontanei.form.steps.step5.pay.title')}
@@ -170,9 +175,10 @@ const Payment = () => {
                   {t('spontanei.form.steps.step5.pay.description')}
                 </Typography>
               </Stack>
-              <Stack direction="row" spacing={2}>
+              <Stack direction="row" spacing={2} justifyContent="center">
                 {appStore.value.brokerInfo?.config?.useCart && (
                   <Button
+                    size="large"
                     variant="text"
                     onClick={addToCart}
                     startIcon={<ShoppingCartIcon />}
@@ -180,7 +186,7 @@ const Payment = () => {
                     {t('spontanei.form.steps.step5.pay.addItemToCartButton')}
                   </Button>
                 )}
-                <Button variant="contained" onClick={pay} data-testid="pay-button">
+                <Button size="large" variant="contained" onClick={pay} data-testid="pay-button">
                   {t('spontanei.form.steps.step5.pay.payButton')}
                 </Button>
               </Stack>
@@ -188,7 +194,12 @@ const Payment = () => {
           </Card>
 
           <Card variant="outlined" data-testid="download-notice-card">
-            <Stack spacing={2} padding={4} direction="row" justifyContent="space-between">
+            <Stack
+              spacing={2}
+              padding={4}
+              direction={{ xs: 'column', sm: 'row' }}
+              textAlign={{ xs: 'center', sm: 'left' }}
+              justifyContent={{ xs: 'center', sm: 'space-between' }}>
               <Stack>
                 <Typography fontSize="18px" fontWeight="600">
                   {t('spontanei.form.steps.step5.download.title')}
@@ -199,6 +210,7 @@ const Payment = () => {
               </Stack>
               <Button
                 variant="text"
+                size="large"
                 startIcon={<FileDownloadIcon />}
                 onClick={goToDownloadPaymentNoticePage}
                 data-testid="download-notice-button">

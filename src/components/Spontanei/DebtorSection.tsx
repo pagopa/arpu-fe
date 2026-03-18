@@ -33,6 +33,7 @@ const DebtorSection = ({ allowedEntityType, hasFlagAnonymousFiscalCode }: Debtor
   const [email, emailMeta, emailHelper] = useField<PaymentNoticeInfo['email']>('email');
   const [entityType, , entityTypeHelper] = useField<PaymentNoticeInfo['entityType']>('entityType');
   const [isFlagNoFiscalCodeChecked, setIsFlagNoFiscalCodeChecked] = React.useState(false);
+
   const { t } = useTranslation();
 
   useEffect(() => {
@@ -109,7 +110,13 @@ const DebtorSection = ({ allowedEntityType, hasFlagAnonymousFiscalCode }: Debtor
           </RadioGroup>
         </FormControl>
       )}
-      <Card variant="outlined" sx={{ padding: 3 }}>
+      <Card
+        variant="outlined"
+        sx={{
+          padding: { xs: 0, sm: 3 },
+          borderWidth: { xs: 0, sm: '1px' },
+          borderRadius: { xs: 0, sm: '5px' }
+        }}>
         <Stack gap={2}>
           <Typography variant="h6">{t('spontanei.form.steps.step3.debtor.title')}</Typography>
           {isFisica && !isAnonymous && (
@@ -118,9 +125,8 @@ const DebtorSection = ({ allowedEntityType, hasFlagAnonymousFiscalCode }: Debtor
               label={t('spontanei.form.steps.step3.debtor.useYourData')}
             />
           )}
-          <Stack direction="row" gap={1}>
+          <Stack direction={{ sx: 'column', md: 'row' }} gap={1}>
             <TextField
-              size="small"
               label={
                 isFisica
                   ? t('spontanei.form.steps.step3.debtor.F.name')
@@ -134,7 +140,6 @@ const DebtorSection = ({ allowedEntityType, hasFlagAnonymousFiscalCode }: Debtor
               sx={{ width: '-webkit-fill-available' }}
             />
             <TextField
-              size="small"
               label={
                 isFisica
                   ? t('spontanei.form.steps.step3.debtor.F.code')
@@ -149,7 +154,6 @@ const DebtorSection = ({ allowedEntityType, hasFlagAnonymousFiscalCode }: Debtor
               sx={{ width: '-webkit-fill-available' }}
             />
             <TextField
-              size="small"
               label={
                 isFisica
                   ? t('spontanei.form.steps.step3.debtor.F.email')
