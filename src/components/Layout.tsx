@@ -106,9 +106,6 @@ export function Layout(props: { anonymous?: boolean }) {
             rootLink={rootLink}
             onAssistanceClick={onAssistanceClick}
             enableLogin={false}
-            translationsMap={{
-              assistance: t('ui.header.help')
-            }}
           />
         )}
         {subHeader && <SubHeader product={<ProductLogo />} />}
