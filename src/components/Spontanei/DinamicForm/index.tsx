@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import { Form, useFormikContext } from 'formik';
 import { BuildFormInputs, BuildFormState, CustomFormValues } from './config';
-import { Card, Stack, Typography } from '@mui/material';
+import { Stack, Typography } from '@mui/material';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers';
 import 'dayjs/locale/it';

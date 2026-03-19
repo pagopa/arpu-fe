@@ -1,6 +1,5 @@
 import React, { useEffect } from 'react';
 import {
-  Card,
   Checkbox,
   FormControl,
   FormControlLabel,
