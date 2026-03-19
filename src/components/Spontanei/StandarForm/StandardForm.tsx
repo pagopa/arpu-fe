@@ -53,43 +53,45 @@ const StandardForm = ({
             hasFlagAnonymousFiscalCode={hasFlagAnonymousFiscalCode}
             allowedEntityType={allowedEntityType}
           />
-          <ResponsiveCard variant="outlined" sx={{ gap: 2 }}>
-            <Typography variant="h6">
-              {t('spontanei.form.steps.step3.paymentData.title')}
-            </Typography>
-            <Stack
-              direction={{ xs: 'column', sm: 'row' }}
-              justifyContent={'space-between'}
-              spacing={2}>
-              <TextField
-                label={t('spontanei.form.steps.step3.paymentData.amount')}
-                variant="outlined"
-                required
-                slotProps={{
-                  input: {
-                    startAdornment: <InputAdornment position="start">€</InputAdornment>
-                  }
-                }}
-                type="number"
-                disabled={fixedAmount !== undefined}
-                {...amount}
-                onChange={(e) => {
-                  const value = Number(e.target.value);
-                  amountHelpers.setValue(value * 100);
-                }}
-                value={amount.value / 100}
-                error={amountMeta.touched && Boolean(amountMeta.error)}
-                helperText={amountMeta.touched && amountMeta.error}
-              />
-              <TextField
-                label={t('spontanei.form.steps.step3.paymentData.description')}
-                variant="outlined"
-                required
-                {...description}
-                error={descriptionMeta.touched && Boolean(descriptionMeta.error)}
-                helperText={descriptionMeta.touched && descriptionMeta.error}
-                sx={{ width: '-webkit-fill-available' }}
-              />
+          <ResponsiveCard variant="outlined">
+            <Stack gap={2}>
+              <Typography variant="h6">
+                {t('spontanei.form.steps.step3.paymentData.title')}
+              </Typography>
+              <Stack
+                direction={{ xs: 'column', sm: 'row' }}
+                justifyContent={'space-between'}
+                spacing={2}>
+                <TextField
+                  label={t('spontanei.form.steps.step3.paymentData.amount')}
+                  variant="outlined"
+                  required
+                  slotProps={{
+                    input: {
+                      startAdornment: <InputAdornment position="start">€</InputAdornment>
+                    }
+                  }}
+                  type="number"
+                  disabled={fixedAmount !== undefined}
+                  {...amount}
+                  onChange={(e) => {
+                    const value = Number(e.target.value);
+                    amountHelpers.setValue(value * 100);
+                  }}
+                  value={amount.value / 100}
+                  error={amountMeta.touched && Boolean(amountMeta.error)}
+                  helperText={amountMeta.touched && amountMeta.error}
+                />
+                <TextField
+                  label={t('spontanei.form.steps.step3.paymentData.description')}
+                  variant="outlined"
+                  required
+                  {...description}
+                  error={descriptionMeta.touched && Boolean(descriptionMeta.error)}
+                  helperText={descriptionMeta.touched && descriptionMeta.error}
+                  sx={{ width: '-webkit-fill-available' }}
+                />
+              </Stack>
             </Stack>
           </ResponsiveCard>
         </Stack>

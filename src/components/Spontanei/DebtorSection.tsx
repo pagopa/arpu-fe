@@ -110,67 +110,68 @@ const DebtorSection = ({ allowedEntityType, hasFlagAnonymousFiscalCode }: Debtor
           </RadioGroup>
         </FormControl>
       )}
-      <ResponsiveCard
-        variant="outlined"
-        sx={{
-          gap: 2
-        }}>
-        <Typography variant="h6">{t('spontanei.form.steps.step3.debtor.title')}</Typography>
-        {isFisica && !isAnonymous && (
-          <FormControlLabel
-            control={<Switch sx={{ mx: 1 }} onChange={handleUseYourDataSwitch} />}
-            label={t('spontanei.form.steps.step3.debtor.useYourData')}
-          />
-        )}
-        <Stack direction={{ sx: 'column', md: 'row' }} gap={{ xs: 2, sm: 1 }} my={{ xs: 1, md: 0 }}>
-          <TextField
-            label={
-              isFisica
-                ? t('spontanei.form.steps.step3.debtor.F.name')
-                : t('spontanei.form.steps.step3.debtor.G.name')
-            }
-            variant="outlined"
-            required
-            {...fullName}
-            error={fullNameMeta.touched && Boolean(fullNameMeta.error)}
-            helperText={fullNameMeta.touched && fullNameMeta.error}
-            sx={{ width: '-webkit-fill-available' }}
-          />
-          <TextField
-            label={
-              isFisica
-                ? t('spontanei.form.steps.step3.debtor.F.code')
-                : t('spontanei.form.steps.step3.debtor.G.code')
-            }
-            variant="outlined"
-            required
-            disabled={isFlagNoFiscalCodeChecked && isFisica}
-            {...fiscalCode}
-            error={fiscalCodeMeta.touched && Boolean(fiscalCodeMeta.error)}
-            helperText={fiscalCodeMeta.touched && fiscalCodeMeta.error}
-            sx={{ width: '-webkit-fill-available' }}
-          />
-          <TextField
-            label={
-              isFisica
-                ? t('spontanei.form.steps.step3.debtor.F.email')
-                : t('spontanei.form.steps.step3.debtor.G.email')
-            }
-            variant="outlined"
-            type="email"
-            required
-            {...email}
-            error={emailMeta.touched && Boolean(emailMeta.error)}
-            helperText={emailMeta.touched && emailMeta.error}
-            sx={{ width: '-webkit-fill-available' }}
-          />
+      <ResponsiveCard variant="outlined">
+        <Stack gap={2}>
+          <Typography variant="h6">{t('spontanei.form.steps.step3.debtor.title')}</Typography>
+          {isFisica && !isAnonymous && (
+            <FormControlLabel
+              control={<Switch sx={{ mx: 1 }} onChange={handleUseYourDataSwitch} />}
+              label={t('spontanei.form.steps.step3.debtor.useYourData')}
+            />
+          )}
+          <Stack
+            direction={{ sx: 'column', md: 'row' }}
+            gap={{ xs: 2, sm: 1 }}
+            my={{ xs: 1, md: 0 }}>
+            <TextField
+              label={
+                isFisica
+                  ? t('spontanei.form.steps.step3.debtor.F.name')
+                  : t('spontanei.form.steps.step3.debtor.G.name')
+              }
+              variant="outlined"
+              required
+              {...fullName}
+              error={fullNameMeta.touched && Boolean(fullNameMeta.error)}
+              helperText={fullNameMeta.touched && fullNameMeta.error}
+              sx={{ width: '-webkit-fill-available' }}
+            />
+            <TextField
+              label={
+                isFisica
+                  ? t('spontanei.form.steps.step3.debtor.F.code')
+                  : t('spontanei.form.steps.step3.debtor.G.code')
+              }
+              variant="outlined"
+              required
+              disabled={isFlagNoFiscalCodeChecked && isFisica}
+              {...fiscalCode}
+              error={fiscalCodeMeta.touched && Boolean(fiscalCodeMeta.error)}
+              helperText={fiscalCodeMeta.touched && fiscalCodeMeta.error}
+              sx={{ width: '-webkit-fill-available' }}
+            />
+            <TextField
+              label={
+                isFisica
+                  ? t('spontanei.form.steps.step3.debtor.F.email')
+                  : t('spontanei.form.steps.step3.debtor.G.email')
+              }
+              variant="outlined"
+              type="email"
+              required
+              {...email}
+              error={emailMeta.touched && Boolean(emailMeta.error)}
+              helperText={emailMeta.touched && emailMeta.error}
+              sx={{ width: '-webkit-fill-available' }}
+            />
+          </Stack>
+          {isFisica && hasFlagAnonymousFiscalCode && (
+            <FormControlLabel
+              control={<Checkbox onChange={handleFlagNoFiscalCode} />}
+              label={t('spontanei.form.steps.step3.debtor.noFiscalCode')}
+            />
+          )}
         </Stack>
-        {isFisica && hasFlagAnonymousFiscalCode && (
-          <FormControlLabel
-            control={<Checkbox onChange={handleFlagNoFiscalCode} />}
-            label={t('spontanei.form.steps.step3.debtor.noFiscalCode')}
-          />
-        )}
       </ResponsiveCard>
     </>
   );
