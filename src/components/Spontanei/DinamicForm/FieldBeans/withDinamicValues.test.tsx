@@ -5,6 +5,42 @@ import { render, waitFor } from '__tests__/renderers';
 import { RenderType, SpontaneousFormItemDTO } from '../../../../../generated/data-contracts';
 
 const { flattenObjectMock, buildDinamicValueMock, getPlaceholdersMock } = vi.hoisted(() => {
+  const extractTemplateTokens = (template: string): Array<{ token: string; key: string }> => {
+    const tokens: Array<{ token: string; key: string }> = [];
+    let currentIndex = 0;
+
+    while (currentIndex < template.length) {
+      const openBraceIndex = template.indexOf('{', currentIndex);
+
+      if (openBraceIndex === -1) {
+        break;
+      }
+
+      const closeBraceIndex = template.indexOf('}', openBraceIndex + 1);
+
+      if (closeBraceIndex === -1) {
+        break;
+      }
+
+      const tokenStartIndex =
+        openBraceIndex > 0 && template[openBraceIndex - 1] === '$'
+          ? openBraceIndex - 1
+          : openBraceIndex;
+      const key = template.slice(openBraceIndex + 1, closeBraceIndex);
+
+      if (!key.includes('{') && !key.includes('}')) {
+        tokens.push({
+          token: template.slice(tokenStartIndex, closeBraceIndex + 1),
+          key
+        });
+      }
+
+      currentIndex = closeBraceIndex + 1;
+    }
+
+    return tokens;
+  };
+
   const flattenObject = (
     obj: Record<string, unknown>,
     delimiter = '.',
@@ -25,10 +61,13 @@ const { flattenObjectMock, buildDinamicValueMock, getPlaceholdersMock } = vi.hoi
     );
 
   const buildDinamicValue = (template: string, templateVars: Record<string, string>) =>
-    template.replace(/[$]?{([^{}]*)}/g, (_, key) => String(templateVars[key]));
+    extractTemplateTokens(template).reduce(
+      (result, { token, key }) => result.split(token).join(String(templateVars[key])),
+      template
+    );
 
   const getPlaceholders = (template: string): string[] =>
-    Array.from(template.matchAll(/[$]?{([^{}]*)}/g), (match) => match[1]);
+    Array.from(new Set(extractTemplateTokens(template).map(({ key }) => key)));
 
   return {
     flattenObjectMock: flattenObject,
@@ -96,7 +135,7 @@ describe('withDinamicValues', () => {
             detailLink={false}
             minOccurences={1}
             maxOccurences={1}
-            source="https://api.dev.p4pa.pagopa.it/pu/cie/public/organizations/${orgFiscalCode.value}/amount"
+            source="https://test.it/pu/cie/public/organizations/${orgFiscalCode.value}/amount"
             sourceParams={sourceParams}
             amountFieldName="costo"
           />
@@ -119,7 +158,7 @@ describe('withDinamicValues', () => {
             detailLink={false}
             minOccurences={1}
             maxOccurences={1}
-            source="https://api.dev.p4pa.pagopa.it/pu/cie/public/organizations/${orgFiscalCode.value}/amount"
+            source="https://test.it/pu/cie/public/organizations/${orgFiscalCode.value}/amount"
             sourceParams={sourceParams}
             amountFieldName="costoBis"
           />
@@ -132,7 +171,7 @@ describe('withDinamicValues', () => {
     });
 
     expect(fetchMock).toHaveBeenCalledWith(
-      'https://api.dev.p4pa.pagopa.it/pu/cie/public/organizations/CF123/amount?debtPositionTypeOrgCode=TYPE01'
+      'https://test.it/pu/cie/public/organizations/CF123/amount?debtPositionTypeOrgCode=TYPE01'
     );
   });
 
@@ -180,7 +219,7 @@ describe('withDinamicValues', () => {
             detailLink={false}
             minOccurences={1}
             maxOccurences={1}
-            source="https://api.dev.p4pa.pagopa.it/pu/cie/public/organizations/${orgFiscalCode.value}/amount"
+            source="https://test.it/pu/cie/public/organizations/${orgFiscalCode.value}/amount"
             sourceParams={sourceParams}
             amountFieldName="costo"
           />
@@ -193,7 +232,7 @@ describe('withDinamicValues', () => {
     });
 
     expect(fetchMock).toHaveBeenCalledWith(
-      'https://api.dev.p4pa.pagopa.it/pu/cie/public/organizations/CF999/amount?debtPositionTypeOrgCode=TYPE02'
+      'https://test.it/pu/cie/public/organizations/CF999/amount?debtPositionTypeOrgCode=TYPE02'
     );
   });
 });
