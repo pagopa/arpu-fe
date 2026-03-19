@@ -3,11 +3,12 @@ import { render, screen, fireEvent, waitFor } from '__tests__/renderers';
 import '@testing-library/jest-dom';
 import OrgSelect from './OrgSelect';
 import FormContext, { FormContextType } from '../FormContext';
-import { Formik } from 'formik';
+import { Formik, useFormikContext } from 'formik';
 import utils from 'utils';
 import {
   OrganizationsWithSpontaneousDTO,
-  PersonEntityType
+  PersonEntityType,
+  DebtPositionTypeOrgsWithSpontaneousDTO
 } from '../../../../generated/data-contracts';
 import { Mock } from 'vitest';
 import { PaymentNoticeInfo } from '../index';
@@ -42,14 +43,21 @@ const getDefaultContext = (overrides: Partial<FormContextType> = {}): FormContex
   setStep: vi.fn(),
   omitFirstStep: false,
   setOmitFirstStep: vi.fn(),
-  formType: null,
-  setFormType: vi.fn(),
-  userDescription: null,
-  setUserDescription: vi.fn(),
+  summaryFields: [],
+  setSummaryFields: vi.fn(),
+  submitFields: [],
+  setSubmitFields: vi.fn(),
+  causaleHasJoinTemplate: false,
+  setCausaleHasJoinTemplate: vi.fn(),
   ...overrides
 });
 
-const initialValues = {
+type FormValues = PaymentNoticeInfo & {
+  sys_type?: string;
+  comune?: string;
+};
+
+const initialValues: FormValues = {
   fullName: '',
   entityType: PersonEntityType.F,
   email: '',
@@ -60,12 +68,24 @@ const initialValues = {
   debtType: null
 };
 
-const renderOrgSelect = (contextValue: Partial<FormContextType> = {}) => {
+const FormikValuesProbe = () => {
+  const { values } = useFormikContext<FormValues>();
+
+  return <pre data-testid="formik-values-probe">{JSON.stringify(values)}</pre>;
+};
+
+const renderOrgSelect = (
+  contextValue: Partial<FormContextType> = {},
+  formValues: Partial<FormValues> = {}
+) => {
   const defaultContext = getDefaultContext(contextValue);
+  const values = { ...initialValues, ...formValues };
+
   return render(
-    <Formik initialValues={initialValues} onSubmit={vi.fn()}>
+    <Formik initialValues={values} onSubmit={vi.fn()}>
       <FormContext.Provider value={defaultContext}>
         <OrgSelect />
+        <FormikValuesProbe />
       </FormContext.Provider>
     </Formik>
   );
@@ -114,6 +134,45 @@ describe('OrgSelect Component', () => {
 
     await waitFor(() => {
       expect(input).toHaveValue('Org 1');
+    });
+  });
+
+  it('resets debt type and dependent fields when organization changes', async () => {
+    const selectedDebtType = {
+      debtPositionTypeOrgId: 10,
+      organizationId: 1,
+      code: 'SERVICE-1',
+      description: 'Service 1'
+    } as DebtPositionTypeOrgsWithSpontaneousDTO;
+
+    renderOrgSelect(
+      {},
+      {
+        org: mockOrgs[0],
+        debtType: selectedDebtType,
+        amount: 2500,
+        description: 'Causale precedente',
+        sys_type: 'FORM_PREVIOUS_VALUE',
+        comune: 'Roma'
+      }
+    );
+
+    const input = screen.getByRole('combobox');
+    fireEvent.focus(input);
+    fireEvent.change(input, { target: { value: 'Org 2' } });
+
+    const option = await screen.findByText('Org 2');
+    fireEvent.click(option);
+
+    await waitFor(() => {
+      const values = JSON.parse(screen.getByTestId('formik-values-probe').textContent || '{}');
+
+      expect(values.org.organizationId).toBe(2);
+      expect(values.debtType).toBeNull();
+      expect(values.amount).toBe(0);
+      expect(values.description).toBe('');
+      expect(values.sys_type).toBeUndefined();
+      expect(values.comune).toBeUndefined();
     });
   });
 

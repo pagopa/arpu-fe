@@ -3,7 +3,7 @@ import { render, screen, fireEvent, waitFor } from '__tests__/renderers';
 import '@testing-library/jest-dom';
 import DebtTypeSelect from './DebtTypeSelect';
 import FormContext, { FormContextType } from '../FormContext';
-import { Formik, FormikErrors } from 'formik';
+import { Formik, FormikErrors, useFormikContext } from 'formik';
 import utils from 'utils';
 import { DebtPositionTypeOrgsWithSpontaneousDTO } from '../../../../generated/data-contracts';
 import { Mock } from 'vitest';
@@ -17,6 +17,8 @@ type FormValues = {
   description: string;
   org: { organizationId: number; orgName: string } | null;
   debtType: DebtPositionTypeOrgsWithSpontaneousDTO | null;
+  sys_type?: string;
+  comune?: string;
 };
 
 // Mock dependencies
@@ -68,6 +70,8 @@ const getDefaultContext = (overrides: Partial<FormContextType> = {}): FormContex
   setCausaleHasJoinTemplate: vi.fn(),
   summaryFields: [],
   setSummaryFields: vi.fn(),
+  submitFields: [],
+  setSubmitFields: vi.fn(),
   ...overrides
 });
 
@@ -82,12 +86,24 @@ const initialValues = {
   debtType: null
 };
 
-const renderDebtTypeSelect = (contextValue: Partial<FormContextType> = {}) => {
+const FormikValuesProbe = () => {
+  const { values } = useFormikContext<FormValues>();
+
+  return <pre data-testid="formik-values-probe">{JSON.stringify(values)}</pre>;
+};
+
+const renderDebtTypeSelect = (
+  contextValue: Partial<FormContextType> = {},
+  formValues: Partial<FormValues> = {}
+) => {
   const defaultContext = getDefaultContext(contextValue);
+  const values = { ...initialValues, ...formValues };
+
   return render(
-    <Formik initialValues={initialValues} onSubmit={vi.fn()}>
+    <Formik initialValues={values} onSubmit={vi.fn()}>
       <FormContext.Provider value={defaultContext}>
         <DebtTypeSelect />
+        <FormikValuesProbe />
       </FormContext.Provider>
     </Formik>
   );
@@ -145,6 +161,35 @@ describe('DebtTypeSelect Component', () => {
     // After clicking radio, it should be checked
     await waitFor(() => {
       expect(radio).toBeChecked();
+    });
+  });
+
+  it('resets amount, description and previous custom fields when debt type changes', async () => {
+    (utils.loaders.getDebtPositionTypeOrgsWithSpontaneous as Mock).mockReturnValue({
+      data: [mockDebtTypes[0], mockDebtTypes[1]]
+    });
+
+    renderDebtTypeSelect(
+      {},
+      {
+        debtType: mockDebtTypes[0],
+        amount: 3500,
+        description: 'Causale precedente',
+        sys_type: 'FORM_PREVIOUS_VALUE',
+        comune: 'Roma'
+      }
+    );
+
+    fireEvent.click(screen.getByLabelText('Debt Type 2'));
+
+    await waitFor(() => {
+      const values = JSON.parse(screen.getByTestId('formik-values-probe').textContent || '{}');
+
+      expect(values.debtType.debtPositionTypeOrgId).toBe(2);
+      expect(values.amount).toBe(0);
+      expect(values.description).toBe('');
+      expect(values.sys_type).toBeUndefined();
+      expect(values.comune).toBeUndefined();
     });
   });
 

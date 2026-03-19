@@ -9,6 +9,20 @@ import { useField, useFormikContext } from 'formik';
 import { PaymentNoticeInfo } from '..';
 import StepWrapper from './StepWrapper';
 
+const buildResetValues = (
+  currentValues: PaymentNoticeInfo,
+  selectedOrg: OrganizationsWithSpontaneousDTO | null
+): PaymentNoticeInfo => ({
+  fullName: currentValues.fullName,
+  entityType: currentValues.entityType,
+  email: currentValues.email,
+  fiscalCode: currentValues.fiscalCode,
+  amount: 0,
+  description: '',
+  org: selectedOrg,
+  debtType: null
+});
+
 /**
  * This component is responsible for selecting the organization. As first step of Spontanei form.
  * @returns JSX.Element
@@ -47,13 +61,29 @@ const OrgSelect = () => {
     _event: React.SyntheticEvent<Element, Event>,
     organization: OrganizationsWithSpontaneousDTO | string | null
   ) => {
+    const resetDependentFields = (selectedOrg: OrganizationsWithSpontaneousDTO | null) => {
+      context?.setCausaleHasJoinTemplate(false);
+      formik.setFormikState((state) => ({
+        ...state,
+        values: buildResetValues(state.values as PaymentNoticeInfo, selectedOrg),
+        errors: {},
+        touched: {}
+      }));
+    };
+
     if (!organization || typeof organization === 'string') {
-      helpers.setValue(null);
-    } else {
-      const selectedOrg =
-        orgs?.find((o) => o.organizationId === organization?.organizationId) || null;
-      helpers.setValue(selectedOrg);
+      resetDependentFields(null);
+      return;
     }
+
+    const selectedOrg = orgs?.find((o) => o.organizationId === organization.organizationId) || null;
+
+    if (meta.value?.organizationId !== selectedOrg?.organizationId) {
+      resetDependentFields(selectedOrg);
+      return;
+    }
+
+    helpers.setValue(selectedOrg);
   };
 
   const shouldContinue = async () => {

@@ -22,6 +22,20 @@ import { Box } from '@mui/system';
 
 const LIMIT_DEBT_TYPE = 10;
 
+const buildResetValues = (
+  currentValues: PaymentNoticeInfo,
+  selectedDebtType: DebtPositionTypeOrgsWithSpontaneousDTO | null
+): PaymentNoticeInfo => ({
+  fullName: currentValues.fullName,
+  entityType: currentValues.entityType,
+  email: currentValues.email,
+  fiscalCode: currentValues.fiscalCode,
+  amount: 0,
+  description: '',
+  org: currentValues.org,
+  debtType: selectedDebtType
+});
+
 /**
  * This component is responsible for selecting the debt type. As second step of Spontanei form.
  * @returns JSX.Element
@@ -52,12 +66,29 @@ const DebtTypeSelect = () => {
     _event: React.SyntheticEvent<Element, Event> | null,
     value: string | DebtPositionTypeOrgsWithSpontaneousDTO | null
   ) => {
+    const resetDependentFields = (
+      selectedDebtType: DebtPositionTypeOrgsWithSpontaneousDTO | null
+    ) => {
+      context?.setCausaleHasJoinTemplate(false);
+      formik.setFormikState((state) => ({
+        ...state,
+        values: buildResetValues(state.values as PaymentNoticeInfo, selectedDebtType),
+        errors: {},
+        touched: {}
+      }));
+    };
+
     if (!value) {
-      debtTypeHelpers.setValue(null);
+      resetDependentFields(null);
       return;
     }
     // if value isn't a string, it means it's an option from the autocomplete
     if (typeof value !== 'string') {
+      if (debtType.value?.debtPositionTypeOrgId !== value.debtPositionTypeOrgId) {
+        resetDependentFields(value);
+        return;
+      }
+
       debtTypeHelpers.setValue(value);
     } else {
       // if value is a string, it means it's an option from the radio group
@@ -67,10 +98,15 @@ const DebtTypeSelect = () => {
         (debtTypeOption) => debtTypeOption.debtPositionTypeOrgId === debtPositionTypeOrgId
       );
       if (selectedDebtType) {
+        if (debtType.value?.debtPositionTypeOrgId !== selectedDebtType.debtPositionTypeOrgId) {
+          resetDependentFields(selectedDebtType);
+          return;
+        }
+
         debtTypeHelpers.setValue(selectedDebtType);
       } else {
         // if value is not found, set it to null
-        debtTypeHelpers.setValue(null);
+        resetDependentFields(null);
       }
     }
   };
@@ -93,8 +129,7 @@ const DebtTypeSelect = () => {
 
   const onChange = async (debtType: DebtPositionTypeOrgsWithSpontaneousDTO) => {
     await formik.validateForm();
-    await debtTypeHelpers.setValue(debtType);
-    await formik.setFieldValue('description', '', true);
+    handleDebtTypeChange(null, debtType);
   };
 
   const shouldContinue = async () => {
