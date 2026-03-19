@@ -1,4 +1,4 @@
-import React, { useContext, useEffect } from 'react';
+import React, { useContext, useEffect, useRef } from 'react';
 import { RenderType, SpontaneousFormField } from '../../../../../generated/data-contracts';
 import {
   buildDinamicValue,
@@ -25,6 +25,12 @@ export interface computedPROPS extends SpontaneousFormField, FieldInputProps<Cus
   allFields?: SpontaneousFormField[];
   options?: Option[];
 }
+
+// Share in-flight requests across field instances so the same dynamic URL is fetched only once.
+const pendingDynamicRequests = new Map<string, Promise<{ result: unknown }>>();
+// Keep a short-lived resolved cache to absorb immediate remounts/re-renders.
+const resolvedDynamicRequests = new Map<string, { result: unknown; timestamp: number }>();
+const RESOLVED_DYNAMIC_REQUEST_TTL_MS = 5000;
 
 const withComputedValues =
   (FieldBean: (props: computedPROPS) => React.JSX.Element) =>
@@ -58,6 +64,7 @@ const withComputedValues =
     const [, , amountHelpers] = useField<PaymentNoticeInfo['amount']>('amount');
     const { values } = useFormikContext<CustomFormValues>();
     const context = useContext<FormContextType | null>(FormContext);
+    const lastFetchedDynamicUrlRef = useRef<string | null>(null);
 
     const isHidden = hiddenDependsOn
       ? computeValue<boolean>(hiddenDependsOn, values)
@@ -105,14 +112,31 @@ const withComputedValues =
     React.useEffect(() => {
       const fetchDynamicResult = async () => {
         try {
-          if (source) {
-            let resultSource = buildDinamicValue(source, flattenedValues);
-            const queryString = queryParams
-              .map((param) => param.key && `${param.name}=${flattenedValues[param.key]}`)
-              .join('&');
-            resultSource = `${resultSource}?${queryString}`;
-            const response = await fetch(resultSource);
-            const { result } = await response.json();
+          if (!source) return;
+
+          const sourceUrl = buildDinamicValue(source, flattenedValues);
+          const queryString = queryParams
+            .filter((param) => Boolean(param.key))
+            .map((param) => param.key && `${param.name}=${flattenedValues[param.key]}`)
+            .join('&');
+          const resultSource = queryString ? `${sourceUrl}?${queryString}` : sourceUrl;
+
+          // Skip duplicate fetches triggered by the same field instance during the same lifecycle.
+          if (lastFetchedDynamicUrlRef.current === resultSource) {
+            return;
+          }
+
+          lastFetchedDynamicUrlRef.current = resultSource;
+
+          const resolvedRequest = resolvedDynamicRequests.get(resultSource);
+          const hasFreshResolvedRequest =
+            resolvedRequest &&
+            Date.now() - resolvedRequest.timestamp < RESOLVED_DYNAMIC_REQUEST_TTL_MS;
+
+          // In StrictMode the component can remount right after the first request resolves:
+          // reuse the cached payload instead of issuing the same GET again.
+          if (hasFreshResolvedRequest) {
+            const { result } = resolvedRequest;
             switch (htmlRender) {
               case RenderType.DYNAMIC_SELECT:
                 setOptions(result as Option[]);
@@ -123,14 +147,52 @@ const withComputedValues =
               default:
                 break;
             }
+            return;
+          }
+
+          if (resolvedRequest) {
+            resolvedDynamicRequests.delete(resultSource);
+          }
+
+          const pendingRequest =
+            pendingDynamicRequests.get(resultSource) ||
+            fetch(resultSource)
+              .then((response) => response.json())
+              .finally(() => pendingDynamicRequests.delete(resultSource));
+
+          pendingDynamicRequests.set(resultSource, pendingRequest);
+
+          const { result } = await pendingRequest;
+          resolvedDynamicRequests.set(resultSource, { result, timestamp: Date.now() });
+          switch (htmlRender) {
+            case RenderType.DYNAMIC_SELECT:
+              setOptions(result as Option[]);
+              break;
+            case RenderType.DYNAMIC_AMOUNT_LABEL:
+              helpers.setValue(result as number, false);
+              break;
+            default:
+              break;
           }
         } catch (error) {
+          lastFetchedDynamicUrlRef.current = null;
           console.error('Error fetching dynamic result:', error);
         }
       };
-      /** this is to prevent to call an source url without url placeholders */
-      if (urlParamsValues.length > 0 && urlParamsValues.every((value) => !value)) return;
-      fetchDynamicResult();
+
+      const hasMissingDependencies =
+        allDependenciesValues.length > 0 &&
+        allDependenciesValues.some(
+          (value) => value === undefined || value === null || value === ''
+        );
+
+      /** prevent calls until every URL/query dependency has been resolved */
+      if (hasMissingDependencies) {
+        lastFetchedDynamicUrlRef.current = null;
+        return;
+      }
+
+      void fetchDynamicResult();
     }, [source, ...allDependenciesValues]);
 
     // sys_type custom field is used to update the description field
