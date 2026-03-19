@@ -38,14 +38,19 @@ export const Footer = () => {
       }}>
       <Divider />
       <Stack
-        direction="row"
+        direction={{ xs: 'column', md: 'row' }}
         justifyContent="space-between"
         alignItems="center"
+        gap={{ xs: 3, md: 0 }}
         padding={3}
         minHeight={50}>
         <ProductLogo />
         <Stack alignItems="flex-end">
-          <Stack direction="row" gap={2} alignItems="center" component="nav">
+          <Stack
+            direction={{ xs: 'column', md: 'row' }}
+            gap={2}
+            alignItems="center"
+            component="nav">
             <FooterLink href={ROUTES.PRIVACY_POLICY}>{t('ui.footer.privacy')}</FooterLink>
             <FooterLink href={ROUTES.TOS}>{t('ui.footer.termsAndConditions')}</FooterLink>
             <FooterLink href={a11yLink}>{t('ui.footer.a11y')}</FooterLink>
