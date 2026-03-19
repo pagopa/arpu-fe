@@ -129,6 +129,7 @@ const DebtorSection = ({ allowedEntityType, hasFlagAnonymousFiscalCode }: Debtor
               variant="outlined"
               required
               {...fullName}
+              id="fullName"
               error={fullNameMeta.touched && Boolean(fullNameMeta.error)}
               helperText={fullNameMeta.touched && fullNameMeta.error}
               sx={{ width: '-webkit-fill-available' }}
@@ -144,6 +145,7 @@ const DebtorSection = ({ allowedEntityType, hasFlagAnonymousFiscalCode }: Debtor
               required
               disabled={isFlagNoFiscalCodeChecked && isFisica}
               {...fiscalCode}
+              id="fiscalCode"
               error={fiscalCodeMeta.touched && Boolean(fiscalCodeMeta.error)}
               helperText={fiscalCodeMeta.touched && fiscalCodeMeta.error}
               sx={{ width: '-webkit-fill-available' }}
@@ -159,6 +161,7 @@ const DebtorSection = ({ allowedEntityType, hasFlagAnonymousFiscalCode }: Debtor
               type="email"
               required
               {...email}
+              id="email"
               error={emailMeta.touched && Boolean(emailMeta.error)}
               helperText={emailMeta.touched && emailMeta.error}
               sx={{ width: '-webkit-fill-available' }}

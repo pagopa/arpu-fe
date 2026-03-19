@@ -34,11 +34,13 @@ const SELECT = (props: computedPROPS & { multiple?: boolean }) => {
         value={fieldValue.value}
         getOptionKey={(opt) => (opt as Option).value}
         getOptionLabel={(org) => (org as Option).label}
+        id={name}
         renderInput={(params) => (
           <TextField
             {...params}
             label={htmlLabel}
             name={name}
+            id={name}
             error={hasError}
             helperText={hasError && errorMessage}
           />
