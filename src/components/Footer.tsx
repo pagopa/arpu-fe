@@ -61,10 +61,16 @@ export const Footer = () => {
       {brokerInfo?.brokerName ? (
         <Stack>
           <Divider />
-          <Stack alignItems="center" justifyContent="center" height={60}>
-            <Typography component="span" fontWeight={600} fontSize={14}>
+          <Stack alignItems="center" direction={'row'} justifyContent="center" height={60}>
+            <Typography fontWeight={600} fontSize={14}>
               {brokerInfo.brokerName}
             </Typography>
+            {brokerInfo.address && (
+              <Typography fontSize={14}>
+                &nbsp;&#x2013;&nbsp;{brokerInfo.address} &middot; {brokerInfo.zipCode}{' '}
+                {brokerInfo.city}
+              </Typography>
+            )}
           </Stack>
         </Stack>
       ) : null}
