@@ -40,11 +40,13 @@ const SELECT = (props: computedPROPS & { multiple?: boolean }) => {
         getOptionLabel={(option) =>
           typeof option === 'string' ? option : (option as Option | null)?.label || ''
         }
+        id={name}
         renderInput={(params) => (
           <TextField
             {...params}
             label={htmlLabel}
             name={name}
+            id={name}
             error={hasError}
             helperText={hasError && errorMessage}
           />

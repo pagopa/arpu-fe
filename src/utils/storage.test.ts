@@ -140,6 +140,15 @@ describe('storage', () => {
     expect(setItemSpy).toHaveBeenCalledWith(storage.StorageItems.BROKERCODE, 'cie');
   });
 
+  it('app.clearBrokerInfo should remove brokerId and brokerCode from localStorage', () => {
+    const removeItemSpy = vi.spyOn(Storage.prototype, 'removeItem');
+
+    storage.app.clearBrokerInfo();
+
+    expect(removeItemSpy).toHaveBeenCalledWith(storage.StorageItems.BROKERID);
+    expect(removeItemSpy).toHaveBeenCalledWith(storage.StorageItems.BROKERCODE);
+  });
+
   it('should handle storage errors gracefully', () => {
     const setItemSpy = vi.spyOn(Storage.prototype, 'setItem').mockImplementation(() => {
       throw new Error('Storage full');

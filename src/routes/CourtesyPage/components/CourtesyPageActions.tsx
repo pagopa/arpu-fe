@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { Button, Stack } from '@mui/material';
-import { Link, useNavigate, useSearchParams } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { Download } from '@mui/icons-material';
 import { useTranslation } from 'react-i18next';
 import { usePostCarts } from 'hooks/usePostCarts';
@@ -140,8 +140,8 @@ export const CourtesyPageActions: React.FC<CourtesyPageActionsProps> = ({ code }
     <Stack gap={2} alignItems="center">
       {isCancelled ? (
         <Button
-          component={Link}
-          to={routes.LOGIN}
+          component="a"
+          href={routes.LOGIN}
           variant="contained"
           size="large"
           color="primary"
