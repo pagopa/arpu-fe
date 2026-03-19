@@ -48,7 +48,7 @@ const { flattenObjectMock, buildDinamicValueMock, getPlaceholdersMock } = vi.hoi
   ): Record<string, string | number> =>
     Object.keys(obj).reduce(
       (acc, key) => {
-        const pre = prefix.length ? `${prefix}${delimiter}` : '';
+        const pre = prefix.length ? prefix + delimiter : '';
         const value = obj[key];
         if (typeof value === 'object' && value !== null && Object.keys(value).length > 0) {
           Object.assign(acc, flattenObject(value as Record<string, unknown>, delimiter, pre + key));
@@ -75,6 +75,10 @@ const { flattenObjectMock, buildDinamicValueMock, getPlaceholdersMock } = vi.hoi
     getPlaceholdersMock: getPlaceholders
   };
 });
+
+const orgFiscalCodePlaceholder = '$' + '{orgFiscalCode.value}';
+const dynamicAmountSource =
+  'https://test.it/pu/cie/public/organizations/' + orgFiscalCodePlaceholder + '/amount';
 
 vi.mock('../config', () => ({
   buildDinamicValue: buildDinamicValueMock,
@@ -135,7 +139,7 @@ describe('withDinamicValues', () => {
             detailLink={false}
             minOccurences={1}
             maxOccurences={1}
-            source="https://test.it/pu/cie/public/organizations/${orgFiscalCode.value}/amount"
+            source={dynamicAmountSource}
             sourceParams={sourceParams}
             amountFieldName="costo"
           />
@@ -158,7 +162,7 @@ describe('withDinamicValues', () => {
             detailLink={false}
             minOccurences={1}
             maxOccurences={1}
-            source="https://test.it/pu/cie/public/organizations/${orgFiscalCode.value}/amount"
+            source={dynamicAmountSource}
             sourceParams={sourceParams}
             amountFieldName="costoBis"
           />
@@ -219,7 +223,7 @@ describe('withDinamicValues', () => {
             detailLink={false}
             minOccurences={1}
             maxOccurences={1}
-            source="https://test.it/pu/cie/public/organizations/${orgFiscalCode.value}/amount"
+            source={dynamicAmountSource}
             sourceParams={sourceParams}
             amountFieldName="costo"
           />

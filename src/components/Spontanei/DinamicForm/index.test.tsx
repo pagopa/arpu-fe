@@ -9,6 +9,10 @@ import {
   SpontaneousFormItemDTO
 } from '../../../../generated/data-contracts';
 
+const orgFiscalCodePlaceholder = '$' + '{orgFiscalCode.value}';
+const dynamicAmountSource =
+  'https://test.it/pu/cie/public/organizations/' + orgFiscalCodePlaceholder + '/amount';
+
 const dynamicSelectField: SpontaneousFormField = {
   name: 'orgFiscalCode',
   required: true,
@@ -57,7 +61,7 @@ const dynamicAmountField: SpontaneousFormField = {
   detailLink: false,
   minOccurences: 1,
   maxOccurences: 1,
-  source: 'https://test.it/pu/cie/public/organizations/${orgFiscalCode.value}/amount',
+  source: dynamicAmountSource,
   sourceParams: amountSourceParams
 };
 
@@ -88,7 +92,7 @@ describe('DinamicForm', () => {
         });
       }
 
-      throw new Error(`Unexpected fetch URL: ${url}`);
+      throw new Error('Unexpected fetch URL: ' + url);
     });
 
     vi.stubGlobal('fetch', fetchMock);
