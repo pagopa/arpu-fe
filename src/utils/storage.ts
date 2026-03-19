@@ -37,6 +37,15 @@ const setStorageItem = (key: StorageItems, value: string) => {
 /** get a session item and return his value. If not possible returns null */
 const getStorageItem = (key: StorageItems) => localStorage.getItem(key);
 
+/** remove a storage item and swallow storage access errors */
+const removeStorageItem = (key: StorageItems) => {
+  try {
+    localStorage.removeItem(key);
+  } catch {
+    return null;
+  }
+};
+
 /** clear both session and local storage */
 const clear = () => {
   window.sessionStorage.clear();
@@ -95,6 +104,10 @@ export default {
       return stored ? Number(stored) : null;
     },
     setBrokerCode: (brokerCode: string) => setStorageItem(StorageItems.BROKERCODE, brokerCode),
-    getBrokerCode: () => getBrokerCodeFromUrl()
+    getBrokerCode: () => getBrokerCodeFromUrl(),
+    clearBrokerInfo: () => {
+      removeStorageItem(StorageItems.BROKERID);
+      removeStorageItem(StorageItems.BROKERCODE);
+    }
   }
 };

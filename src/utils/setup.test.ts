@@ -92,10 +92,12 @@ describe('setup', () => {
 
   it('catches an error, redirects to courtesy page, and returns false', async () => {
     vi.spyOn(utils.apiClient.public, 'getPublicBrokerInfo').mockRejectedValue(new Error('error'));
+    const clearBrokerInfoSpy = vi.spyOn(utils.storage.app, 'clearBrokerInfo');
 
     expect(await appSetup()).toBe(false);
 
-    const expectedUrl = ROUTES.COURTESY_PAGE.replace(':outcome', OUTCOMES[410]);
+    const expectedUrl = ROUTES.public.COURTESY_PAGE.replace(':outcome', OUTCOMES[410]);
+    expect(clearBrokerInfoSpy).toHaveBeenCalledTimes(1);
     expect(mockReplace).toHaveBeenCalledWith(expectedUrl);
   });
 
