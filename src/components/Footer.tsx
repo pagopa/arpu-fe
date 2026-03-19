@@ -42,13 +42,13 @@ export const Footer = () => {
         justifyContent="space-between"
         alignItems="center"
         gap={{ xs: 3, md: 0 }}
-        padding={3}
+        padding={{ xs: 2, md: 3 }}
         minHeight={50}>
         <ProductLogo />
         <Stack alignItems="flex-end">
           <Stack
             direction={{ xs: 'column', md: 'row' }}
-            gap={2}
+            gap={{ xs: 0, md: 2 }}
             alignItems="center"
             component="nav">
             <FooterLink href={ROUTES.PRIVACY_POLICY}>{t('ui.footer.privacy')}</FooterLink>
