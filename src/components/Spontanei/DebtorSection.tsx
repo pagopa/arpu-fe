@@ -125,7 +125,10 @@ const DebtorSection = ({ allowedEntityType, hasFlagAnonymousFiscalCode }: Debtor
               label={t('spontanei.form.steps.step3.debtor.useYourData')}
             />
           )}
-          <Stack direction={{ sx: 'column', md: 'row' }} gap={1}>
+          <Stack
+            direction={{ sx: 'column', md: 'row' }}
+            gap={{ xs: 2, sm: 1 }}
+            my={{ xs: 1, md: 0 }}>
             <TextField
               label={
                 isFisica
