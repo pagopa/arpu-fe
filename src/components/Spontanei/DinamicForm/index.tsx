@@ -1,13 +1,14 @@
 import React, { useEffect } from 'react';
 import { Form, useFormikContext } from 'formik';
 import { BuildFormInputs, BuildFormState, CustomFormValues } from './config';
-import { Card, Stack, Typography } from '@mui/material';
+import { Stack, Typography } from '@mui/material';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers';
 import 'dayjs/locale/it';
 import { PaymentNoticeInfo } from '..';
 import { useTranslation } from 'react-i18next';
 import { SpontaneousFormField } from '../../../../generated/data-contracts';
+import { ResponsiveCard } from 'components/ResponsiveCard';
 
 export type CustomFormProps = {
   fieldBeans: SpontaneousFormField[];
@@ -37,14 +38,14 @@ const CustomForm = ({ fieldBeans, amountFieldName }: CustomFormProps) => {
   return (
     <>
       <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale="it">
-        <Card variant="outlined" sx={{ padding: 3 }}>
+        <ResponsiveCard variant="outlined">
           <Typography variant="h6" mb={2}>
             {t('spontanei.form.steps.step3.custom.title')}
           </Typography>
           <Form>
             <Stack gap={2}>{fields}</Stack>
           </Form>
-        </Card>
+        </ResponsiveCard>
       </LocalizationProvider>
     </>
   );

@@ -68,14 +68,15 @@ const SummaryStructure = (props: {
 
 const SummaryItem = (props: { label: string; value: string; dataTestId?: string }) => (
   <Grid container data-testid={props.dataTestId || 'spontanei-step3-summary-item'}>
-    <Grid size={4}>
+    <Grid size={{ xs: 12, sm: 6, md: 4 }}>
       <Typography
         variant="body2"
+        sx={{ overflowWrap: 'anywhere' }}
         data-testid={`${props.dataTestId || 'spontanei-step3-summary-item'}-label`}>
         {props.label}
       </Typography>
     </Grid>
-    <Grid size={8}>
+    <Grid size={{ xs: 12, sm: 4 }}>
       <Typography
         variant="body2"
         fontWeight={600}
