@@ -66,8 +66,8 @@ const Download = () => {
           </Typography>
         </Stack>
         <Button
-          component={Link}
-          to={isAnonymous ? routes.LOGIN : routes.DASHBOARD}
+          component={'a'}
+          href={isAnonymous ? routes.LOGIN : routes.DASHBOARD}
           variant="contained"
           size="large">
           {t('spontanei.download.close')}
