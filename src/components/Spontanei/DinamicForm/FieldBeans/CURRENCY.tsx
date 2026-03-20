@@ -3,7 +3,7 @@ import { InputAdornment, TextField } from '@mui/material';
 import withComputedValues, { computedPROPS } from './withDinamicValues';
 import { useField } from 'formik';
 
-export const CURRENCY = (props: computedPROPS) => {
+const CURRENCY = (props: computedPROPS) => {
   //asserting value is a number(Euro in Cents)
   const { value, name, htmlLabel, onBlur, hasError, required, errorMessage, isDisabled } = props;
 
