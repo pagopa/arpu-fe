@@ -39,8 +39,6 @@ export const getErrorMessage = (issues: z.ZodIssue[], fieldName: string) =>
     .map(({ message }) => message)
     .toString();
 
-type FlattenedValue = string | number | boolean | null | undefined;
-
 /** Extrae placeholders from a string */
 export const getPlaceholders = (template: string): string[] => {
   const regex = /[$]?{([^{}]*)}/g;
@@ -58,24 +56,12 @@ function formatString(formatString: string, dataObject: { [key: string]: unknown
   });
 }
 
-export const flattenObject = (
-  obj: Record<string, unknown>,
-  delimiter = '.',
-  prefix = ''
-): Record<string, FlattenedValue> =>
-  Object.keys(obj).reduce<Record<string, FlattenedValue>>((acc, k) => {
+export const flattenObject = (obj, delimiter = '.', prefix = ''): Record<string, string | number> =>
+  Object.keys(obj).reduce((acc, k) => {
     const pre = prefix.length ? `${prefix}${delimiter}` : '';
-    const value = obj[k];
-
-    if (typeof value === 'object' && value !== null && !Array.isArray(value)) {
-      const nestedObject = value as Record<string, unknown>;
-      if (Object.keys(nestedObject).length > 0) {
-        Object.assign(acc, flattenObject(nestedObject, delimiter, pre + k));
-        return acc;
-      }
-    }
-
-    acc[pre + k] = value as FlattenedValue;
+    if (typeof obj[k] === 'object' && obj[k] !== null && Object.keys(obj[k]).length > 0)
+      Object.assign(acc, flattenObject(obj[k], delimiter, pre + k));
+    else acc[pre + k] = obj[k];
     return acc;
   }, {});
 
@@ -105,52 +91,40 @@ export function computeValue<T>(code: string, scope = {}) {
 }
 
 /** set the form schema for validation */
-let schemaObject: Record<string, z.ZodTypeAny> = {};
+let schemaObject = {};
 export const BuildFormSchema = (fields: Array<SpontaneousFormField>) => {
-  schemaObject = {};
-
-  const buildFormSchema = (fieldsToBuild: Array<SpontaneousFormField>) => {
-    fieldsToBuild.forEach((field) => {
-      if (field.subfields) buildFormSchema(field.subfields);
-      const name = field.name;
-      const isRequired = field.required;
-      const regex = field.regex;
-      const type = field.htmlRender;
-      if (type === RenderType.MULTIFIELD) {
-        return;
+  fields.forEach((field) => {
+    if (field.subfields) BuildFormSchema(field.subfields);
+    const name = field.name;
+    const isRequired = field.required;
+    const regex = field.regex;
+    const type = field.htmlRender;
+    const errorMessage = field.extraAttr?.error_messag;
+    const isAmountField =
+      type === RenderType.CURRENCY ||
+      type === RenderType.DYNAMIC_AMOUNT_LABEL ||
+      type === RenderType.CURRENCY_LABEL;
+    let fieldSchema;
+    if (isAmountField) {
+      fieldSchema = isRequired ? z.number().min(0, errorMessage) : z.number();
+    } else if (type === RenderType.SINGLESELECT || type === RenderType.DYNAMIC_SELECT) {
+      fieldSchema = z
+        .object({
+          label: z.string(),
+          value: z.string()
+        })
+        .nullable()
+        .refine((option) => isRequired && option !== null, errorMessage);
+    } else if (type === RenderType.MULTISELECT) {
+      fieldSchema = isRequired ? z.array(z.string()).min(1, errorMessage) : z.array(z.string());
+    } else {
+      fieldSchema = isRequired ? z.string().min(1, errorMessage) : z.string();
+      if (regex) {
+        fieldSchema = fieldSchema.regex(new RegExp(regex || ''), errorMessage);
       }
-      const errorMessage = field.extraAttr?.error_messag;
-      const isAmountField =
-        type === RenderType.CURRENCY ||
-        type === RenderType.DYNAMIC_AMOUNT_LABEL ||
-        type === RenderType.CURRENCY_LABEL;
-      let fieldSchema: z.ZodTypeAny;
-      if (isAmountField) {
-        fieldSchema = isRequired ? z.number().min(0, errorMessage) : z.number();
-      } else if (type === RenderType.SINGLESELECT || type === RenderType.DYNAMIC_SELECT) {
-        fieldSchema = z
-          .object({
-            label: z.string(),
-            value: z.string()
-          })
-          .nullable()
-          .refine((option) => !isRequired || option !== null, errorMessage);
-      } else if (type === RenderType.MULTISELECT) {
-        fieldSchema = isRequired ? z.array(z.string()).min(1, errorMessage) : z.array(z.string());
-      } else {
-        const stringSchema = isRequired ? z.string().min(1, errorMessage) : z.string();
-        if (regex) {
-          fieldSchema = stringSchema.regex(new RegExp(regex || ''), errorMessage);
-        } else {
-          fieldSchema = stringSchema;
-        }
-      }
-      schemaObject = { ...schemaObject, [name]: fieldSchema };
-    });
-  };
-
-  buildFormSchema(fields);
-
+    }
+    schemaObject = { ...schemaObject, [name]: fieldSchema };
+  });
   return z.object(schemaObject);
 };
 
@@ -169,14 +143,16 @@ export interface CustomFormValues {
   description?: string;
 }
 
+/** Type guard to check if a value is a valid Option */
 const isOption = (value: unknown): value is Option =>
   typeof value === 'object' &&
   value !== null &&
   'label' in value &&
   'value' in value &&
-  typeof value.label === 'string' &&
-  typeof value.value === 'string';
+  typeof (value as Option).label === 'string' &&
+  typeof (value as Option).value === 'string';
 
+/** Normalize a select value to a proper Option or null */
 export const normalizeSelectValue = (value: unknown, options: Option[] = []): Option | null => {
   if (isOption(value)) {
     return value;
@@ -193,43 +169,37 @@ export const normalizeSelectValue = (value: unknown, options: Option[] = []): Op
 let intialState: CustomFormValues = {};
 export const BuildFormState = (fields: Array<SpontaneousFormField>): CustomFormValues => {
   intialState = {};
-
-  const buildFormState = (fieldsToBuild: Array<SpontaneousFormField>) => {
-    fieldsToBuild.forEach(({ name, defaultValue, subfields, htmlRender, enumerationList = [] }) => {
-      if (subfields) buildFormState(subfields);
-      /* I fields MULTFIELD sono solo contenitori di altri fields
-        non hanno un value associato e per questo motivo non è
-        necessario tenere tracciao dello stato
-        probabilmente anche altri tipi di fields non necessitano
-        di stato  */
-      if (htmlRender !== RenderType.MULTIFIELD) {
-        // Una multiselect usa un array di valori
-        // TODO: gestire un eventuale valore
-        // iniziale. In questo caso è più complesso
-        // perchè defaultValue dovrebbe essere un array di valori
-        if (htmlRender == RenderType.MULTISELECT) {
-          intialState = { ...intialState, [name]: [] };
-        } else if (
-          htmlRender === RenderType.SINGLESELECT ||
-          htmlRender === RenderType.DYNAMIC_SELECT
-        ) {
-          const initialOptions = enumerationList.map((enumeration) => ({
-            label: enumeration,
-            value: enumeration
-          }));
-          intialState = {
-            ...intialState,
-            [name]: normalizeSelectValue(defaultValue, initialOptions)
-          };
-        } else {
-          intialState = { ...intialState, [name]: defaultValue };
-        }
+  fields.forEach(({ name, defaultValue, subfields, htmlRender, enumerationList }) => {
+    if (subfields) BuildFormState(subfields);
+    /* I fields MULTFIELD sono solo contenitori di altri fields
+      non hanno un value associato e per questo motivo non è
+      necessario tenere tracciao dello stato
+      probabilmente anche altri tipi di fields non necessitano
+      di stato  */
+    if (htmlRender !== RenderType.MULTIFIELD) {
+      // Una multiselect usa un array di valori
+      // TODO: gestire un eventuale valore
+      // iniziale. In questo caso è più complesso
+      // perchè defaultValue dovrebbe essere un array di valori
+      if (htmlRender == RenderType.MULTISELECT) {
+        intialState = { ...intialState, [name]: [] };
+      } else if (
+        htmlRender === RenderType.SINGLESELECT ||
+        htmlRender === RenderType.DYNAMIC_SELECT
+      ) {
+        const initialOptions = (enumerationList || []).map((enumeration) => ({
+          label: enumeration,
+          value: enumeration
+        }));
+        intialState = {
+          ...intialState,
+          [name]: normalizeSelectValue(defaultValue, initialOptions)
+        };
+      } else {
+        intialState = { ...intialState, [name]: defaultValue };
       }
-    });
-  };
-
-  buildFormState(fields);
-
+    }
+  });
   return intialState;
 };
 
@@ -275,7 +245,7 @@ export const BuildFormInputs = (
   elements: Array<SpontaneousFormField>,
   amountFieldName?: string
 ) => {
-  const fields = [...elements];
+  const fields = elements;
 
   if (!amountFieldName) {
     fields.push({

@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useMemo } from 'react';
 import { Form, useFormikContext } from 'formik';
 import { BuildFormInputs, BuildFormState, CustomFormValues } from './config';
 import { Stack, Typography } from '@mui/material';
@@ -23,17 +23,30 @@ const CustomForm = ({ fieldBeans, amountFieldName }: CustomFormProps) => {
   const fields = BuildFormInputs(fieldBeans, amountFieldName);
   const initialValues: CustomFormValues = BuildFormState(fieldBeans);
 
+  const fieldBeansKey = useMemo(
+    () =>
+      fieldBeans
+        .map((f) => f.name)
+        .sort()
+        .join(','),
+    [fieldBeans]
+  );
+
   useEffect(() => {
     setFormikState((state) => {
+      const dynamicFieldNames = new Set(Object.keys(initialValues));
+      const mergedValues: Record<string, unknown> = { ...state.values };
+
+      dynamicFieldNames.forEach((fieldName) => {
+        mergedValues[fieldName] = initialValues[fieldName];
+      });
+
       return {
         ...state,
-        values: {
-          ...initialValues,
-          ...state.values
-        }
+        values: mergedValues as typeof state.values
       };
     });
-  }, []);
+  }, [fieldBeansKey]);
 
   return (
     <>

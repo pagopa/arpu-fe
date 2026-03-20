@@ -4,7 +4,6 @@ import { computedPROPS } from './withDinamicValues';
 import { Autocomplete, TextField } from '@mui/material';
 import { Option } from './withDinamicValues';
 import { useField } from 'formik';
-import { normalizeSelectValue } from '../config';
 import { useTranslation } from 'react-i18next';
 
 const SELECT = (props: computedPROPS & { multiple?: boolean }) => {
@@ -12,7 +11,15 @@ const SELECT = (props: computedPROPS & { multiple?: boolean }) => {
   const { name, onBlur, htmlLabel, hasError, required, errorMessage, options = [] } = props;
 
   const [fieldValue, , helpers] = useField<Option | null>(name);
-  const normalizedValue = normalizeSelectValue(fieldValue.value, options);
+
+  // Guard: ensure the value is a valid Option object, otherwise treat as null
+  const currentValue: Option | null =
+    fieldValue.value &&
+    typeof fieldValue.value === 'object' &&
+    'label' in fieldValue.value &&
+    'value' in fieldValue.value
+      ? fieldValue.value
+      : null;
 
   const handleChange = (
     _event: React.SyntheticEvent<Element, Event>,
@@ -32,14 +39,10 @@ const SELECT = (props: computedPROPS & { multiple?: boolean }) => {
         options={options}
         onChange={handleChange}
         onBlur={onBlur}
-        freeSolo
-        value={normalizedValue}
         noOptionsText={t('errors.empty.search')}
+        value={currentValue}
         getOptionKey={(opt) => (opt as Option).value}
-        isOptionEqualToValue={(option, value) => option.value === value.value}
-        getOptionLabel={(option) =>
-          typeof option === 'string' ? option : (option as Option | null)?.label || ''
-        }
+        getOptionLabel={(org) => (org as Option).label}
         id={name}
         renderInput={(params) => (
           <TextField

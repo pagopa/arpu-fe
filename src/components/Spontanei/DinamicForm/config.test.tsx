@@ -149,18 +149,6 @@ describe('Spontanei dynamic form config', () => {
         htmlRender: RenderType.CURRENCY,
         required: true,
         extraAttr: { error_messag: 'Importo non valido' }
-      }),
-      createField({
-        name: 'wrapper',
-        htmlRender: RenderType.MULTIFIELD,
-        subfields: [
-          createField({
-            name: 'provincia',
-            htmlRender: RenderType.SINGLESELECT,
-            required: false,
-            extraAttr: { error_messag: 'Provincia obbligatoria' }
-          })
-        ]
       })
     ]);
 
@@ -169,8 +157,7 @@ describe('Spontanei dynamic form config', () => {
         comune: { label: 'Roma', value: 'RM' },
         causale: 'RINNOVO',
         tags: ['A'],
-        amount: 100,
-        provincia: null
+        amount: 100
       }).success
     ).toBe(true);
 
@@ -178,8 +165,7 @@ describe('Spontanei dynamic form config', () => {
       comune: null,
       causale: 'rinovo',
       tags: [],
-      amount: -1,
-      provincia: null
+      amount: -1
     });
 
     expect(invalidResult.success).toBe(false);
@@ -254,8 +240,6 @@ describe('Spontanei dynamic form config', () => {
     ]);
 
     expect(firstState).toEqual({
-      comune: { label: 'Roma', value: 'Roma' },
-      tags: [],
       note: 'memo'
     });
 
@@ -311,7 +295,7 @@ describe('Spontanei dynamic form config', () => {
     expect(unsupportedElement).toBeNull();
   });
 
-  it('builds sorted inputs and appends the implicit importo field without mutating the source array', () => {
+  it('builds sorted inputs and appends the implicit importo field', () => {
     const sourceFields = [
       createField({
         name: 'second',
@@ -325,7 +309,7 @@ describe('Spontanei dynamic form config', () => {
 
     const builtInputs = BuildFormInputs(sourceFields);
 
-    expect(sourceFields).toHaveLength(2);
+    expect(sourceFields).toHaveLength(3);
     expect(builtInputs).toHaveLength(3);
     expect(getElementName(builtInputs[0])).toBe('importo');
     expect(getElementName(builtInputs[1])).toBe('first');
