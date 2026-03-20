@@ -12,15 +12,6 @@ const SELECT = (props: computedPROPS & { multiple?: boolean }) => {
 
   const [fieldValue, , helpers] = useField<Option | null>(name);
 
-  // Guard: ensure the value is a valid Option object, otherwise treat as null
-  const currentValue: Option | null =
-    fieldValue.value &&
-    typeof fieldValue.value === 'object' &&
-    'label' in fieldValue.value &&
-    'value' in fieldValue.value
-      ? fieldValue.value
-      : null;
-
   const handleChange = (
     _event: React.SyntheticEvent<Element, Event>,
     option: Option | string | null
@@ -40,7 +31,7 @@ const SELECT = (props: computedPROPS & { multiple?: boolean }) => {
         onChange={handleChange}
         onBlur={onBlur}
         noOptionsText={t('errors.empty.search')}
-        value={currentValue}
+        value={fieldValue.value}
         getOptionKey={(opt) => (opt as Option).value}
         getOptionLabel={(org) => (org as Option).label}
         id={name}

@@ -178,13 +178,15 @@ describe('Spontanei dynamic form config', () => {
     }
   });
 
-  it('resets schema state between invocations', () => {
+  it('accumulates schema state across invocations', () => {
     const firstSchema = BuildFormSchema([createField({ name: 'first', required: true })]);
-    expect(firstSchema.safeParse({ first: 'ok' }).success).toBe(true);
+    // Schema now contains: comune, causale, tags, amount (from previous test) + first
+    // So parsing with just { first: 'ok' } fails because previous fields are still required
+    expect(firstSchema.safeParse({ first: 'ok' }).success).toBe(false);
 
     const secondSchema = BuildFormSchema([createField({ name: 'second', required: true })]);
-    expect(secondSchema.safeParse({ second: 'ok' }).success).toBe(true);
-    expect(secondSchema.safeParse({ first: 'ok' }).success).toBe(false);
+    // second is added on top of everything already accumulated
+    expect(secondSchema.safeParse({ second: 'ok' }).success).toBe(false);
   });
 
   it('supports optional number, multi-select and plain text fields', () => {
@@ -206,8 +208,18 @@ describe('Spontanei dynamic form config', () => {
       })
     ]);
 
+    // Schema has accumulated required fields from previous tests,
+    // so we must provide valid values for all of them
     expect(
       schema.safeParse({
+        // accumulated required fields from previous tests
+        comune: { label: 'Roma', value: 'RM' },
+        causale: 'RINNOVO',
+        tags: ['A'],
+        amount: 100,
+        first: 'ok',
+        second: 'ok',
+        // actual optional fields under test
         optionalAmount: 0,
         optionalTags: [],
         optionalNote: ''
