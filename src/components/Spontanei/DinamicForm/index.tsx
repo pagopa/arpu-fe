@@ -27,7 +27,7 @@ const CustomForm = ({ fieldBeans, amountFieldName }: CustomFormProps) => {
     () =>
       fieldBeans
         .map((f) => f.name)
-        .sort()
+        .sort((a, b) => a.localeCompare(b))
         .join(','),
     [fieldBeans]
   );
