@@ -28,6 +28,7 @@ const CustomForm = ({ fieldBeans, amountFieldName }: CustomFormProps) => {
       return {
         ...state,
         values: {
+          // inverting the two lines makes the state of the dynamic fields persistent
           ...state.values,
           ...initialValues
         }
