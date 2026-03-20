@@ -69,7 +69,6 @@ const CustomPagination = ({
       <Select
         value={pageSize}
         onChange={handlePageSizeChange}
-        size="small"
         data-testid="result-set-select"
         sx={{
           fontSize: 12

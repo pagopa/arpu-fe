@@ -114,7 +114,6 @@ export const AssistanceForm = () => {
                     aria-required="false"
                     value={email}
                     aria-label={t('app.assistance.input1Placeholder')}
-                    size="small"
                     error={emailError}
                     helperText={emailError && t('app.assistance.input1Helper')}
                     onChange={(e) => {
@@ -141,7 +140,6 @@ export const AssistanceForm = () => {
                     onChange={(e) => {
                       setEmailConfirm(e.target.value);
                     }}
-                    size="small"
                     sx={{ maxWidth: { lg: '20vw', md: '25vw', sm: '35vw', xs: '100%' } }}
                     label={t('app.assistance.input2Placeholder')}
                     helperText={emailConfirmError && t('app.assistance.input2Helper')}

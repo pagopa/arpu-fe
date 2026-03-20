@@ -13,14 +13,14 @@ import SINGLESELECT from './FieldBeans/SINGLESELECT';
 import MULTISELECT from './FieldBeans/MULTISELECT';
 import DATEPICKER from './FieldBeans/DATE';
 import TEXT from './FieldBeans/TEXT';
-import CURRENCY_LABEL from './FieldBeans/CURRENCY_LABEL';
 import MULTIFIELD from './FieldBeans/MULTIFIELD';
 import NONE from './FieldBeans/NONE';
 import TAB from './FieldBeans/TAB';
 import DYNAMIC_SELECT from './FieldBeans/DYNAMIC_SELECT';
-import DYNAMIC_AMOUNTLABEL from './FieldBeans/DYNAMIC_AMOUNT_LABEL';
-import { RenderType } from '../../../../generated/apiClient';
 import CURRENCY from './FieldBeans/CURRENCY';
+import DYNAMIC_AMOUNTLABEL from './FieldBeans/DYNAMIC_AMOUNT_LABEL';
+import CURRENCY_LABEL from './FieldBeans/CURRENCY_LABEL';
+import { RenderType } from '../../../../generated/apiClient';
 
 export type FieldName = SpontaneousFormField['name'];
 
