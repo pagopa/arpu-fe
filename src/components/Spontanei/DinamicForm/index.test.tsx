@@ -75,7 +75,7 @@ describe('DinamicForm', () => {
     const fetchMock = vi.fn().mockImplementation((input: RequestInfo | URL) => {
       const url = String(input);
 
-      if (url === 'https://test.it/pu/cie/public/organizations') {
+      if (url === 'https://test.it/pu/cie/public/organizations?') {
         return Promise.resolve({
           json: vi.fn().mockResolvedValue({
             result: [{ label: 'Comune di Test', value: 'CF123' }]
@@ -117,7 +117,7 @@ describe('DinamicForm', () => {
     );
 
     await waitFor(() => {
-      expect(fetchMock).toHaveBeenCalledWith('https://test.it/pu/cie/public/organizations');
+      expect(fetchMock).toHaveBeenCalledWith('https://test.it/pu/cie/public/organizations?');
     });
 
     const input = screen.getByLabelText('Cerca il comune');

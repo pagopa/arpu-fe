@@ -1,6 +1,6 @@
 import React from 'react';
 import { InputAdornment, TextField } from '@mui/material';
-import withComputedValues, { computedPROPS } from './withDinamicValues';
+import { computedPROPS } from './withDinamicValues';
 import { useField } from 'formik';
 
 export const CURRENCY = (props: computedPROPS) => {
@@ -33,4 +33,4 @@ export const CURRENCY = (props: computedPROPS) => {
   );
 };
 
-export default withComputedValues(CURRENCY);
+export default CURRENCY;

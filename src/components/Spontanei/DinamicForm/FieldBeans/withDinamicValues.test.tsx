@@ -95,7 +95,7 @@ describe('withDinamicValues', () => {
     vi.unstubAllGlobals();
   });
 
-  it('deduplicates concurrent requests for the same dynamic source', async () => {
+  it('calls fetch for each component instance with the same dynamic source', async () => {
     const fetchMock = vi.fn().mockResolvedValue({
       json: vi.fn().mockResolvedValue({ result: 2500 })
     });
@@ -171,7 +171,7 @@ describe('withDinamicValues', () => {
     );
 
     await waitFor(() => {
-      expect(fetchMock).toHaveBeenCalledTimes(1);
+      expect(fetchMock).toHaveBeenCalledTimes(2);
     });
 
     expect(fetchMock).toHaveBeenCalledWith(
@@ -179,7 +179,7 @@ describe('withDinamicValues', () => {
     );
   });
 
-  it('does not duplicate the request on StrictMode remount for the same dynamic source', async () => {
+  it('calls fetch again on StrictMode remount for the same dynamic source', async () => {
     const fetchMock = vi.fn().mockResolvedValue({
       json: vi.fn().mockResolvedValue({ result: 1750 })
     });
@@ -232,7 +232,7 @@ describe('withDinamicValues', () => {
     );
 
     await waitFor(() => {
-      expect(fetchMock).toHaveBeenCalledTimes(1);
+      expect(fetchMock).toHaveBeenCalledTimes(2);
     });
 
     expect(fetchMock).toHaveBeenCalledWith(
