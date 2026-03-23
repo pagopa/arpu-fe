@@ -16,14 +16,16 @@ const BrokerConfigSchema = z.object({
   useCart: z.boolean().optional(),
   assistanceLink: z.string().url().optional(),
   a11yLink: z.string().optional(),
-  homeLink: z.string().url().optional()
+  homeLink: z.string().url().optional(),
+  availableRoutes: z.array(z.string()).optional()
 });
 
 export type BrokerConfig = z.infer<typeof BrokerConfigSchema>;
 
 export const defaultBrokerConfig: BrokerConfig = {
   translation: {},
-  useCart: true
+  useCart: true,
+  availableRoutes: []
 };
 
 /**

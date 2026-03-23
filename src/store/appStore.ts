@@ -39,7 +39,8 @@ export function setBrokerInfo(parsedConfig: ParsedConfig, brokerCode: string) {
         useCart: parsedConfig.config?.useCart ?? defaultBrokerConfig.useCart,
         assistanceLink: parsedConfig.config?.assistanceLink,
         a11yLink: parsedConfig.config?.a11yLink ?? defaultBrokerConfig.a11yLink,
-        homeLink: parsedConfig.config?.homeLink
+        homeLink: parsedConfig.config?.homeLink,
+        availableRoutes: parsedConfig.config?.availableRoutes ?? defaultBrokerConfig.availableRoutes
       }
     },
     brokerCode

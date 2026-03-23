@@ -37,6 +37,7 @@ import { appSetup } from 'utils/setup';
 import appStore from 'store/appStore';
 import ResourcePage from 'routes/ResourcePage/ResourcePage';
 import { RecaptchaProvider } from 'components/RecaptchaProvider/RecaptchaProvider';
+import { RouteGuardByAvailableRoutes as Guard } from 'components/RouteGuard';
 
 /**
  * Validates that the required query params (nav, org_fiscal_code, installment_id)
@@ -95,7 +96,10 @@ const router = createBrowserRouter([
         children: [
           {
             path: ROUTES.LOGIN,
-            element: <Login />,
+            element:
+              <Guard path={ROUTES.LOGIN}>
+                <Login />
+              </Guard>,
             handle: {
               titleKey: 'pageTitles.login',
               gutters: false,
@@ -107,15 +111,21 @@ const router = createBrowserRouter([
             children: [
               {
                 index: true,
-                element: <Spontanei />,
+                element:
+                  <Guard path={ROUTES.public.PAYMENTS_ON_THE_FLY}>
+                    <Spontanei />
+                  </Guard>,
                 handle: {
                   backButton: true,
                   titleKey: 'pageTitles.spontanei'
                 } as RouteHandleObject
               },
               {
-                path: 'download/:orgId/:nav',
-                element: <Download />,
+                path: ROUTES.public.PAYMENTS_ON_THE_FLY_DOWNLOAD,
+                element:
+                  <Guard path={ROUTES.public.PAYMENTS_ON_THE_FLY_DOWNLOAD}>
+                    <Download />
+                  </Guard>,
                 handle: {
                   titleKey: 'pageTitles.spontanei'
                 } as RouteHandleObject
@@ -124,7 +134,10 @@ const router = createBrowserRouter([
           },
           {
             path: ROUTES.public.DEBT_POSITION_SEARCH,
-            element: <DebtPositionsSearch />,
+            element:
+              <Guard path={ROUTES.public.DEBT_POSITION_SEARCH}>
+                <DebtPositionsSearch />
+              </Guard>,
             handle: {
               titleKey: 'pageTitles.debtPositionsSearch',
               backButton: true
@@ -132,14 +145,20 @@ const router = createBrowserRouter([
           },
           {
             path: ROUTES.public.DEBT_POSITION_DOWNLOAD,
-            element: <DebtPositionDownload />,
+            element:
+              <Guard path={ROUTES.public.DEBT_POSITION_DOWNLOAD}>
+                <DebtPositionDownload />
+              </Guard>,
             handle: {
               titleKey: 'pageTitles.debtPositionsDownload'
             } as RouteHandleObject
           },
           {
             path: ROUTES.public.RECEIPTS_SEARCH,
-            element: <ReceiptsSearch />,
+            element:
+              <Guard path={ROUTES.public.RECEIPTS_SEARCH}>
+                <ReceiptsSearch />
+              </Guard>,
             handle: {
               titleKey: 'pageTitles.receiptsSearch',
               backButton: true
@@ -147,7 +166,10 @@ const router = createBrowserRouter([
           },
           {
             path: ROUTES.public.RECEIPT,
-            element: <ReceiptDetail />,
+            element:
+              <Guard path={ROUTES.public.RECEIPT}>
+                <ReceiptDetail />
+              </Guard>,
             handle: {
               titleKey: 'pageTitles.receiptDetail',
               backButton: true
