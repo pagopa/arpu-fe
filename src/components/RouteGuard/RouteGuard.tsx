@@ -30,8 +30,13 @@ export const RouteGuard = ({
   return isAuthorized ? children : <Navigate to={redirectTo} />;
 };
 
-export const RouteGuardByAvailableRoutes = ({ path, children }: { path: string, children: React.ReactNode }) => {
-
+export const RouteGuardByAvailableRoutes = ({
+  path,
+  children
+}: {
+  path: string;
+  children: React.ReactNode;
+}) => {
   const conditionFn = () => {
     const availableRoutes = appStore.value.brokerInfo?.config?.availableRoutes;
     // if availableRoutes is not defined or empty, all routes are allowed
@@ -40,8 +45,12 @@ export const RouteGuardByAvailableRoutes = ({ path, children }: { path: string, 
     }
     // check if the current path is in the available routes
     return availableRoutes?.includes(path) ?? false;
-  }
-  return <RouteGuard conditionFn={conditionFn} redirectTo={ROUTES.public.COURTESY_PAGE.replace(':outcome', OUTCOMES['403'])}>
-    {children}
-  </RouteGuard>;
+  };
+  return (
+    <RouteGuard
+      conditionFn={conditionFn}
+      redirectTo={ROUTES.public.COURTESY_PAGE.replace(':outcome', OUTCOMES['403'])}>
+      {children}
+    </RouteGuard>
+  );
 };

@@ -96,10 +96,11 @@ const router = createBrowserRouter([
         children: [
           {
             path: ROUTES.LOGIN,
-            element:
+            element: (
               <Guard path={ROUTES.LOGIN}>
                 <Login />
-              </Guard>,
+              </Guard>
+            ),
             handle: {
               titleKey: 'pageTitles.login',
               gutters: false,
@@ -111,10 +112,11 @@ const router = createBrowserRouter([
             children: [
               {
                 index: true,
-                element:
+                element: (
                   <Guard path={ROUTES.public.PAYMENTS_ON_THE_FLY}>
                     <Spontanei />
-                  </Guard>,
+                  </Guard>
+                ),
                 handle: {
                   backButton: true,
                   titleKey: 'pageTitles.spontanei'
@@ -122,10 +124,11 @@ const router = createBrowserRouter([
               },
               {
                 path: ROUTES.public.PAYMENTS_ON_THE_FLY_DOWNLOAD,
-                element:
+                element: (
                   <Guard path={ROUTES.public.PAYMENTS_ON_THE_FLY_DOWNLOAD}>
                     <Download />
-                  </Guard>,
+                  </Guard>
+                ),
                 handle: {
                   titleKey: 'pageTitles.spontanei'
                 } as RouteHandleObject
@@ -134,10 +137,11 @@ const router = createBrowserRouter([
           },
           {
             path: ROUTES.public.DEBT_POSITION_SEARCH,
-            element:
+            element: (
               <Guard path={ROUTES.public.DEBT_POSITION_SEARCH}>
                 <DebtPositionsSearch />
-              </Guard>,
+              </Guard>
+            ),
             handle: {
               titleKey: 'pageTitles.debtPositionsSearch',
               backButton: true
@@ -145,20 +149,22 @@ const router = createBrowserRouter([
           },
           {
             path: ROUTES.public.DEBT_POSITION_DOWNLOAD,
-            element:
+            element: (
               <Guard path={ROUTES.public.DEBT_POSITION_DOWNLOAD}>
                 <DebtPositionDownload />
-              </Guard>,
+              </Guard>
+            ),
             handle: {
               titleKey: 'pageTitles.debtPositionsDownload'
             } as RouteHandleObject
           },
           {
             path: ROUTES.public.RECEIPTS_SEARCH,
-            element:
+            element: (
               <Guard path={ROUTES.public.RECEIPTS_SEARCH}>
                 <ReceiptsSearch />
-              </Guard>,
+              </Guard>
+            ),
             handle: {
               titleKey: 'pageTitles.receiptsSearch',
               backButton: true
@@ -166,10 +172,11 @@ const router = createBrowserRouter([
           },
           {
             path: ROUTES.public.RECEIPT,
-            element:
+            element: (
               <Guard path={ROUTES.public.RECEIPT}>
                 <ReceiptDetail />
-              </Guard>,
+              </Guard>
+            ),
             handle: {
               titleKey: 'pageTitles.receiptDetail',
               backButton: true
