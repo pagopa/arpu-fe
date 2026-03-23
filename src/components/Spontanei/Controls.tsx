@@ -24,26 +24,26 @@ export type ControlsProps = HideContinue | ShouldContinue;
 const Controls = (props: ControlsProps) => {
   const { t } = useTranslation();
   const context = useContext<FormContextType | null>(FormContext);
-  const step = context?.step || 0;
+  const step = context?.step || { current: 0, previous: 0 };
   const omitFirstStep = context?.omitFirstStep || false;
   // If the first step is omitted, the back button should navigate to the previous page instead of the first step
-  const backButtonWithOmitFirstStep = step === 1 && omitFirstStep;
+  const backButtonWithOmitFirstStep = step.current === 1 && omitFirstStep;
   const navigate = useNavigate();
 
-  const showBackButton = omitFirstStep ? step > 1 : step > 0;
+  const showBackButton = omitFirstStep ? step.current > 1 : step.current > 0;
 
   const onBack = () => {
-    if (!step || step < 1 || backButtonWithOmitFirstStep) {
+    if (!step || step.current < 1 || backButtonWithOmitFirstStep) {
       navigate(-1);
     } else {
-      context?.setStep(step - 1);
+      context?.setStep({ current: step.current - 1, previous: step.current });
     }
   };
 
   const onContinue = async () => {
     const canContinue = await (props as ShouldContinue).shouldContinue();
     if (canContinue) {
-      context?.setStep(step + 1);
+      context?.setStep({ current: step.current + 1, previous: step.current });
     }
   };
 
@@ -68,7 +68,7 @@ const Controls = (props: ControlsProps) => {
           variant="contained"
           onClick={onContinue}
           data-testid="spontanei-controls-continue-button">
-          {step === 4 ? t('spontanei.form.confirm') : t('spontanei.form.continue')}
+          {step.current === 4 ? t('spontanei.form.confirm') : t('spontanei.form.continue')}
         </Button>
       )}
     </Stack>

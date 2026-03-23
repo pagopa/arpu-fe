@@ -4,8 +4,8 @@ import { SpontaneousFormStructure } from '../../../generated/data-contracts';
 export type FormContextType = {
   omitFirstStep: boolean;
   setOmitFirstStep: React.Dispatch<React.SetStateAction<boolean>>;
-  step: number;
-  setStep: React.Dispatch<React.SetStateAction<number>>;
+  step: { current: number; previous: number };
+  setStep: React.Dispatch<React.SetStateAction<{ current: number; previous: number }>>;
   summaryFields: SpontaneousFormStructure['summaryFields'];
   setSummaryFields: React.Dispatch<React.SetStateAction<SpontaneousFormStructure['summaryFields']>>;
   submitFields: SpontaneousFormStructure['submitFields'];
