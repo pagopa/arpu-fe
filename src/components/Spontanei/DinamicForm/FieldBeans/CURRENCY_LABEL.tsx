@@ -1,4 +1,3 @@
-import withComputedValues from './withDinamicValues';
-import { CURRENCY } from './CURRENCY';
+import CURRENCY from './CURRENCY';
 
-export default withComputedValues(CURRENCY);
+export default CURRENCY;

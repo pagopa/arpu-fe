@@ -7,6 +7,7 @@ import { useEffect } from 'react';
 import { PaymentNoticeInfo } from '..';
 import Controls from '../Controls';
 import { PersonEntityType } from '../../../../generated/data-contracts';
+import { ResponsiveCard } from 'components/ResponsiveCard';
 
 type StandardFormProps = {
   fixedAmount?: number;
@@ -52,14 +53,16 @@ const StandardForm = ({
             hasFlagAnonymousFiscalCode={hasFlagAnonymousFiscalCode}
             allowedEntityType={allowedEntityType}
           />
-          <Card variant="outlined" sx={{ padding: 3 }}>
+          <ResponsiveCard variant="outlined">
             <Stack gap={2}>
               <Typography variant="h6">
                 {t('spontanei.form.steps.step3.paymentData.title')}
               </Typography>
-              <Stack direction="row" justifyContent={'space-between'} spacing={2}>
+              <Stack
+                direction={{ xs: 'column', sm: 'row' }}
+                justifyContent={'space-between'}
+                spacing={2}>
                 <TextField
-                  size="small"
                   label={t('spontanei.form.steps.step3.paymentData.amount')}
                   variant="outlined"
                   required
@@ -80,7 +83,6 @@ const StandardForm = ({
                   helperText={amountMeta.touched && amountMeta.error}
                 />
                 <TextField
-                  size="small"
                   label={t('spontanei.form.steps.step3.paymentData.description')}
                   variant="outlined"
                   required
@@ -91,7 +93,7 @@ const StandardForm = ({
                 />
               </Stack>
             </Stack>
-          </Card>
+          </ResponsiveCard>
         </Stack>
       </Card>
       <Controls shouldContinue={shouldContinue} />
