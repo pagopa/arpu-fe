@@ -3,7 +3,7 @@ import { render, screen, fireEvent, waitFor } from '__tests__/renderers';
 import '@testing-library/jest-dom';
 import OrgSelect from './OrgSelect';
 import FormContext, { FormContextType } from '../FormContext';
-import { Formik } from 'formik';
+import { Formik, useFormikContext } from 'formik';
 import utils from 'utils';
 import {
   OrganizationsWithSpontaneousDTO,
@@ -179,6 +179,85 @@ describe('OrgSelect Component', () => {
 
     await waitFor(() => {
       expect(setStep).toHaveBeenCalled();
+    });
+  });
+
+  it('resets debtType when a different organization is selected', async () => {
+    const initialValuesWithDebtType = {
+      ...initialValues,
+      org: mockOrgs[0],
+      debtType: {
+        debtPositionTypeOrgId: 99,
+        description: 'Old Debt',
+        code: '999',
+        organizationId: 1
+      }
+    };
+
+    let formValues: typeof initialValuesWithDebtType | undefined;
+    const FormSpy = () => {
+      const { values } = useFormikContext<typeof initialValuesWithDebtType>();
+      formValues = values;
+      return null;
+    };
+
+    render(
+      <Formik initialValues={initialValuesWithDebtType} onSubmit={vi.fn()}>
+        <FormContext.Provider value={getDefaultContext()}>
+          <OrgSelect />
+          <FormSpy />
+        </FormContext.Provider>
+      </Formik>
+    );
+
+    const input = screen.getByRole('combobox');
+    fireEvent.focus(input);
+    fireEvent.change(input, { target: { value: 'Org 2' } });
+    const option = await screen.findByText('Org 2');
+    fireEvent.click(option);
+
+    await waitFor(() => {
+      expect(formValues?.debtType).toBeNull();
+      expect(formValues?.org?.organizationId).toBe(2);
+    });
+  });
+
+  it('resets debtType when auto-selecting the only available organization', async () => {
+    const singleOrg = [mockOrgs[0]];
+    (utils.loaders.getOrganizationsWithSpontaneous as Mock).mockReturnValue({ data: singleOrg });
+    const setStep = vi.fn();
+    const setOmitFirstStep = vi.fn();
+
+    const initialValuesWithDebtType = {
+      ...initialValues,
+      debtType: {
+        debtPositionTypeOrgId: 99,
+        description: 'Old Debt',
+        code: '999',
+        organizationId: 5
+      }
+    };
+
+    let formValues: typeof initialValuesWithDebtType | undefined;
+    const FormSpy = () => {
+      const { values } = useFormikContext<typeof initialValuesWithDebtType>();
+      formValues = values;
+      return null;
+    };
+
+    render(
+      <Formik initialValues={initialValuesWithDebtType} onSubmit={vi.fn()}>
+        <FormContext.Provider value={getDefaultContext({ setStep, setOmitFirstStep })}>
+          <OrgSelect />
+          <FormSpy />
+        </FormContext.Provider>
+      </Formik>
+    );
+
+    await waitFor(() => {
+      expect(setStep).toHaveBeenCalled();
+      expect(formValues?.debtType).toBeNull();
+      expect(formValues?.org?.organizationId).toBe(1);
     });
   });
 });

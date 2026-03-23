@@ -21,6 +21,7 @@ const OrgSelect = () => {
 
   const formik = useFormikContext<PaymentNoticeInfo>();
   const [, meta, helpers] = useField<PaymentNoticeInfo['org']>('org');
+  const [, , debtTypeHelpers] = useField<PaymentNoticeInfo['debtType']>('debtType');
 
   const serviceQuery = isAnonymous
     ? utils.loaders.public.getPublicOrganizationsWithSpontaneous(brokerId)
@@ -35,6 +36,7 @@ const OrgSelect = () => {
     if (orgs?.length === 1 && !meta.value && context?.step.current === 0) {
       // set the only org as value
       helpers.setValue(orgs[0]);
+      debtTypeHelpers.setValue(null);
       // omit the first step in steppers
       context && context.setOmitFirstStep(true);
       context?.setStep({ current: 1, previous: 1 });
@@ -47,6 +49,7 @@ const OrgSelect = () => {
     _event: React.SyntheticEvent<Element, Event>,
     organization: OrganizationsWithSpontaneousDTO | string | null
   ) => {
+    debtTypeHelpers.setValue(null);
     if (!organization || typeof organization === 'string') {
       helpers.setValue(null);
     } else {
