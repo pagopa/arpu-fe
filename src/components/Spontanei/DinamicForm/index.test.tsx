@@ -3,6 +3,8 @@ import '@testing-library/jest-dom';
 import { Formik } from 'formik';
 import { fireEvent, render, screen, waitFor } from '__tests__/renderers';
 import DinamicForm from './index';
+import FormContext, { FormContextType } from '../FormContext';
+
 import {
   RenderType,
   SpontaneousFormField,
@@ -63,6 +65,19 @@ const dynamicAmountField: SpontaneousFormField = {
   maxOccurences: 1,
   source: dynamicAmountSource,
   sourceParams: amountSourceParams
+};
+
+const formContext: FormContextType = {
+  omitFirstStep: false,
+  setOmitFirstStep: vi.fn(),
+  causaleHasJoinTemplate: false,
+  setCausaleHasJoinTemplate: vi.fn(),
+  step: { current: 1, previous: 0 },
+  setStep: vi.fn(),
+  summaryFields: [],
+  setSummaryFields: vi.fn(),
+  submitFields: [],
+  setSubmitFields: vi.fn()
 };
 
 describe('DinamicForm', () => {
@@ -133,6 +148,44 @@ describe('DinamicForm', () => {
       );
 
       expect(amountCalls).toHaveLength(1);
+    });
+  });
+
+  it('reset the form only when the user goes back to the previous step', async () => {
+    const fieldBeans: SpontaneousFormField[] = [dynamicSelectField];
+
+    const initialValues = {
+      orgFiscalCode: { label: 'Keep me', value: 'keep-me' }
+    };
+
+    // Case 1: direction > 0 (forward) - SHOULD RESET
+    const { unmount } = render(
+      <FormContext.Provider value={{ ...formContext, step: { current: 2, previous: 1 } }}>
+        <Formik initialValues={initialValues} onSubmit={vi.fn()}>
+          <DinamicForm fieldBeans={fieldBeans} />
+        </Formik>
+      </FormContext.Provider>
+    );
+
+    // expect label search input to be empty after mount-reset
+    await waitFor(() => {
+      expect(screen.getByLabelText('Cerca il comune')).toHaveValue('');
+    });
+
+    unmount();
+
+    // Case 2: direction < 0 (backward) - SHOULD NOT RESET
+    render(
+      <FormContext.Provider value={{ ...formContext, step: { current: 1, previous: 2 } }}>
+        <Formik initialValues={initialValues} onSubmit={vi.fn()}>
+          <DinamicForm fieldBeans={fieldBeans} />
+        </Formik>
+      </FormContext.Provider>
+    );
+
+    // Initial value is preserved
+    await waitFor(() => {
+      expect(screen.getByLabelText('Cerca il comune')).toHaveValue('Keep me');
     });
   });
 });

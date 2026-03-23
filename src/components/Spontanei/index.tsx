@@ -34,7 +34,7 @@ const Spontanei = () => {
   // Omit the first step in steppers
   const [omitFirstStep, setOmitFirstStep] = React.useState(false);
   // Step state
-  const [step, setStep] = React.useState(0);
+  const [step, setStep] = React.useState({ current: 0, previous: 0 });
   // causale has join template state
   const [causaleHasJoinTemplate, setCausaleHasJoinTemplate] = React.useState(false);
   // summary fields state
@@ -96,12 +96,12 @@ const Spontanei = () => {
                 {t('spontanei.form.description')}
               </Typography>
               <Stack spacing={4} mt={4}>
-                <Steps activeStep={step} />
-                {step === 0 && <OrgSelect />}
-                {step === 1 && <DebtTypeSelect />}
-                {step === 2 && <DebtTypeConfig />}
-                {step === 3 && <Summary />}
-                {step === 4 && <Payment />}
+                <Steps activeStep={step.current} />
+                {step.current === 0 && <OrgSelect />}
+                {step.current === 1 && <DebtTypeSelect />}
+                {step.current === 2 && <DebtTypeConfig />}
+                {step.current === 3 && <Summary />}
+                {step.current === 4 && <Payment />}
               </Stack>
             </Stack>
           </FormContext.Provider>

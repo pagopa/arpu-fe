@@ -15,14 +15,16 @@ const mockNavigate = vi.fn();
 
 const renderWithContext = (props: ControlsProps, contextValue: Partial<FormContextType> = {}) => {
   const defaultContext: FormContextType = {
-    step: 0,
+    step: { current: 0, previous: 0 },
     setStep: vi.fn(),
     omitFirstStep: false,
     setOmitFirstStep: vi.fn(),
-    formType: null,
-    setFormType: vi.fn(),
-    userDescription: null,
-    setUserDescription: vi.fn(),
+    summaryFields: [],
+    setSummaryFields: vi.fn(),
+    submitFields: [],
+    setSubmitFields: vi.fn(),
+    causaleHasJoinTemplate: false,
+    setCausaleHasJoinTemplate: vi.fn(),
     ...contextValue
   };
 
@@ -39,7 +41,7 @@ describe('Controls Component', () => {
   });
 
   it('renders step 0 correctly: test if back button is hidden', () => {
-    renderWithContext({ shouldContinue: vi.fn() }, { step: 0 });
+    renderWithContext({ shouldContinue: vi.fn() }, { step: { current: 0, previous: 0 } });
 
     const backButton = screen.queryByTestId('spontanei-controls-back-button');
     expect(backButton).not.toBeInTheDocument();
@@ -47,45 +49,48 @@ describe('Controls Component', () => {
 
   it('renders step 1 correctly: shows Back and calls setStep(0)', () => {
     const setStep = vi.fn();
-    renderWithContext({ shouldContinue: vi.fn() }, { step: 1, setStep });
+    renderWithContext({ shouldContinue: vi.fn() }, { step: { current: 1, previous: 1 }, setStep });
 
     const backButton = screen.getByTestId('spontanei-controls-back-button');
     expect(backButton).toBeInTheDocument();
 
     fireEvent.click(backButton);
-    expect(setStep).toHaveBeenCalledWith(0);
+    expect(setStep).toHaveBeenCalledWith({ current: 0, previous: 1 });
   });
 
   it('handles omitFirstStep: back button on step 1 hidden', () => {
-    renderWithContext({ shouldContinue: vi.fn() }, { step: 1, omitFirstStep: true });
+    renderWithContext(
+      { shouldContinue: vi.fn() },
+      { step: { current: 1, previous: 1 }, omitFirstStep: true }
+    );
 
     const backButton = screen.queryByTestId('spontanei-controls-back-button');
     expect(backButton).not.toBeInTheDocument();
   });
 
   it('renders confirm button on step 4', () => {
-    renderWithContext({ shouldContinue: vi.fn() }, { step: 4 });
+    renderWithContext({ shouldContinue: vi.fn() }, { step: { current: 4, previous: 4 } });
     expect(screen.getByTestId('spontanei-controls-continue-button')).toBeInTheDocument();
   });
 
   it('calls onContinue and updates step on success', async () => {
     const setStep = vi.fn();
     const shouldContinue = vi.fn().mockResolvedValue(true);
-    renderWithContext({ shouldContinue }, { step: 1, setStep });
+    renderWithContext({ shouldContinue }, { step: { current: 1, previous: 1 }, setStep });
 
     const continueButton = screen.getByTestId('spontanei-controls-continue-button');
     fireEvent.click(continueButton);
 
     await waitFor(() => {
       expect(shouldContinue).toHaveBeenCalled();
-      expect(setStep).toHaveBeenCalledWith(2);
+      expect(setStep).toHaveBeenCalledWith({ current: 2, previous: 1 });
     });
   });
 
   it('calls onContinue and does NOT update step on failure', async () => {
     const setStep = vi.fn();
     const shouldContinue = vi.fn().mockResolvedValue(false);
-    renderWithContext({ shouldContinue }, { step: 1, setStep });
+    renderWithContext({ shouldContinue }, { step: { current: 1, previous: 1 }, setStep });
 
     const continueButton = screen.getByTestId('spontanei-controls-continue-button');
     fireEvent.click(continueButton);
@@ -97,7 +102,7 @@ describe('Controls Component', () => {
   });
 
   it('hides continue button when hideContinue is true', () => {
-    renderWithContext({ hideContinue: true }, { step: 1 });
+    renderWithContext({ hideContinue: true }, { step: { current: 1, previous: 1 } });
     expect(screen.queryByTestId('spontanei-controls-continue-button')).not.toBeInTheDocument();
   });
 });
