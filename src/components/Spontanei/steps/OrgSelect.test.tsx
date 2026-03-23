@@ -38,14 +38,16 @@ const mockOrgs: OrganizationsWithSpontaneousDTO[] = [
 ];
 
 const getDefaultContext = (overrides: Partial<FormContextType> = {}): FormContextType => ({
-  step: 0,
+  step: { current: 0, previous: 0 },
   setStep: vi.fn(),
   omitFirstStep: false,
   setOmitFirstStep: vi.fn(),
-  formType: null,
-  setFormType: vi.fn(),
-  userDescription: null,
-  setUserDescription: vi.fn(),
+  summaryFields: [],
+  setSummaryFields: vi.fn(),
+  submitFields: [],
+  setSubmitFields: vi.fn(),
+  causaleHasJoinTemplate: false,
+  setCausaleHasJoinTemplate: vi.fn(),
   ...overrides
 });
 
