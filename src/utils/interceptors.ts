@@ -31,6 +31,10 @@ export const setupInterceptors = (client: Client) => {
         utils.storage.app.clearBrokerInfo();
         window.location.replace(toUrl);
       } else if (error.response?.status === 401) {
+        const isPublicRequest = error.config?.url?.includes('/public/');
+        if (isPublicRequest) {
+          return Promise.reject(error);
+        }
         const toUrl = ROUTES.public.COURTESY_PAGE.replace(':outcome', OUTCOMES['401']);
         utils.storage.user.logOut();
         window.location.replace(toUrl);
