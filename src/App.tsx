@@ -36,6 +36,7 @@ import { DebtPositionDownload } from 'routes/DebtPositions/download';
 import { appSetup } from 'utils/setup';
 import appStore from 'store/appStore';
 import ResourcePage from 'routes/ResourcePage/ResourcePage';
+import { RecaptchaProvider } from 'components/RecaptchaProvider/RecaptchaProvider';
 
 /**
  * Validates that the required query params (nav, org_fiscal_code, installment_id)
@@ -292,7 +293,9 @@ export const App = () => {
         <Overlay visible={!isReady} />
         <Theme>
           <Overlay />
-          <RouterProvider router={router} />
+          <RecaptchaProvider>
+            <RouterProvider router={router} />
+          </RecaptchaProvider>
         </Theme>
       </LocalizationProvider>
     </>

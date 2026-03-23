@@ -6,6 +6,7 @@ import utils from 'utils';
 import { Link, useLocation, useParams } from 'react-router-dom';
 import storage from 'utils/storage';
 import { useAppRoutes } from 'hooks/useAppRoutes';
+import { useRecaptcha } from 'components/RecaptchaProvider/RecaptchaProvider';
 
 const Download = () => {
   const { routes, externalRoutes } = useAppRoutes();
@@ -32,10 +33,13 @@ const Download = () => {
 
   const isAnonymous = utils.storage.user.isAnonymous();
 
+  const { executeRecaptcha } = useRecaptcha();
+
   const download = async () => {
     try {
       if (isAnonymous) {
-        const { data, filename } = await anonymousMutation.mutateAsync();
+        const recaptchaToken = await executeRecaptcha();
+        const { data, filename } = await anonymousMutation.mutateAsync({ recaptchaToken });
         utils.files.downloadBlob(data, filename || `${nav}.pdf`);
         return;
       }

@@ -7,6 +7,7 @@ import storage from 'utils/storage';
 import files from 'utils/files';
 import notify from 'utils/notify';
 import { useAppRoutes } from 'hooks/useAppRoutes';
+import { useRecaptcha } from 'components/RecaptchaProvider/RecaptchaProvider';
 
 export const DebtPositionDownload = () => {
   const { t } = useTranslation();
@@ -26,14 +27,20 @@ export const DebtPositionDownload = () => {
     throw new Error('Missing required parameters');
   }
 
-  const noticeLoader = isAnonymous
-    ? loaders.public.getPublicPaymentNotice
-    : loaders.getPaymentNotice;
+  const { executeRecaptcha } = useRecaptcha();
 
-  const paymentNotice = noticeLoader(brokerId, organizationId, { nav }, fiscalCode);
+  const paymentNotice = isAnonymous
+    ? loaders.public.getPublicPaymentNotice(brokerId, organizationId, { nav }, fiscalCode)
+    : loaders.getPaymentNotice(brokerId, organizationId, { nav }, fiscalCode);
 
   const onDownload = async () => {
     try {
+      if (isAnonymous) {
+        const recaptchaToken = await executeRecaptcha();
+        const { data, filename } = await paymentNotice.mutateAsync({ recaptchaToken });
+        files.downloadBlob(data, filename || `${nav}.pdf`);
+        return;
+      }
       const { data, filename } = await paymentNotice.mutateAsync();
       files.downloadBlob(data, filename || `${nav}.pdf`);
     } catch {

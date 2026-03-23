@@ -249,7 +249,7 @@ describe('Payment Notices API', () => {
     });
   });
 
-  it('createPublicSpontaneousDebtPosition calls API and schema parser correctly', async () => {
+  it('createPublicSpontaneousDebtPosition calls API with recaptcha header when token is provided', async () => {
     const bodyMock = createMock(debtPositionRequestDTOSchema);
     const responseMock = createMock(debtPositionResponseDTOSchema);
 
@@ -258,17 +258,58 @@ describe('Payment Notices API', () => {
       .mockResolvedValue({ data: responseMock } as AxiosResponse);
 
     const query = renderHook(
-      () => loaders.public.createPublicSpontaneousDebtPosition(1, bodyMock),
+      () => loaders.public.createPublicSpontaneousDebtPosition(1, bodyMock, 'recaptcha-token-abc'),
       {
         wrapper
       }
     );
 
     await waitFor(() => {
-      expect(apiMock).toHaveBeenCalledWith(1, bodyMock);
+      expect(apiMock).toHaveBeenCalledWith(1, bodyMock, {
+        headers: { 'X-recaptcha-token': 'recaptcha-token-abc' }
+      });
       expect(query.result.current.isSuccess).toBeTruthy();
       expect(query.result.current.data).toEqual(responseMock);
     });
+  });
+
+  it('createPublicSpontaneousDebtPosition calls API without recaptcha header when token is undefined', async () => {
+    const bodyMock = createMock(debtPositionRequestDTOSchema);
+    const responseMock = createMock(debtPositionResponseDTOSchema);
+
+    const apiMock = vi
+      .spyOn(utils.apiClient.public, 'createPublicSpontaneousDebtPosition')
+      .mockResolvedValue({ data: responseMock } as AxiosResponse);
+
+    const query = renderHook(
+      () => loaders.public.createPublicSpontaneousDebtPosition(1, bodyMock, undefined),
+      {
+        wrapper
+      }
+    );
+
+    await waitFor(() => {
+      expect(apiMock).toHaveBeenCalledWith(1, bodyMock, { headers: {} });
+      expect(query.result.current.isSuccess).toBeTruthy();
+    });
+  });
+
+  it('createPublicSpontaneousDebtPosition does not fire query when token is null', () => {
+    const bodyMock = createMock(debtPositionRequestDTOSchema);
+
+    const apiMock = vi
+      .spyOn(utils.apiClient.public, 'createPublicSpontaneousDebtPosition')
+      .mockResolvedValue({ data: {} } as AxiosResponse);
+
+    const query = renderHook(
+      () => loaders.public.createPublicSpontaneousDebtPosition(1, bodyMock, null),
+      {
+        wrapper
+      }
+    );
+
+    expect(apiMock).not.toHaveBeenCalled();
+    expect(query.result.current.fetchStatus).toBe('idle');
   });
 
   it('getPublicOrganizationsWithSpontaneous calls API and schema parser correctly', async () => {
@@ -334,6 +375,66 @@ describe('Payment Notices API', () => {
       );
       expect(mutation.result.current.isSuccess).toBeTruthy();
       expect(mutation.result.current.data).toEqual({ data: 'Test', filename: 'test.pdf' });
+    });
+  });
+
+  it('getPublicPaymentNotice mutation includes recaptcha header when token is provided', async () => {
+    const apiMock = vi.spyOn(utils.apiClient.public, 'getPublicPaymentNotice').mockResolvedValue({
+      data: 'Test',
+      headers: { 'content-disposition': "attachment; filename='test.pdf'" }
+    } as unknown as AxiosResponse);
+
+    const mutation = renderHook(
+      () => loaders.public.getPublicPaymentNotice(1, 3, { nav: '1' }, 'FISCALCODE'),
+      {
+        wrapper
+      }
+    );
+
+    await mutation.result.current.mutateAsync({ recaptchaToken: 'recaptcha-token-xyz' });
+
+    await waitFor(() => {
+      expect(apiMock).toHaveBeenCalledWith(
+        1,
+        3,
+        { nav: '1' },
+        {
+          format: 'blob',
+          headers: {
+            'X-fiscal-code': 'FISCALCODE',
+            'X-recaptcha-token': 'recaptcha-token-xyz'
+          }
+        }
+      );
+      expect(mutation.result.current.isSuccess).toBeTruthy();
+    });
+  });
+
+  it('getPublicPaymentNotice mutation does not include recaptcha header when token is null', async () => {
+    const apiMock = vi.spyOn(utils.apiClient.public, 'getPublicPaymentNotice').mockResolvedValue({
+      data: 'Test',
+      headers: { 'content-disposition': "attachment; filename='test.pdf'" }
+    } as unknown as AxiosResponse);
+
+    const mutation = renderHook(
+      () => loaders.public.getPublicPaymentNotice(1, 3, { nav: '1' }, 'FISCALCODE'),
+      {
+        wrapper
+      }
+    );
+
+    await mutation.result.current.mutateAsync({ recaptchaToken: null });
+
+    await waitFor(() => {
+      expect(apiMock).toHaveBeenCalledWith(
+        1,
+        3,
+        { nav: '1' },
+        {
+          format: 'blob',
+          headers: { 'X-fiscal-code': 'FISCALCODE' }
+        }
+      );
     });
   });
 });
