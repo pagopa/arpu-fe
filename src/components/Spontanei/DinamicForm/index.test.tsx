@@ -3,7 +3,7 @@ import '@testing-library/jest-dom';
 import { Formik } from 'formik';
 import { fireEvent, render, screen, waitFor } from '__tests__/renderers';
 import DinamicForm from './index';
-import FormContext from '../FormContext';
+import FormContext, { FormContextType } from '../FormContext';
 
 import {
   RenderType,
@@ -65,6 +65,19 @@ const dynamicAmountField: SpontaneousFormField = {
   maxOccurences: 1,
   source: dynamicAmountSource,
   sourceParams: amountSourceParams
+};
+
+const formContext: FormContextType = {
+  omitFirstStep: false,
+  setOmitFirstStep: vi.fn(),
+  causaleHasJoinTemplate: false,
+  setCausaleHasJoinTemplate: vi.fn(),
+  step: { current: 1, previous: 0 },
+  setStep: vi.fn(),
+  summaryFields: [],
+  setSummaryFields: vi.fn(),
+  submitFields: [],
+  setSubmitFields: vi.fn()
 };
 
 describe('DinamicForm', () => {
@@ -147,7 +160,7 @@ describe('DinamicForm', () => {
 
     // Case 1: direction > 0 (forward) - SHOULD RESET
     const { unmount } = render(
-      <FormContext.Provider value={{ step: { current: 2, previous: 1 } } as any}>
+      <FormContext.Provider value={{ ...formContext, step: { current: 2, previous: 1 } }}>
         <Formik initialValues={initialValues} onSubmit={vi.fn()}>
           <DinamicForm fieldBeans={fieldBeans} />
         </Formik>
@@ -163,7 +176,7 @@ describe('DinamicForm', () => {
 
     // Case 2: direction < 0 (backward) - SHOULD NOT RESET
     render(
-      <FormContext.Provider value={{ step: { current: 1, previous: 2 } } as any}>
+      <FormContext.Provider value={{ ...formContext, step: { current: 1, previous: 2 } }}>
         <Formik initialValues={initialValues} onSubmit={vi.fn()}>
           <DinamicForm fieldBeans={fieldBeans} />
         </Formik>
@@ -175,5 +188,4 @@ describe('DinamicForm', () => {
       expect(screen.getByLabelText('Cerca il comune')).toHaveValue('Keep me');
     });
   });
-
 });
