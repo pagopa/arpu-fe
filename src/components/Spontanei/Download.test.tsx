@@ -17,6 +17,7 @@ i18nTestSetup(TRANSLATIONS);
 const mockNavigate = vi.fn();
 const mockMutateAsync = vi.fn();
 const mockAnonymousMutateAsync = vi.fn();
+const mockExecuteRecaptcha = vi.fn();
 
 vi.mock('react-router-dom', async () => {
   const actual = await vi.importActual<typeof import('react-router-dom')>('react-router-dom');
@@ -77,10 +78,18 @@ vi.mock('utils/storage', async (importOriginal) => {
   };
 });
 
+vi.mock('components/RecaptchaProvider/RecaptchaProvider', () => ({
+  useRecaptcha: () => ({
+    executeRecaptcha: mockExecuteRecaptcha,
+    isEnabled: true
+  })
+}));
+
 beforeEach(() => {
   vi.clearAllMocks();
   mockMutateAsync.mockResolvedValue({ data: new Blob(), filename: 'notice.pdf' });
   mockAnonymousMutateAsync.mockResolvedValue({ data: new Blob(), filename: 'notice.pdf' });
+  mockExecuteRecaptcha.mockResolvedValue('test-recaptcha-token');
   (utils.storage.user.isAnonymous as ReturnType<typeof vi.fn>).mockReturnValue(false);
 });
 
@@ -113,7 +122,45 @@ describe('Download', () => {
     });
   });
 
-  it('triggers anonymous download when user is anonymous', async () => {
+  it('triggers anonymous download with recaptcha token when user is anonymous', async () => {
+    (utils.storage.user.isAnonymous as ReturnType<typeof vi.fn>).mockReturnValue(true);
+
+    render(<Download />);
+
+    await waitFor(() => {
+      expect(mockExecuteRecaptcha).toHaveBeenCalledTimes(1);
+      expect(mockAnonymousMutateAsync).toHaveBeenCalledWith({
+        recaptchaToken: 'test-recaptcha-token'
+      });
+    });
+
+    expect(mockMutateAsync).not.toHaveBeenCalled();
+  });
+
+  it('does not call executeRecaptcha for authenticated user', async () => {
+    render(<Download />);
+
+    await waitFor(() => {
+      expect(mockMutateAsync).toHaveBeenCalledTimes(1);
+    });
+
+    expect(mockExecuteRecaptcha).not.toHaveBeenCalled();
+    expect(mockMutateAsync).toHaveBeenCalledWith();
+  });
+
+  it('passes null recaptcha token when executeRecaptcha returns null', async () => {
+    (utils.storage.user.isAnonymous as ReturnType<typeof vi.fn>).mockReturnValue(true);
+    mockExecuteRecaptcha.mockResolvedValue(null);
+
+    render(<Download />);
+
+    await waitFor(() => {
+      expect(mockAnonymousMutateAsync).toHaveBeenCalledWith({ recaptchaToken: null });
+      expect(utils.files.downloadBlob).toHaveBeenCalled();
+    });
+  });
+
+  it('retries anonymous download with recaptcha on help link click', async () => {
     (utils.storage.user.isAnonymous as ReturnType<typeof vi.fn>).mockReturnValue(true);
 
     render(<Download />);
@@ -122,7 +169,13 @@ describe('Download', () => {
       expect(mockAnonymousMutateAsync).toHaveBeenCalledTimes(1);
     });
 
-    expect(mockMutateAsync).not.toHaveBeenCalled();
+    const retryLink = screen.getByText('click here');
+    fireEvent.click(retryLink);
+
+    await waitFor(() => {
+      expect(mockExecuteRecaptcha).toHaveBeenCalledTimes(2);
+      expect(mockAnonymousMutateAsync).toHaveBeenCalledTimes(2);
+    });
   });
 
   it('shows notification on download error', async () => {

@@ -25,6 +25,17 @@ vi.mock('../Controls', () => ({
   ))
 }));
 
+// Mock reCAPTCHA
+const mockExecuteRecaptcha = vi.fn();
+const mockIsRecaptchaEnabled = vi.fn();
+
+vi.mock('components/RecaptchaProvider/RecaptchaProvider', () => ({
+  useRecaptcha: () => ({
+    executeRecaptcha: mockExecuteRecaptcha,
+    isEnabled: mockIsRecaptchaEnabled()
+  })
+}));
+
 // Mock store and hooks
 const mockCart = { items: [] as never[] };
 vi.mock('store/GlobalStore', () => ({
@@ -161,6 +172,8 @@ const renderPayment = (
 describe('Payment Component', () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    mockExecuteRecaptcha.mockResolvedValue('test-recaptcha-token');
+    mockIsRecaptchaEnabled.mockReturnValue(true);
   });
 
   afterEach(() => {
@@ -265,5 +278,97 @@ describe('Payment Component', () => {
 
     expect(notify.emit).toHaveBeenCalledWith(expect.any(String), 'error');
     expect(CartStore.addItem).not.toHaveBeenCalled();
+  });
+
+  describe('reCAPTCHA integration', () => {
+    it('calls executeRecaptcha on mount for anonymous user when recaptcha is enabled', async () => {
+      (utils.storage.user.isAnonymous as Mock).mockReturnValue(true);
+      mockIsRecaptchaEnabled.mockReturnValue(true);
+      mockExecuteRecaptcha.mockResolvedValue('recaptcha-token-abc');
+
+      renderPayment();
+
+      await vi.waitFor(() => {
+        expect(mockExecuteRecaptcha).toHaveBeenCalledTimes(1);
+      });
+    });
+
+    it('does not call executeRecaptcha for authenticated user', async () => {
+      (utils.storage.user.isAnonymous as Mock).mockReturnValue(false);
+      mockIsRecaptchaEnabled.mockReturnValue(true);
+
+      renderPayment();
+
+      expect(mockExecuteRecaptcha).not.toHaveBeenCalled();
+    });
+
+    it('does not call executeRecaptcha when recaptcha is disabled', async () => {
+      (utils.storage.user.isAnonymous as Mock).mockReturnValue(true);
+      mockIsRecaptchaEnabled.mockReturnValue(false);
+
+      renderPayment();
+
+      expect(mockExecuteRecaptcha).not.toHaveBeenCalled();
+    });
+
+    it('passes recaptcha token to createPublicSpontaneousDebtPosition for anonymous user', async () => {
+      (utils.storage.user.isAnonymous as Mock).mockReturnValue(true);
+      mockIsRecaptchaEnabled.mockReturnValue(true);
+      mockExecuteRecaptcha.mockResolvedValue('recaptcha-token-abc');
+
+      renderPayment();
+
+      await vi.waitFor(() => {
+        expect(utils.loaders.public.createPublicSpontaneousDebtPosition).toHaveBeenCalledWith(
+          1,
+          expect.any(Object),
+          'recaptcha-token-abc'
+        );
+      });
+    });
+
+    it('passes undefined token to loader when executeRecaptcha fails', async () => {
+      (utils.storage.user.isAnonymous as Mock).mockReturnValue(true);
+      mockIsRecaptchaEnabled.mockReturnValue(true);
+      mockExecuteRecaptcha.mockRejectedValue(new Error('Recaptcha failed'));
+
+      renderPayment();
+
+      await vi.waitFor(() => {
+        expect(utils.loaders.public.createPublicSpontaneousDebtPosition).toHaveBeenCalledWith(
+          1,
+          expect.any(Object),
+          undefined
+        );
+      });
+    });
+
+    it('passes undefined token to loader when executeRecaptcha returns null', async () => {
+      (utils.storage.user.isAnonymous as Mock).mockReturnValue(true);
+      mockIsRecaptchaEnabled.mockReturnValue(true);
+      mockExecuteRecaptcha.mockResolvedValue(null);
+
+      renderPayment();
+
+      await vi.waitFor(() => {
+        expect(utils.loaders.public.createPublicSpontaneousDebtPosition).toHaveBeenCalledWith(
+          1,
+          expect.any(Object),
+          undefined
+        );
+      });
+    });
+
+    it('uses createSpontaneousDebtPosition without token for authenticated user', () => {
+      (utils.storage.user.isAnonymous as Mock).mockReturnValue(false);
+
+      renderPayment();
+
+      expect(utils.loaders.createSpontaneousDebtPosition).toHaveBeenCalledWith(
+        1,
+        expect.any(Object)
+      );
+      expect(utils.loaders.public.createPublicSpontaneousDebtPosition).not.toHaveBeenCalled();
+    });
   });
 });

@@ -17,7 +17,8 @@ const {
   LOGIN_URL = 'https://api.dev.cittadini-p4pa.pagopa.it/arc/v1/login/oneidentity',
   VERSION = '',
   SHOW_NOTICES = '1',
-  RESOURCES_URL = '/cittadini-legaldocs/{BROKER_EXTERNAL_ID}/{DOCUMENT_TYPE}/{DOC_LANGUAGE}_{DOCUMENT_TYPE}.md'
+  RESOURCES_URL = '/cittadini-legaldocs/{BROKER_EXTERNAL_ID}/{DOCUMENT_TYPE}/{DOC_LANGUAGE}_{DOCUMENT_TYPE}.md',
+  RECAPTCHA_SITE_KEY = ''
 } = process.env;
 
 const PARSED_API_TIMEOUT = Number.parseInt(API_TIMEOUT, 10);
@@ -37,6 +38,7 @@ const LOGIN_URL_schema = z.string().url();
 const VERSION_schema = z.string();
 const SHOW_NOTICES_schema = z.enum(['0', '1']);
 const RESOURCES_URL_schema = z.string().min(1);
+const RECAPTCHA_SITE_KEY_schema = z.string().optional();
 
 try {
   ENV_Schema.parse(process.env.ENV);
@@ -50,6 +52,7 @@ try {
   VERSION_schema.parse(process.env.VERSION);
   SHOW_NOTICES_schema.parse(process.env.SHOW_NOTICES);
   RESOURCES_URL_schema.parse(process.env.RESOURCES_URL);
+  RECAPTCHA_SITE_KEY_schema.parse(process.env.RECAPTCHA_SITE_KEY);
 } catch (e) {
   console.error('ENV variables validation failed', (e as ZodError).issues);
 }
@@ -75,6 +78,8 @@ type Config = {
   paramsSerializer: CustomParamsSerializer;
   /** Template URL for legal resources (PP, ToS). */
   resourcesUrl: string;
+  /** reCAPTCHA v2 invisible site key. Empty string = disabled. */
+  recaptchaSiteKey: string;
 };
 
 const assistanceLink: string = 'nomeprodotto@assistenza.pagopa.it';
@@ -143,7 +148,8 @@ const config: Config = {
       arrayFormat: 'comma',
       skipEmptyString: true
     }),
-  resourcesUrl: RESOURCES_URL
+  resourcesUrl: RESOURCES_URL,
+  recaptchaSiteKey: RECAPTCHA_SITE_KEY
 };
 
 export default config;

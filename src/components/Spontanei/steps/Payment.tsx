@@ -1,5 +1,5 @@
 import { Button, Card, Stack, Typography } from '@mui/material';
-import React, { useContext, useMemo } from 'react';
+import React, { useContext, useEffect, useMemo, useState } from 'react';
 import Controls from '../Controls';
 import { useTranslation } from 'react-i18next';
 import { addItem, isItemInCart, setCartEmail, toggleCartDrawer } from 'store/CartStore';
@@ -18,6 +18,7 @@ import FileDownloadIcon from '@mui/icons-material/FileDownload';
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 import appStore from 'store/appStore';
 import { flattenObject } from '../DinamicForm/config';
+import { useRecaptcha } from 'components/RecaptchaProvider/RecaptchaProvider';
 import styled from '@mui/system/styled';
 
 const SpacedStack = styled(Stack)(({ theme }) => ({
@@ -25,10 +26,6 @@ const SpacedStack = styled(Stack)(({ theme }) => ({
   padding: theme.spacing(4)
 }));
 
-/**
- * This component is responsible for rendering the payment step of the form.
- * @returns JSX.Element
- */
 const Payment = () => {
   const context = useContext<FormContextType | null>(FormContext);
   const { submitFields } = context || {};
@@ -101,8 +98,31 @@ const Payment = () => {
     fieldValues
   };
 
+  const { executeRecaptcha, isEnabled: isRecaptchaEnabled } = useRecaptcha();
+
+  const [recaptchaToken, setRecaptchaToken] = useState<string | null | undefined>(
+    isAnonymous && isRecaptchaEnabled ? null : undefined
+  );
+
+  useEffect(() => {
+    const fetchToken = async () => {
+      if (!isAnonymous || !isRecaptchaEnabled) return;
+      try {
+        const token = await executeRecaptcha();
+        setRecaptchaToken(token ?? undefined);
+      } catch {
+        setRecaptchaToken(undefined);
+      }
+    };
+    fetchToken();
+  }, [isAnonymous, isRecaptchaEnabled, executeRecaptcha]);
+
   const { data: debtPositionResponse } = isAnonymous
-    ? utils.loaders.public.createPublicSpontaneousDebtPosition(Number(brokerId), body)
+    ? utils.loaders.public.createPublicSpontaneousDebtPosition(
+        Number(brokerId),
+        body,
+        recaptchaToken
+      )
     : utils.loaders.createSpontaneousDebtPosition(Number(brokerId), body);
 
   const addToCart = () => {
