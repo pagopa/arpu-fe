@@ -40,4 +40,29 @@ describe('RouteGuard component', () => {
     );
     expect(screen.getByText('test')).toBeInTheDocument();
   });
+
+  it('should render children when conditionFn returns true', () => {
+    const conditionFn = vi.fn(() => true);
+
+    render(
+      <FakeGuardedRouter conditionFn={conditionFn}>
+        <p>test</p>
+      </FakeGuardedRouter>
+    );
+    expect(screen.getByText('test')).toBeInTheDocument();
+    expect(conditionFn).toHaveBeenCalled();
+  });
+
+  it('should redirect to specified route when conditionFn returns false', () => {
+    const redirectTo = '/recovery-route';
+    const conditionFn = vi.fn(() => false);
+
+    render(
+      <FakeGuardedRouter conditionFn={conditionFn} redirectTo={redirectTo}>
+        <p>test</p>
+      </FakeGuardedRouter>
+    );
+    expect(screen.queryByText('recovery')).toBeInTheDocument();
+    expect(conditionFn).toHaveBeenCalled();
+  });
 });
