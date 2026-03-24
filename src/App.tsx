@@ -217,11 +217,19 @@ const router = createBrowserRouter([
         children: [
           {
             path: ROUTES.DASHBOARD,
-            element: <DashboardRoute />
+            element: (
+              <Guard path={ROUTES.DASHBOARD}>
+                <DashboardRoute />
+              </Guard>
+            )
           },
           {
             path: ROUTES.USER,
-            element: <UserRoute />,
+            element: (
+              <Guard path={ROUTES.USER}>
+                <UserRoute />
+              </Guard>
+            ),
             handle: {
               backButton: true,
               sidebar: false,
@@ -230,35 +238,55 @@ const router = createBrowserRouter([
           },
           {
             path: ROUTES.RECEIPTS,
-            element: <ReceiptsList />,
+            element: (
+              <Guard path={ROUTES.RECEIPTS}>
+                <ReceiptsList />
+              </Guard>
+            ),
             handle: {
               titleKey: 'pageTitles.receiptsList'
             } as RouteHandleObject
           },
           {
             path: ROUTES.RECEIPT,
-            element: <ReceiptDetail />,
+            element: (
+              <Guard path={ROUTES.RECEIPT}>
+                <ReceiptDetail />
+              </Guard>
+            ),
             handle: {
               titleKey: 'pageTitles.receiptDetail'
             } as RouteHandleObject
           },
           {
             path: ROUTES.DEBT_POSITIONS,
-            element: <DebtPositionsList />,
+            element: (
+              <Guard path={ROUTES.DEBT_POSITIONS}>
+                <DebtPositionsList />
+              </Guard>
+            ),
             handle: {
               titleKey: 'pageTitles.debtPositionsList'
             }
           },
           {
             path: ROUTES.DEBT_POSITION,
-            element: <DebtPositionDetail />,
+            element: (
+              <Guard path={ROUTES.DEBT_POSITION}>
+                <DebtPositionDetail />
+              </Guard>
+            ),
             handle: {
               titleKey: 'pageTitles.debtPositionDetail'
             }
           },
           {
             path: ROUTES.DEBT_POSITION_DOWNLOAD,
-            element: <DebtPositionDownload />,
+            element: (
+              <Guard path={ROUTES.DEBT_POSITION_DOWNLOAD}>
+                <DebtPositionDownload />
+              </Guard>
+            ),
             handle: {
               titleKey: 'pageTitles.debtPositionsDownload'
             }
@@ -271,15 +299,23 @@ const router = createBrowserRouter([
             children: [
               {
                 index: true,
-                element: <Spontanei />,
+                element: (
+                  <Guard path={ROUTES.PAYMENTS_ON_THE_FLY}>
+                    <Spontanei />
+                  </Guard>
+                ),
                 handle: {
                   backButton: true,
                   titleKey: 'pageTitles.spontanei'
                 } as RouteHandleObject
               },
               {
-                path: 'download/:orgId/:nav',
-                element: <Download />,
+                path: ROUTES.PAYMENTS_ON_THE_FLY_DOWNLOAD,
+                element: (
+                  <Guard path={ROUTES.PAYMENTS_ON_THE_FLY_DOWNLOAD}>
+                    <Download />
+                  </Guard>
+                ),
                 handle: {
                   backButton: false,
                   titleKey: 'pageTitles.spontanei'
@@ -289,7 +325,11 @@ const router = createBrowserRouter([
           },
           {
             path: ROUTES.ASSISTANCE,
-            element: <Assistance />,
+            element: (
+              <Guard path={ROUTES.ASSISTANCE}>
+                <Assistance />
+              </Guard>
+            ),
             handle: {
               sidebar: false,
               titleKey: 'pageTitles.assistance'

@@ -466,8 +466,9 @@
       "cta": "Accedi"
     },
     "403": {
-      "title": "Non è stato possibile accedere",
-      "body": "L'Area Riservata di pagoPA è in fase di sviluppo, al momento l'accesso non è disponibile"
+      "title": "La Pagina che stai cercando non è disponibile",
+      "body": "Puoi ritornare alla homepage o visitare una nuova pagina",
+      "cta": "Ritorna alla homepage"
     },
     "404": {
       "title": "La Pagina che stai cercando non esiste",
