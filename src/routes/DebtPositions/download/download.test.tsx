@@ -11,6 +11,7 @@ const mockIsAnonymous = vi.fn();
 const mockGetBrokerId = vi.fn();
 const mockGetPaymentNotice = vi.fn();
 const mockGetPublicPaymentNotice = vi.fn();
+const mockExecuteRecaptcha = vi.fn();
 
 vi.mock('utils/storage', () => ({
   default: {
@@ -76,6 +77,13 @@ vi.mock('routes/routes', () => ({
   }
 }));
 
+vi.mock('components/RecaptchaProvider/RecaptchaProvider', () => ({
+  useRecaptcha: () => ({
+    executeRecaptcha: mockExecuteRecaptcha,
+    isEnabled: true
+  })
+}));
+
 describe('DebtPositionDownload', () => {
   beforeEach(() => {
     vi.clearAllMocks();
@@ -94,6 +102,8 @@ describe('DebtPositionDownload', () => {
       data: new Blob(['test pdf content'], { type: 'application/pdf' }),
       filename: 'receipt_IUV123.pdf'
     });
+
+    mockExecuteRecaptcha.mockResolvedValue('test-recaptcha-token');
   });
 
   describe('Rendering', () => {
@@ -145,7 +155,7 @@ describe('DebtPositionDownload', () => {
       });
     });
 
-    it('automatically downloads receipt on mount for anonymous user', async () => {
+    it('automatically downloads receipt on mount for anonymous user with recaptcha token', async () => {
       mockIsAnonymous.mockReturnValue(true);
       render(<DebtPositionDownload />);
 
@@ -156,8 +166,30 @@ describe('DebtPositionDownload', () => {
           { nav: 'NAV123' },
           'RSSMRA80A01H501U'
         );
-        expect(mockMutateAsync).toHaveBeenCalledWith();
+        expect(mockExecuteRecaptcha).toHaveBeenCalledTimes(1);
+        expect(mockMutateAsync).toHaveBeenCalledWith({ recaptchaToken: 'test-recaptcha-token' });
         expect(mockDownloadBlob).toHaveBeenCalledWith(expect.any(Blob), 'receipt_IUV123.pdf');
+      });
+    });
+
+    it('does not call executeRecaptcha for authenticated user', async () => {
+      mockIsAnonymous.mockReturnValue(false);
+      render(<DebtPositionDownload />);
+
+      await waitFor(() => {
+        expect(mockExecuteRecaptcha).not.toHaveBeenCalled();
+        expect(mockMutateAsync).toHaveBeenCalledWith();
+      });
+    });
+
+    it('passes null recaptcha token when executeRecaptcha returns null', async () => {
+      mockIsAnonymous.mockReturnValue(true);
+      mockExecuteRecaptcha.mockResolvedValue(null);
+      render(<DebtPositionDownload />);
+
+      await waitFor(() => {
+        expect(mockMutateAsync).toHaveBeenCalledWith({ recaptchaToken: null });
+        expect(mockDownloadBlob).toHaveBeenCalled();
       });
     });
 

@@ -6,6 +6,7 @@ import { DebtPositionRequestDTO, InstallmentStatus } from '../../generated/data-
 import { FilteredRequest } from 'models/Filters';
 import { STATE } from 'store/types';
 import { getResourceUrl, ResourceType } from './resources';
+import { buildRecaptchaHeaders } from './recaptchaheaders';
 
 const parseAndLog = <T>(schema: ZodSchema, data: T, throwError: boolean = true): void | never => {
   const result = schema.safeParse(data);
@@ -89,17 +90,20 @@ export const createSpontaneousDebtPosition = (brokerId: number, body: DebtPositi
 
 export const createPublicSpontaneousDebtPosition = (
   brokerId: number,
-  body: DebtPositionRequestDTO
+  body: DebtPositionRequestDTO,
+  recaptchaToken?: string | null
 ) =>
   useQuery({
-    queryKey: ['createSpontaneousDebtPosition'],
+    queryKey: ['createSpontaneousDebtPosition', recaptchaToken],
     queryFn: async () => {
       const { data } = await utils.apiClient.public.createPublicSpontaneousDebtPosition(
         brokerId,
-        body
+        body,
+        { headers: { ...buildRecaptchaHeaders(recaptchaToken) } }
       );
       return data;
-    }
+    },
+    enabled: recaptchaToken !== null
   });
 
 export const getOrganizationsWithSpontaneous = (brokerId: number) =>
@@ -255,6 +259,10 @@ export const getPaymentNotice = (
     throwOnError: true
   });
 
+type PublicPaymentNoticeMutationArgs = {
+  recaptchaToken?: string | null;
+};
+
 export const getPublicPaymentNotice = (
   brokerId: number,
   organizationId: number,
@@ -263,12 +271,18 @@ export const getPublicPaymentNotice = (
 ) =>
   useMutation({
     mutationKey: ['getPaymentNotice'],
-    mutationFn: async () => {
+    mutationFn: async (args?: PublicPaymentNoticeMutationArgs) => {
       const response = await utils.apiClient.public.getPublicPaymentNotice(
         brokerId,
         organizationId,
         query,
-        { format: 'blob', headers: { 'X-fiscal-code': debtorFiscalCode } }
+        {
+          format: 'blob',
+          headers: {
+            'X-fiscal-code': debtorFiscalCode,
+            ...buildRecaptchaHeaders(args?.recaptchaToken)
+          }
+        }
       );
       const contentDisposition = response.headers['content-disposition'] || '';
       const filename = utils.converters.extractFilename(contentDisposition);

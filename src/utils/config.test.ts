@@ -20,6 +20,7 @@ describe('Configuration Tests', () => {
     process.env.VERSION = '1.0.0';
     process.env.RESOURCES_URL =
       '/cittadini-legaldocs/{BROKER_EXTERNAL_ID}/{DOCUMENT_TYPE}/{DOC_LANGUAGE}_{DOCUMENT_TYPE}.md';
+    process.env.RECAPTCHA_SITE_KEY = '6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI';
 
     const reloadedConfig = (await import('./config')).default;
 
@@ -30,6 +31,7 @@ describe('Configuration Tests', () => {
     expect(reloadedConfig.deployPath).toBe(process.env.DEPLOY_PATH);
     expect(reloadedConfig.version).toBe('1.0.0');
     expect(reloadedConfig.resourcesUrl).toBe(process.env.RESOURCES_URL);
+    expect(reloadedConfig.recaptchaSiteKey).toBe('6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI');
   });
 
   it('should throw validation error for invalid URL in APIHOST', async () => {
@@ -71,5 +73,36 @@ describe('Configuration Tests', () => {
     expect(reloadedConfig.resourcesUrl).toBe(
       '/cittadini-legaldocs/{BROKER_EXTERNAL_ID}/{DOCUMENT_TYPE}/{DOC_LANGUAGE}_{DOCUMENT_TYPE}.md'
     );
+  });
+
+  it('should expose recaptchaSiteKey from environment variable', async () => {
+    process.env.RECAPTCHA_SITE_KEY = '6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI';
+
+    const reloadedConfig = (await import('./config')).default;
+
+    expect(reloadedConfig.recaptchaSiteKey).toBe('6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI');
+  });
+
+  it('should default recaptchaSiteKey to empty string when not set', async () => {
+    delete process.env.RECAPTCHA_SITE_KEY;
+
+    const reloadedConfig = (await import('./config')).default;
+
+    expect(reloadedConfig.recaptchaSiteKey).toBe('');
+  });
+
+  it('should pass validation when RECAPTCHA_SITE_KEY is not set (optional)', async () => {
+    delete process.env.RECAPTCHA_SITE_KEY;
+
+    const logSpy = vi.spyOn(console, 'error');
+    await import('./config');
+
+    if (logSpy.mock.calls.length > 0) {
+      const validationIssues = logSpy.mock.calls[0][1] as Array<{ path: string[] }>;
+      const hasRecaptchaError = validationIssues?.some?.((issue) =>
+        JSON.stringify(issue).includes('RECAPTCHA')
+      );
+      expect(hasRecaptchaError).toBeFalsy();
+    }
   });
 });

@@ -31,10 +31,7 @@ export function setBrokerInfo(parsedConfig: ParsedConfig, brokerCode: string) {
     ...appStore.value,
     brokerInfo: {
       ...appStore.value.brokerInfo,
-      brokerId: parsedConfig.brokerId,
-      brokerName: parsedConfig.brokerName,
-      brokerFiscalCode: parsedConfig.brokerFiscalCode,
-      brokerLogo: parsedConfig.brokerLogo,
+      ...parsedConfig,
       externalId: parsedConfig.externalId ?? appStore.value.brokerInfo?.externalId ?? '',
       config: {
         ...appStore.value.brokerInfo?.config,
@@ -42,7 +39,8 @@ export function setBrokerInfo(parsedConfig: ParsedConfig, brokerCode: string) {
         useCart: parsedConfig.config?.useCart ?? defaultBrokerConfig.useCart,
         assistanceLink: parsedConfig.config?.assistanceLink,
         a11yLink: parsedConfig.config?.a11yLink ?? defaultBrokerConfig.a11yLink,
-        homeLink: parsedConfig.config?.homeLink
+        homeLink: parsedConfig.config?.homeLink,
+        availableRoutes: parsedConfig.config?.availableRoutes ?? defaultBrokerConfig.availableRoutes
       }
     },
     brokerCode

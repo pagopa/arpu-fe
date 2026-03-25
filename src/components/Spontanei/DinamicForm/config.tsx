@@ -13,14 +13,14 @@ import SINGLESELECT from './FieldBeans/SINGLESELECT';
 import MULTISELECT from './FieldBeans/MULTISELECT';
 import DATEPICKER from './FieldBeans/DATE';
 import TEXT from './FieldBeans/TEXT';
-import CURRENCY_LABEL from './FieldBeans/CURRENCY_LABEL';
 import MULTIFIELD from './FieldBeans/MULTIFIELD';
 import NONE from './FieldBeans/NONE';
 import TAB from './FieldBeans/TAB';
 import DYNAMIC_SELECT from './FieldBeans/DYNAMIC_SELECT';
-import DYNAMIC_AMOUNTLABEL from './FieldBeans/DYNAMIC_AMOUNT_LABEL';
-import { RenderType } from '../../../../generated/apiClient';
 import CURRENCY from './FieldBeans/CURRENCY';
+import DYNAMIC_AMOUNTLABEL from './FieldBeans/DYNAMIC_AMOUNT_LABEL';
+import CURRENCY_LABEL from './FieldBeans/CURRENCY_LABEL';
+import { RenderType } from '../../../../generated/apiClient';
 
 export type FieldName = SpontaneousFormField['name'];
 
@@ -129,7 +129,7 @@ export const BuildFormSchema = (fields: Array<SpontaneousFormField>) => {
 };
 
 export interface CustomFormValues {
-  [key: string]: string | string[] | number | number[] | Option | undefined;
+  [key: string]: string | string[] | number | number[] | Option | null | undefined;
   debtPositionTypeOrgCode?: string;
   debtPositionTypeOrgId?: number;
   debtPositionTypeOrgDescription?: string;
@@ -143,10 +143,33 @@ export interface CustomFormValues {
   description?: string;
 }
 
+/** Type guard to check if a value is a valid Option */
+const isOption = (value: unknown): value is Option =>
+  typeof value === 'object' &&
+  value !== null &&
+  'label' in value &&
+  'value' in value &&
+  typeof (value as Option).label === 'string' &&
+  typeof (value as Option).value === 'string';
+
+/** Normalize a select value to a proper Option or null */
+export const normalizeSelectValue = (value: unknown, options: Option[] = []): Option | null => {
+  if (isOption(value)) {
+    return value;
+  }
+
+  if (typeof value !== 'string' || value.trim().length === 0) {
+    return null;
+  }
+
+  return options.find((option) => option.value === value || option.label === value) || null;
+};
+
 /** set the form state considering the initial value */
 let intialState: CustomFormValues = {};
 export const BuildFormState = (fields: Array<SpontaneousFormField>): CustomFormValues => {
-  fields.forEach(({ name, defaultValue, subfields, htmlRender }) => {
+  intialState = {};
+  fields.forEach(({ name, defaultValue, subfields, htmlRender, enumerationList }) => {
     if (subfields) BuildFormState(subfields);
     /* I fields MULTFIELD sono solo contenitori di altri fields
       non hanno un value associato e per questo motivo non è
@@ -160,6 +183,18 @@ export const BuildFormState = (fields: Array<SpontaneousFormField>): CustomFormV
       // perchè defaultValue dovrebbe essere un array di valori
       if (htmlRender == RenderType.MULTISELECT) {
         intialState = { ...intialState, [name]: [] };
+      } else if (
+        htmlRender === RenderType.SINGLESELECT ||
+        htmlRender === RenderType.DYNAMIC_SELECT
+      ) {
+        const initialOptions = (enumerationList || []).map((enumeration) => ({
+          label: enumeration,
+          value: enumeration
+        }));
+        intialState = {
+          ...intialState,
+          [name]: normalizeSelectValue(defaultValue, initialOptions)
+        };
       } else {
         intialState = { ...intialState, [name]: defaultValue };
       }

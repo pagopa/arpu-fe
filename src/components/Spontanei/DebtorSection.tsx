@@ -1,6 +1,5 @@
 import React, { useEffect } from 'react';
 import {
-  Card,
   Checkbox,
   FormControl,
   FormControlLabel,
@@ -19,6 +18,7 @@ import { useTranslation } from 'react-i18next';
 import { useUserInfo } from 'hooks/useUserInfo';
 import { useUserEmail } from 'hooks/useUserEmail';
 import { useUserFiscalCode } from 'hooks/useUserFiscalCode';
+import { ResponsiveCard } from 'components/ResponsiveCard';
 
 type DebtorSectionProps = {
   hasFlagAnonymousFiscalCode?: boolean;
@@ -33,6 +33,7 @@ const DebtorSection = ({ allowedEntityType, hasFlagAnonymousFiscalCode }: Debtor
   const [email, emailMeta, emailHelper] = useField<PaymentNoticeInfo['email']>('email');
   const [entityType, , entityTypeHelper] = useField<PaymentNoticeInfo['entityType']>('entityType');
   const [isFlagNoFiscalCodeChecked, setIsFlagNoFiscalCodeChecked] = React.useState(false);
+
   const { t } = useTranslation();
 
   useEffect(() => {
@@ -109,7 +110,7 @@ const DebtorSection = ({ allowedEntityType, hasFlagAnonymousFiscalCode }: Debtor
           </RadioGroup>
         </FormControl>
       )}
-      <Card variant="outlined" sx={{ padding: 3 }}>
+      <ResponsiveCard variant="outlined">
         <Stack gap={2}>
           <Typography variant="h6">{t('spontanei.form.steps.step3.debtor.title')}</Typography>
           {isFisica && !isAnonymous && (
@@ -118,9 +119,11 @@ const DebtorSection = ({ allowedEntityType, hasFlagAnonymousFiscalCode }: Debtor
               label={t('spontanei.form.steps.step3.debtor.useYourData')}
             />
           )}
-          <Stack direction="row" gap={1}>
+          <Stack
+            direction={{ sx: 'column', md: 'row' }}
+            gap={{ xs: 2, sm: 1 }}
+            my={{ xs: 1, md: 0 }}>
             <TextField
-              size="small"
               label={
                 isFisica
                   ? t('spontanei.form.steps.step3.debtor.F.name')
@@ -129,12 +132,12 @@ const DebtorSection = ({ allowedEntityType, hasFlagAnonymousFiscalCode }: Debtor
               variant="outlined"
               required
               {...fullName}
+              id="fullName"
               error={fullNameMeta.touched && Boolean(fullNameMeta.error)}
               helperText={fullNameMeta.touched && fullNameMeta.error}
               sx={{ width: '-webkit-fill-available' }}
             />
             <TextField
-              size="small"
               label={
                 isFisica
                   ? t('spontanei.form.steps.step3.debtor.F.code')
@@ -144,12 +147,12 @@ const DebtorSection = ({ allowedEntityType, hasFlagAnonymousFiscalCode }: Debtor
               required
               disabled={isFlagNoFiscalCodeChecked && isFisica}
               {...fiscalCode}
+              id="fiscalCode"
               error={fiscalCodeMeta.touched && Boolean(fiscalCodeMeta.error)}
               helperText={fiscalCodeMeta.touched && fiscalCodeMeta.error}
               sx={{ width: '-webkit-fill-available' }}
             />
             <TextField
-              size="small"
               label={
                 isFisica
                   ? t('spontanei.form.steps.step3.debtor.F.email')
@@ -159,6 +162,7 @@ const DebtorSection = ({ allowedEntityType, hasFlagAnonymousFiscalCode }: Debtor
               type="email"
               required
               {...email}
+              id="email"
               error={emailMeta.touched && Boolean(emailMeta.error)}
               helperText={emailMeta.touched && emailMeta.error}
               sx={{ width: '-webkit-fill-available' }}
@@ -171,7 +175,7 @@ const DebtorSection = ({ allowedEntityType, hasFlagAnonymousFiscalCode }: Debtor
             />
           )}
         </Stack>
-      </Card>
+      </ResponsiveCard>
     </>
   );
 };

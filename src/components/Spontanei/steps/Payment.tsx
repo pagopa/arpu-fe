@@ -1,5 +1,5 @@
 import { Button, Card, Stack, Typography } from '@mui/material';
-import React, { useContext, useMemo } from 'react';
+import React, { useContext, useEffect, useMemo, useState } from 'react';
 import Controls from '../Controls';
 import { useTranslation } from 'react-i18next';
 import { addItem, isItemInCart, setCartEmail, toggleCartDrawer } from 'store/CartStore';
@@ -18,11 +18,14 @@ import FileDownloadIcon from '@mui/icons-material/FileDownload';
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 import appStore from 'store/appStore';
 import { flattenObject } from '../DinamicForm/config';
+import { useRecaptcha } from 'components/RecaptchaProvider/RecaptchaProvider';
+import styled from '@mui/system/styled';
 
-/**
- * This component is responsible for rendering the payment step of the form.
- * @returns JSX.Element
- */
+const SpacedStack = styled(Stack)(({ theme }) => ({
+  gap: theme.spacing(2),
+  padding: theme.spacing(4)
+}));
+
 const Payment = () => {
   const context = useContext<FormContextType | null>(FormContext);
   const { submitFields } = context || {};
@@ -95,8 +98,31 @@ const Payment = () => {
     fieldValues
   };
 
+  const { executeRecaptcha, isEnabled: isRecaptchaEnabled } = useRecaptcha();
+
+  const [recaptchaToken, setRecaptchaToken] = useState<string | null | undefined>(
+    isAnonymous && isRecaptchaEnabled ? null : undefined
+  );
+
+  useEffect(() => {
+    const fetchToken = async () => {
+      if (!isAnonymous || !isRecaptchaEnabled) return;
+      try {
+        const token = await executeRecaptcha();
+        setRecaptchaToken(token ?? undefined);
+      } catch {
+        setRecaptchaToken(undefined);
+      }
+    };
+    fetchToken();
+  }, [isAnonymous, isRecaptchaEnabled, executeRecaptcha]);
+
   const { data: debtPositionResponse } = isAnonymous
-    ? utils.loaders.public.createPublicSpontaneousDebtPosition(Number(brokerId), body)
+    ? utils.loaders.public.createPublicSpontaneousDebtPosition(
+        Number(brokerId),
+        body,
+        recaptchaToken
+      )
     : utils.loaders.createSpontaneousDebtPosition(Number(brokerId), body);
 
   const addToCart = () => {
@@ -156,12 +182,15 @@ const Payment = () => {
   return (
     <>
       <Card variant="outlined" data-testid="spontanei-step4-payment-container">
-        <Stack spacing={2} padding={4}>
+        <SpacedStack>
           <Typography variant="h6">{t('spontanei.form.steps.step5.title')}</Typography>
           <Typography>{t('spontanei.form.steps.step5.description')}</Typography>
 
           <Card variant="outlined" data-testid="payment-methods-card">
-            <Stack spacing={2} padding={4} direction="row" justifyContent="space-between">
+            <SpacedStack
+              direction={{ xs: 'column', sm: 'row' }}
+              textAlign={{ xs: 'center', sm: 'left' }}
+              justifyContent={{ xs: 'center', sm: 'space-between' }}>
               <Stack>
                 <Typography fontSize="18px" fontWeight="600">
                   {t('spontanei.form.steps.step5.pay.title')}
@@ -170,9 +199,10 @@ const Payment = () => {
                   {t('spontanei.form.steps.step5.pay.description')}
                 </Typography>
               </Stack>
-              <Stack direction="row" spacing={2}>
+              <Stack direction="row" spacing={2} justifyContent="center">
                 {appStore.value.brokerInfo?.config?.useCart && (
                   <Button
+                    size="large"
                     variant="text"
                     onClick={addToCart}
                     startIcon={<ShoppingCartIcon />}
@@ -180,15 +210,18 @@ const Payment = () => {
                     {t('spontanei.form.steps.step5.pay.addItemToCartButton')}
                   </Button>
                 )}
-                <Button variant="contained" onClick={pay} data-testid="pay-button">
+                <Button size="large" variant="contained" onClick={pay} data-testid="pay-button">
                   {t('spontanei.form.steps.step5.pay.payButton')}
                 </Button>
               </Stack>
-            </Stack>
+            </SpacedStack>
           </Card>
 
           <Card variant="outlined" data-testid="download-notice-card">
-            <Stack spacing={2} padding={4} direction="row" justifyContent="space-between">
+            <SpacedStack
+              direction={{ xs: 'column', sm: 'row' }}
+              textAlign={{ xs: 'center', sm: 'left' }}
+              justifyContent={{ xs: 'center', sm: 'space-between' }}>
               <Stack>
                 <Typography fontSize="18px" fontWeight="600">
                   {t('spontanei.form.steps.step5.download.title')}
@@ -199,14 +232,15 @@ const Payment = () => {
               </Stack>
               <Button
                 variant="text"
+                size="large"
                 startIcon={<FileDownloadIcon />}
                 onClick={goToDownloadPaymentNoticePage}
                 data-testid="download-notice-button">
                 {t('spontanei.form.steps.step5.download.downloadButton')}
               </Button>
-            </Stack>
+            </SpacedStack>
           </Card>
-        </Stack>
+        </SpacedStack>
       </Card>
       <Controls hideContinue={true} />
     </>

@@ -38,14 +38,19 @@ export const Footer = () => {
       }}>
       <Divider />
       <Stack
-        direction="row"
+        direction={{ xs: 'column', md: 'row' }}
         justifyContent="space-between"
         alignItems="center"
-        padding={3}
+        gap={{ xs: 3, md: 0 }}
+        padding={{ xs: 2, md: 3 }}
         minHeight={50}>
         <ProductLogo />
         <Stack alignItems="flex-end">
-          <Stack direction="row" gap={2} alignItems="center" component="nav">
+          <Stack
+            direction={{ xs: 'column', md: 'row' }}
+            gap={{ xs: 0, md: 2 }}
+            alignItems="center"
+            component="nav">
             <FooterLink href={ROUTES.PRIVACY_POLICY}>{t('ui.footer.privacy')}</FooterLink>
             <FooterLink href={ROUTES.TOS}>{t('ui.footer.termsAndConditions')}</FooterLink>
             <FooterLink href={a11yLink}>{t('ui.footer.a11y')}</FooterLink>
@@ -61,10 +66,16 @@ export const Footer = () => {
       {brokerInfo?.brokerName ? (
         <Stack>
           <Divider />
-          <Stack alignItems="center" justifyContent="center" height={60}>
-            <Typography component="span" fontWeight={600} fontSize={14}>
+          <Stack alignItems="center" direction={'row'} justifyContent="center" height={60}>
+            <Typography fontWeight={600} fontSize={14}>
               {brokerInfo.brokerName}
             </Typography>
+            {brokerInfo.address && (
+              <Typography fontSize={14}>
+                &nbsp;&#x2013;&nbsp;{brokerInfo.address} &middot; {brokerInfo.zipCode}{' '}
+                {brokerInfo.city}
+              </Typography>
+            )}
           </Stack>
         </Stack>
       ) : null}
