@@ -393,7 +393,8 @@
   },
   "common": {
     "person": "Persona fisica",
-    "company": "Soggetto giuridico"
+    "company": "Soggetto giuridico",
+    "openDialog": "apri finestra di dialogo"
   },
   "general": {
     "and": "e",
