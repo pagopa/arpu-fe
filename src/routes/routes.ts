@@ -37,7 +37,7 @@ export enum OUTCOMES {
   /** generic error */
   'sconosciuto' = 400,
   'sessione-scaduta' = 401,
-  /** whitelist: user not authorized to access the resource */
+  /** user not authorized to access the resource */
   'accesso-non-autorizzato' = 403,
   /** resource not found */
   'risorsa-non-trovata' = 404,
