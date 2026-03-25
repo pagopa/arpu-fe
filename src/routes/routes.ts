@@ -49,5 +49,7 @@ export enum OUTCOMES {
   'avvio-pagamento' = 423,
   'pagamento-non-riuscito' = 424,
   'pagamento-annullato' = 425,
+  /** reCAPTCHA verification failed */
+  'verifica-non-riuscita' = 426,
   'errore-server' = 500
 }
