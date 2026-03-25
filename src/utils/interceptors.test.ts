@@ -104,8 +104,6 @@ describe('setupInterceptors', () => {
     );
   });
 
-  // ── 401: recaptcha error ──
-
   it('should redirect to verifica-non-riuscita on 401 when isRecaptchaError returns true', () => {
     (isRecaptchaError as Mock).mockReturnValue(true);
     const error = { response: { status: 401 } };
