@@ -279,10 +279,11 @@ describe('CourtesyPageActions – pagamento-non-riuscito (424)', () => {
       expect(mockInstallmentsMutateAsync).toHaveBeenCalled();
     });
 
-    fireEvent.click(screen.getByTestId('courtesyPage.cta'));
-
-    expect(mockPostCartsMutate).toHaveBeenCalledWith({
-      notices: [expect.objectContaining({ nav: 'NAV-001' })]
+    await waitFor(() => {
+      fireEvent.click(screen.getByTestId('courtesyPage.cta'));
+      expect(mockPostCartsMutate).toHaveBeenCalledWith({
+        notices: [expect.objectContaining({ nav: 'NAV-001' })]
+      });
     });
   });
 
