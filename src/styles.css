@@ -14,3 +14,7 @@
     left: 1rem;
     top: 1rem;
 }
+
+.grecaptcha-badge {
+    visibility: hidden;
+}
