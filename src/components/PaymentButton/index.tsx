@@ -7,7 +7,11 @@ const PaymentButton = () => {
   const { t } = useTranslation();
 
   return (
-    <Button variant="contained" size="large" onClick={togglePaymentTypeDrawerVisibility}>
+    <Button
+      variant="contained"
+      size="large"
+      aria-label={`${t('app.dashboard.newPayment')}, ${t('common.openDialog')}`}
+      onClick={togglePaymentTypeDrawerVisibility}>
       {t('app.dashboard.newPayment')}
     </Button>
   );

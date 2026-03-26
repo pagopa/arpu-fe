@@ -39,7 +39,7 @@ export const ListItem = ({
   };
 
   return (
-    <Card>
+    <Card role="listitem">
       <Stack height={theme.spacing(19)} justifyContent="center">
         <Stack
           p={{ sm: 3, xs: 2 }}
