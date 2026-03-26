@@ -2,9 +2,9 @@ name: e2e test
 
 on:
   workflow_dispatch:
-  # pull_request:
-  #   branches:
-  #     - uat
+  pull_request:
+    branches:
+      - uat
 
 env:
   NODE_VERSION: '22.11.0'
@@ -44,7 +44,7 @@ jobs:
         uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4
         with:
           repository: pagopa/arpu-fe-e2e
-          ref: P4PU-1305
+          ref: main
           path: e2e
 
       - name: Install E2E dependecies
