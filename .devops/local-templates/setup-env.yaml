@@ -40,10 +40,6 @@ parameters:
     type: string
     default: ''
 
-  - name: 'show_notices'
-    type: string
-    default: '1'
-
   - name: 'resources_url'
     type: string
     default: ''
@@ -66,7 +62,6 @@ steps:
       ARC_FE_CHECKOUT_PLATFORM_URL=${{ parameters.checkout_platform_url }} \
       ARC_FE_DEPLOY_PATH=${{ parameters.deploy_path }} \
       ARC_FE_VERSION=${{ parameters.version }} \
-      ARC_FE_SHOW_NOTICES=${{ parameters.show_notices }} \
       ARC_FE_RESOURCES_URL=${{ parameters.resources_url }} \
       ARC_FE_RECAPTCHA_SITE_KEY=${{ parameters.recaptcha_site_key }} \
       bash env.sh

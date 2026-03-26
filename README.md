@@ -1,6 +1,6 @@
 [![semantic-release](https://img.shields.io/badge/semantic%20release-666666?logo=semantic-release)](https://github.com/semantic-release/semantic-release)
 
-# pagopa-arc-fe
+# pagopa-arpu-fe
 
 ## About The Project
 
@@ -25,24 +25,23 @@ In order to build and run this project are required:
 
 The table below describes all the Environment variables needed by the application.
 
-| Variable name      | Description                                                   | type                        |
-| ------------------ | ------------------------------------------------------------- | --------------------------- | ----- | ----- | ------ |
-| APIHOST            | API service host                                              | url                         |
-| API_TIMEOUT        | after this time API requests will be cancelled                | number                      |
-| ENTITIES_LOGO_CDN  | cdn link for logos                                            | url                         |
-| LOGIN_URL          | Link for login button                                         | url                         |
-| SHOW_NOTICES       | shows/hides payment notices section (and the cart)            | '0'                         | '1'   |
-| DEPLOY_PATH        | deploy subpath (default "/cittadini")                         | string                      |
-| ENV                | env target (used in conditional evaluations)                  | 'LOCAL'                     | 'DEV' | 'UAT' | 'PROD' |
-| VERSION            | active version (valued by pipeline, debug purpose)            | string (branch:commit-hash) |
-| RESOURCES_URL      | template URL/path for legal resources (supports placeholders) | string                      |
-| RECAPTCHA_SITE_KEY | reCAPTCHA v2 invisible site key (leave empty if disabled)     | string                      |
+| Variable name      | Description                                                   | type                        |                        |
+| ------------------ | ------------------------------------------------------------- | --------------------------- | ---------------------- |
+| APIHOST            | API service host                                              | url                         |                        |
+| API_TIMEOUT        | after this time API requests will be cancelled                | number                      |                        |
+| ENTITIES_LOGO_CDN  | cdn link for logos                                            | url                         |                        |
+| LOGIN_URL          | Link for login button                                         | url                         |                        |
+| DEPLOY_PATH        | deploy subpath (default "/cittadini")                         | string                      |                        |
+| ENV                | env target (used in conditional evaluations)                  | string                     | 'DEV' | 'UAT' | 'PROD' |
+| VERSION            | active version (valued by pipeline, debug purpose)            | string (branch:commit-hash) |                        |
+| RESOURCES_URL      | template URL/path for legal resources (supports placeholders) | string                      |                        |
+| RECAPTCHA_SITE_KEY | reCAPTCHA v2 invisible site key (leave empty if disabled)     | string                      |                        |
 
 ### Installation
 
 1. Clone the repo
    ```sh
-   git clone https://github.com/pagopa/pagopa-arc-fe.git
+   git clone https://github.com/pagopa/pagopa-arpu-fe.git
    ```
 2. Install node packages
    ```sh
