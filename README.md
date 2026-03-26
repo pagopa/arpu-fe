@@ -32,7 +32,7 @@ The table below describes all the Environment variables needed by the applicatio
 | ENTITIES_LOGO_CDN  | cdn link for logos                                            | url                         |                        |
 | LOGIN_URL          | Link for login button                                         | url                         |                        |
 | DEPLOY_PATH        | deploy subpath (default "/cittadini")                         | string                      |                        |
-| ENV                | env target (used in conditional evaluations)                  | string                     | 'DEV' | 'UAT' | 'PROD' |
+| ENV                | env target (used in conditional evaluations)                  | string                      | 'DEV' | 'UAT' | 'PROD' |
 | VERSION            | active version (valued by pipeline, debug purpose)            | string (branch:commit-hash) |                        |
 | RESOURCES_URL      | template URL/path for legal resources (supports placeholders) | string                      |                        |
 | RECAPTCHA_SITE_KEY | reCAPTCHA v2 invisible site key (leave empty if disabled)     | string                      |                        |
