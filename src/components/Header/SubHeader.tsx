@@ -54,7 +54,7 @@ export const SubHeader = ({ product }: { product: ReactNode }) => {
         alignItems="center"
         justifyContent="space-between"
         p={3}
-        pl={2}
+        pl={5}
         pb={2}
         width="100%">
         {product}

@@ -7,7 +7,7 @@ import { setAppReady, setBrokerInfo } from 'store/appStore';
 /**
  * Initial setup function to prepare the application state and necessary config.
  *
- * The broker is now identified by brokerCode (externalId) extracted from the URL,
+ * The broker is identified by brokerCode (externalId) extracted from the URL,
  * and the API resolves it to the numeric brokerId via query parameter.
  */
 const stateSetup = async () => {
