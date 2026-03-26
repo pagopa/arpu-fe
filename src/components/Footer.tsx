@@ -1,7 +1,7 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { useLanguage } from 'hooks/useLanguage';
-import { Divider, Link, Stack, Typography } from '@mui/material';
+import { Box, Divider, Link, Stack, Typography } from '@mui/material';
 import { ROUTES } from 'routes/routes';
 import { ProductLogo } from './ProductLogo';
 import appStore from 'store/appStore';
@@ -12,14 +12,16 @@ const DEFAULT_LINK_A11Y = 'https://www.w3.org/WAI/standards-guidelines/wai-aria/
 
 const FooterLink = ({ href, children }: { href: string; children: string }) => {
   return (
-    <Link
-      href={href}
-      variant="body2"
-      target="_blank"
-      rel="noopener noreferrer"
-      sx={{ textDecoration: 'none', color: 'text.primary', fontWeight: 600, fontSize: 14 }}>
-      {children}
-    </Link>
+    <Box component="li" sx={{ listStyle: 'none' }}>
+      <Link
+        href={href}
+        variant="body2"
+        target="_blank"
+        rel="noopener noreferrer"
+        sx={{ textDecoration: 'none', color: 'text.primary', fontWeight: 600, fontSize: 14 }}>
+        {children}
+      </Link>
+    </Box>
   );
 };
 
@@ -45,12 +47,13 @@ export const Footer = () => {
         padding={{ xs: 2, md: 3 }}
         minHeight={50}>
         <ProductLogo />
-        <Stack alignItems="flex-end">
+        <Stack alignItems="flex-end" component="nav">
           <Stack
             direction={{ xs: 'column', md: 'row' }}
             gap={{ xs: 0, md: 2 }}
             alignItems="center"
-            component="nav">
+            component="ul"
+            id="footer-links">
             <FooterLink href={ROUTES.PRIVACY_POLICY}>{t('ui.footer.privacy')}</FooterLink>
             <FooterLink href={ROUTES.TOS}>{t('ui.footer.termsAndConditions')}</FooterLink>
             <FooterLink href={a11yLink}>{t('ui.footer.a11y')}</FooterLink>

@@ -31,7 +31,10 @@ export const Receipts = () => {
           {t('app.dashboard.lastTransactions')}
         </Typography>
         {receipts.query.data?.content?.length ? (
-          <Button component={Link} to={ROUTES.RECEIPTS}>
+          <Button
+            component={Link}
+            to={ROUTES.RECEIPTS}
+            aria-label={`${t('app.dashboard.seeAllTransactions')} ${t('app.dashboard.lastTransactions')}`}>
             {t('app.dashboard.seeAllTransactions')}
           </Button>
         ) : null}
@@ -43,7 +46,7 @@ export const Receipts = () => {
         queryKey="pagedDebtorReceipts"
         noDataTitle={t('app.receipts.empty.title')}
         noDataText={t('app.receipts.empty.subtitle')}>
-        <Stack gap={2}>
+        <Stack gap={2} role="list">
           {receipts.query.data?.content?.map((receipt) => (
             <ReceiptItem key={receipt.receiptId} receipt={receipt} />
           ))}

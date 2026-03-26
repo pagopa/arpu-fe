@@ -31,7 +31,10 @@ export const DebtPositions = () => {
           {t('app.dashboard.lastDebtPositions')}
         </Typography>
         {debtPositions.query.data?.content?.length ? (
-          <Button component={Link} to={ROUTES.DEBT_POSITIONS}>
+          <Button
+            component={Link}
+            to={ROUTES.DEBT_POSITIONS}
+            aria-label={`${t('app.dashboard.seeAllTransactions')} ${t('app.dashboard.lastDebtPositions')}`}>
             {t('app.dashboard.seeAllTransactions')}
           </Button>
         ) : null}
@@ -43,7 +46,7 @@ export const DebtPositions = () => {
         queryKey="pagedUnpaidDebtPositions"
         noDataTitle={t('app.debtPositions.empty.title')}
         noDataText={t('app.debtPositions.empty.subtitle')}>
-        <Stack gap={2}>
+        <Stack gap={2} role="list">
           {debtPositions.query.data?.content?.map((debtPosition) => (
             <DebtPositionItem key={debtPosition.debtPositionId} debtPosition={debtPosition} />
           ))}
