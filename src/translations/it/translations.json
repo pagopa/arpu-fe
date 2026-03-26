@@ -508,6 +508,11 @@
       "body": "Riprova tra qualche minuto.",
       "cta": "Chiudi"
     },
+    "426": {
+      "title": "Verifica di sicurezza non riuscita",
+      "body": "Non siamo riusciti a verificare che tu sia un utente reale. Riprova tra qualche minuto.",
+      "cta": "Riprova"
+    },
     "500": {
       "title": "Errore del server",
       "body": "Si è verificato un errore del server. Riprova più tardi.",

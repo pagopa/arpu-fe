@@ -23,6 +23,7 @@ vi.mock('./components/CourtesyPageActions', () => ({
 const SESSION_EXPIRED_CODE = OUTCOMES['sessione-scaduta'];
 const CHECKOUT_KO_CODE = OUTCOMES['pagamento-non-riuscito'];
 const CANCELLED_CODE = OUTCOMES['pagamento-annullato'];
+const RECAPTCHA_FAILED_CODE = OUTCOMES['verifica-non-riuscita'];
 
 i18nTestSetup({
   courtesyPage: {
@@ -46,6 +47,11 @@ i18nTestSetup({
       body: 'You cancelled the payment. You can download the notice.',
       cta: 'Back to home',
       downloadCta: 'Download notice'
+    },
+    [RECAPTCHA_FAILED_CODE]: {
+      title: 'Verification failed',
+      body: 'The reCAPTCHA verification was not successful.',
+      cta: 'Try again'
     }
   }
 });
@@ -100,6 +106,13 @@ describe('ErrorIconComponent', () => {
     const img = screen.getByTitle('Expired');
     expect(img).toBeInTheDocument();
     expect(img).toHaveAttribute('src', '/cittadini/pictograms/expired.svg');
+  });
+
+  it('renders the "Verification failed" pictogram for verifica-non-riuscita', () => {
+    render(<ErrorIconComponent code={OUTCOMES['verifica-non-riuscita']} />);
+    const img = screen.getByTitle('Verification failed');
+    expect(img).toBeInTheDocument();
+    expect(img).toHaveAttribute('src', '/cittadini/pictograms/genericerror.svg');
   });
 
   it('renders the umbrella pictogram for risorsa-non-trovata (falls to default)', () => {
@@ -228,5 +241,30 @@ describe('CourtesyPage – pagamento-annullato (425)', () => {
     expect(actions).toBeInTheDocument();
     expect(actions).toHaveAttribute('data-code', String(OUTCOMES['pagamento-annullato']));
     expect(screen.queryByTestId('courtesyPage.cta')).not.toBeInTheDocument();
+  });
+});
+
+describe('CourtesyPage – verifica-non-riuscita (recaptcha)', () => {
+  afterEach(() => vi.clearAllMocks());
+
+  it('renders the "Verification failed" icon for verifica-non-riuscita', () => {
+    renderCourtesyPage({ outcome: 'verifica-non-riuscita' });
+    expect(screen.getByTitle('Verification failed')).toBeInTheDocument();
+  });
+
+  it('shows translated title and body for verifica-non-riuscita', () => {
+    renderCourtesyPage({ outcome: 'verifica-non-riuscita' });
+    expect(screen.getByTestId('courtesyPage.title')).toHaveTextContent('Verification failed');
+    expect(screen.getByTestId('courtesyPage.body')).toHaveTextContent(
+      'The reCAPTCHA verification was not successful.'
+    );
+  });
+
+  it('renders a CTA button (not CourtesyPageActions) for verifica-non-riuscita', () => {
+    renderCourtesyPage({ outcome: 'verifica-non-riuscita' });
+    const cta = screen.getByTestId('courtesyPage.cta');
+    expect(cta).toBeInTheDocument();
+    expect(cta).toHaveTextContent('Try again');
+    expect(screen.queryByTestId('courtesyPageActions')).not.toBeInTheDocument();
   });
 });

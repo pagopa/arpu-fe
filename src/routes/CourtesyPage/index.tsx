@@ -23,6 +23,14 @@ export const ErrorIconComponent: React.FC<ErrorIconComponentProps> = ({ code }) 
       return <img src="/cittadini/pictograms/warning.svg" title="Error" aria-hidden="true" />;
     case OUTCOMES['sessione-scaduta']:
       return <img src="/cittadini/pictograms/expired.svg" title="Expired" aria-hidden="true" />;
+    case OUTCOMES['verifica-non-riuscita']:
+      return (
+        <img
+          src="/cittadini/pictograms/genericerror.svg"
+          title="Verification failed"
+          aria-hidden="true"
+        />
+      );
     case OUTCOMES['avvio-pagamento']:
     case OUTCOMES['sconosciuto']:
       return (
@@ -52,6 +60,13 @@ export const CourtesyPage = () => {
 
   const hasCustomActions =
     code === OUTCOMES['pagamento-non-riuscito'] || code === OUTCOMES['pagamento-annullato'];
+
+  const getCtaHref = (code: OUTCOMES): string => {
+    if (code === OUTCOMES['verifica-non-riuscita']) {
+      return routes.public.PAYMENTS_ON_THE_FLY;
+    }
+    return routes.LOGIN;
+  };
 
   return (
     <Container
@@ -85,7 +100,7 @@ export const CourtesyPage = () => {
           i18next.exists(`courtesyPage.${code}.cta`) && (
             <Button
               component="a"
-              href={routes.LOGIN}
+              href={getCtaHref(code)}
               variant="contained"
               size="large"
               color="primary"
