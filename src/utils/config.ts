@@ -16,14 +16,11 @@ const {
   ENTITIES_LOGO_CDN,
   LOGIN_URL = 'https://api.dev.cittadini-p4pa.pagopa.it/arc/v1/login/oneidentity',
   VERSION = '',
-  SHOW_NOTICES = '1',
   RESOURCES_URL = '/cittadini-legaldocs/{BROKER_EXTERNAL_ID}/{DOCUMENT_TYPE}/{DOC_LANGUAGE}_{DOCUMENT_TYPE}.md',
   RECAPTCHA_SITE_KEY = ''
 } = process.env;
 
 const PARSED_API_TIMEOUT = Number.parseInt(API_TIMEOUT, 10);
-const PARSED_SHOW_NOTICES = Boolean(Number.parseInt(SHOW_NOTICES, 10));
-
 export type ENVIRONMENT = 'LOCAL' | 'DEV' | 'UAT' | 'PROD';
 
 // ENV variables validation
@@ -36,7 +33,6 @@ const DEPLOY_PATH_schema = z.string();
 const ENTITIES_LOGO_CDN_schema = z.string().url();
 const LOGIN_URL_schema = z.string().url();
 const VERSION_schema = z.string();
-const SHOW_NOTICES_schema = z.enum(['0', '1']);
 const RESOURCES_URL_schema = z.string().min(1);
 const RECAPTCHA_SITE_KEY_schema = z.string().optional();
 
@@ -50,7 +46,6 @@ try {
   ENTITIES_LOGO_CDN_schema.parse(process.env.ENTITIES_LOGO_CDN);
   LOGIN_URL_schema.parse(process.env.LOGIN_URL);
   VERSION_schema.parse(process.env.VERSION);
-  SHOW_NOTICES_schema.parse(process.env.SHOW_NOTICES);
   RESOURCES_URL_schema.parse(process.env.RESOURCES_URL);
   RECAPTCHA_SITE_KEY_schema.parse(process.env.RECAPTCHA_SITE_KEY);
 } catch (e) {
@@ -71,10 +66,9 @@ type Config = {
   pagopaLink: RootLinkType;
   tokenHeaderExcludePaths: string[];
   version: string;
-  brokerId: string | null;
+  brokerId: number | null;
   /** The broker's external identifier (human-readable), used in URLs */
   brokerCode: string | null;
-  showNotices: boolean;
   paramsSerializer: CustomParamsSerializer;
   /** Template URL for legal resources (PP, ToS). */
   resourcesUrl: string;
@@ -124,7 +118,6 @@ const config: Config = {
   brokerId: storage.app.getBrokerId(),
   /** The broker code is extracted from the URL path, with localStorage as fallback (see storage.ts) */
   brokerCode: storage.app.getBrokerCode(),
-  showNotices: PARSED_SHOW_NOTICES,
   /** A global custom parameters serializer:
    * - null value and empty string parameters are strippef off.
    * - arrays separated by comma.

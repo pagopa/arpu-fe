@@ -32,7 +32,6 @@ variables:
     api_timeout: '10000'
     checkout_host: '$(UAT_CHECKOUT_PREFIX_DOMAIN)'
     checkout_platform_url: '$(UAT_CHECKOUT_PLATFORM_URL)'
-    show_notices: '1'
     resources_url: '$(UAT_LEGALDOCS_TEMPLATE_URL)'
     recaptcha_site_key: '$(UAT_RECAPTCHA_SITE_KEY)'
 
@@ -48,7 +47,6 @@ variables:
     api_timeout: '10000'
     checkout_host: '$(PROD_CHECKOUT_PREFIX_DOMAIN)'
     checkout_platform_url: '$(PROD_CHECKOUT_PLATFORM_URL)'
-    show_notices: '1'
     resources_url: '$(PROD_LEGALDOCS_TEMPLATE_URL)'
     recaptcha_site_key: '$(PROD_RECAPTCHA_SITE_KEY)'
 
@@ -65,7 +63,6 @@ variables:
     api_timeout: '0'
     checkout_host: '$(DEV_CHECKOUT_PREFIX_DOMAIN)'
     checkout_platform_url: '$(DEV_CHECKOUT_PLATFORM_URL)'
-    show_notices: '1'
     resources_url: '$(DEV_LEGALDOCS_TEMPLATE_URL)'
     recaptcha_site_key: '$(DEV_RECAPTCHA_SITE_KEY)'
 
@@ -102,8 +99,8 @@ stages:
               checkout_platform_url: '$(checkout_platform_url)'
               deploy_path: '$(DEPLOY_PATH)'
               version: '$(Build.SourceBranchName):$(Build.SourceVersion)'
-              show_notices: '$(show_notices)'
               resources_url: '$(resources_url)'
+              recaptcha_site_key: '$(recaptcha_site_key)'
 
           - script: |
               yarn build
