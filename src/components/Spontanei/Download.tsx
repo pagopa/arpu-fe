@@ -40,10 +40,18 @@ const Download = () => {
       if (isAnonymous) {
         const recaptchaToken = await executeRecaptcha();
         const { data, filename } = await anonymousMutation.mutateAsync({ recaptchaToken });
+        if (!data || (data instanceof Blob && data.size === 0)) {
+          utils.notify.emit(t('spontanei.download.error'));
+          return;
+        }
         utils.files.downloadBlob(data, filename || `${nav}.pdf`);
         return;
       }
       const { data, filename } = await mutation.mutateAsync();
+      if (!data || (data instanceof Blob && data.size === 0)) {
+        utils.notify.emit(t('spontanei.download.error'));
+        return;
+      }
       utils.files.downloadBlob(data, filename || `${nav}.pdf`);
     } catch {
       utils.notify.emit('qualcosa è andato storto');
