@@ -109,7 +109,7 @@ export const CourtesyPageActions: React.FC<CourtesyPageActionsProps> = ({ code }
       amount: installment.amountCents ?? 0,
       iuv: installment.iuv ?? '',
       nav: installment.nav ?? '',
-      paTaxCode: installment.orgFiscalCode ?? ''
+      paTaxCode: orgFiscalCode ?? ''
     };
 
     postCarts.mutate({ notices: [cartItem] });
