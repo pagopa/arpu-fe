@@ -358,19 +358,6 @@ describe('CourtesyPageActions – pagamento-non-riuscito (424)', () => {
     const downloadLink = screen.getByTestId('courtesyPage.downloadCta');
     expect(downloadLink).toHaveAttribute('href', expect.stringContaining('NAV-001'));
   });
-
-  it('emits download error when installment is still null (fetch pending)', async () => {
-    const notifyModule = (await import('utils/notify')).default;
-    mockInstallmentsMutateAsync.mockImplementation(() => new Promise(() => { }));
-    setupSearchParams({ nav: 'NAV-001', org_fiscal_code: 'ORG-FC-001', installment_id: '42' });
-    render(<CourtesyPageActions code={CODE_424} />);
-
-    fireEvent.click(screen.getByTestId('courtesyPage.downloadCta'));
-
-    await waitFor(() => {
-      expect(notifyModule.emit).toHaveBeenCalledWith('Download error');
-    });
-  });
 });
 
 describe('CourtesyPageActions – pagamento-annullato (425)', () => {

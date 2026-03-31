@@ -160,13 +160,7 @@ export const CourtesyPageActions: React.FC<CourtesyPageActionsProps> = ({ code }
         target="_blank"
         variant="text"
         startIcon={<Download />}
-        data-testid="courtesyPage.downloadCta"
-        onClick={(e) => {
-          if (!installment) {
-            e.preventDefault();
-            notify.emit(t('app.receiptDetail.downloadError'));
-          }
-        }}>
+        data-testid="courtesyPage.downloadCta">
         {t(`courtesyPage.${code}.downloadCta`)}
       </Button>
     </Stack>
