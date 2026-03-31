@@ -18,6 +18,7 @@ import { render } from '__tests__/renderers';
 const mockPostCartsMutate = vi.fn();
 const mockInstallmentsMutateAsync = vi.fn();
 const mockDownloadMutateAsync = vi.fn();
+const mockExecuteRecaptcha = vi.fn();
 
 vi.mock('hooks/usePostCarts', () => ({
   usePostCarts: (opts: { onSuccess: (url: string) => void; onError: () => void }) => ({
@@ -26,6 +27,12 @@ vi.mock('hooks/usePostCarts', () => ({
       opts.onSuccess('https://checkout.test');
     },
     isPending: false
+  })
+}));
+
+vi.mock('components/RecaptchaProvider/RecaptchaProvider', () => ({
+  useRecaptcha: () => ({
+    executeRecaptcha: mockExecuteRecaptcha
   })
 }));
 
@@ -207,9 +214,10 @@ describe('CourtesyPageActions – pagamento-non-riuscito (424)', () => {
     );
   });
 
-  it('calls downloadBlob on successful download', async () => {
+  it('calls executeRecaptcha and passes token to downloadMutation', async () => {
     const filesModule = (await import('utils/files')).default;
     mockInstallmentsMutateAsync.mockResolvedValue([INSTALLMENT_MATCH]);
+    mockExecuteRecaptcha.mockResolvedValue('recaptcha-token-123');
     mockDownloadMutateAsync.mockResolvedValue({ data: new Blob(), filename: 'notice.pdf' });
     setupSearchParams({ nav: 'NAV-001', org_fiscal_code: 'ORG-FC-001', installment_id: '42' });
     render(<CourtesyPageActions code={CODE_424} />);
@@ -221,7 +229,10 @@ describe('CourtesyPageActions – pagamento-non-riuscito (424)', () => {
     fireEvent.click(screen.getByTestId('courtesyPage.downloadCta'));
 
     await waitFor(() => {
-      expect(mockDownloadMutateAsync).toHaveBeenCalled();
+      expect(mockExecuteRecaptcha).toHaveBeenCalled();
+      expect(mockDownloadMutateAsync).toHaveBeenCalledWith({
+        recaptchaToken: 'recaptcha-token-123'
+      });
       expect(filesModule.downloadBlob).toHaveBeenCalledWith(expect.any(Blob), 'notice.pdf');
     });
   });
@@ -229,6 +240,7 @@ describe('CourtesyPageActions – pagamento-non-riuscito (424)', () => {
   it('shows error notification when download fails', async () => {
     const notifyModule = (await import('utils/notify')).default;
     mockInstallmentsMutateAsync.mockResolvedValue([INSTALLMENT_MATCH]);
+    mockExecuteRecaptcha.mockResolvedValue('recaptcha-token-123');
     mockDownloadMutateAsync.mockRejectedValue(new Error('fail'));
     setupSearchParams({ nav: 'NAV-001', org_fiscal_code: 'ORG-FC-001', installment_id: '42' });
     render(<CourtesyPageActions code={CODE_424} />);
@@ -240,6 +252,25 @@ describe('CourtesyPageActions – pagamento-non-riuscito (424)', () => {
     fireEvent.click(screen.getByTestId('courtesyPage.downloadCta'));
 
     await waitFor(() => {
+      expect(notifyModule.emit).toHaveBeenCalledWith('Download error');
+    });
+  });
+
+  it('shows error notification when recaptcha fails', async () => {
+    const notifyModule = (await import('utils/notify')).default;
+    mockInstallmentsMutateAsync.mockResolvedValue([INSTALLMENT_MATCH]);
+    mockExecuteRecaptcha.mockRejectedValue(new Error('recaptcha failed'));
+    setupSearchParams({ nav: 'NAV-001', org_fiscal_code: 'ORG-FC-001', installment_id: '42' });
+    render(<CourtesyPageActions code={CODE_424} />);
+
+    await waitFor(() => {
+      expect(mockInstallmentsMutateAsync).toHaveBeenCalled();
+    });
+
+    fireEvent.click(screen.getByTestId('courtesyPage.downloadCta'));
+
+    await waitFor(() => {
+      expect(mockDownloadMutateAsync).not.toHaveBeenCalled();
       expect(notifyModule.emit).toHaveBeenCalledWith('Download error');
     });
   });
@@ -279,10 +310,11 @@ describe('CourtesyPageActions – pagamento-non-riuscito (424)', () => {
       expect(mockInstallmentsMutateAsync).toHaveBeenCalled();
     });
 
-    fireEvent.click(screen.getByTestId('courtesyPage.cta'));
-
-    expect(mockPostCartsMutate).toHaveBeenCalledWith({
-      notices: [expect.objectContaining({ nav: 'NAV-001' })]
+    await waitFor(() => {
+      fireEvent.click(screen.getByTestId('courtesyPage.cta'));
+      expect(mockPostCartsMutate).toHaveBeenCalledWith({
+        notices: [expect.objectContaining({ nav: 'NAV-001' })]
+      });
     });
   });
 
@@ -310,6 +342,7 @@ describe('CourtesyPageActions – pagamento-non-riuscito (424)', () => {
   it('uses nav as fallback filename when server returns no filename', async () => {
     const filesModule = (await import('utils/files')).default;
     mockInstallmentsMutateAsync.mockResolvedValue([INSTALLMENT_MATCH]);
+    mockExecuteRecaptcha.mockResolvedValue('recaptcha-token-123');
     mockDownloadMutateAsync.mockResolvedValue({ data: new Blob(), filename: null });
     setupSearchParams({ nav: 'NAV-001', org_fiscal_code: 'ORG-FC-001', installment_id: '42' });
     render(<CourtesyPageActions code={CODE_424} />);
@@ -383,9 +416,10 @@ describe('CourtesyPageActions – pagamento-annullato (425)', () => {
     });
   });
 
-  it('calls downloadBlob on successful download', async () => {
+  it('calls executeRecaptcha and passes token to downloadMutation', async () => {
     const filesModule = (await import('utils/files')).default;
     mockInstallmentsMutateAsync.mockResolvedValue([INSTALLMENT_MATCH]);
+    mockExecuteRecaptcha.mockResolvedValue('recaptcha-token-456');
     mockDownloadMutateAsync.mockResolvedValue({ data: new Blob(), filename: 'avviso.pdf' });
     setupSearchParams({ nav: 'NAV-001', org_fiscal_code: 'ORG-FC-001', installment_id: '42' });
     render(<CourtesyPageActions code={CODE_425} />);
@@ -397,7 +431,10 @@ describe('CourtesyPageActions – pagamento-annullato (425)', () => {
     fireEvent.click(screen.getByTestId('courtesyPage.downloadCta'));
 
     await waitFor(() => {
-      expect(mockDownloadMutateAsync).toHaveBeenCalled();
+      expect(mockExecuteRecaptcha).toHaveBeenCalled();
+      expect(mockDownloadMutateAsync).toHaveBeenCalledWith({
+        recaptchaToken: 'recaptcha-token-456'
+      });
       expect(filesModule.downloadBlob).toHaveBeenCalledWith(expect.any(Blob), 'avviso.pdf');
     });
   });
@@ -405,6 +442,7 @@ describe('CourtesyPageActions – pagamento-annullato (425)', () => {
   it('emits download error when download fails for cancelled payment', async () => {
     const notifyModule = (await import('utils/notify')).default;
     mockInstallmentsMutateAsync.mockResolvedValue([INSTALLMENT_MATCH]);
+    mockExecuteRecaptcha.mockResolvedValue('recaptcha-token-456');
     mockDownloadMutateAsync.mockRejectedValue(new Error('fail'));
     setupSearchParams({ nav: 'NAV-001', org_fiscal_code: 'ORG-FC-001', installment_id: '42' });
     render(<CourtesyPageActions code={CODE_425} />);

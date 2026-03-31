@@ -21,6 +21,7 @@ const Dashboard = () => {
         mb={5}>
         <Typography
           variant="h3"
+          component={'h1'}
           aria-label={t('app.dashboard.greeting')}
           sx={{ textTransform: 'capitalize' }}>
           {userInfo?.name &&

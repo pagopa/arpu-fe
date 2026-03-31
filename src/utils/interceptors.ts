@@ -4,6 +4,7 @@ import { OUTCOMES, ROUTES } from 'routes/routes';
 import { AxiosError, InternalAxiosRequestConfig } from 'axios';
 import { t } from 'i18next';
 import { StorageItems } from './storage';
+import { isRecaptchaError } from 'models/ApiErrors';
 
 const isPublicBrokerInfoRequest = (error: AxiosError) =>
   error.config?.url === '/public/brokers' && Boolean(error.config?.params?.externalId);
@@ -27,13 +28,18 @@ export const setupInterceptors = (client: Client) => {
     (response) => response,
     (error) => {
       if (isPublicBrokerInfoRequest(error)) {
-        const toUrl = ROUTES.public.COURTESY_PAGE.replace(':outcome', OUTCOMES['410']);
+        const toUrl = ROUTES.public.COURTESY_PAGE.replace(':outcome', 'broker-non-trovato');
         utils.storage.app.clearBrokerInfo();
         window.location.replace(toUrl);
       } else if (error.response?.status === 401) {
-        const toUrl = ROUTES.public.COURTESY_PAGE.replace(':outcome', OUTCOMES['401']);
-        utils.storage.user.logOut();
-        window.location.replace(toUrl);
+        if (isRecaptchaError(error)) {
+          const toUrl = ROUTES.public.COURTESY_PAGE.replace(':outcome', 'verifica-non-riuscita');
+          window.location.replace(toUrl);
+        } else {
+          const toUrl = ROUTES.public.COURTESY_PAGE.replace(':outcome', OUTCOMES['401']);
+          utils.storage.user.logOut();
+          window.location.replace(toUrl);
+        }
       } else if (error.response?.status === 403) {
         utils.notify.emit(t('errors.toast.403'));
       } else if (error.response?.status === 404) {
@@ -43,6 +49,8 @@ export const setupInterceptors = (client: Client) => {
       } else {
         utils.notify.emit(t('errors.toast.default'));
       }
+
+      return Promise.reject(error);
     }
   );
 };

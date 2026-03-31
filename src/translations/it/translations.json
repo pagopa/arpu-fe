@@ -393,7 +393,8 @@
   },
   "common": {
     "person": "Persona fisica",
-    "company": "Soggetto giuridico"
+    "company": "Soggetto giuridico",
+    "openDialog": "apri finestra di dialogo"
   },
   "general": {
     "and": "e",
@@ -506,6 +507,11 @@
       "title": "Non siamo riusciti ad avviare il pagamento",
       "body": "Riprova tra qualche minuto.",
       "cta": "Chiudi"
+    },
+    "426": {
+      "title": "Verifica di sicurezza non riuscita",
+      "body": "Non siamo riusciti a verificare che tu sia un utente reale. Riprova tra qualche minuto.",
+      "cta": "Riprova"
     },
     "500": {
       "title": "Errore del server",

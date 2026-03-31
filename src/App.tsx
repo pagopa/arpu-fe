@@ -38,6 +38,7 @@ import appStore from 'store/appStore';
 import ResourcePage from 'routes/ResourcePage/ResourcePage';
 import { RecaptchaProvider } from 'components/RecaptchaProvider/RecaptchaProvider';
 import { RouteGuardByAvailableRoutes as Guard } from 'components/RouteGuard';
+import { useFavicon } from 'hooks/useFavicon';
 
 /**
  * Validates that the required query params (nav, org_fiscal_code, installment_id)
@@ -355,6 +356,9 @@ const router = createBrowserRouter([
 
 export const App = () => {
   const isReady = appStore.value.isReady;
+  const favicon = appStore.value.brokerInfo?.brokerLogo;
+  useFavicon(favicon);
+
   return (
     <>
       <HealthCheck />
