@@ -33,7 +33,7 @@ variables:
     checkout_host: '$(UAT_CHECKOUT_PREFIX_DOMAIN)'
     checkout_platform_url: '$(UAT_CHECKOUT_PLATFORM_URL)'
     resources_url: '$(UAT_LEGALDOCS_TEMPLATE_URL)'
-    recaptcha_site_key: '$(UAT_RECAPTCHA_SITE_KEY)'
+    recaptcha_site_key: ''
 
   ${{ elseif eq(variables['Build.SourceBranch'], 'refs/heads/main') }}:
     environment: 'PROD'
