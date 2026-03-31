@@ -64,7 +64,7 @@ variables:
     checkout_host: '$(DEV_CHECKOUT_PREFIX_DOMAIN)'
     checkout_platform_url: '$(DEV_CHECKOUT_PLATFORM_URL)'
     resources_url: '$(DEV_LEGALDOCS_TEMPLATE_URL)'
-    recaptcha_site_key: ''
+    recaptcha_site_key: '$(DEV_RECAPTCHA_SITE_KEY)'
 
 resources:
   repositories:
