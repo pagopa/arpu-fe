@@ -3,6 +3,11 @@ import React from 'react';
 import { screen, fireEvent, waitFor } from '@testing-library/react';
 import { CourtesyPageActions } from './CourtesyPageActions';
 import { OUTCOMES, ROUTES } from 'routes/routes';
+import { useSearchParams } from 'react-router-dom';
+import { i18nTestSetup } from '__tests__/i18nTestSetup';
+import { render } from '__tests__/renderers';
+import utils from 'utils';
+import { Mock } from 'vitest';
 
 const mockNavigate = vi.fn();
 
@@ -27,10 +32,6 @@ vi.mock('react-router-dom', async (importOriginal) => {
     )
   };
 });
-
-import { useSearchParams } from 'react-router-dom';
-import { i18nTestSetup } from '__tests__/i18nTestSetup';
-import { render } from '__tests__/renderers';
 
 const mockPostCartsMutate = vi.fn();
 const mockInstallmentsMutateAsync = vi.fn();
@@ -63,6 +64,9 @@ vi.mock('utils/storage', async (importOriginal) => {
         ...(actual.default as any).app,
         getBrokerId: vi.fn(() => 'broker-123'),
         getBrokerCode: vi.fn(() => 'BROKER-CODE-123')
+      },
+      user: {
+        isAnonymous: vi.fn(() => false)
       }
     }
   };
@@ -418,6 +422,24 @@ describe('CourtesyPageActions – pagamento-annullato (425)', () => {
     expect(downloadLink).toHaveAttribute(
       'href',
       expect.stringContaining('/spontanei/download/99/NAV-001')
+    );
+  });
+
+  it('renders correct download link for cancelled payment when the user is not logged in', async () => {
+    (utils.storage.user.isAnonymous as Mock).mockReturnValue(true);
+    mockInstallmentsMutateAsync.mockResolvedValue([INSTALLMENT_MATCH]);
+    setupSearchParams({ nav: 'NAV-001', org_fiscal_code: 'ORG-FC-001', installment_id: '42' });
+    render(<CourtesyPageActions code={CODE_425} />);
+
+    await waitFor(() => {
+      expect(mockInstallmentsMutateAsync).toHaveBeenCalled();
+    });
+
+    const downloadLink = screen.getByTestId('courtesyPage.downloadCta');
+    expect(downloadLink).toHaveAttribute('target', '_blank');
+    expect(downloadLink).toHaveAttribute(
+      'href',
+      expect.stringContaining('/spontanei/download/99/NAV-001/DEBTOR-FC-001')
     );
   });
 
