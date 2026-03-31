@@ -26,7 +26,7 @@ const getPaymentNoticeInfoSchema = (t: (key: string) => string) =>
       .string()
       .regex(
         /(^[A-Za-z]{6}[0-9]{2}[A-Za-z]{1}[0-9]{2}[A-Za-z]{1}[0-9]{3}[A-Za-z]{1}$)|(^[0-9]{11}$)|ANONIMO/,
-        t('spontanei.form.errors.fullName')
+        t('spontanei.form.errors.fiscalCode')
       ),
     email: z.string().email(t('spontanei.form.errors.email'))
   });
