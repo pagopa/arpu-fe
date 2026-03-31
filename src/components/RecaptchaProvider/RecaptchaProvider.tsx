@@ -4,11 +4,6 @@ import config from 'utils/config';
 
 const RECAPTCHA_SITE_KEY = config.recaptchaSiteKey;
 
-window.recaptchaOptions = {
-  useRecaptchaNet: true,
-  enterprise: config.env === 'UAT' || config.env === 'PROD'
-};
-
 interface RecaptchaContextType {
   executeRecaptcha: (action?: string) => Promise<string | null>;
   isEnabled: boolean;
@@ -21,7 +16,17 @@ const RecaptchaContext = createContext<RecaptchaContextType>({
 
 export const useRecaptcha = () => useContext(RecaptchaContext);
 
-export const isRecaptchaEnabled = (): boolean => Boolean(RECAPTCHA_SITE_KEY);
+export const isRecaptchaEnabled = (): boolean => {
+  const key = RECAPTCHA_SITE_KEY;
+  return key.trim() !== '' && key !== 'undefined';
+};
+
+if (isRecaptchaEnabled()) {
+  window.recaptchaOptions = {
+    useRecaptchaNet: true,
+    enterprise: config.env === 'UAT' || config.env === 'PROD'
+  };
+}
 
 interface RecaptchaProviderProps {
   children: React.ReactNode;
