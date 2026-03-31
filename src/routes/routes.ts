@@ -24,7 +24,7 @@ export const ROUTES = {
   PAYMENTS_ON_THE_FLY_DOWNLOAD: `${rootPrefix}/spontanei/download/:orgId/:nav`,
   public: {
     PAYMENTS_ON_THE_FLY: `${rootPrefix}/public/spontanei`,
-    PAYMENTS_ON_THE_FLY_DOWNLOAD: `${rootPrefix}/public/spontanei/download/:orgId/:nav`,
+    PAYMENTS_ON_THE_FLY_DOWNLOAD: `${rootPrefix}/public/spontanei/download/:orgId/:nav/:debtorFiscalCode`,
     COURTESY_PAGE: `${rootPrefix}/public/esito/:outcome`,
     RECEIPTS_SEARCH: `${rootPrefix}/public/ricevute/ricerca`,
     RECEIPT: `${rootPrefix}/public/ricevute/:receiptId/:organizationId`,

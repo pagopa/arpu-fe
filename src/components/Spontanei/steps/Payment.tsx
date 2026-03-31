@@ -6,13 +6,13 @@ import { addItem, isItemInCart, setCartEmail, toggleCartDrawer } from 'store/Car
 import notify from 'utils/notify';
 import { useStore } from 'store/GlobalStore';
 import utils from 'utils';
-import { generatePath, useNavigate } from 'react-router-dom';
-import { DebtPositionRequestDTO, FormTypeEnum } from '../../../../generated/data-contracts';
+import { generatePath, Link, useNavigate } from 'react-router-dom';
+import { DebtPositionRequestDTO } from '../../../../generated/data-contracts';
 import { useField, useFormikContext } from 'formik';
 import { PaymentNoticeInfo } from '..';
 import FormContext, { FormContextType } from '../FormContext';
 import { usePostCarts } from 'hooks/usePostCarts';
-import { ROUTES } from 'routes/routes';
+import { OUTCOMES, ROUTES } from 'routes/routes';
 import { CartItem } from 'models/Cart';
 import FileDownloadIcon from '@mui/icons-material/FileDownload';
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
@@ -45,11 +45,9 @@ const Payment = () => {
 
   const organizationId = org.value?.organizationId;
   const debtPositionTypeOrgId = debtType.value?.debtPositionTypeOrgId;
-  const userDescription = context?.userDescription || undefined;
 
   const navigate = useNavigate();
   const brokerId = utils.storage.app.getBrokerId();
-  const formType = context?.formType;
 
   if (!organizationId || !debtPositionTypeOrgId || !brokerId) {
     throw new Error('Missing required parameters');
@@ -83,8 +81,7 @@ const Payment = () => {
           {
             amountCents: amount.value,
             remittanceInformation: description.value,
-            userRemittanceInformation:
-              formType !== FormTypeEnum.CUSTOM ? description.value : userDescription,
+            userRemittanceInformation: description.value,
             debtor: {
               entityType: entityType.value,
               fiscalCode: fiscalCode.value,
@@ -119,10 +116,10 @@ const Payment = () => {
 
   const { data: debtPositionResponse } = isAnonymous
     ? utils.loaders.public.createPublicSpontaneousDebtPosition(
-        Number(brokerId),
-        body,
-        recaptchaToken
-      )
+      Number(brokerId),
+      body,
+      recaptchaToken
+    )
     : utils.loaders.createSpontaneousDebtPosition(Number(brokerId), body);
 
   const addToCart = () => {
@@ -164,21 +161,36 @@ const Payment = () => {
       paFullName: orgName,
       description: remittanceInformation
     };
-    carts.mutate({ notices: [item], email: email.value || undefined });
-  };
-
-  const goToDownloadPaymentNoticePage = () => {
-    if (!debtPositionResponse) return;
-    const { organizationId: orgId, paymentDetails } = debtPositionResponse;
-    const { nav } = paymentDetails;
-    if (!nav) return;
-    const route = isAnonymous
-      ? ROUTES.public.PAYMENTS_ON_THE_FLY_DOWNLOAD
-      : ROUTES.PAYMENTS_ON_THE_FLY_DOWNLOAD;
-    navigate(generatePath(route, { orgId, nav }), {
-      state: { fiscalCode: fiscalCode.value }
+    carts.mutate({
+      notices: [item],
+      email: email.value || undefined
     });
   };
+
+  const generateDownloadUrl = () => {
+    try {
+      if (!debtPositionResponse) throw new Error(OUTCOMES[400]);
+      const { organizationId: orgId, paymentDetails } = debtPositionResponse;
+      const { nav } = paymentDetails;
+      if (!nav) throw new Error(OUTCOMES[400]);
+
+      const route = isAnonymous
+        ? ROUTES.public.PAYMENTS_ON_THE_FLY_DOWNLOAD
+        : ROUTES.PAYMENTS_ON_THE_FLY_DOWNLOAD;
+
+      return generatePath(route, {
+        orgId,
+        nav
+      });
+    } catch (error) {
+      const route = isAnonymous
+        ? ROUTES.public.COURTESY_PAGE
+        : ROUTES.COURTESY_PAGE;
+      return generatePath(route, { outcome: error });
+    }
+  };
+
+
 
   return (
     <>
@@ -235,8 +247,10 @@ const Payment = () => {
                 variant="text"
                 size="large"
                 startIcon={<FileDownloadIcon />}
-                onClick={goToDownloadPaymentNoticePage}
-                data-testid="download-notice-button">
+                data-testid="download-notice-button"
+                component={Link}
+                target="_blank"
+                to={generateDownloadUrl()}>
                 {t('spontanei.form.steps.step5.download.downloadButton')}
               </Button>
             </SpacedStack>

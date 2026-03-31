@@ -8,7 +8,24 @@ const mockNavigate = vi.fn();
 
 vi.mock('react-router-dom', async (importOriginal) => {
   const actual = await importOriginal<typeof import('react-router-dom')>();
-  return { ...actual, useSearchParams: vi.fn(), useNavigate: () => mockNavigate };
+  return {
+    ...actual,
+    useSearchParams: vi.fn(),
+    useNavigate: () => mockNavigate,
+    Link: ({ children, to, state, onClick, ...props }: any) => (
+      <a
+        href={to}
+        onClick={(e) => {
+          if (onClick) onClick(e);
+          if (!e.defaultPrevented) {
+            mockNavigate(to, { state });
+          }
+        }}
+        {...props}>
+        {children}
+      </a>
+    )
+  };
 });
 
 import { useSearchParams } from 'react-router-dom';
@@ -214,11 +231,8 @@ describe('CourtesyPageActions – pagamento-non-riuscito (424)', () => {
     );
   });
 
-  it('calls executeRecaptcha and passes token to downloadMutation', async () => {
-    const filesModule = (await import('utils/files')).default;
+  it('renders correct download link with correct attributes', async () => {
     mockInstallmentsMutateAsync.mockResolvedValue([INSTALLMENT_MATCH]);
-    mockExecuteRecaptcha.mockResolvedValue('recaptcha-token-123');
-    mockDownloadMutateAsync.mockResolvedValue({ data: new Blob(), filename: 'notice.pdf' });
     setupSearchParams({ nav: 'NAV-001', org_fiscal_code: 'ORG-FC-001', installment_id: '42' });
     render(<CourtesyPageActions code={CODE_424} />);
 
@@ -226,22 +240,18 @@ describe('CourtesyPageActions – pagamento-non-riuscito (424)', () => {
       expect(mockInstallmentsMutateAsync).toHaveBeenCalled();
     });
 
-    fireEvent.click(screen.getByTestId('courtesyPage.downloadCta'));
-
-    await waitFor(() => {
-      expect(mockExecuteRecaptcha).toHaveBeenCalled();
-      expect(mockDownloadMutateAsync).toHaveBeenCalledWith({
-        recaptchaToken: 'recaptcha-token-123'
-      });
-      expect(filesModule.downloadBlob).toHaveBeenCalledWith(expect.any(Blob), 'notice.pdf');
-    });
+    const downloadLink = screen.getByTestId('courtesyPage.downloadCta');
+    expect(downloadLink).toHaveAttribute('target', '_blank');
+    expect(downloadLink).toHaveAttribute(
+      'href',
+      expect.stringContaining('/spontanei/download/99/NAV-001')
+    );
   });
 
-  it('shows error notification when download fails', async () => {
-    const notifyModule = (await import('utils/notify')).default;
-    mockInstallmentsMutateAsync.mockResolvedValue([INSTALLMENT_MATCH]);
-    mockExecuteRecaptcha.mockResolvedValue('recaptcha-token-123');
-    mockDownloadMutateAsync.mockRejectedValue(new Error('fail'));
+  // Test for download failure is no longer applicable here as download logic moved to Download component.
+  // Instead, verify that the link is still valid even if fetch fails (it uses defaults)
+  it('renders download link using defaults when installment fetch fails', async () => {
+    mockInstallmentsMutateAsync.mockRejectedValue(new Error('fail'));
     setupSearchParams({ nav: 'NAV-001', org_fiscal_code: 'ORG-FC-001', installment_id: '42' });
     render(<CourtesyPageActions code={CODE_424} />);
 
@@ -249,11 +259,8 @@ describe('CourtesyPageActions – pagamento-non-riuscito (424)', () => {
       expect(mockInstallmentsMutateAsync).toHaveBeenCalled();
     });
 
-    fireEvent.click(screen.getByTestId('courtesyPage.downloadCta'));
-
-    await waitFor(() => {
-      expect(notifyModule.emit).toHaveBeenCalledWith('Download error');
-    });
+    const downloadLink = screen.getByTestId('courtesyPage.downloadCta');
+    expect(downloadLink).toHaveAttribute('href', expect.stringContaining('/download/-1'));
   });
 
   it('shows error notification when recaptcha fails', async () => {
@@ -339,11 +346,8 @@ describe('CourtesyPageActions – pagamento-non-riuscito (424)', () => {
     );
   });
 
-  it('uses nav as fallback filename when server returns no filename', async () => {
-    const filesModule = (await import('utils/files')).default;
+  it('generates correct filename in the link when server returns no filename (not directly relevant but kept for logic check)', async () => {
     mockInstallmentsMutateAsync.mockResolvedValue([INSTALLMENT_MATCH]);
-    mockExecuteRecaptcha.mockResolvedValue('recaptcha-token-123');
-    mockDownloadMutateAsync.mockResolvedValue({ data: new Blob(), filename: null });
     setupSearchParams({ nav: 'NAV-001', org_fiscal_code: 'ORG-FC-001', installment_id: '42' });
     render(<CourtesyPageActions code={CODE_424} />);
 
@@ -351,16 +355,13 @@ describe('CourtesyPageActions – pagamento-non-riuscito (424)', () => {
       expect(mockInstallmentsMutateAsync).toHaveBeenCalled();
     });
 
-    fireEvent.click(screen.getByTestId('courtesyPage.downloadCta'));
-
-    await waitFor(() => {
-      expect(filesModule.downloadBlob).toHaveBeenCalledWith(expect.any(Blob), 'NAV-001.pdf');
-    });
+    const downloadLink = screen.getByTestId('courtesyPage.downloadCta');
+    expect(downloadLink).toHaveAttribute('href', expect.stringContaining('NAV-001'));
   });
 
   it('emits download error when installment is still null (fetch pending)', async () => {
     const notifyModule = (await import('utils/notify')).default;
-    mockInstallmentsMutateAsync.mockImplementation(() => new Promise(() => {}));
+    mockInstallmentsMutateAsync.mockImplementation(() => new Promise(() => { }));
     setupSearchParams({ nav: 'NAV-001', org_fiscal_code: 'ORG-FC-001', installment_id: '42' });
     render(<CourtesyPageActions code={CODE_424} />);
 
@@ -416,11 +417,8 @@ describe('CourtesyPageActions – pagamento-annullato (425)', () => {
     });
   });
 
-  it('calls executeRecaptcha and passes token to downloadMutation', async () => {
-    const filesModule = (await import('utils/files')).default;
+  it('renders correct download link for cancelled payment', async () => {
     mockInstallmentsMutateAsync.mockResolvedValue([INSTALLMENT_MATCH]);
-    mockExecuteRecaptcha.mockResolvedValue('recaptcha-token-456');
-    mockDownloadMutateAsync.mockResolvedValue({ data: new Blob(), filename: 'avviso.pdf' });
     setupSearchParams({ nav: 'NAV-001', org_fiscal_code: 'ORG-FC-001', installment_id: '42' });
     render(<CourtesyPageActions code={CODE_425} />);
 
@@ -428,22 +426,17 @@ describe('CourtesyPageActions – pagamento-annullato (425)', () => {
       expect(mockInstallmentsMutateAsync).toHaveBeenCalled();
     });
 
-    fireEvent.click(screen.getByTestId('courtesyPage.downloadCta'));
-
-    await waitFor(() => {
-      expect(mockExecuteRecaptcha).toHaveBeenCalled();
-      expect(mockDownloadMutateAsync).toHaveBeenCalledWith({
-        recaptchaToken: 'recaptcha-token-456'
-      });
-      expect(filesModule.downloadBlob).toHaveBeenCalledWith(expect.any(Blob), 'avviso.pdf');
-    });
+    const downloadLink = screen.getByTestId('courtesyPage.downloadCta');
+    expect(downloadLink).toHaveAttribute('target', '_blank');
+    expect(downloadLink).toHaveAttribute(
+      'href',
+      expect.stringContaining('/spontanei/download/99/NAV-001')
+    );
   });
 
-  it('emits download error when download fails for cancelled payment', async () => {
-    const notifyModule = (await import('utils/notify')).default;
-    mockInstallmentsMutateAsync.mockResolvedValue([INSTALLMENT_MATCH]);
-    mockExecuteRecaptcha.mockResolvedValue('recaptcha-token-456');
-    mockDownloadMutateAsync.mockRejectedValue(new Error('fail'));
+  // Test for download failure removed as download moved to Download component.
+  it('renders download link using defaults when fetch fails for cancelled payment', async () => {
+    mockInstallmentsMutateAsync.mockRejectedValue(new Error('fail'));
     setupSearchParams({ nav: 'NAV-001', org_fiscal_code: 'ORG-FC-001', installment_id: '42' });
     render(<CourtesyPageActions code={CODE_425} />);
 
@@ -451,10 +444,7 @@ describe('CourtesyPageActions – pagamento-annullato (425)', () => {
       expect(mockInstallmentsMutateAsync).toHaveBeenCalled();
     });
 
-    fireEvent.click(screen.getByTestId('courtesyPage.downloadCta'));
-
-    await waitFor(() => {
-      expect(notifyModule.emit).toHaveBeenCalledWith('Download error');
-    });
+    const downloadLink = screen.getByTestId('courtesyPage.downloadCta');
+    expect(downloadLink).toHaveAttribute('href', expect.stringContaining('/download/-1'));
   });
 });

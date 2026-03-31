@@ -8,8 +8,7 @@ import { PaymentNoticeInfo } from '../index';
 import {
   OrganizationsWithSpontaneousDTO,
   DebtPositionTypeOrgsWithSpontaneousDTO,
-  PersonEntityType,
-  FormTypeEnum
+  PersonEntityType
 } from '../../../../generated/data-contracts';
 import { ROUTES } from 'routes/routes';
 import * as CartStore from 'store/CartStore';
@@ -59,7 +58,30 @@ vi.mock('hooks/usePostCarts', () => ({
 const mockNavigate = vi.fn();
 vi.mock('react-router-dom', async (importOriginal) => ({
   ...(await importOriginal<typeof import('react-router-dom')>()),
-  useNavigate: () => mockNavigate
+  useNavigate: () => mockNavigate,
+  Link: ({
+    children,
+    to,
+    onClick,
+    state,
+    ...props
+  }: {
+    to: string;
+    onClick: (e: React.MouseEvent) => void;
+    children: React.ReactNode;
+    state?: { [key: string]: unknown };
+  }) => (
+    <a
+      href={to}
+      onClick={(e) => {
+        e.preventDefault();
+        if (onClick) onClick(e);
+        mockNavigate(to, { state });
+      }}
+      {...props}>
+      {children}
+    </a>
+  )
 }));
 
 // Mock icons
@@ -123,14 +145,16 @@ vi.mock('store/CartStore', () => ({
 }));
 
 const getDefaultContext = (overrides: Partial<FormContextType> = {}): FormContextType => ({
-  step: 4,
+  step: { current: 4, previous: 3 },
   setStep: vi.fn(),
   omitFirstStep: false,
   setOmitFirstStep: vi.fn(),
-  formType: FormTypeEnum.STANDARD,
-  setFormType: vi.fn(),
-  userDescription: null,
-  setUserDescription: vi.fn(),
+  summaryFields: [],
+  setSummaryFields: vi.fn(),
+  submitFields: [],
+  setSubmitFields: vi.fn(),
+  causaleHasJoinTemplate: false,
+  setCausaleHasJoinTemplate: vi.fn(),
   ...overrides
 });
 
@@ -248,8 +272,10 @@ describe('Payment Component', () => {
     fireEvent.click(downloadButton);
 
     expect(mockNavigate).toHaveBeenCalledWith(
-      ROUTES.public.PAYMENTS_ON_THE_FLY_DOWNLOAD.replace(':orgId', '123').replace(':nav', 'NAV123'),
-      { state: { fiscalCode: 'RSSMRA80A01H501U' } }
+      ROUTES.public.PAYMENTS_ON_THE_FLY_DOWNLOAD.replace(':orgId', '123')
+        .replace(':nav', 'NAV123')
+        .replace(':debtorFiscalCode', 'RSSMRA80A01H501U'),
+      { state: undefined }
     );
   });
 
@@ -262,7 +288,7 @@ describe('Payment Component', () => {
 
     expect(mockNavigate).toHaveBeenCalledWith(
       ROUTES.PAYMENTS_ON_THE_FLY_DOWNLOAD.replace(':orgId', '123').replace(':nav', 'NAV123'),
-      { state: { fiscalCode: 'RSSMRA80A01H501U' } }
+      { state: undefined }
     );
   });
 
