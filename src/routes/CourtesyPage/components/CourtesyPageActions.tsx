@@ -11,6 +11,7 @@ import loaders from 'utils/loaders';
 import files from 'utils/files';
 import notify from 'utils/notify';
 import { useAppRoutes } from 'hooks/useAppRoutes';
+import { useRecaptcha } from 'components/RecaptchaProvider/RecaptchaProvider';
 
 /**
  * Expected query params on the courtesy-page URL:
@@ -48,6 +49,7 @@ export const CourtesyPageActions: React.FC<CourtesyPageActionsProps> = ({ code }
   const navigate = useNavigate();
   const { routes } = useAppRoutes();
   const [searchParams] = useSearchParams();
+  const { executeRecaptcha } = useRecaptcha();
 
   const nav = searchParams.get('nav');
   const orgFiscalCode = searchParams.get('org_fiscal_code');
@@ -127,12 +129,13 @@ export const CourtesyPageActions: React.FC<CourtesyPageActionsProps> = ({ code }
       if (!installment?.organizationId || !installment?.nav || !brokerId) {
         throw new Error('Missing required data for download');
       }
-      const { data, filename } = await downloadMutation.mutateAsync();
+      const recaptchaToken = await executeRecaptcha();
+      const { data, filename } = await downloadMutation.mutateAsync({ recaptchaToken });
       files.downloadBlob(data, filename || `${installment.nav}.pdf`);
     } catch {
       notify.emit(t('app.receiptDetail.downloadError'));
     }
-  }, [installment, brokerId, downloadMutation, t]);
+  }, [installment, brokerId, downloadMutation, executeRecaptcha, t]);
 
   const isCancelled = code === OUTCOMES['pagamento-annullato'];
 
