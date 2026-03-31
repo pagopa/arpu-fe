@@ -665,7 +665,8 @@
       "title": "Il download dell’avviso è in corso",
       "help": "Se non parte automaticamente, clicca <link1>qui.</link1>",
       "info": "Scopri i canali abilitati",
-      "close": "Chiudi"
+      "close": "Chiudi",
+      "error": "Errore nella generazione del PDF dell'avviso, riprova più tardi."
     }
   }
 }

@@ -9,7 +9,8 @@ const TRANSLATIONS = {
   'spontanei.download.title': 'Download in progress',
   'spontanei.download.help': 'If the download does not start <link1>click here</link1>',
   'spontanei.download.close': 'Close',
-  'spontanei.download.info': 'Where to pay'
+  'spontanei.download.info': 'Where to pay',
+  'spontanei.form.steps.step5.download.error': 'The file is empty'
 };
 
 i18nTestSetup(TRANSLATIONS);
@@ -87,8 +88,11 @@ vi.mock('components/RecaptchaProvider/RecaptchaProvider', () => ({
 
 beforeEach(() => {
   vi.clearAllMocks();
-  mockMutateAsync.mockResolvedValue({ data: new Blob(), filename: 'notice.pdf' });
-  mockAnonymousMutateAsync.mockResolvedValue({ data: new Blob(), filename: 'notice.pdf' });
+  mockMutateAsync.mockResolvedValue({ data: new Blob(['content']), filename: 'notice.pdf' });
+  mockAnonymousMutateAsync.mockResolvedValue({
+    data: new Blob(['content']),
+    filename: 'notice.pdf'
+  });
   mockExecuteRecaptcha.mockResolvedValue('test-recaptcha-token');
   (utils.storage.user.isAnonymous as ReturnType<typeof vi.fn>).mockReturnValue(false);
 });
@@ -113,7 +117,7 @@ describe('Download', () => {
   });
 
   it('uses nav as fallback filename when server returns none', async () => {
-    mockMutateAsync.mockResolvedValue({ data: new Blob(), filename: null });
+    mockMutateAsync.mockResolvedValue({ data: new Blob(['content']), filename: null });
 
     render(<Download />);
 
@@ -227,5 +231,44 @@ describe('Download', () => {
     const infoLink = screen.getByRole('link', { name: 'Where to pay' });
     expect(infoLink).toHaveAttribute('href', 'https://www.pagopa.gov.it/it/cittadini/dove-pagare/');
     expect(infoLink).toHaveAttribute('target', '_blank');
+  });
+
+  it('shows notification and skips download when authenticated response returns empty blob', async () => {
+    mockMutateAsync.mockResolvedValue({ data: new Blob(), filename: 'notice.pdf' });
+
+    render(<Download />);
+
+    await waitFor(() => {
+      expect(mockMutateAsync).toHaveBeenCalledTimes(1);
+    });
+
+    expect(utils.files.downloadBlob).not.toHaveBeenCalled();
+    expect(utils.notify.emit).toHaveBeenCalledWith('spontanei.download.error');
+  });
+
+  it('shows notification and skips download when anonymous response returns empty blob', async () => {
+    (utils.storage.user.isAnonymous as ReturnType<typeof vi.fn>).mockReturnValue(true);
+    mockAnonymousMutateAsync.mockResolvedValue({ data: new Blob(), filename: 'notice.pdf' });
+
+    render(<Download />);
+
+    await waitFor(() => {
+      expect(mockAnonymousMutateAsync).toHaveBeenCalledTimes(1);
+    });
+
+    expect(utils.files.downloadBlob).not.toHaveBeenCalled();
+    expect(utils.notify.emit).toHaveBeenCalledWith('spontanei.download.error');
+  });
+
+  it('shows notification and skips download when data is null', async () => {
+    mockMutateAsync.mockResolvedValue({ data: null, filename: 'notice.pdf' });
+
+    render(<Download />);
+
+    await waitFor(() => {
+      expect(utils.notify.emit).toHaveBeenCalledWith('spontanei.download.error');
+    });
+
+    expect(utils.files.downloadBlob).not.toHaveBeenCalled();
   });
 });
