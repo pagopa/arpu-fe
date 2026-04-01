@@ -116,10 +116,10 @@ const Payment = () => {
 
   const { data: debtPositionResponse } = isAnonymous
     ? utils.loaders.public.createPublicSpontaneousDebtPosition(
-      Number(brokerId),
-      body,
-      recaptchaToken
-    )
+        Number(brokerId),
+        body,
+        recaptchaToken
+      )
     : utils.loaders.createSpontaneousDebtPosition(Number(brokerId), body);
 
   const addToCart = () => {
@@ -178,19 +178,17 @@ const Payment = () => {
         ? ROUTES.public.PAYMENTS_ON_THE_FLY_DOWNLOAD
         : ROUTES.PAYMENTS_ON_THE_FLY_DOWNLOAD;
 
-      return generatePath(route, {
-        orgId,
-        nav
-      });
+      return (
+        generatePath(route, {
+          orgId,
+          nav
+        }) + `#debtorFiscalCode=${fiscalCode.value}`
+      );
     } catch (error) {
-      const route = isAnonymous
-        ? ROUTES.public.COURTESY_PAGE
-        : ROUTES.COURTESY_PAGE;
+      const route = isAnonymous ? ROUTES.public.COURTESY_PAGE : ROUTES.COURTESY_PAGE;
       return generatePath(route, { outcome: error });
     }
   };
-
-
 
   return (
     <>
