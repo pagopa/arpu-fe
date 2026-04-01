@@ -59,7 +59,7 @@ vi.mock('react-router-dom', async () => {
     ...actual,
     useParams: vi.fn(() => ({
       nav: 'NAV123',
-      organizationId: '456'
+      orgId: '456'
     })),
     useLocation: vi.fn(() => ({
       state: { fiscalCode: 'RSSMRA80A01H501U' }
@@ -212,7 +212,7 @@ describe('DebtPositionDownload', () => {
       render(<DebtPositionDownload />);
 
       await waitFor(() => {
-        expect(mockNotifyEmit).toHaveBeenCalledWith('app.receiptDetail.downloadError');
+        expect(mockNotifyEmit).toHaveBeenCalledWith('errors.toast.file');
         expect(mockDownloadBlob).not.toHaveBeenCalled();
       });
     });

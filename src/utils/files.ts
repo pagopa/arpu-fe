@@ -23,6 +23,9 @@ const downloadFile = (file: File, filename: string) => {
 };
 
 export const downloadBlob = (blob: Blob, fileName: string): void => {
+  if (!blob || blob.size === 0) {
+    throw new Error('Empty file');
+  }
   const url = URL.createObjectURL(blob);
   const link = document.createElement('a');
   link.href = url;

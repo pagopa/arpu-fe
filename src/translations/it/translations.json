@@ -298,7 +298,6 @@
         "title": "Informazioni sulla transazione"
       },
       "downloadReceipt": "Scarica ricevuta",
-      "downloadReceiptError": "Non è stato possibile recuperare la ricevuta.",
       "noReceipt": "La ricevuta pagoPA non è disponibile. Rivolgiti all’Ente Creditore se hai bisogno della quietanza di pagamento, cioè il documento che attesta di aver saldato un debito.",
       "downloadQuiettance": "Scarica quietanza",
       "createdOn": "Creato il",
@@ -426,7 +425,8 @@
       "500": "Errore del server, riprova più tardi.",
       "default": "Si è verificato un errore imprevisto. Riprova più tardi.",
       "drawer": "Errore durante l'aggiunta all'carrello dei pagamenti. Riprova più tardi.",
-      "payment": "Errore durante il pagamento. Riprova più tardi."
+      "payment": "Errore durante il pagamento. Riprova più tardi.",
+      "file": "Non è stato possibile recuperare il file."
     },
     "empty": {
       "search": "Nessun risultato trovato."

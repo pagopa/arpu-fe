@@ -150,7 +150,6 @@
         "title": "Informations sur la transaction"
       },
       "downloadReceipt": "Télécharger le reçu",
-      "downloadReceiptError":"Impossible de récupérer le reçu.",
       "noReceipt": "Le reçu pagoPA n'est pas disponible. Veuillez contacter l’organisme créancier si vous avez besoin d’un justificatif de paiement, c'est-à-dire du document confirmant le règlement de votre dette.",
       "downloadQuiettance": "Télécharger le justificatif",
       "paidBy": "Effectuée par",

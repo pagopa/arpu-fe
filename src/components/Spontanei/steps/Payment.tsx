@@ -172,11 +172,12 @@ const Payment = () => {
     const { organizationId: orgId, paymentDetails } = debtPositionResponse;
     const { nav } = paymentDetails;
     if (!nav) return;
-    isAnonymous
-      ? navigate(generatePath(ROUTES.public.PAYMENTS_ON_THE_FLY_DOWNLOAD, { orgId, nav }), {
-          state: { debtorFiscalCode: fiscalCode.value }
-        })
-      : navigate(generatePath(ROUTES.PAYMENTS_ON_THE_FLY_DOWNLOAD, { orgId, nav }));
+    const route = isAnonymous
+      ? ROUTES.public.PAYMENTS_ON_THE_FLY_DOWNLOAD
+      : ROUTES.PAYMENTS_ON_THE_FLY_DOWNLOAD;
+    navigate(generatePath(route, { orgId, nav }), {
+      state: { fiscalCode: fiscalCode.value }
+    });
   };
 
   return (
