@@ -149,7 +149,6 @@
         "title": "Transaction Information"
       },
       "downloadReceipt": "Download receipt",
-      "downloadReceiptError": "Receipt could not be retrieved",
       "noReceipt": "The pagoPA receipt is not available. Contact the Payee if you need the payment receipt, i.e. the document certifying that a debt has been settled.",
       "downloadQuiettance": "Download receipt",
       "paidBy": "Executed by",

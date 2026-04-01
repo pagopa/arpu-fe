@@ -22,7 +22,6 @@ import AuthCallback from 'routes/AuthCallback';
 import { getTokenOneidentity } from 'utils/loaders';
 import { ApiClient } from 'components/ApiClient';
 import Spontanei from 'routes/Spontanei';
-import Download from 'components/Spontanei/Download';
 import { ReceiptsList } from 'routes/Receipts/list';
 import { ReceiptDetail } from 'routes/Receipts/detail';
 import { DebtPositionsList } from 'routes/DebtPositions/list';
@@ -127,7 +126,7 @@ const router = createBrowserRouter([
                 path: ROUTES.public.PAYMENTS_ON_THE_FLY_DOWNLOAD,
                 element: (
                   <Guard path={ROUTES.public.PAYMENTS_ON_THE_FLY_DOWNLOAD}>
-                    <Download />
+                    <DebtPositionDownload />
                   </Guard>
                 ),
                 handle: {
@@ -314,7 +313,7 @@ const router = createBrowserRouter([
                 path: ROUTES.PAYMENTS_ON_THE_FLY_DOWNLOAD,
                 element: (
                   <Guard path={ROUTES.PAYMENTS_ON_THE_FLY_DOWNLOAD}>
-                    <Download />
+                    <DebtPositionDownload />
                   </Guard>
                 ),
                 handle: {

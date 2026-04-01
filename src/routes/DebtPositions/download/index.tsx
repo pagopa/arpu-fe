@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { Link, useLocation, useParams, Location } from 'react-router-dom';
+import { Link, useLocation, useParams } from 'react-router-dom';
 import { Stack, Typography, Button, Link as MuiLink } from '@mui/material';
 import { Trans, useTranslation } from 'react-i18next';
 import loaders from 'utils/loaders';
@@ -16,12 +16,12 @@ export const DebtPositionDownload = () => {
   const brokerId = storage.app.getBrokerId();
   const isAnonymous = storage.user.isAnonymous();
 
-  const location = useLocation() as Location<{ fiscalCode: string }>;
+  const location = useLocation();
   const fiscalCode = location?.state?.fiscalCode;
 
-  const params = useParams<{ nav: string; organizationId: string }>();
+  const params = useParams();
   const nav = params?.nav;
-  const organizationId = Number(params?.organizationId);
+  const organizationId = Number(params?.orgId);
 
   if (isNaN(organizationId) || !nav || !brokerId || !fiscalCode) {
     throw new Error('Missing required parameters');
@@ -29,22 +29,27 @@ export const DebtPositionDownload = () => {
 
   const { executeRecaptcha } = useRecaptcha();
 
-  const paymentNotice = isAnonymous
-    ? loaders.public.getPublicPaymentNotice(brokerId, organizationId, { nav }, fiscalCode)
-    : loaders.getPaymentNotice(brokerId, organizationId, { nav }, fiscalCode);
+  const anonymousPaymentNotice = loaders.public.getPublicPaymentNotice(
+    brokerId,
+    organizationId,
+    { nav },
+    fiscalCode
+  );
+
+  const paymentNotice = loaders.getPaymentNotice(brokerId, organizationId, { nav }, fiscalCode);
 
   const onDownload = async () => {
     try {
       if (isAnonymous) {
         const recaptchaToken = await executeRecaptcha();
-        const { data, filename } = await paymentNotice.mutateAsync({ recaptchaToken });
+        const { data, filename } = await anonymousPaymentNotice.mutateAsync({ recaptchaToken });
         files.downloadBlob(data, filename || `${nav}.pdf`);
-        return;
+      } else {
+        const { data, filename } = await paymentNotice.mutateAsync();
+        files.downloadBlob(data, filename || `${nav}.pdf`);
       }
-      const { data, filename } = await paymentNotice.mutateAsync();
-      files.downloadBlob(data, filename || `${nav}.pdf`);
     } catch {
-      notify.emit(t('app.receiptDetail.downloadError'));
+      notify.emit(t('errors.toast.file'));
     }
   };
 
