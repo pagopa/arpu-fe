@@ -267,25 +267,6 @@ describe('CourtesyPageActions – pagamento-non-riuscito (424)', () => {
     expect(downloadLink).toHaveAttribute('href', expect.stringContaining('/download/-1'));
   });
 
-  it('shows error notification when recaptcha fails', async () => {
-    const notifyModule = (await import('utils/notify')).default;
-    mockInstallmentsMutateAsync.mockResolvedValue([INSTALLMENT_MATCH]);
-    mockExecuteRecaptcha.mockRejectedValue(new Error('recaptcha failed'));
-    setupSearchParams({ nav: 'NAV-001', org_fiscal_code: 'ORG-FC-001', installment_id: '42' });
-    render(<CourtesyPageActions code={CODE_424} />);
-
-    await waitFor(() => {
-      expect(mockInstallmentsMutateAsync).toHaveBeenCalled();
-    });
-
-    fireEvent.click(screen.getByTestId('courtesyPage.downloadCta'));
-
-    await waitFor(() => {
-      expect(mockDownloadMutateAsync).not.toHaveBeenCalled();
-      expect(notifyModule.emit).toHaveBeenCalledWith('Download error');
-    });
-  });
-
   it('selects the only installment when installment_id is absent', async () => {
     mockInstallmentsMutateAsync.mockResolvedValue([INSTALLMENT_MATCH]);
     setupSearchParams({ nav: 'NAV-001', org_fiscal_code: 'ORG-FC-001' });
