@@ -122,13 +122,13 @@ export const CourtesyPageActions: React.FC<CourtesyPageActionsProps> = ({ code }
 
   const downloadUrl = isAnonymous
     ? generatePath(ROUTES.public.PAYMENTS_ON_THE_FLY_DOWNLOAD, {
-      orgId: installment?.organizationId || -1,
-      nav: installment?.nav || ''
-    }) + `#debtorFiscalCode=${installment?.debtor?.fiscalCode}`
+        orgId: installment?.organizationId || -1,
+        nav: installment?.nav || ''
+      }) + `#debtorFiscalCode=${installment?.debtor?.fiscalCode}`
     : generatePath(ROUTES.PAYMENTS_ON_THE_FLY_DOWNLOAD, {
-      orgId: installment?.organizationId || -1,
-      nav: installment?.nav || ''
-    });
+        orgId: installment?.organizationId || -1,
+        nav: installment?.nav || ''
+      });
 
   return (
     <Stack gap={2} alignItems="center">
