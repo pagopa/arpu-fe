@@ -123,9 +123,8 @@ export const CourtesyPageActions: React.FC<CourtesyPageActionsProps> = ({ code }
   const downloadUrl = isAnonymous
     ? generatePath(ROUTES.public.PAYMENTS_ON_THE_FLY_DOWNLOAD, {
       orgId: installment?.organizationId || -1,
-      nav: installment?.nav || '',
-      debtorFiscalCode: installment?.debtor?.fiscalCode || ''
-    })
+      nav: installment?.nav || ''
+    }) + `#debtorFiscalCode=${installment?.debtor?.fiscalCode}`
     : generatePath(ROUTES.PAYMENTS_ON_THE_FLY_DOWNLOAD, {
       orgId: installment?.organizationId || -1,
       nav: installment?.nav || ''

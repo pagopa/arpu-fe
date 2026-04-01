@@ -272,9 +272,10 @@ describe('Payment Component', () => {
     fireEvent.click(downloadButton);
 
     expect(mockNavigate).toHaveBeenCalledWith(
-      ROUTES.public.PAYMENTS_ON_THE_FLY_DOWNLOAD.replace(':orgId', '123')
-        .replace(':nav', 'NAV123')
-        .replace(':debtorFiscalCode', 'RSSMRA80A01H501U'),
+      ROUTES.public.PAYMENTS_ON_THE_FLY_DOWNLOAD.replace(':orgId', '123').replace(
+        ':nav',
+        'NAV123'
+      ) + '#debtorFiscalCode=RSSMRA80A01H501U',
       { state: undefined }
     );
   });

@@ -3,16 +3,20 @@ import React, { useEffect } from 'react';
 import { Trans, useTranslation } from 'react-i18next';
 import IllusHourGlass from './IllusHourGlass';
 import utils from 'utils';
-import { Link, useParams } from 'react-router-dom';
+import { Link, useLocation, useParams } from 'react-router-dom';
 import storage from 'utils/storage';
 import { useAppRoutes } from 'hooks/useAppRoutes';
 import { useRecaptcha } from 'components/RecaptchaProvider/RecaptchaProvider';
+import queryString from 'query-string';
 
 const Download = () => {
   const { routes, externalRoutes } = useAppRoutes();
   const { t } = useTranslation();
-  const { orgId, nav, debtorFiscalCode } = useParams();
+  const { orgId, nav } = useParams();
   const brokerId = storage.app.getBrokerId();
+
+  const location = useLocation();
+  const { debtorFiscalCode } = queryString.parse(location.hash);
 
   if (!orgId || !nav || !brokerId) {
     throw new Error('Missing required parameters');
@@ -26,7 +30,7 @@ const Download = () => {
     brokerId,
     parsedOrgId,
     { nav },
-    debtorFiscalCode || ''
+    (debtorFiscalCode as string) || ''
   );
 
   const isAnonymous = utils.storage.user.isAnonymous();
