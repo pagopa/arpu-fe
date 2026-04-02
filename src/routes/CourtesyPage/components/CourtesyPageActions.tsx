@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { Button, Stack } from '@mui/material';
-import { generatePath, Link, useNavigate, useSearchParams } from 'react-router-dom';
+import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { Download } from '@mui/icons-material';
 import { useTranslation } from 'react-i18next';
 import { usePostCarts } from 'hooks/usePostCarts';
@@ -10,7 +10,6 @@ import storage from 'utils/storage';
 import loaders from 'utils/loaders';
 import notify from 'utils/notify';
 import { useAppRoutes } from 'hooks/useAppRoutes';
-import { ROUTES } from 'routes/routes';
 import utils from 'utils';
 
 /**
@@ -120,15 +119,12 @@ export const CourtesyPageActions: React.FC<CourtesyPageActionsProps> = ({ code }
 
   const isCancelled = code === OUTCOMES['pagamento-annullato'];
 
-  const downloadUrl = isAnonymous
-    ? generatePath(ROUTES.public.PAYMENTS_ON_THE_FLY_DOWNLOAD, {
-        orgId: installment?.organizationId || -1,
-        nav: installment?.nav || ''
-      }) + `#debtorFiscalCode=${installment?.debtor?.fiscalCode}`
-    : generatePath(ROUTES.PAYMENTS_ON_THE_FLY_DOWNLOAD, {
-        orgId: installment?.organizationId || -1,
-        nav: installment?.nav || ''
-      });
+  const downloadUrl = utils.files.generateDownloadUrl({
+    orgId: installment?.organizationId,
+    nav: installment?.nav,
+    isAnonymous,
+    fiscalCode: installment?.debtor?.fiscalCode
+  });
 
   return (
     <Stack gap={2} alignItems="center">

@@ -6,13 +6,13 @@ import { addItem, isItemInCart, setCartEmail, toggleCartDrawer } from 'store/Car
 import notify from 'utils/notify';
 import { useStore } from 'store/GlobalStore';
 import utils from 'utils';
-import { generatePath, Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { DebtPositionRequestDTO } from '../../../../generated/data-contracts';
 import { useField, useFormikContext } from 'formik';
 import { PaymentNoticeInfo } from '..';
 import FormContext, { FormContextType } from '../FormContext';
 import { usePostCarts } from 'hooks/usePostCarts';
-import { OUTCOMES, ROUTES } from 'routes/routes';
+import { ROUTES } from 'routes/routes';
 import { CartItem } from 'models/Cart';
 import FileDownloadIcon from '@mui/icons-material/FileDownload';
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
@@ -167,28 +167,12 @@ const Payment = () => {
     });
   };
 
-  const generateDownloadUrl = () => {
-    try {
-      if (!debtPositionResponse) throw new Error(OUTCOMES[400]);
-      const { organizationId: orgId, paymentDetails } = debtPositionResponse;
-      const { nav } = paymentDetails;
-      if (!nav) throw new Error(OUTCOMES[400]);
-
-      const route = isAnonymous
-        ? ROUTES.public.PAYMENTS_ON_THE_FLY_DOWNLOAD
-        : ROUTES.PAYMENTS_ON_THE_FLY_DOWNLOAD;
-
-      return (
-        generatePath(route, {
-          orgId,
-          nav
-        }) + `#debtorFiscalCode=${fiscalCode.value}`
-      );
-    } catch (error) {
-      const route = isAnonymous ? ROUTES.public.COURTESY_PAGE : ROUTES.COURTESY_PAGE;
-      return generatePath(route, { outcome: error });
-    }
-  };
+  const downloadUrl = utils.files.generateDownloadUrl({
+    orgId: debtPositionResponse?.organizationId,
+    nav: debtPositionResponse?.paymentDetails?.nav,
+    isAnonymous,
+    fiscalCode: fiscalCode.value
+  });
 
   return (
     <>
@@ -248,7 +232,7 @@ const Payment = () => {
                 data-testid="download-notice-button"
                 component={Link}
                 target="_blank"
-                to={generateDownloadUrl()}>
+                to={downloadUrl}>
                 {t('spontanei.form.steps.step5.download.downloadButton')}
               </Button>
             </SpacedStack>

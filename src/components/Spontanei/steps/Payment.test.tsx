@@ -125,6 +125,15 @@ vi.mock('utils', () => ({
         }))
       }
     },
+    files: {
+      generateDownloadUrl: vi.fn(({ orgId, nav, isAnonymous, fiscalCode }) => {
+        const baseUrl = isAnonymous
+          ? ROUTES.public.PAYMENTS_ON_THE_FLY_DOWNLOAD
+          : ROUTES.PAYMENTS_ON_THE_FLY_DOWNLOAD;
+        const url = baseUrl.replace(':orgId', String(orgId)).replace(':nav', nav);
+        return fiscalCode ? `${url}#debtorFiscalCode=${fiscalCode}` : url;
+      })
+    },
     notify: { emit: vi.fn() }
   }
 }));

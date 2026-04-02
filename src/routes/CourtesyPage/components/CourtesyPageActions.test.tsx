@@ -74,7 +74,12 @@ vi.mock('utils/storage', async (importOriginal) => {
 
 vi.mock('utils/files', () => ({
   default: {
-    downloadBlob: vi.fn()
+    downloadBlob: vi.fn(),
+    generateDownloadUrl: vi.fn(({ orgId, nav, isAnonymous, fiscalCode }) => {
+      const prefix = isAnonymous ? '/public/spontanei' : '/spontanei';
+      const url = `${prefix}/download/${orgId ?? -1}/${nav ?? 'NAV'}`;
+      return fiscalCode ? `${url}#debtorFiscalCode=${fiscalCode}` : url;
+    })
   }
 }));
 

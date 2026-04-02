@@ -1,3 +1,6 @@
+import { generatePath } from 'react-router-dom';
+import { OUTCOMES, ROUTES } from 'routes/routes';
+
 /**
  * Downloads a file
  */
@@ -36,7 +39,38 @@ export const downloadBlob = (blob: Blob, fileName: string): void => {
   URL.revokeObjectURL(url);
 };
 
+const generateDownloadUrl = ({
+  orgId,
+  nav,
+  isAnonymous,
+  fiscalCode
+}: {
+  orgId?: number;
+  nav?: string;
+  fiscalCode?: string;
+  isAnonymous: boolean;
+}) => {
+  try {
+    if (!nav || !orgId || !fiscalCode) throw new Error(OUTCOMES[400]);
+
+    const route = isAnonymous
+      ? ROUTES.public.PAYMENTS_ON_THE_FLY_DOWNLOAD
+      : ROUTES.PAYMENTS_ON_THE_FLY_DOWNLOAD;
+
+    return (
+      generatePath(route, {
+        orgId,
+        nav
+      }) + `#debtorFiscalCode=${fiscalCode}`
+    );
+  } catch (error) {
+    const route = isAnonymous ? ROUTES.public.COURTESY_PAGE : ROUTES.COURTESY_PAGE;
+    return generatePath(route, { outcome: error });
+  }
+};
+
 export default {
   downloadFile,
-  downloadBlob
+  downloadBlob,
+  generateDownloadUrl
 };
