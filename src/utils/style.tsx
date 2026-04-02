@@ -39,6 +39,32 @@ const customTheme = createTheme({
           })
         })
       }
+    },
+    MuiButton: {
+      ...theme?.components?.MuiButton,
+      // styleOverrides: {
+      //   sizeLarge: ({ theme }) => ({
+      //     minHeight: theme.spacing(6)
+      //   })
+      // },
+      variants: [
+        {
+          props: { variant: 'contrast' },
+          style: ({ theme }) => ({
+            backgroundColor: theme.palette.background.paper,
+            border: `1px solid ${theme.palette.background.paper}`,
+            color: theme.palette.primary.main,
+            justifyContent: 'flex-start',
+            textAlign: 'left',
+            paddingX: 20,
+            paddingY: 11,
+            fontWeight: 700,
+            '&:hover': {
+              border: `1px solid ${theme.palette.primary.main}`
+            }
+          })
+        }
+      ]
     }
   }
 } as ThemeOptions);
