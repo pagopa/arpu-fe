@@ -44,7 +44,7 @@ const Spontanei = () => {
   const [submitFields, setSubmitFields] = React.useState<SpontaneousFormStructure['submitFields']>(
     []
   );
-
+  const [amountFieldName, setAmountFieldName] = React.useState<string>('amount');
   const { t } = useTranslation();
 
   const defaultPaymentNoticeInfo: PaymentNoticeInfo = {
@@ -78,9 +78,11 @@ const Spontanei = () => {
       summaryFields,
       setSummaryFields,
       submitFields,
-      setSubmitFields
+      setSubmitFields,
+      amountFieldName,
+      setAmountFieldName
     }),
-    [omitFirstStep, step, causaleHasJoinTemplate, summaryFields, submitFields]
+    [omitFirstStep, step, causaleHasJoinTemplate, summaryFields, submitFields, amountFieldName]
   );
 
   return (

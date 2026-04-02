@@ -93,8 +93,21 @@ const ExtraSummaryFields = (props: { extraSummaryFields: string[] }) => {
 
   const { values } = useFormikContext<PaymentNoticeInfo>();
   const flattenedValues = flattenObject(values);
+
+  const context = useContext<FormContextType | null>(FormContext);
+  const amountFieldName = context?.amountFieldName;
+
+  const isAmountField = (field: string) => field === amountFieldName;
+
+  const getValue = (field: string) => {
+    if (isAmountField(field)) {
+      return utils.converters.toEuro(flattenedValues[field] as number);
+    }
+    return flattenedValues[field];
+  };
+
   return (
-    <Card sx={{ marginBottom: 2 }} variant="outlined" data-testid="spontanei-step3-extra-summary">
+    <Card sx={{ marginBottom: 2 }} variant="outlined" data-testid="spontanei-step4-extra-summary">
       <SummaryStructure
         title={t('spontanei.form.steps.step4.extra.title')}
         dataTestId="summary-extra">
@@ -102,7 +115,7 @@ const ExtraSummaryFields = (props: { extraSummaryFields: string[] }) => {
           <SummaryItem
             key={field}
             label={t(`spontanei.form.steps.step4.extra.${field}`)}
-            value={`${flattenedValues[field]}`}
+            value={`${getValue(field)}`}
             dataTestId={`summary-extra-${field}`}
           />
         ))}
