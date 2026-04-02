@@ -8,6 +8,7 @@ import files from 'utils/files';
 import notify from 'utils/notify';
 import { useAppRoutes } from 'hooks/useAppRoutes';
 import { useRecaptcha } from 'components/RecaptchaProvider/RecaptchaProvider';
+import queryString from 'query-string';
 
 export const DebtPositionDownload = () => {
   const { t } = useTranslation();
@@ -17,13 +18,13 @@ export const DebtPositionDownload = () => {
   const isAnonymous = storage.user.isAnonymous();
 
   const location = useLocation();
-  const fiscalCode = location?.state?.fiscalCode;
+  const { debtorFiscalCode } = queryString.parse(location.hash);
 
   const params = useParams();
   const nav = params?.nav;
   const organizationId = Number(params?.orgId);
 
-  if (isNaN(organizationId) || !nav || !brokerId || !fiscalCode) {
+  if (isNaN(organizationId) || !nav || !brokerId || !debtorFiscalCode) {
     throw new Error('Missing required parameters');
   }
 
@@ -33,10 +34,15 @@ export const DebtPositionDownload = () => {
     brokerId,
     organizationId,
     { nav },
-    fiscalCode
+    debtorFiscalCode as string
   );
 
-  const paymentNotice = loaders.getPaymentNotice(brokerId, organizationId, { nav }, fiscalCode);
+  const paymentNotice = loaders.getPaymentNotice(
+    brokerId,
+    organizationId,
+    { nav },
+    debtorFiscalCode as string
+  );
 
   const onDownload = async () => {
     try {

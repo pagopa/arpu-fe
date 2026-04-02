@@ -6,8 +6,8 @@ import { addItem, isItemInCart, setCartEmail, toggleCartDrawer } from 'store/Car
 import notify from 'utils/notify';
 import { useStore } from 'store/GlobalStore';
 import utils from 'utils';
-import { generatePath, useNavigate } from 'react-router-dom';
-import { DebtPositionRequestDTO, FormTypeEnum } from '../../../../generated/data-contracts';
+import { Link, useNavigate } from 'react-router-dom';
+import { DebtPositionRequestDTO } from '../../../../generated/data-contracts';
 import { useField, useFormikContext } from 'formik';
 import { PaymentNoticeInfo } from '..';
 import FormContext, { FormContextType } from '../FormContext';
@@ -45,11 +45,9 @@ const Payment = () => {
 
   const organizationId = org.value?.organizationId;
   const debtPositionTypeOrgId = debtType.value?.debtPositionTypeOrgId;
-  const userDescription = context?.userDescription || undefined;
 
   const navigate = useNavigate();
   const brokerId = utils.storage.app.getBrokerId();
-  const formType = context?.formType;
 
   if (!organizationId || !debtPositionTypeOrgId || !brokerId) {
     throw new Error('Missing required parameters');
@@ -83,8 +81,7 @@ const Payment = () => {
           {
             amountCents: amount.value,
             remittanceInformation: description.value,
-            userRemittanceInformation:
-              formType !== FormTypeEnum.CUSTOM ? description.value : userDescription,
+            userRemittanceInformation: description.value,
             debtor: {
               entityType: entityType.value,
               fiscalCode: fiscalCode.value,
@@ -164,21 +161,18 @@ const Payment = () => {
       paFullName: orgName,
       description: remittanceInformation
     };
-    carts.mutate({ notices: [item], email: email.value || undefined });
-  };
-
-  const goToDownloadPaymentNoticePage = () => {
-    if (!debtPositionResponse) return;
-    const { organizationId: orgId, paymentDetails } = debtPositionResponse;
-    const { nav } = paymentDetails;
-    if (!nav) return;
-    const route = isAnonymous
-      ? ROUTES.public.PAYMENTS_ON_THE_FLY_DOWNLOAD
-      : ROUTES.PAYMENTS_ON_THE_FLY_DOWNLOAD;
-    navigate(generatePath(route, { orgId, nav }), {
-      state: { fiscalCode: fiscalCode.value }
+    carts.mutate({
+      notices: [item],
+      email: email.value || undefined
     });
   };
+
+  const downloadUrl = utils.files.generateDownloadUrl({
+    orgId: debtPositionResponse?.organizationId,
+    nav: debtPositionResponse?.paymentDetails?.nav,
+    isAnonymous,
+    fiscalCode: fiscalCode.value
+  });
 
   return (
     <>
@@ -235,8 +229,10 @@ const Payment = () => {
                 variant="text"
                 size="large"
                 startIcon={<FileDownloadIcon />}
-                onClick={goToDownloadPaymentNoticePage}
-                data-testid="download-notice-button">
+                data-testid="download-notice-button"
+                component={Link}
+                target="_blank"
+                to={downloadUrl}>
                 {t('spontanei.form.steps.step5.download.downloadButton')}
               </Button>
             </SpacedStack>

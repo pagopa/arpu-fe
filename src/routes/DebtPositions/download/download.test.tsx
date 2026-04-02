@@ -62,7 +62,8 @@ vi.mock('react-router-dom', async () => {
       orgId: '456'
     })),
     useLocation: vi.fn(() => ({
-      state: { fiscalCode: 'RSSMRA80A01H501U' }
+      state: { fiscalCode: 'RSSMRA80A01H501U' },
+      hash: '#debtorFiscalCode=RSSMRA80A01H501U'
     }))
   };
 });
@@ -237,9 +238,9 @@ describe('DebtPositionDownload', () => {
       expect(() => render(<DebtPositionDownload />)).toThrow('Missing required parameters');
     });
 
-    it('throws when fiscalCode is missing from location state', () => {
+    it('throws when debtorFiscalCode is missing from location hash', () => {
       vi.spyOn(ReactRouterDom, 'useLocation').mockReturnValue({
-        state: null
+        hash: ''
       } as any);
 
       expect(() => render(<DebtPositionDownload />)).toThrow('Missing required parameters');
