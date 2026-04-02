@@ -76,7 +76,7 @@ const SummaryItem = (props: { label: string; value: string; dataTestId?: string 
         {props.label}
       </Typography>
     </Grid>
-    <Grid size={{ xs: 12, sm: 4 }}>
+    <Grid size={{ xs: 12, sm: 6, md: 8 }}>
       <Typography
         variant="body2"
         fontWeight={600}
