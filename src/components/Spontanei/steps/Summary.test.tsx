@@ -176,4 +176,88 @@ describe('Summary Component', () => {
     renderSummary();
     expect(screen.getByTestId('controls-mock')).toBeInTheDocument();
   });
+
+  describe('with summaryFields context filtering', () => {
+    it('only renders sections included in summaryFields', () => {
+      renderSummary({
+        summaryFields: ['fullName', 'amount']
+      });
+
+      // Included
+      expect(screen.getByTestId('spontanei-step3-debtor-summary')).toBeInTheDocument();
+      expect(screen.getByTestId('spontanei-step3-payment-summary')).toBeInTheDocument();
+      expect(screen.getByTestId('summary-debtor-name')).toBeInTheDocument();
+      expect(screen.getByTestId('summary-payment-amount')).toBeInTheDocument();
+
+      // NOT included
+      expect(screen.queryByTestId('spontanei-step3-org-and-service-summary')).not.toBeInTheDocument();
+      expect(screen.queryByTestId('summary-debtor-code')).not.toBeInTheDocument();
+      expect(screen.queryByTestId('summary-payment-description')).not.toBeInTheDocument();
+    });
+
+    it('returns null if filtered summary fields are empty for a section', () => {
+      renderSummary({
+        summaryFields: ['someOtherField']
+      });
+
+      expect(screen.queryByTestId('spontanei-step3-org-and-service-summary')).not.toBeInTheDocument();
+      expect(screen.queryByTestId('spontanei-step3-debtor-summary')).not.toBeInTheDocument();
+      expect(screen.queryByTestId('spontanei-step3-payment-summary')).not.toBeInTheDocument();
+    });
+  });
+
+  describe('ExtraSummaryFields', () => {
+    it('renders extra fields correctly', () => {
+      renderSummary(
+        {
+          summaryFields: ['customField1', 'customField2']
+        },
+        {
+          // We need custom fields in the formik values
+          ...initialValues,
+          // @ts-ignore - custom fields not in PaymentNoticeInfo but expected by flattenObject and ExtraSummaryFields
+          customField1: 'Value 1',
+          customField2: 'Value 2'
+        }
+      );
+
+      expect(screen.getByTestId('spontanei-step4-extra-summary')).toBeInTheDocument();
+      expect(screen.getByTestId('summary-extra-customField1-value')).toHaveTextContent('Value 1');
+      expect(screen.getByTestId('summary-extra-customField2-value')).toHaveTextContent('Value 2');
+    });
+
+    it('converts value to Euro if it matches amountFieldName', () => {
+      renderSummary(
+        {
+          summaryFields: ['extraAmount'],
+          amountFieldName: 'extraAmount'
+        },
+        {
+          ...initialValues,
+          // @ts-ignore
+          extraAmount: 1250
+        }
+      );
+
+      expect(screen.getByTestId('summary-extra-extraAmount-value')).toHaveTextContent('€ 12,50');
+    });
+  });
+
+  it('displays debt type description in payment summary when causaleHasJoinTemplate is true', () => {
+    renderSummary(
+      {
+        causaleHasJoinTemplate: true
+      },
+      {
+        debtType: {
+          description: 'Debt Type Description'
+        } as DebtPositionTypeOrgsWithSpontaneousDTO,
+        description: 'User Description'
+      }
+    );
+
+    expect(screen.getByTestId('summary-payment-description-value')).toHaveTextContent(
+      'Debt Type Description'
+    );
+  });
 });
