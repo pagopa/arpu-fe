@@ -10,7 +10,6 @@ import {
   OrganizationsWithSpontaneousDTO,
   PersonEntityType
 } from '../../../../generated/data-contracts';
-import { FormTypeEnum } from '../../../../generated/apiClient';
 
 // Mock sub-components
 vi.mock('../Controls', () => ({
@@ -27,16 +26,18 @@ vi.mock('utils', () => ({
 }));
 
 const getDefaultContext = (overrides: Partial<FormContextType> = {}): FormContextType => ({
-  step: 3,
+  step: { current: 3, previous: 2 },
   setStep: vi.fn(),
   omitFirstStep: false,
   setOmitFirstStep: vi.fn(),
-  formType: FormTypeEnum.STANDARD,
-  setFormType: vi.fn(),
-  userDescription: null,
-  setUserDescription: vi.fn(),
   setSummaryFields: vi.fn(),
+  submitFields: [],
+  setSubmitFields: vi.fn(),
   summaryFields: [],
+  amountFieldName: '',
+  setAmountFieldName: vi.fn(),
+  causaleHasJoinTemplate: false,
+  setCausaleHasJoinTemplate: vi.fn(),
   ...overrides
 });
 
@@ -141,7 +142,7 @@ describe('Summary Component', () => {
 
   it('displays payment summary correctly with standard form', () => {
     renderSummary(
-      { formType: FormTypeEnum.STANDARD },
+      {},
       {
         amount: 5050,
         description: 'Monthly Fee'
@@ -156,9 +157,8 @@ describe('Summary Component', () => {
   });
 
   it('displays payment summary correctly with custom form and calls setUserDescription', () => {
-    const setUserDescription = vi.fn();
     renderSummary(
-      { formType: FormTypeEnum.CUSTOM, setUserDescription },
+      {},
       {
         debtType: {
           description: 'Test Description'
