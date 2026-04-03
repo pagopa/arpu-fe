@@ -46,7 +46,7 @@ export const Footer = () => {
         gap={{ xs: 3, md: 0 }}
         padding={{ xs: 2, md: 3 }}
         minHeight={50}>
-        <ProductLogo />
+        <ProductLogo maxWidth="80px" />
         <Stack alignItems="flex-end" component="nav">
           <Stack
             direction={{ xs: 'column', md: 'row' }}
