@@ -66,13 +66,21 @@ export const DebtPositionDownload = () => {
   return (
     <Stack gap={4} padding={25} alignItems="center" justifyContent="center">
       <img src="/cittadini/pictograms/hourglass.svg" aria-hidden="true" height={60} width={60} />
-      <Stack gap={1} alignItems="center">
+      <Stack gap={1} alignItems="center" textAlign="center" maxWidth={(theme) => theme.spacing(48)}>
         <Typography variant="h4" component="h1" fontWeight={600}>
           {t('app.debtPositions.download.title')}
         </Typography>
-        <Typography variant="body1" component="h2">
+        <Typography variant="body1" component="p">
           <Trans
-            i18nKey="app.debtPositions.download.subtitle"
+            i18nKey="app.debtPositions.download.help"
+            components={{
+              CustomLink: <MuiLink onClick={onDownload} sx={{ cursor: 'pointer' }} />
+            }}
+          />
+        </Typography>
+        <Typography variant="body1" component="p">
+          <Trans
+            i18nKey="app.debtPositions.download.info"
             components={{
               CustomLink: <MuiLink onClick={onDownload} sx={{ cursor: 'pointer' }} />
             }}
