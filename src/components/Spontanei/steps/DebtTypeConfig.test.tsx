@@ -54,7 +54,7 @@ vi.mock('utils', () => ({
 }));
 
 const getDefaultContext = (overrides: Partial<FormContextType> = {}): FormContextType => ({
-  step: 0,
+  step: { current: 0, previous: 0 },
   setStep: vi.fn(),
   omitFirstStep: false,
   setOmitFirstStep: vi.fn(),
@@ -64,6 +64,8 @@ const getDefaultContext = (overrides: Partial<FormContextType> = {}): FormContex
   setSummaryFields: vi.fn(),
   submitFields: [],
   setSubmitFields: vi.fn(),
+  amountFieldName: 'amount',
+  setAmountFieldName: vi.fn(),
   ...overrides
 });
 

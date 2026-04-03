@@ -54,7 +54,7 @@ const Controls = (props: ControlsProps) => {
       data-testid="spontanei-controls-container">
       {showBackButton && (
         <Button
-          size="large"
+          size="medium"
           variant="outlined"
           onClick={onBack}
           startIcon={<ArrowBack />}
@@ -64,7 +64,7 @@ const Controls = (props: ControlsProps) => {
       )}
       {!props.hideContinue && (
         <Button
-          size="large"
+          size="medium"
           variant="contained"
           onClick={onContinue}
           data-testid="spontanei-controls-continue-button">
