@@ -190,7 +190,9 @@ describe('Summary Component', () => {
       expect(screen.getByTestId('summary-payment-amount')).toBeInTheDocument();
 
       // NOT included
-      expect(screen.queryByTestId('spontanei-step3-org-and-service-summary')).not.toBeInTheDocument();
+      expect(
+        screen.queryByTestId('spontanei-step3-org-and-service-summary')
+      ).not.toBeInTheDocument();
       expect(screen.queryByTestId('summary-debtor-code')).not.toBeInTheDocument();
       expect(screen.queryByTestId('summary-payment-description')).not.toBeInTheDocument();
     });
@@ -200,7 +202,9 @@ describe('Summary Component', () => {
         summaryFields: ['someOtherField']
       });
 
-      expect(screen.queryByTestId('spontanei-step3-org-and-service-summary')).not.toBeInTheDocument();
+      expect(
+        screen.queryByTestId('spontanei-step3-org-and-service-summary')
+      ).not.toBeInTheDocument();
       expect(screen.queryByTestId('spontanei-step3-debtor-summary')).not.toBeInTheDocument();
       expect(screen.queryByTestId('spontanei-step3-payment-summary')).not.toBeInTheDocument();
     });
@@ -215,7 +219,7 @@ describe('Summary Component', () => {
         {
           // We need custom fields in the formik values
           ...initialValues,
-          // @ts-ignore - custom fields not in PaymentNoticeInfo but expected by flattenObject and ExtraSummaryFields
+          // @ts-expect-error - custom fields not in PaymentNoticeInfo but expected by flattenObject and ExtraSummaryFields
           customField1: 'Value 1',
           customField2: 'Value 2'
         }
@@ -234,7 +238,7 @@ describe('Summary Component', () => {
         },
         {
           ...initialValues,
-          // @ts-ignore
+          // @ts-expect-error - custom fields not in PaymentNoticeInfo but expected by flattenObject and ExtraSummaryFields
           extraAmount: 1250
         }
       );
