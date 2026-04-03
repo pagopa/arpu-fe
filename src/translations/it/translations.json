@@ -189,7 +189,8 @@
       },
       "download": {
         "title": "Il download dell’avviso è in corso",
-        "subtitle": "Se non parte automaticamente, <CustomLink>clicca qui</CustomLink>.",
+        "help": "Se non parte automaticamente, <CustomLink>clicca qui</CustomLink>.",
+        "info": "",
         "link": "Scopri i canali abilitati"
       }
     },
