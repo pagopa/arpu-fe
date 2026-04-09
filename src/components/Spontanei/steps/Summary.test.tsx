@@ -264,4 +264,126 @@ describe('Summary Component', () => {
       'Debt Type Description'
     );
   });
+
+  describe('i18n localized descriptions', () => {
+    it('displays localized debt type name in service summary when descriptionI18n is available', () => {
+      renderSummary(
+        {},
+        {
+          debtType: {
+            debtPositionTypeOrgId: 456,
+            organizationId: 123,
+            code: 'DEBT_CODE',
+            description: 'Tipo Debito Italiano',
+            descriptionI18n: { en: 'English Debt Type' }
+          } as DebtPositionTypeOrgsWithSpontaneousDTO
+        }
+      );
+
+      expect(screen.getByTestId('summary-service-name-value')).toBeInTheDocument();
+    });
+
+    it('falls back to default description in service summary when descriptionI18n is undefined', () => {
+      renderSummary(
+        {},
+        {
+          debtType: {
+            debtPositionTypeOrgId: 456,
+            organizationId: 123,
+            code: 'DEBT_CODE',
+            description: 'Fallback Description'
+          } as DebtPositionTypeOrgsWithSpontaneousDTO
+        }
+      );
+
+      expect(screen.getByTestId('summary-service-name-value')).toHaveTextContent(
+        'Fallback Description'
+      );
+    });
+
+    it('falls back to default description in service summary when descriptionI18n does not contain current language', () => {
+      renderSummary(
+        {},
+        {
+          debtType: {
+            debtPositionTypeOrgId: 456,
+            organizationId: 123,
+            code: 'DEBT_CODE',
+            description: 'Descrizione Italiana',
+            descriptionI18n: { de: 'German Only' }
+          } as DebtPositionTypeOrgsWithSpontaneousDTO
+        }
+      );
+
+      expect(screen.getByTestId('summary-service-name-value')).toHaveTextContent(
+        'Descrizione Italiana'
+      );
+    });
+
+    it('displays localized description in payment summary when causaleHasJoinTemplate is true and descriptionI18n is available', () => {
+      renderSummary(
+        {
+          causaleHasJoinTemplate: true
+        },
+        {
+          debtType: {
+            debtPositionTypeOrgId: 456,
+            organizationId: 123,
+            code: 'DEBT_CODE',
+            description: 'Descrizione Italiana',
+            descriptionI18n: { de: 'German Only' }
+          } as DebtPositionTypeOrgsWithSpontaneousDTO,
+          description: 'User Description'
+        }
+      );
+
+      expect(screen.getByTestId('summary-payment-description-value')).toHaveTextContent(
+        'Descrizione Italiana'
+      );
+    });
+
+    it('displays localized debtType.description in ExtraSummaryFields', () => {
+      renderSummary(
+        {
+          summaryFields: ['debtType.description']
+        },
+        {
+          ...initialValues,
+          debtType: {
+            debtPositionTypeOrgId: 456,
+            organizationId: 123,
+            code: 'DEBT_CODE',
+            description: 'Descrizione Default',
+            descriptionI18n: { de: 'German Description' }
+          } as DebtPositionTypeOrgsWithSpontaneousDTO
+        }
+      );
+
+      expect(screen.getByTestId('spontanei-step4-extra-summary')).toBeInTheDocument();
+      expect(screen.getByTestId('summary-extra-debtType.description-value')).toHaveTextContent(
+        'Descrizione Default'
+      );
+    });
+
+    it('falls back to default description in ExtraSummaryFields when descriptionI18n is undefined', () => {
+      renderSummary(
+        {
+          summaryFields: ['debtType.description']
+        },
+        {
+          ...initialValues,
+          debtType: {
+            debtPositionTypeOrgId: 456,
+            organizationId: 123,
+            code: 'DEBT_CODE',
+            description: 'No I18n Here'
+          } as DebtPositionTypeOrgsWithSpontaneousDTO
+        }
+      );
+
+      expect(screen.getByTestId('summary-extra-debtType.description-value')).toHaveTextContent(
+        'No I18n Here'
+      );
+    });
+  });
 });
