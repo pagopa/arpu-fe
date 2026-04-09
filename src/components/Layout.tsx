@@ -59,7 +59,7 @@ export function Layout(props: { anonymous?: boolean }) {
 
   const rootLink: RootLinkType = {
     label: appStore.value.brokerInfo?.brokerName || '',
-    href: ROUTES.DASHBOARD,
+    href: appStore.value.brokerInfo?.config?.brokerLink || ROUTES.DASHBOARD,
     ariaLabel: appStore.value.brokerInfo?.brokerName || '',
     title: appStore.value.brokerInfo?.brokerName || ''
   };

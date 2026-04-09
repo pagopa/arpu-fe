@@ -79,6 +79,42 @@ describe('brokerconfig', () => {
 
       expect(result.assistanceLink).toBe('https://demo.it/faq');
     });
+
+    it('parses brokerLink when present', () => {
+      const validConfig = {
+        translation: { en: { greeting: 'Hello' } },
+        brokerLink: 'https://broker.example.com'
+      };
+
+      const result = parseBrokerConfig(JSON.stringify(validConfig));
+
+      expect(console.warn).not.toHaveBeenCalled();
+      expect(result.brokerLink).toBe('https://broker.example.com');
+    });
+
+    it('returns undefined brokerLink when not present', () => {
+      const validConfig = {
+        translation: { en: { greeting: 'Hello' } }
+      };
+
+      const result = parseBrokerConfig(JSON.stringify(validConfig));
+
+      expect(result.brokerLink).toBeUndefined();
+    });
+
+    it('fails validation when brokerLink is not a valid URL', () => {
+      const invalidConfig = {
+        translation: { en: { greeting: 'Hello' } },
+        brokerLink: 'not-a-url'
+      };
+
+      parseBrokerConfig(JSON.stringify(invalidConfig));
+
+      expect(console.warn).toHaveBeenCalledWith(
+        '[brokerConfig] validation failed:',
+        expect.any(Object)
+      );
+    });
   });
 
   describe('applyBrokerTranslations', () => {
