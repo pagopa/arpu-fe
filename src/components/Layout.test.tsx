@@ -4,6 +4,7 @@ import React from 'react';
 import { Layout } from './Layout';
 import appStore from 'store/appStore';
 import { render } from '__tests__/renderers';
+import { ROUTES } from 'routes/routes';
 
 vi.mock('react-router-dom', async () => {
   const actual = await vi.importActual('react-router-dom');
@@ -136,6 +137,49 @@ describe('Layout', () => {
     it('should render assistance button even when link is not configured', () => {
       render(<Layout anonymous />);
       expect(screen.getByText('Assistenza')).toBeInTheDocument();
+    });
+
+    describe('rootLink brokerLink', () => {
+      it('should use brokerLink as rootLink href when present in config', () => {
+        appStore.value = {
+          ...appStore.value,
+          brokerInfo: {
+            brokerId: 1,
+            externalId: 'test',
+            brokerName: 'Test Broker',
+            brokerFiscalCode: '00000000000',
+            config: {
+              translation: {},
+              brokerLink: 'https://broker.example.com'
+            }
+          }
+        };
+
+        render(<Layout anonymous />);
+
+        const link = screen.getByRole('link', { name: 'Test Broker' });
+        expect(link).toHaveAttribute('href', 'https://broker.example.com');
+      });
+
+      it('should fallback to DASHBOARD route when brokerLink is not present', () => {
+        appStore.value = {
+          ...appStore.value,
+          brokerInfo: {
+            brokerId: 1,
+            externalId: 'test',
+            brokerName: 'Test Broker',
+            brokerFiscalCode: '00000000000',
+            config: {
+              translation: {}
+            }
+          }
+        };
+
+        render(<Layout anonymous />);
+
+        const link = screen.getByRole('link', { name: 'Test Broker' });
+        expect(link).toHaveAttribute('href', ROUTES.DASHBOARD);
+      });
     });
   });
 });

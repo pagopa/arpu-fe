@@ -17,6 +17,7 @@ const BrokerConfigSchema = z.object({
   assistanceLink: z.string().url().optional(),
   a11yLink: z.string().optional(),
   homeLink: z.string().url().optional(),
+  brokerLink: z.string().url().optional(),
   availableRoutes: z.array(z.string()).optional()
 });
 

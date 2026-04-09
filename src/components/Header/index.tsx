@@ -43,7 +43,7 @@ export const Header = (props: HeaderProps) => {
 
   const rootLink: RootLinkType = {
     label: appStore.value.brokerInfo?.brokerName || '',
-    href: ROUTES.LOGIN,
+    href: appStore.value.brokerInfo?.config?.brokerLink || ROUTES.LOGIN,
     ariaLabel: appStore.value.brokerInfo?.brokerName || '',
     title: appStore.value.brokerInfo?.brokerName || ''
   };
