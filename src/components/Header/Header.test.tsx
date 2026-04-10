@@ -148,4 +148,47 @@ describe('Header component', () => {
 
     mockStorage.mockClear();
   });
+
+  describe('rootLink brokerLink', () => {
+    it('should use brokerLink as rootLink href when present in config', () => {
+      appStore.value = {
+        ...appStore.value,
+        brokerInfo: {
+          brokerId: 1,
+          externalId: 'test',
+          brokerName: 'Test Broker',
+          brokerFiscalCode: '00000000000',
+          config: {
+            translation: {},
+            brokerLink: 'https://broker.example.com'
+          }
+        }
+      };
+
+      render(<WrappedHeader />);
+
+      const link = screen.getByRole('link', { name: 'Test Broker' });
+      expect(link).toHaveAttribute('href', 'https://broker.example.com');
+    });
+
+    it('should fallback to LOGIN route when brokerLink is not present', () => {
+      appStore.value = {
+        ...appStore.value,
+        brokerInfo: {
+          brokerId: 1,
+          externalId: 'test',
+          brokerName: 'Test Broker',
+          brokerFiscalCode: '00000000000',
+          config: {
+            translation: {}
+          }
+        }
+      };
+
+      render(<WrappedHeader />);
+
+      const link = screen.getByRole('link', { name: 'Test Broker' });
+      expect(link).toHaveAttribute('href', ROUTES.LOGIN);
+    });
+  });
 });

@@ -527,6 +527,56 @@ describe('IuvSearch', () => {
     });
   });
 
+  describe('Back button visibility', () => {
+    it('does not show back button before form submission', () => {
+      render(<IuvSearch {...defaultProps} />);
+
+      expect(screen.queryByText('app.routes.exit')).not.toBeInTheDocument();
+    });
+
+    it('shows back button after successful submission with results', () => {
+      mockUsePublicInstallmentsByIuvOrNav.mockReturnValue({
+        mutateAsync: mockMutateAsync,
+        reset: mockReset,
+        data: [{ id: 1 }],
+        isSuccess: true,
+        isError: false
+      });
+
+      render(<IuvSearch {...defaultProps} />);
+
+      expect(screen.getByText('app.routes.exit')).toBeInTheDocument();
+    });
+
+    it('shows back button after successful submission with no results', () => {
+      mockUsePublicInstallmentsByIuvOrNav.mockReturnValue({
+        mutateAsync: mockMutateAsync,
+        reset: mockReset,
+        data: [],
+        isSuccess: true,
+        isError: false
+      });
+
+      render(<IuvSearch {...defaultProps} />);
+
+      expect(screen.getByText('app.routes.exit')).toBeInTheDocument();
+    });
+
+    it('does not show back button when submission fails', () => {
+      mockUsePublicInstallmentsByIuvOrNav.mockReturnValue({
+        mutateAsync: mockMutateAsync,
+        reset: mockReset,
+        data: undefined,
+        isSuccess: false,
+        isError: true
+      });
+
+      render(<IuvSearch {...defaultProps} />);
+
+      expect(screen.queryByText('app.routes.exit')).not.toBeInTheDocument();
+    });
+  });
+
   describe('Error handling and retry', () => {
     it('shows retry option on error', () => {
       mockUsePublicInstallmentsByIuvOrNav.mockReturnValue({

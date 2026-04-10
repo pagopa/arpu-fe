@@ -7,6 +7,7 @@ import { useField, useFormikContext } from 'formik';
 import { PaymentNoticeInfo } from '..';
 import Controls from '../Controls';
 import { flattenObject } from '../DinamicForm/config';
+import getLocalizedDescription from '../GetLocalizedDescription';
 
 enum SummaryFields {
   ORG_NAME = 'orgName',
@@ -76,7 +77,7 @@ const SummaryItem = (props: { label: string; value: string; dataTestId?: string 
         {props.label}
       </Typography>
     </Grid>
-    <Grid size={{ xs: 12, sm: 4 }}>
+    <Grid size={{ xs: 12, sm: 6, md: 8 }}>
       <Typography
         variant="body2"
         fontWeight={600}
@@ -88,13 +89,33 @@ const SummaryItem = (props: { label: string; value: string; dataTestId?: string 
 );
 
 const ExtraSummaryFields = (props: { extraSummaryFields: string[] }) => {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const { extraSummaryFields } = props;
 
   const { values } = useFormikContext<PaymentNoticeInfo>();
   const flattenedValues = flattenObject(values);
+
+  const context = useContext<FormContextType | null>(FormContext);
+  const amountFieldName = context?.amountFieldName;
+
+  const isAmountField = (field: string) => field === amountFieldName;
+
+  const getValue = (field: string) => {
+    if (isAmountField(field)) {
+      return utils.converters.toEuro(flattenedValues[field] as number);
+    }
+    if (field === 'debtType.description') {
+      return getLocalizedDescription(
+        values.debtType?.descriptionI18n,
+        i18n.language,
+        flattenedValues[field] as string
+      );
+    }
+    return flattenedValues[field];
+  };
+
   return (
-    <Card sx={{ marginBottom: 2 }} variant="outlined" data-testid="spontanei-step3-extra-summary">
+    <Card sx={{ marginBottom: 2 }} variant="outlined" data-testid="spontanei-step4-extra-summary">
       <SummaryStructure
         title={t('spontanei.form.steps.step4.extra.title')}
         dataTestId="summary-extra">
@@ -102,7 +123,7 @@ const ExtraSummaryFields = (props: { extraSummaryFields: string[] }) => {
           <SummaryItem
             key={field}
             label={t(`spontanei.form.steps.step4.extra.${field}`)}
-            value={`${flattenedValues[field]}`}
+            value={`${getValue(field)}`}
             dataTestId={`summary-extra-${field}`}
           />
         ))}
@@ -112,14 +133,20 @@ const ExtraSummaryFields = (props: { extraSummaryFields: string[] }) => {
 };
 
 const OrgAndServiceSummary = WithSummaryFieldsOrHidden((props: WithSummaryFieldsProps) => {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const [org] = useField<PaymentNoticeInfo['org']>('org');
   const [debtType] = useField<PaymentNoticeInfo['debtType']>('debtType');
   const summaryFields = props.summaryFields;
 
   const orgName = org.value?.orgName || '';
   const orgCode = org.value?.orgFiscalCode || '';
-  const debtTypeName = debtType.value?.description || '';
+  const debtTypeName = debtType.value
+    ? getLocalizedDescription(
+        debtType.value.descriptionI18n,
+        i18n.language,
+        debtType.value.description
+      )
+    : '';
 
   return (
     <Card
@@ -215,14 +242,20 @@ const DebtTypeSummary = WithSummaryFieldsOrHidden((props: WithSummaryFieldsProps
 });
 
 const PaymentSummary = WithSummaryFieldsOrHidden((props: WithSummaryFieldsProps) => {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const [amount] = useField<PaymentNoticeInfo['amount']>('amount');
   const [description] = useField<PaymentNoticeInfo['description']>('description');
   const [debtType] = useField<PaymentNoticeInfo['debtType']>('debtType');
   const context = useContext<FormContextType | null>(FormContext);
   const causaleHasJoinTemplate = context?.causaleHasJoinTemplate;
 
-  const descriptionLabel = causaleHasJoinTemplate ? debtType.value?.description : description.value;
+  const descriptionLabel = causaleHasJoinTemplate
+    ? getLocalizedDescription(
+        debtType.value?.descriptionI18n,
+        i18n.language,
+        debtType.value?.description || ''
+      )
+    : description.value;
   const { summaryFields } = props;
 
   return (

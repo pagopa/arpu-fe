@@ -19,6 +19,7 @@ import { PaymentNoticeInfo } from '..';
 import StepWrapper from './StepWrapper';
 import FormContext, { FormContextType } from '../FormContext';
 import { Box } from '@mui/system';
+import getLocalizedDescription from '../GetLocalizedDescription';
 
 const LIMIT_DEBT_TYPE = 10;
 
@@ -27,7 +28,7 @@ const LIMIT_DEBT_TYPE = 10;
  * @returns JSX.Element
  */
 const DebtTypeSelect = () => {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const brokerId = utils.storage.app.getBrokerId();
   const isAnonymous = utils.storage.user.isAnonymous();
   const context = useContext<FormContextType | null>(FormContext);
@@ -132,7 +133,11 @@ const DebtTypeSelect = () => {
                       sx={{ my: 0.5 }}
                       value={debtTypeOption.debtPositionTypeOrgId}
                       control={<Radio />}
-                      label={debtTypeOption.description}
+                      label={getLocalizedDescription(
+                        debtTypeOption.descriptionI18n,
+                        i18n.language,
+                        debtTypeOption.description
+                      )}
                     />
                     {index !== debtTypeOptions.length - 1 && <Divider />}
                   </Box>
@@ -149,9 +154,14 @@ const DebtTypeSelect = () => {
               getOptionKey={(option) =>
                 (option as DebtPositionTypeOrgsWithSpontaneousDTO).debtPositionTypeOrgId
               }
-              getOptionLabel={(option) =>
-                (option as DebtPositionTypeOrgsWithSpontaneousDTO).description
-              }
+              getOptionLabel={(option) => {
+                const item = option as DebtPositionTypeOrgsWithSpontaneousDTO;
+                return getLocalizedDescription(
+                  item.descriptionI18n,
+                  i18n.language,
+                  item.description
+                );
+              }}
               renderInput={(params) => (
                 <TextField
                   {...params}
@@ -194,17 +204,19 @@ const DebtTypeSelect = () => {
                               }
                             />
                           }
-                          label={MostUsedDebtType.description}
+                          label={getLocalizedDescription(
+                            MostUsedDebtType.descriptionI18n,
+                            i18n.language,
+                            MostUsedDebtType.description
+                          )}
                         />
                       </FormControl>
                     ))}
                   </RadioGroup>
                 </Stack>
-                {debtTypeMeta.touched && (
-                  <Typography color="error">{debtTypeMeta.error}</Typography>
-                )}
               </>
             )}
+          {debtTypeMeta.touched && <Typography color="error">{debtTypeMeta.error}</Typography>}
         </Stack>
       </StepWrapper>
       <Controls shouldContinue={shouldContinue} />

@@ -79,7 +79,7 @@ export const CourtesyPage = () => {
         justifyContent: 'center',
         paddingBottom: 15
       }}>
-      <Box textAlign="center" mt={10} mb={10}>
+      <Box textAlign="center" mt={10} mb={10} maxWidth={(theme) => theme.spacing(48)}>
         <Box my={3}>
           <ErrorIconComponent code={code} />
         </Box>

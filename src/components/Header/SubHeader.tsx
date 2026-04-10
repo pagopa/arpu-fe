@@ -55,7 +55,8 @@ export const SubHeader = ({ product }: { product: ReactNode }) => {
         justifyContent="space-between"
         p={3}
         pl={5}
-        pb={2}
+        pb={1.25}
+        pt={1.25}
         width="100%">
         {product}
         {useCart && <Cart />}

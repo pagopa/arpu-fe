@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { Button, Stack } from '@mui/material';
-import { useNavigate, useSearchParams } from 'react-router-dom';
+import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { Download } from '@mui/icons-material';
 import { useTranslation } from 'react-i18next';
 import { usePostCarts } from 'hooks/usePostCarts';
@@ -8,10 +8,9 @@ import { CartItem } from 'models/Cart';
 import { OUTCOMES } from '../../../routes/routes';
 import storage from 'utils/storage';
 import loaders from 'utils/loaders';
-import files from 'utils/files';
 import notify from 'utils/notify';
 import { useAppRoutes } from 'hooks/useAppRoutes';
-import { useRecaptcha } from 'components/RecaptchaProvider/RecaptchaProvider';
+import utils from 'utils';
 
 /**
  * Expected query params on the courtesy-page URL:
@@ -49,13 +48,14 @@ export const CourtesyPageActions: React.FC<CourtesyPageActionsProps> = ({ code }
   const navigate = useNavigate();
   const { routes } = useAppRoutes();
   const [searchParams] = useSearchParams();
-  const { executeRecaptcha } = useRecaptcha();
 
   const nav = searchParams.get('nav');
   const orgFiscalCode = searchParams.get('org_fiscal_code');
   const installmentId = searchParams.get('installment_id');
 
   const brokerId = storage.app.getBrokerId();
+
+  const isAnonymous = utils.storage.user.isAnonymous();
 
   const [installment, setInstallment] = useState<InstallmentInfo | null>(null);
 
@@ -117,27 +117,14 @@ export const CourtesyPageActions: React.FC<CourtesyPageActionsProps> = ({ code }
     postCarts.mutate({ notices: [cartItem] });
   }, [installment, postCarts]);
 
-  const downloadMutation = loaders.public.getPublicPaymentNotice(
-    brokerId!,
-    installment?.organizationId ?? 0,
-    { nav: installment?.nav ?? '' },
-    installment?.debtor?.fiscalCode ?? ''
-  );
-
-  const handleDownload = useCallback(async () => {
-    try {
-      if (!installment?.organizationId || !installment?.nav || !brokerId) {
-        throw new Error('Missing required data for download');
-      }
-      const recaptchaToken = await executeRecaptcha();
-      const { data, filename } = await downloadMutation.mutateAsync({ recaptchaToken });
-      files.downloadBlob(data, filename || `${installment.nav}.pdf`);
-    } catch {
-      notify.emit(t('app.receiptDetail.downloadError'));
-    }
-  }, [installment, brokerId, downloadMutation, executeRecaptcha, t]);
-
   const isCancelled = code === OUTCOMES['pagamento-annullato'];
+
+  const downloadUrl = utils.files.generateDownloadUrl({
+    orgId: installment?.organizationId,
+    nav: installment?.nav,
+    isAnonymous,
+    fiscalCode: installment?.debtor?.fiscalCode
+  });
 
   return (
     <Stack gap={2} alignItems="center">
@@ -163,8 +150,10 @@ export const CourtesyPageActions: React.FC<CourtesyPageActionsProps> = ({ code }
       )}
 
       <Button
+        component={Link}
+        to={downloadUrl}
+        target="_blank"
         variant="text"
-        onClick={handleDownload}
         startIcon={<Download />}
         data-testid="courtesyPage.downloadCta">
         {t(`courtesyPage.${code}.downloadCta`)}

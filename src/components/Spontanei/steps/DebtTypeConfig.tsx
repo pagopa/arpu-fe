@@ -57,6 +57,7 @@ const DebtTypeConfig = () => {
    */
   useEffect(() => {
     context?.setSubmitFields(submitFields);
+    context?.setAmountFieldName(data?.formCustom?.structure.amountFieldName || 'amount');
   }, [submitFields.length]);
 
   const hasFlagAnonymousFiscalCode = data?.flagAnonymousFiscalCode;

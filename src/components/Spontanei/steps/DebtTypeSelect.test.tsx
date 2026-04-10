@@ -46,8 +46,20 @@ vi.mock('utils', () => ({
 }));
 
 const mockDebtTypes: DebtPositionTypeOrgsWithSpontaneousDTO[] = [
-  { debtPositionTypeOrgId: 1, description: 'Debt Type 1', code: '111', organizationId: 1 },
-  { debtPositionTypeOrgId: 2, description: 'Debt Type 2', code: '222', organizationId: 1 },
+  {
+    debtPositionTypeOrgId: 1,
+    description: 'Debt Type 1',
+    code: '111',
+    organizationId: 1,
+    descriptionI18n: { en: 'Debt Type 1 EN', de: 'Debt Type 1 DE' }
+  },
+  {
+    debtPositionTypeOrgId: 2,
+    description: 'Debt Type 2',
+    code: '222',
+    organizationId: 1,
+    descriptionI18n: { en: 'Debt Type 2 EN' }
+  },
   { debtPositionTypeOrgId: 3, description: 'Debt Type 3', code: '333', organizationId: 1 },
   { debtPositionTypeOrgId: 4, description: 'Debt Type 4', code: '444', organizationId: 1 },
   { debtPositionTypeOrgId: 5, description: 'Debt Type 5', code: '555', organizationId: 1 },
@@ -113,9 +125,9 @@ describe('DebtTypeSelect Component', () => {
     expect(screen.getByTestId('spontanei-step2-description')).toBeInTheDocument();
     expect(screen.getByTestId('spontanei-step2-search-input')).toBeInTheDocument();
 
-    // Check if most used debt types are rendered
+    // Check if most used debt types are rendered (localized to 'en' in test env)
     expect(screen.getByTestId('spontanei-step2-mostUsedDebtTypes')).toBeInTheDocument();
-    expect(screen.getByText('Debt Type 1')).toBeInTheDocument();
+    expect(screen.getByText('Debt Type 1 EN')).toBeInTheDocument();
   });
 
   it('handles debt type selection via Autocomplete', async () => {
@@ -139,7 +151,8 @@ describe('DebtTypeSelect Component', () => {
     });
     const { getByLabelText } = renderDebtTypeSelect();
 
-    const radio = getByLabelText('Debt Type 1');
+    // Labels are localized to 'en' in test env via descriptionI18n
+    const radio = getByLabelText('Debt Type 1 EN');
     fireEvent.click(radio);
 
     // After clicking radio, it should be checked
@@ -200,15 +213,14 @@ describe('DebtTypeSelect Component', () => {
     const setStep = vi.fn();
     renderDebtTypeSelect({ setStep });
 
-    // Select a debt type
     const input = screen.getByRole('combobox');
     fireEvent.focus(input);
     fireEvent.change(input, { target: { value: 'Debt Type 2' } });
-    const option = await screen.findByText('Debt Type 2');
+    const option = await screen.findByText('Debt Type 2 EN');
     fireEvent.click(option);
 
     await waitFor(() => {
-      expect(input).toHaveValue('Debt Type 2');
+      expect(input).toHaveValue('Debt Type 2 EN');
     });
 
     const continueButton = screen.getByTestId('spontanei-controls-continue-button');
@@ -216,6 +228,105 @@ describe('DebtTypeSelect Component', () => {
 
     await waitFor(() => {
       expect(setStep).toHaveBeenCalled();
+    });
+  });
+
+  describe('i18n localized descriptions', () => {
+    it('displays localized description in RadioGroup when descriptionI18n contains current language', async () => {
+      const i18nDebtTypes = [
+        {
+          debtPositionTypeOrgId: 1,
+          description: 'Tipo Debito 1',
+          code: '111',
+          organizationId: 1,
+          descriptionI18n: { en: 'Debt Type 1 EN' }
+        },
+        { debtPositionTypeOrgId: 2, description: 'Tipo Debito 2', code: '222', organizationId: 1 }
+      ];
+      (utils.loaders.getDebtPositionTypeOrgsWithSpontaneous as Mock).mockReturnValue({
+        data: i18nDebtTypes
+      });
+
+      renderDebtTypeSelect();
+
+      expect(screen.getByText('Debt Type 1 EN')).toBeInTheDocument();
+      expect(screen.getByText('Tipo Debito 2')).toBeInTheDocument();
+    });
+
+    it('falls back to default description when descriptionI18n does not contain current language', () => {
+      const i18nDebtTypes = [
+        {
+          debtPositionTypeOrgId: 1,
+          description: 'Tipo Debito Fallback',
+          code: '111',
+          organizationId: 1,
+          descriptionI18n: { de: 'German Only' }
+        }
+      ];
+      (utils.loaders.getDebtPositionTypeOrgsWithSpontaneous as Mock).mockReturnValue({
+        data: i18nDebtTypes
+      });
+
+      renderDebtTypeSelect();
+
+      expect(screen.getByText('Tipo Debito Fallback')).toBeInTheDocument();
+    });
+
+    it('falls back to default description when descriptionI18n is undefined', () => {
+      const i18nDebtTypes = [
+        {
+          debtPositionTypeOrgId: 1,
+          description: 'No I18n Description',
+          code: '111',
+          organizationId: 1
+        }
+      ];
+      (utils.loaders.getDebtPositionTypeOrgsWithSpontaneous as Mock).mockReturnValue({
+        data: i18nDebtTypes
+      });
+
+      renderDebtTypeSelect();
+
+      expect(screen.getByText('No I18n Description')).toBeInTheDocument();
+    });
+
+    it('displays localized description in Autocomplete options', async () => {
+      (utils.loaders.getDebtPositionTypeOrgsWithSpontaneous as Mock).mockReturnValue({
+        data: mockDebtTypes
+      });
+
+      renderDebtTypeSelect();
+
+      const input = screen.getByRole('combobox');
+      fireEvent.focus(input);
+      fireEvent.change(input, { target: { value: 'Debt Type 3' } });
+
+      const option = await screen.findByText('Debt Type 3');
+      expect(option).toBeInTheDocument();
+    });
+
+    it('displays localized labels for most used debt types', async () => {
+      (utils.loaders.getDebtPositionTypeOrgsWithSpontaneous as Mock).mockReturnValue({
+        data: mockDebtTypes
+      });
+      (
+        utils.loaders.getMostUsedSpontaneousDebtPositionTypeOrgsForCurrentYear as Mock
+      ).mockReturnValue({
+        data: [
+          {
+            debtPositionTypeOrgId: 1,
+            description: 'Tipo Debito 1',
+            code: '111',
+            organizationId: 1,
+            descriptionI18n: { en: 'Most Used EN' }
+          }
+        ]
+      });
+
+      renderDebtTypeSelect();
+
+      expect(screen.getByTestId('spontanei-step2-mostUsedDebtTypes')).toBeInTheDocument();
+      expect(screen.getByText('Most Used EN')).toBeInTheDocument();
     });
   });
 });

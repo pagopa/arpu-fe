@@ -24,11 +24,19 @@ const getPaymentNoticeInfoSchema = (t: (key: string) => string) =>
     fullName: z.string().min(2, t('spontanei.form.errors.fullName')),
     fiscalCode: z
       .string()
-      .regex(
-        /(^[A-Za-z]{6}[0-9]{2}[A-Za-z]{1}[0-9]{2}[A-Za-z]{1}[0-9]{3}[A-Za-z]{1}$)|(^[0-9]{11}$)|ANONIMO/,
-        t('spontanei.form.errors.fullName')
+      .min(1, t('errors.form.fiscalCode.required'))
+      .pipe(
+        z
+          .string()
+          .regex(
+            /(^[A-Za-z]{6}[0-9]{2}[A-Za-z]{1}[0-9]{2}[A-Za-z]{1}[0-9]{3}[A-Za-z]{1}$)|(^[0-9]{11}$)|ANONIMO/,
+            t('errors.form.fiscalCode.invalid')
+          )
       ),
-    email: z.string().email(t('spontanei.form.errors.email'))
+    email: z
+      .string()
+      .min(1, t('errors.form.email.required'))
+      .pipe(z.string().email(t('errors.form.email.invalid')))
   });
 
 export default getPaymentNoticeInfoSchema;

@@ -59,7 +59,7 @@ export function Layout(props: { anonymous?: boolean }) {
 
   const rootLink: RootLinkType = {
     label: appStore.value.brokerInfo?.brokerName || '',
-    href: ROUTES.DASHBOARD,
+    href: appStore.value.brokerInfo?.config?.brokerLink || ROUTES.DASHBOARD,
     ariaLabel: appStore.value.brokerInfo?.brokerName || '',
     title: appStore.value.brokerInfo?.brokerName || ''
   };
@@ -108,7 +108,7 @@ export function Layout(props: { anonymous?: boolean }) {
             enableLogin={false}
           />
         )}
-        {subHeader && <SubHeader product={<ProductLogo />} />}
+        {subHeader && <SubHeader product={<ProductLogo maxWidth="160px" />} />}
         <Stack direction={lg ? 'row' : 'column'} bgcolor={grey['100']}>
           {sidebar ? <Sidebar /> : null}
           <Box width={'100%'} component="main" id="main-content" tabIndex={-1}>

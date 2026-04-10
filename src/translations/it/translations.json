@@ -189,7 +189,8 @@
       },
       "download": {
         "title": "Il download dell’avviso è in corso",
-        "subtitle": "Se non parte automaticamente, <CustomLink>clicca qui</CustomLink>.",
+        "help": "Se non parte automaticamente, <CustomLink>clicca qui</CustomLink>.",
+        "info": "",
         "link": "Scopri i canali abilitati"
       }
     },
@@ -298,7 +299,6 @@
         "title": "Informazioni sulla transazione"
       },
       "downloadReceipt": "Scarica ricevuta",
-      "downloadReceiptError": "Non è stato possibile recuperare la ricevuta.",
       "noReceipt": "La ricevuta pagoPA non è disponibile. Rivolgiti all’Ente Creditore se hai bisogno della quietanza di pagamento, cioè il documento che attesta di aver saldato un debito.",
       "downloadQuiettance": "Scarica quietanza",
       "createdOn": "Creato il",
@@ -418,7 +418,15 @@
   "errors": {
     "resourceNotAvailable": "Risorsa non disponibile",
     "form": {
-      "required": "Questo campo non puoi essere vuoto."
+      "required": "Questo campo non puoi essere vuoto.",
+      "email": {
+        "required": "Inserisci un indirizzo email.",
+        "invalid": "Inserisci un indirizzo email valido."
+      },
+      "fiscalCode": {
+        "required": "Inserisci il codice fiscale.",
+        "invalid": "Il Codice Fiscale non è corretto."
+      }
     },
     "toast": {
       "403": "Non hai i permessi per eseguire questa azione.",
@@ -426,7 +434,8 @@
       "500": "Errore del server, riprova più tardi.",
       "default": "Si è verificato un errore imprevisto. Riprova più tardi.",
       "drawer": "Errore durante l'aggiunta all'carrello dei pagamenti. Riprova più tardi.",
-      "payment": "Errore durante il pagamento. Riprova più tardi."
+      "payment": "Errore durante il pagamento. Riprova più tardi.",
+      "file": "Non è stato possibile recuperare il file."
     },
     "empty": {
       "search": "Nessun risultato trovato."
@@ -632,17 +641,17 @@
         },
         "step5": {
           "step": "Completa il pagamento",
-          "title": "Completa il pagamento",
-          "description": "Seleziona una delle opzioni per completare il pagamento.",
+          "title": "Come vuoi pagare?",
+          "description": "Puoi scegliere se pagare subito online oppure scaricare l’avviso e pagare in un secondo momento.",
           "pay": {
-            "title": "Paga online con pagoPA",
-            "description": "Effettua il pagamento subito in modo digitale.",
+            "title": "Paga online",
+            "description": "Puoi usare carta, conto e app di pagamento.",
             "addItemToCartButton": "Aggiungi al carrello",
             "payButton": "Paga ora"
           },
           "download": {
             "title": "Scarica l’avviso di pagamento",
-            "description": "Potrai usarlo per pagare successivamente presso sportelli, banche, o altri punti convenzionati.",
+            "description": "Potrai usarlo per pagare presso sportelli, banche o altri canali abilitati ai pagamenti degli avvisi pagoPA.",
             "downloadButton": "Scarica l’avviso"
           }
         }
@@ -655,17 +664,9 @@
         "description": "Causale troppo corta o mancante.",
         "amount": "Importo non valido.",
         "fullName": "Nome e cognome non validi.",
-        "fiscalCode": "Codice Fiscale o Partita IVA errato.",
-        "email": "Email non valida.",
         "org": "La selezione dell'ente è obbligatoria.",
         "debtType": "*Seleziona un servizio nella lista superiore o nell'elenco dei più utilizzati"
       }
-    },
-    "download": {
-      "title": "Il download dell’avviso è in corso",
-      "help": "Se non parte automaticamente, clicca <link1>qui.</link1>",
-      "info": "Scopri i canali abilitati",
-      "close": "Chiudi"
     }
   }
 }
