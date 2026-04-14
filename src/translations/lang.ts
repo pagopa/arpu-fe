@@ -1,7 +1,7 @@
-import translationIT from './it/arpu-it.json';
-import translationEN from './en/arpu-en.json';
-import translationFR from './fr/arpu-fr.json';
-import translationDE from './de/arpu-de.json';
+import translationIT from './it.json';
+import translationEN from './en.json';
+import translationFR from './fr.json';
+import translationDE from './de.json';
 
 const lang = {
   it: {

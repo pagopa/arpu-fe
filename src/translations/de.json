@@ -631,8 +631,14 @@
                 "description": "Ursache: zu kurz oder fehlend.",
                 "amount": "Ungültiger Betrag.",
                 "fullName": "Bitte geben Sie Ihren Vor- und Nachnamen ein",
-                "fiscalCode": "Geben Sie Ihre Steuernummer ein",
-                "email": "Bitte geben Sie eine E-Mail Adresse ein",
+                "fiscalCode": {
+                    "required": "Geben Sie Ihre Steuernummer ein",
+                    "invalid": "Geben Sie eine gültige Steuernummer ein"
+                },
+                "email": {
+                    "required": "Bitte geben Sie eine E-Mail Adresse ein",
+                    "invalid": "Bitte geben Sie eine gültige E-Mail Adresse ein"
+                },
                 "org": "Die Auswahl der Einrichtung ist obligatorisch.",
                 "debtType": "*Wählen Sie einen Dienst aus der obersten oder meistgenutzten Liste"
             }

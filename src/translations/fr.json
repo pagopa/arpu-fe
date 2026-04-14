@@ -631,8 +631,14 @@
                 "description": "Cause trop courte ou manquante.",
                 "amount": "Montant non valide.",
                 "fullName": "Saisir le nom et le prénom",
-                "fiscalCode": "Saisir le code fiscal",
-                "email": "Saisir une adresse e-mail",
+                "fiscalCode": {
+                    "required": "Saisir le code fiscal",
+                    "invalid": "Saisir un code fiscal valide"
+                },
+                "email": {
+                    "required": "Saisir une adresse e-mail",
+                    "invalid": "Saisir une adresse e-mail valide"
+                },
                 "org": "La sélection de l’organisme est obligatoire.",
                 "debtType": "*Sélectionner un service dans la liste ci-dessus ou dans la liste des services les plus utilisés"
             }
