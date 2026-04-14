@@ -42,7 +42,9 @@ export const ReceiptDetail = () => {
 
     if (!data?.nav) return;
 
-    navigate(generatePath(path, { nav: data.nav, organizationId }), { state: { fiscalCode } });
+    navigate(
+      `${generatePath(path, { nav: data.nav, organizationId })}#debtorFiscalCode=${fiscalCode}`
+    );
   };
 
   const onBack = () => {

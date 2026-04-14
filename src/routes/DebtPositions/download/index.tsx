@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useRef } from 'react';
 import { Link, useLocation, useParams } from 'react-router-dom';
 import { Stack, Typography, Button, Link as MuiLink } from '@mui/material';
 import { Trans, useTranslation } from 'react-i18next';
@@ -22,7 +22,7 @@ export const DebtPositionDownload = () => {
 
   const params = useParams();
   const nav = params?.nav;
-  const organizationId = Number(params?.orgId);
+  const organizationId = Number(params?.organizationId);
 
   if (isNaN(organizationId) || !nav || !brokerId || !debtorFiscalCode) {
     throw new Error('Missing required parameters');
@@ -59,8 +59,13 @@ export const DebtPositionDownload = () => {
     }
   };
 
+  const hasDownloaded = useRef(false);
+
   useEffect(() => {
-    onDownload();
+    if (!hasDownloaded.current) {
+      hasDownloaded.current = true;
+      onDownload();
+    }
   }, []);
 
   return (

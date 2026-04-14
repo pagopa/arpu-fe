@@ -315,9 +315,9 @@ describe('Actions', () => {
       render(<Actions installment={mockExpiredInstallment} />);
       fireEvent.click(screen.getByLabelText('actions.download'));
 
-      expect(mockNavigate).toHaveBeenCalledWith('/download/NAV002/321', {
-        state: { fiscalCode: 'RSSMRA80A01H501U' }
-      });
+      expect(mockNavigate).toHaveBeenCalledWith(
+        '/download/NAV002/321#debtorFiscalCode=RSSMRA80A01H501U'
+      );
     });
 
     it('navigates to public download route for anonymous user', () => {
@@ -325,9 +325,9 @@ describe('Actions', () => {
       render(<Actions installment={mockExpiredInstallment} />);
       fireEvent.click(screen.getByLabelText('actions.download'));
 
-      expect(mockNavigate).toHaveBeenCalledWith('/public/download/NAV002/321', {
-        state: { fiscalCode: 'RSSMRA80A01H501U' }
-      });
+      expect(mockNavigate).toHaveBeenCalledWith(
+        '/public/download/NAV002/321#debtorFiscalCode=RSSMRA80A01H501U'
+      );
     });
 
     it('emits default error when nav is missing', () => {
@@ -426,9 +426,9 @@ describe('Actions', () => {
         render(<Actions installment={mockUnpaidInstallment} />);
         fireEvent.click(screen.getByLabelText('actions.download'));
 
-        expect(mockNavigate).toHaveBeenCalledWith('/download/NAV003/654', {
-          state: { fiscalCode: 'RSSMRA80A01H501U' }
-        });
+        expect(mockNavigate).toHaveBeenCalledWith(
+          '/download/NAV003/654#debtorFiscalCode=RSSMRA80A01H501U'
+        );
       });
 
       it('navigates to public download route for anonymous user', () => {
@@ -436,9 +436,9 @@ describe('Actions', () => {
         render(<Actions installment={mockUnpaidInstallment} />);
         fireEvent.click(screen.getByLabelText('actions.download'));
 
-        expect(mockNavigate).toHaveBeenCalledWith('/public/download/NAV003/654', {
-          state: { fiscalCode: 'RSSMRA80A01H501U' }
-        });
+        expect(mockNavigate).toHaveBeenCalledWith(
+          '/public/download/NAV003/654#debtorFiscalCode=RSSMRA80A01H501U'
+        );
       });
 
       it('emits default error when nav is missing', () => {

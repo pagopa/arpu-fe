@@ -59,7 +59,7 @@ vi.mock('react-router-dom', async () => {
     ...actual,
     useParams: vi.fn(() => ({
       nav: 'NAV123',
-      orgId: '456'
+      organizationId: '456'
     })),
     useLocation: vi.fn(() => ({
       state: { fiscalCode: 'RSSMRA80A01H501U' },
