@@ -628,8 +628,8 @@
       "abort": "Exit",
       "back": "Back",
       "errors": {
-        "description": "Reason for payment too short or missing.",
-        "amount": "Invalid amount.",
+        "description": "Reason for payment too short or missing",
+        "amount": "Invalid amount",
         "fullName": "Enter your first and last name",
         "fiscalCode": {
           "required": "Enter Tax Code",
@@ -640,7 +640,7 @@
           "invalid": "Enter a valid email address"
         },
         "org": "Selection of the Institution is mandatory",
-        "debtType": "*Select a service from the list above or from the list of most frequently used services"
+        "debtType": "Select a service from the list above or from the list of most frequently used services"
       }
     },
     "download": {

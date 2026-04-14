@@ -628,8 +628,8 @@
             "abort": "Quitter",
             "back": "Retour",
             "errors": {
-                "description": "Cause trop courte ou manquante.",
-                "amount": "Montant non valide.",
+                "description": "Cause trop courte ou manquante",
+                "amount": "Montant non valide",
                 "fullName": "Saisir le nom et le prénom",
                 "fiscalCode": {
                     "required": "Saisir le code fiscal",
@@ -639,8 +639,8 @@
                     "required": "Saisir une adresse e-mail",
                     "invalid": "Saisir une adresse e-mail valide"
                 },
-                "org": "La sélection de l’organisme est obligatoire.",
-                "debtType": "*Sélectionner un service dans la liste ci-dessus ou dans la liste des services les plus utilisés"
+                "org": "La sélection de l’organisme est obligatoire",
+                "debtType": "Sélectionner un service dans la liste ci-dessus ou dans la liste des services les plus utilisés"
             }
         },
         "download": {

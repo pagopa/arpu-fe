@@ -628,8 +628,8 @@
             "abort": "Ausfahrt",
             "back": "Zurück",
             "errors": {
-                "description": "Ursache: zu kurz oder fehlend.",
-                "amount": "Ungültiger Betrag.",
+                "description": "Ursache: zu kurz oder fehlend",
+                "amount": "Ungültiger Betrag",
                 "fullName": "Bitte geben Sie Ihren Vor- und Nachnamen ein",
                 "fiscalCode": {
                     "required": "Geben Sie Ihre Steuernummer ein",
@@ -639,8 +639,8 @@
                     "required": "Bitte geben Sie eine E-Mail Adresse ein",
                     "invalid": "Bitte geben Sie eine gültige E-Mail Adresse ein"
                 },
-                "org": "Die Auswahl der Einrichtung ist obligatorisch.",
-                "debtType": "*Wählen Sie einen Dienst aus der obersten oder meistgenutzten Liste"
+                "org": "Die Auswahl der Einrichtung ist obligatorisch",
+                "debtType": "Wählen Sie einen Dienst aus der obersten oder meistgenutzten Liste"
             }
         },
         "download": {

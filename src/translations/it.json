@@ -628,12 +628,18 @@
             "abort": "Esci",
             "back": "Indietro",
             "errors": {
-                "description": "Causale troppo corta o mancante.",
-                "amount": "Importo non valido.",
+                "description": "Causale troppo corta o mancante",
+                "amount": "Importo non valido",
                 "fullName": "Inserisci nome e cognome",
-                "fiscalCode": "Inserisci il Codice Fiscale",
-                "email": "Inserisci un indirizzo email",
-                "org": "La selezione dell'ente è obbligatoria.",
+                "fiscalCode": {
+                    "required": "Inserisci il Codice Fiscale",
+                    "invalid": "Il Codice Fiscale non è corretto"
+                },
+                "email": {
+                    "required": "Inserisci un indirizzo email",
+                    "invalid": "Inserisci un indirizzo email valido"
+                },
+                "org": "La selezione dell'ente è obbligatoria",
                 "debtType": "*Seleziona un servizio nella lista superiore o nell'elenco dei più utilizzati"
             }
         },
