@@ -87,7 +87,15 @@ const Spontanei = () => {
       amountFieldName,
       setAmountFieldName
     }),
-    [omitFirstStep, step, causaleHasJoinTemplate, summaryFields, submitFields, dictionary, amountFieldName]
+    [
+      omitFirstStep,
+      step,
+      causaleHasJoinTemplate,
+      summaryFields,
+      submitFields,
+      dictionary,
+      amountFieldName
+    ]
   );
 
   return (
