@@ -114,7 +114,7 @@ const DebtTypeSelect = () => {
     <>
       <StepWrapper isPending={isDebtPositionTypeOrgsWithSpontaneousPending}>
         <Stack spacing={2} padding={4}>
-          <Typography variant="h6" data-testid="spontanei-step2-title">
+          <Typography variant="h6" data-testid="spontanei-step2-title" component={'h2'}>
             {t('spontanei.form.steps.step2.title')}
           </Typography>
           <Typography data-testid="spontanei-step2-description">
@@ -139,7 +139,7 @@ const DebtTypeSelect = () => {
                         debtTypeOption.description
                       )}
                     />
-                    {index !== debtTypeOptions.length - 1 && <Divider />}
+                    {index !== debtTypeOptions.length - 1 && <Divider aria-hidden="true" />}
                   </Box>
                 ))}
               </RadioGroup>

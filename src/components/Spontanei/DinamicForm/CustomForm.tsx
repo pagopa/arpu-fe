@@ -53,7 +53,9 @@ const CustomForm = (props: CustomFormProps) => {
     <>
       <Card variant="outlined">
         <Stack spacing={2} padding={4}>
-          <Typography variant="h6">{t('spontanei.form.steps.step3.title')}</Typography>
+          <Typography variant="h6" component={'h2'}>
+            {t('spontanei.form.steps.step3.title')}
+          </Typography>
           <Typography>{t('spontanei.form.steps.step3.description')}</Typography>
           <Stack direction="column" justifyContent={'space-between'} spacing={2}>
             <StaticFormSection

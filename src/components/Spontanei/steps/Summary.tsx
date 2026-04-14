@@ -307,7 +307,7 @@ const Summary = () => {
   return (
     <>
       <Card sx={{ padding: 3 }} data-testid="spontanei-step3-summary">
-        <Typography variant="h6" mb={2}>
+        <Typography variant="h6" component={'h2'} mb={2}>
           {t('spontanei.form.steps.step4.title')}
         </Typography>
         <Typography variant="body1" mb={3}>

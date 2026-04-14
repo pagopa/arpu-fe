@@ -178,7 +178,9 @@ const Payment = () => {
     <>
       <Card variant="outlined" data-testid="spontanei-step4-payment-container">
         <SpacedStack>
-          <Typography variant="h6">{t('spontanei.form.steps.step5.title')}</Typography>
+          <Typography variant="h6" component={'h2'}>
+            {t('spontanei.form.steps.step5.title')}
+          </Typography>
           <Typography>{t('spontanei.form.steps.step5.description')}</Typography>
 
           <Card variant="outlined" data-testid="payment-methods-card">

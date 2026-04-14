@@ -41,7 +41,9 @@ const StandardForm = ({
     <>
       <Card sx={{ padding: 3 }}>
         <Stack gap={2}>
-          <Typography variant="h6">{t('spontanei.form.steps.step3.title')}</Typography>
+          <Typography variant="h6" component={'h2'}>
+            {t('spontanei.form.steps.step3.title')}
+          </Typography>
           <Typography>{t('spontanei.form.steps.step3.description')}</Typography>
           <Typography color="error.dark">
             {t('spontanei.form.steps.step3.requiredField')}
@@ -55,7 +57,7 @@ const StandardForm = ({
           />
           <ResponsiveCard variant="outlined">
             <Stack gap={2}>
-              <Typography variant="h6">
+              <Typography variant="h6" component={'h2'}>
                 {t('spontanei.form.steps.step3.paymentData.title')}
               </Typography>
               <Stack

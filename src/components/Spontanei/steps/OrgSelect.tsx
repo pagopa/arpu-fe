@@ -45,6 +45,8 @@ const OrgSelect = () => {
 
   const orgOptions = orgs || [];
 
+  const idInputElement = 'spontanei.form.steps.step1.orgSelectLabel';
+
   const handleOrgChange = (
     _event: React.SyntheticEvent<Element, Event>,
     organization: OrganizationsWithSpontaneousDTO | string | null
@@ -62,6 +64,9 @@ const OrgSelect = () => {
   const shouldContinue = async () => {
     formik.setTouched({ org: true });
     const errors = await formik.validateForm();
+    if (errors.org) {
+      document.getElementById(idInputElement)?.focus();
+    }
     return !errors.org;
   };
 
@@ -69,7 +74,7 @@ const OrgSelect = () => {
     <>
       <StepWrapper isPending={serviceQuery.isPending}>
         <Stack spacing={2} padding={4}>
-          <Typography variant="h6" data-testid="spontanei-step1-title">
+          <Typography variant="h6" data-testid="spontanei-step1-title" component={'h2'}>
             {t('spontanei.form.steps.step1.title')}
           </Typography>
           <Typography data-testid="spontanei-step1-description">
@@ -78,7 +83,7 @@ const OrgSelect = () => {
           <Autocomplete
             data-testid="spontanei-step1-search-input"
             onChange={handleOrgChange}
-            id="spontanei.form.steps.step1.orgSelectLabel"
+            id={idInputElement}
             freeSolo
             options={orgOptions}
             value={meta.value}
