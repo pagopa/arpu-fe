@@ -1,0 +1,645 @@
+{
+  "app": {
+    "info": "Information",
+    "modal": {
+      "close": "Close modal"
+    },
+    "receiptsSearch": {
+      "title": "Retrieve a receipt",
+      "description": "If you have already made a payment, fill in the required fields and look for your receipt.",
+      "sub": "Search for the receipt",
+      "result_zero": "No receipt found",
+      "result_one": "We found {{count}} receipt",
+      "result_other": "We found {{count}} receipts",
+      "tab1": {
+        "description": "Enter the Notice Code (or IUV) and Tax Code to start searching for the receipt. If you do not have the Tax Code, you can still retrieve the receipt."
+      },
+      "tab2": {
+        "description": "Enter the Notice Code (or IUV) and VAT number to start the receipt search."
+      },
+      "noData": {
+        "title": "We found no matching receipts",
+        "text": "Check the information you entered and try again"
+      }
+    },
+    "debtPositionsSearch": {
+      "title": "Search for an notice",
+      "sub": "Search for a notice",
+      "result_zero": "No results",
+      "result_one": "We found {{count}} notice",
+      "result_other": "We found {{count}} notices",
+      "description": "Retrieve a payment notice by filling in the fields with the required data.",
+      "noData": {
+        "title": "We found no matching notices",
+        "text": "Check the data entered and try again."
+      },
+      "actions": {
+        "download": "Download notice"
+      }
+    },
+    "user": {
+      "title": "Your data",
+      "subtitle": "This data is derived from your SPID or CIE. To change them, contact your digital identity provider.",
+      "info": {
+        "name": "Name",
+        "surname": "Last name",
+        "identifier": "Tax Code",
+        "email": "Email address"
+      }
+    },
+    "cart": {
+      "header": {
+        "title": "Your cart",
+        "close": "Close cart",
+        "amount": "Subtotal"
+      },
+      "empty": {
+        "title": "Your cart is empty",
+        "description": "Add one or more notices to your cart to proceed with payment",
+        "button": "Back to notices"
+      },
+      "items": {
+        "alert": "The amount updates automatically, so you always pay what you owe and avoid penalties or other interest. <link1>Do you want to know more?<\/link1>",
+        "back": "Back to alerts",
+        "pay": "Go to payment",
+        "full": "You cannot add more than 5 notices to your cart",
+        "info": "You can pay up to 5 notices together"
+      }
+    },
+    "installmentsDrawer": {
+      "title": "Your installment plan",
+      "description": "Check your installments, check amounts and due dates, and select the ones you want to pay now.",
+      "selectedInstallments": "You are about to pay:",
+      "availableInstallments": "Available rates:",
+      "expiredInstallments": "Overdue installments",
+      "installment": {
+        "installmentNumber": "Installment {{installmentNumber}} of {{totalInstallments}}",
+        "dueDate": "By <strong>{{date}}<\/strong>",
+        "expireDate": "the <strong>{{date}}<\/strong>"
+      },
+      "actions": {
+        "add": "Add to cart ({{count}})",
+        "pay": "Go to payment ({{count}})"
+      }
+    },
+    "receiptDetail": {
+      "title": "Detail",
+      "subtitle": "You can look up the receipt data corresponding to your research and download it.",
+      "download": "Download receipt",
+      "amount": "Amount",
+      "remittanceInformation": "Object of payment",
+      "noticeCode": "Notice Code",
+      "beneficiary": "Beneficiary Institution",
+      "beneficiaryFiscalCode": "Tax Code Institution",
+      "debtor": "Payer",
+      "debtorFiscalCode": "Debtor Tax Code",
+      "paymentInformation": "TRANSACTION INFORMATION",
+      "psp": "Payment Service Provider (PSP)",
+      "paymentDate": "Date and time",
+      "authorizationCode": "Authorization code",
+      "iur": "IUR",
+      "iud": "IUD",
+      "downloadError": "The receipt could not be retrieved."
+    },
+    "assistance": {
+      "title": "How can we help you?",
+      "description": "If you need support using the portal, please enter the required details to get help.",
+      "cardTitle": "Your email address",
+      "cardDescription": "Please enter the email address where you would like to receive replies from customer support.",
+      "input1Placeholder": "Enter the email address",
+      "input1Helper": "Please enter a valid email address",
+      "input2Helper": "Email addresses must match",
+      "input2Placeholder": "Confirm email address",
+      "privacy": "By continuing you are stating that you have read the <link1> Privacy Policy <\/link1> of the Citizen Assistance Service",
+      "confirm": "Confirm",
+      "modalTitle": "Do you really want to quit?",
+      "modalDescription": "If you leave, the request for assistance will be lost."
+    },
+    "login": {
+      "auth": {
+        "title": "Access your personal profile",
+        "description": "Manage your pagoPA payment notices and view receipts quickly and easily.",
+        "CTA": "Access Profile"
+      },
+      "noAuth": {
+        "title": "Are you in a hurry?",
+        "description": "Make a spontaneous payment or retrieve a receipt from a payment already made, all without logging in.",
+        "CTA1": "Make a spontaneous payment",
+        "CTA2": "Retrieve a receipt",
+        "CTA3": "Search for an alert"
+      }
+    },
+    "dashboard": {
+      "title": "Hello, {{username}}",
+      "greetings": "Welcome",
+      "newPayment": "Pay now",
+      "lastTransactions": "Your receipts",
+      "seeAllTransactions": "See all",
+      "lastDebtPositions": "Your debt positions",
+      "IOAlert": {
+        "title": "Want to access your receipts and pay notices faster?",
+        "description": "View and manage your payment methods and all your receipts",
+        "cta": "Download IO app"
+      }
+    },
+    "retry": {
+      "title": "We are unable to retrieve the data due to a problem.",
+      "action": "Try again"
+    },
+    "receipts": {
+      "searchByName": "Search by name",
+      "subtitle": "Here you will find receipts made out to you. If you are looking for receipts in someone else's name, click on",
+      "subtitleLink": "Retrieve a receipt",
+      "searchBy": "Search for",
+      "orderBy": "Sort by",
+      "mostRecent": "most recent",
+      "leastRecent": "less recent",
+      "payee": "Name of Institution",
+      "status": "Status",
+      "date": "Date",
+      "paymentDateTime": "Paid on",
+      "amount": "Amount",
+      "higherAmount": "highest amount",
+      "lowerAmount": "lowest amount",
+      "multiEntities": "Multiple notices",
+      "paid": "Paid",
+      "viewDetail": "View the detail for the transaction",
+      "empty": {
+        "title": "Here you will see your receipts",
+        "subtitle": "You'll find them here after paying a debt position through any authorized channel.",
+        "back": "Back to your profile",
+        "link": "Proceed to payment"
+      }
+    },
+    "debtPositions": {
+      "empty": {
+        "title": "There are no outstanding debts.",
+        "subtitle": "To make a payment, enter your position information via the \"Make a Payment\" button."
+      },
+      "debtPositionItem": {
+        "amount": "Amount",
+        "dueDate": "Due by",
+        "noDueDate": "More payment options"
+      },
+      "list": {
+        "title": "Amounts to be paid",
+        "subtitle": "Here you will find notices that are yet to be paid or already started in installments. If you are looking for a notice in someone else's name, click on",
+        "subtitleLink": "Find a payment notice"
+      },
+      "download": {
+        "title": "Download in progress",
+        "subtitle": "If it does not start automatically, <link>download the alert manually<\/link>.",
+        "link": "Find authorized payment channels"
+      }
+    },
+    "debtPositionDetail": {
+      "title": "Debt position detail",
+      "paymentData": "Payment data",
+      "org": "Payee",
+      "cf": "Institution tax code",
+      "iupd": "Unique Debt Position Identifier (IUPD)",
+      "paymentOptions": "Payment options",
+      "payNow": "Pay now",
+      "payLater": "Pay in installments",
+      "addItemToCart": "Add to Cart",
+      "removeItemFromCart": "Remove from cart",
+      "paymentOptionSingleInstallment": "One-time payment",
+      "paymentOptionInstallments": "Installment plan",
+      "installment": "installment",
+      "installments": "rate",
+      "before": "by",
+      "receipts": "Receipts",
+      "paidOptionReceipt": "Receipt from {{date}} of {{amount}}",
+      "downloadReceipt": "Download the receipt",
+      "status": {
+        "PAID": "Paid",
+        "UNPAID": "To be paid",
+        "EXPIRED": "Expired"
+      },
+      "dueDate": {
+        "EXPIRED": "the {{dueDate}}",
+        "UNPAID": "by <strong>{{dueDate}}<\/strong>",
+        "PAID": "the {{paymentDateTime}}",
+        "REPORTED": "the {{paymentDateTime}}"
+      }
+    },
+    "paymentNotice": {
+      "preview": {
+        "title": "Search your pagoPA payment notices",
+        "description": "This section contains a list of notices that have been communicated to us by the payees.",
+        "action": "Search your notices"
+      },
+      "empty": {
+        "title": "We haven't found a notice to pay.",
+        "description": "If you have received a pagoPA notice, press 'Pay a Notice' and enter the information.",
+        "button": "Pay a notice"
+      },
+      "filtered.nodata": {
+        "paidByMe": {
+          "title": "Here you will see receipts for payments made by you",
+          "text": "If you paid through another channel, to get a receipt, contact the payee."
+        },
+        "ownedByMe": {
+          "title": "Here you will see receipts for payments made out to you",
+          "text": "If you don't find a receipt, contact the creditor agency."
+        }
+      },
+      "error": {
+        "description": "We are unable to recover the data because of a problem.",
+        "button": "Try again"
+      },
+      "card": {
+        "amount": "Amount",
+        "multiPayment": "Other payment options",
+        "expiringDate": "Single installment by",
+        "detail": "View the detail"
+      }
+    },
+    "paymentNotices": {
+      "title": "Your payment notices",
+      "found_one": "We found {{count}} notice",
+      "found_other": "We found {{count}} notices",
+      "notice": "notices",
+      "updated": "Updated on",
+      "loading": "We are searching through the archives of the creditor agencies participating in the service...",
+      "bottomAlert": {
+        "info": "Payment notices have been communicated to us by the Payee. If you have any problems, please contact the institution."
+      },
+      "noticesAlert": {
+        "info": "These are the payment notices that entities have communicated to PagoPA. If you do not find a notice, contact the Payee or press 'Pay a Notice' and enter the data.",
+        "action": "Pay a notice"
+      },
+      "optin": {
+        "title": "Do you allow PagoPA to search your notices?",
+        "body": "If you confirm, you allow PagoPA to search for payment notices in your name among the archives of the institution participating in the service.",
+        "privacy": "By continuing you agree to the <a1>Privacy Policy<\/a1> and the <a2>Terms and Conditions of Use<\/a2> of the service."
+      }
+    },
+    "routes": {
+      "back": "Back",
+      "exit": "Exit",
+      "cancel": "Cancel",
+      "continue": "Continue",
+      "consent": "Allow",
+      "breadcrumbs": "breadcrumbs",
+      "breadcrumbsElementClickable": "Clickable breadcrumbs element",
+      "breadcrumbsElement": "Breadcrumbs element",
+      "home": "Homepage",
+      "transactionDetail": "Operation detail",
+      "transactions": "Receipts",
+      "user": "Your data",
+      "paymentNotices": "Payment Notices",
+      "paymentNoticeDetail": "Notice detail"
+    },
+    "transactionDetail": {
+      "title": "Operation detail",
+      "card2": {
+        "title": "Transaction information"
+      },
+      "downloadReceipt": "Download receipt",
+      "downloadReceiptError": "The receipt could not be retrieved.",
+      "noReceipt": "The pagoPA receipt is not available. Contact the payee if you need the payment receipt, which is the document certifying that you have settled a debt.",
+      "downloadQuiettance": "Receipt of payment",
+      "createdOn": "Created on",
+      "paidBy": "Performed by",
+      "authCode": "Authorization code",
+      "transactionId": "Transaction ID",
+      "accountHolder": "Headed to",
+      "paymentMethod": "Payment method",
+      "PSP": "Payment Service Provider (PSP)",
+      "dateAndTime": "Date and time",
+      "subject": "Item",
+      "creditorEntity": "Payee",
+      "creditorFiscalCode": "Tax Code Institution",
+      "debtor": "Debtor",
+      "noticeCode": "Notice code\/IUV code",
+      "partialAmount": "Partial amount",
+      "amount": "Amount",
+      "commission": "Fee",
+      "total": "Total",
+      "somethingDoesntAddUp": "Does something seem wrong?",
+      "contactSupport": "Contact support",
+      "totalLabel": "The total amount includes <strong>{{fee}}<\/strong> commission, charged by {{psp}}"
+    },
+    "paymentNoticeDetail": {
+      "title": "Notice detail",
+      "card1": {
+        "title": "Payment data",
+        "amount": "Amount",
+        "paFullname": "Payee",
+        "subject": "Object of payment",
+        "dueDate": "By the",
+        "iuv": "Notice code\/IUV code",
+        "paTaxCode": "Institution's tax code"
+      },
+      "card2": {
+        "title": "How much and when to pay?",
+        "firstInstallmentDate": "Single payment by",
+        "firstInstallmentAmount": "Amount",
+        "button1": "Pay now",
+        "label1": "Or",
+        "button2": "Download the pagoPA notice",
+        "addItemToCart": "Add to Cart",
+        "removeItemFromCart": "Remove from cart"
+      },
+      "modal": {
+        "title": "Do you see a different amount?",
+        "description": "pagoPA automatically updates the amount to ensure that you have paid exactly what you owe and thus avoid penalties or other interest."
+      }
+    }
+  },
+  "aria": {
+    "a11y": "Accessibility",
+    "help": "Help"
+  },
+  "dates": {
+    "from": "From",
+    "to": "At",
+    "validation": "Invalid date"
+  },
+  "actions": {
+    "filter": "Filter",
+    "resetFilters": "Remove filters",
+    "search": "Search",
+    "detail": "Detail",
+    "download": "Download",
+    "close": "Close",
+    "payNow": "Pay now",
+    "addItemToCart": "Add to Cart"
+  },
+  "fields": {
+    "iuv": "Notice\/IUV Code",
+    "fiscalcode": "Tax Code",
+    "piva": "Fiscal Code\/VAT Number",
+    "anonymous": "I don't have a tax code",
+    "orgName": "Creditor Entity",
+    "amount": "Amount",
+    "noticeCode": "Notice Code",
+    "status": "Status"
+  },
+  "installment": {
+    "status": {
+      "CANCELLED": "Cancelled",
+      "DRAFT": "Draft",
+      "EXPIRED": "Expired",
+      "INVALID": "Not valid",
+      "PAID": "Paid",
+      "REPORTED": "Paid",
+      "TO_SYNC": "To be synchronized",
+      "UNPAID": "To be paid",
+      "UNPAYABLE": "Non-payable"
+    }
+  },
+  "common": {
+    "person": "Person",
+    "company": "Legal entity"
+  },
+  "general": {
+    "and": "e",
+    "PagoPA": "PagoPA S.p.A"
+  },
+  "menu": {
+    "description": "Browse the portal",
+    "homepage": "Homepage",
+    "receipts": {
+      "menuTitle": "Receipts",
+      "pageTitle": "Receipts"
+    },
+    "navigationMenu": "Navigation menu",
+    "menu": "Menu",
+    "debtPositions": "Amounts to be paid"
+  },
+  "sidebar": {
+    "collapse": "Compress menu",
+    "expand": "Expand the menu"
+  },
+  "errors": {
+    "resourceNotAvailable": "Resource not available",
+    "form": {
+      "required": "This field cannot be empty."
+    },
+    "toast": {
+      "403": "You do not have permissions to perform this action.",
+      "404": "Resource not found.",
+      "500": "Server error, please try again later.",
+      "default": "An unexpected error occurred. Please try again later.",
+      "drawer": "Error while adding to payment cart. Please try again later.",
+      "payment": "Error during payment. Please try again later."
+    },
+    "empty": {
+      "search": "No results"
+    }
+  },
+  "ui": {
+    "a11y": {
+      "cart": "View payment cart",
+      "home": "Go to the home page"
+    },
+    "header": {
+      "profile": "Your data",
+      "logout": "Exit",
+      "skipToContent": "Skip to main content"
+    },
+    "footer": {
+      "a11y": "Accessibility",
+      "help": "Help",
+      "privacy": "Privacy Policy",
+      "personalData": "Right to protect personal data",
+      "termsAndConditions": "Terms and Conditions"
+    }
+  },
+  "courtesyPage": {
+    "default": {
+      "title": "Something didn't work",
+      "body": "We are working to fix it as soon as possible. Please try again later."
+    },
+    "400": {
+      "title": "Something didn't work",
+      "body": "An unexpected error occurred. Please try again in a few minutes.",
+      "cta": "Try again"
+    },
+    "401": {
+      "title": "Your session has expired",
+      "body": "Sign in to keep using the site.",
+      "cta": "Sign in"
+    },
+    "403": {
+      "title": "The page you are looking for is not available",
+      "body": "You can go back to the homepage or visit a new page",
+      "cta": "Back to homepage"
+    },
+    "404": {
+      "title": "The page you are looking for does not exist",
+      "body": "You can return to the homepage or visit a new page",
+      "cta": "Back to homepage"
+    },
+    "408": {
+      "title": "It was not possible to access",
+      "body": "A problem occurred while logging in. Please try again in a few minutes.",
+      "cta": "Try again"
+    },
+    "420": {
+      "title": "Payment completed",
+      "body": "Your payment has been successfully received.",
+      "cta": "Back to home"
+    },
+    "422": {
+      "title": "We cannot proceed with the payment",
+      "body": "To get more information about the notice contact the Payee.",
+      "cta": "Close"
+    },
+    "424": {
+      "title": "The payment failed",
+      "body": "You can try again or download the pagoPA notice and pay at all enabled channels.",
+      "cta": "Try again",
+      "downloadCta": "Download the notice"
+    },
+    "425": {
+      "title": "You cancelled the payment",
+      "body": "If you wish, you can download the pagoPA notice and pay at all enabled channels.",
+      "cta": "Back to home",
+      "downloadCta": "Download the notice"
+    },
+    "423": {
+      "title": "We were unable to initiate payment",
+      "body": "Try again in a few minutes.",
+      "cta": "Close"
+    },
+    "500": {
+      "title": "Server error",
+      "body": "A server error occurred. Please try again later.",
+      "cta": "Back to homepage"
+    }
+  },
+  "pageTitles": {
+    "dashboard": "Your Dashboard",
+    "notices": "Your payment receipts",
+    "courtesy": "Courtesy page",
+    "userpage": "Your data",
+    "login": "Sign in",
+    "debtPositions": "Amounts to be paid",
+    "debtPositionDetail": "Debt position",
+    "debtPositionsSearch": "Search for a notice",
+    "debtPositionsList": "Amounts to be paid",
+    "paymentReceipt": "Payment Receipt",
+    "receiptDetail": "Receipt detail",
+    "receiptsSearch": "Retrieve a receipt",
+    "receiptsList": "Receipt list",
+    "spontanei": "Spontaneous payments",
+    "assistance": "Assistance",
+    "paymentOutcomeOk": "Payment completed",
+    "pp": "Privacy Policy",
+    "tos": "Terms of Service"
+  },
+  "spontanei": {
+    "drawer": {
+      "title": "PAY A NOTICE",
+      "card1": {
+        "title": "Have you received a payment notice?",
+        "description": "You already have the codes or a QR code to proceed with payment",
+        "cta": "Go ahead and pay"
+      },
+      "card2": {
+        "title": "Do you want to make a spontaneous payment?",
+        "description": "You want to pay the civil service because you feel like it and because you are a good",
+        "cta": "Set up the payment"
+      }
+    },
+    "form": {
+      "description": "Complete the required steps and proceed with payment.",
+      "steps": {
+        "step1": {
+          "step": "Select the institution",
+          "title": "Select the beneficiary institution",
+          "description": "Start typing the name of the Institution receiving the payment and select it from the list.",
+          "search": "Search by Institution's name"
+        },
+        "step2": {
+          "search": "Search by service name",
+          "mostUsedDebtTypes": "Based on your research"
+        },
+        "step3": {
+          "step": "Enter data",
+          "requiredField": "* Required field",
+          "debtor": {
+            "useYourData": "Use your data",
+            "F": {
+              "title": "Person"
+            },
+            "G": {
+              "title": "Legal entity",
+              "name": "Name",
+              "code": "Fiscal Code\/VAT Number",
+              "email": "Email"
+            },
+            "noFiscalCode": "I don't have a tax code"
+          },
+          "paymentData": {
+            "title": "Payment notice data",
+            "amount": "Amount",
+            "description": "What the payment is for"
+          }
+        },
+        "step4": {
+          "step": "Check the data",
+          "title": "Check the data entered",
+          "description": "The payment will be valid only for the municipality you have selected ",
+          "org": {
+            "title": "Beneficiary Institution",
+            "name": " Institution Name",
+            "code": "Institution's Tax Code"
+          },
+          "service": {
+            "title": "Service",
+            "name": "Service name"
+          },
+          "debtor": {
+            "G": {
+              "name": "Name",
+              "code": "Fiscal Code\/VAT Number",
+              "email": "Email"
+            }
+          },
+          "payment": {
+            "title": "Payment notice data",
+            "description": "Object of payment",
+            "amount": "Amount"
+          }
+        },
+        "step5": {
+          "step": "Proceed with the payment",
+          "title": "How do you want to pay?",
+          "description": "You can choose to pay online now or download the notice and pay later.",
+          "pay": {
+            "title": "Pay online",
+            "description": "You can pay by card, bank transfer, or payment app.",
+            "addItemToCartButton": "Add to Cart",
+            "payButton": "Pay now"
+          },
+          "download": {
+            "title": "Download the payment notice",
+            "description": "You can use it to pay at cash desks, banks and other places that take pagoPA payments.",
+            "downloadButton": "Download the notice"
+          }
+        }
+      },
+      "continue": "Continue",
+      "confirm": "Confirm",
+      "abort": "Exit",
+      "back": "Back",
+      "errors": {
+        "description": "Reason for payment too short or missing.",
+        "amount": "Invalid amount.",
+        "fullName": "Enter your first and last name",
+        "fiscalCode": "Enter Tax Code",
+        "email": "Enter an email address",
+        "org": "Selection of the Institution is mandatory",
+        "debtType": "*Select a service from the list above or from the list of most frequently used services"
+      }
+    },
+    "download": {
+      "title": "The notice is currently being downloaded",
+      "help": "If it does not start automatically, <link1>download the alert manually<\/link1>."
+    }
+  }
+}

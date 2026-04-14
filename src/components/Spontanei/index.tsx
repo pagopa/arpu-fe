@@ -14,6 +14,7 @@ import {
   DebtPositionTypeOrgsWithSpontaneousDTO,
   OrganizationsWithSpontaneousDTO,
   PersonEntityType,
+  SpontaneousForm,
   SpontaneousFormStructure
 } from '../../../generated/data-contracts';
 import Payment from './steps/Payment';
@@ -44,6 +45,8 @@ const Spontanei = () => {
   const [submitFields, setSubmitFields] = React.useState<SpontaneousFormStructure['submitFields']>(
     []
   );
+  // dictionary state
+  const [dictionary, setDictionary] = React.useState<SpontaneousForm['dictionary']>({});
   const [amountFieldName, setAmountFieldName] = React.useState<string>('amount');
   const { t } = useTranslation();
 
@@ -79,10 +82,12 @@ const Spontanei = () => {
       setSummaryFields,
       submitFields,
       setSubmitFields,
+      dictionary,
+      setDictionary,
       amountFieldName,
       setAmountFieldName
     }),
-    [omitFirstStep, step, causaleHasJoinTemplate, summaryFields, submitFields, amountFieldName]
+    [omitFirstStep, step, causaleHasJoinTemplate, summaryFields, submitFields, dictionary, amountFieldName]
   );
 
   return (

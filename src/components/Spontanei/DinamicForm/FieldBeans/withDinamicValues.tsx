@@ -12,6 +12,7 @@ import { Stack, Tooltip } from '@mui/material';
 import InfoRoundedIcon from '@mui/icons-material/InfoRounded';
 import { PaymentNoticeInfo } from 'components/Spontanei';
 import FormContext, { FormContextType } from 'components/Spontanei/FormContext';
+import i18n from '../../../../translations/i18n';
 
 export type Option = { label: string; value: string };
 
@@ -28,164 +29,169 @@ export interface computedPROPS extends SpontaneousFormField, FieldInputProps<Cus
 
 const withComputedValues =
   (FieldBean: (props: computedPROPS) => React.JSX.Element) =>
-  (
-    props: SpontaneousFormField & { allFields?: SpontaneousFormField[]; amountFieldName?: string }
-  ) => {
-    const {
-      hiddenDependsOn,
-      enabledDependsOn,
-      name,
-      htmlRender,
-      valueDependsOn,
-      errorMessage: errMsg,
-      helpMessage: helpMsg,
-      extraAttr,
-      allFields,
-      source,
-      sourceParams = [],
-      enumerationList = [],
-      amountFieldName
-    } = props;
+    (
+      props: SpontaneousFormField & { allFields?: SpontaneousFormField[]; amountFieldName?: string }
+    ) => {
+      const {
+        hiddenDependsOn,
+        enabledDependsOn,
+        name,
+        htmlRender,
+        htmlLabel,
+        valueDependsOn,
+        errorMessage: errMsg,
+        helpMessage: helpMsg,
+        extraAttr,
+        allFields,
+        source,
+        sourceParams = [],
+        enumerationList = [],
+        amountFieldName,
+      } = props;
 
-    const initialOptions = enumerationList.map((enumeration) => ({
-      label: enumeration,
-      value: enumeration
-    }));
+      const initialOptions = enumerationList.map((enumeration) => ({
+        label: enumeration,
+        value: enumeration
+      }));
 
-    const [field, meta, helpers] = useField<CustomFormValues['']>(name);
-    const [options, setOptions] = React.useState<Option[]>(initialOptions);
-    const [, , descriptionHelpers] = useField<PaymentNoticeInfo['description']>('description');
-    const [, , amountHelpers] = useField<PaymentNoticeInfo['amount']>('amount');
-    const { values } = useFormikContext<CustomFormValues>();
-    const context = useContext<FormContextType | null>(FormContext);
+      const [field, meta, helpers] = useField<CustomFormValues['']>(name);
+      const [options, setOptions] = React.useState<Option[]>(initialOptions);
+      const [, , descriptionHelpers] = useField<PaymentNoticeInfo['description']>('description');
+      const [, , amountHelpers] = useField<PaymentNoticeInfo['amount']>('amount');
+      const { values } = useFormikContext<CustomFormValues>();
+      const context = useContext<FormContextType | null>(FormContext);
 
-    const isHidden = hiddenDependsOn
-      ? computeValue<boolean>(hiddenDependsOn, values)
-      : htmlRender === RenderType.NONE;
+      const dictionary = context?.dictionary || {};
 
-    const isEnabled = enabledDependsOn
-      ? computeValue<boolean>(enabledDependsOn, values)
-      : htmlRender !== RenderType.DYNAMIC_AMOUNT_LABEL && htmlRender !== RenderType.CURRENCY_LABEL;
+      const isHidden = hiddenDependsOn
+        ? computeValue<boolean>(hiddenDependsOn, values)
+        : htmlRender === RenderType.NONE;
 
-    const hasError = meta.touched && Boolean(meta.error);
+      const isEnabled = enabledDependsOn
+        ? computeValue<boolean>(enabledDependsOn, values)
+        : htmlRender !== RenderType.DYNAMIC_AMOUNT_LABEL && htmlRender !== RenderType.CURRENCY_LABEL;
 
-    const hasValuDependsOn = Boolean(valueDependsOn);
+      const hasError = meta.touched && Boolean(meta.error);
 
-    const erroMessage = errMsg || extraAttr?.error_message || '';
-    const helpMessage = helpMsg || extraAttr?.help_message || '';
+      const hasValuDependsOn = Boolean(valueDependsOn);
 
-    useEffect(() => {
-      if (hasValuDependsOn && valueDependsOn) {
-        const newValue = computeValue<string>(valueDependsOn, values);
-        helpers.setValue(newValue, false);
-      }
-    }, [values]);
+      const erroMessage = dictionary?.[i18n.language]?.[name]?.errorMessage || errMsg || extraAttr?.error_message || '';
+      const helpMessage = dictionary?.[i18n.language]?.[name]?.helpMessage || helpMsg || extraAttr?.help_message || '';
+      const label = dictionary?.[i18n.language]?.[name]?.htmlLabel || htmlLabel || '';
 
-    const hasJoinTemplate = Boolean(extraAttr?.join_template);
-    const joinTemplate = hasJoinTemplate ? extraAttr?.join_template || '' : '';
+      useEffect(() => {
+        if (hasValuDependsOn && valueDependsOn) {
+          const newValue = computeValue<string>(valueDependsOn, values);
+          helpers.setValue(newValue, false);
+        }
+      }, [values]);
 
-    const value = hasJoinTemplate
-      ? buildDinamicValue(joinTemplate, values, allFields)
-      : field.value;
+      const hasJoinTemplate = Boolean(extraAttr?.join_template);
+      const joinTemplate = hasJoinTemplate ? extraAttr?.join_template || '' : '';
 
-    useEffect(() => {
-      if (hasJoinTemplate) helpers.setValue(value);
-    }, [value]);
+      const value = hasJoinTemplate
+        ? buildDinamicValue(joinTemplate, values, allFields)
+        : field.value;
 
-    // the following code is to fetch dynamic values from a source url
-    const flattenedValues = flattenObject(values);
-    const urlParams = getPlaceholders(source || '');
-    const urlParamsValues = urlParams.map((urlParam) => flattenedValues[urlParam]);
-    const queryParams = sourceParams;
-    const queryParamsValues = queryParams.map(
-      (urlParam) => urlParam?.key && flattenedValues[urlParam.key]
-    );
-    const allDependenciesValues = [...urlParamsValues, ...queryParamsValues];
+      useEffect(() => {
+        if (hasJoinTemplate) helpers.setValue(value);
+      }, [value]);
 
-    React.useEffect(() => {
-      const fetchDynamicResult = async () => {
-        try {
-          if (source) {
-            let resultSource = buildDinamicValue(source, flattenedValues);
-            const queryString = queryParams
-              .map((param) => param.key && `${param.name}=${flattenedValues[param.key]}`)
-              .join('&');
-            resultSource = `${resultSource}?${queryString}`;
-            const response = await fetch(resultSource);
-            const { result } = await response.json();
-            switch (htmlRender) {
-              case RenderType.DYNAMIC_SELECT:
-                setOptions(result as Option[]);
-                break;
-              case RenderType.DYNAMIC_AMOUNT_LABEL:
-                helpers.setValue(result as number, false);
-                break;
-              default:
-                break;
+      // the following code is to fetch dynamic values from a source url
+      const flattenedValues = flattenObject(values);
+      const urlParams = getPlaceholders(source || '');
+      const urlParamsValues = urlParams.map((urlParam) => flattenedValues[urlParam]);
+      const queryParams = sourceParams;
+      const queryParamsValues = queryParams.map(
+        (urlParam) => urlParam?.key && flattenedValues[urlParam.key]
+      );
+      const allDependenciesValues = [...urlParamsValues, ...queryParamsValues];
+
+      React.useEffect(() => {
+        const fetchDynamicResult = async () => {
+          try {
+            if (source) {
+              let resultSource = buildDinamicValue(source, flattenedValues);
+              const queryString = queryParams
+                .map((param) => param.key && `${param.name}=${flattenedValues[param.key]}`)
+                .join('&');
+              resultSource = `${resultSource}?${queryString}`;
+              const response = await fetch(resultSource);
+              const { result } = await response.json();
+              switch (htmlRender) {
+                case RenderType.DYNAMIC_SELECT:
+                  setOptions(result as Option[]);
+                  break;
+                case RenderType.DYNAMIC_AMOUNT_LABEL:
+                  helpers.setValue(result as number, false);
+                  break;
+                default:
+                  break;
+              }
             }
+          } catch (error) {
+            console.error('Error fetching dynamic result:', error);
           }
-        } catch (error) {
-          console.error('Error fetching dynamic result:', error);
-        }
-      };
-      /** this is to prevent to call an source url without url placeholders */
-      if (urlParamsValues.length > 0 && urlParamsValues.every((value) => !value)) return;
-      fetchDynamicResult();
-    }, [source, ...allDependenciesValues]);
+        };
+        /** this is to prevent to call an source url without url placeholders */
+        if (urlParamsValues.length > 0 && urlParamsValues.every((value) => !value)) return;
+        fetchDynamicResult();
+      }, [source, ...allDependenciesValues]);
 
-    // sys_type custom field is used to update the description field
-    useEffect(() => {
-      // causale update
-      if (field.value && name === 'sys_type') {
-        if (hasJoinTemplate) {
-          context?.setCausaleHasJoinTemplate(true);
+      // sys_type custom field is used to update the description field
+      useEffect(() => {
+        // causale update
+        if (field.value && name === 'sys_type') {
+          if (hasJoinTemplate) {
+            context?.setCausaleHasJoinTemplate(true);
+          }
+          if (typeof field.value === 'string') {
+            descriptionHelpers.setValue(field.value);
+          } else {
+            throw new Error(`An errror occurred trying to update the sys_type field: ${field.value}`);
+          }
         }
-        if (typeof field.value === 'string') {
-          descriptionHelpers.setValue(field.value);
-        } else {
-          throw new Error(`An errror occurred trying to update the sys_type field: ${field.value}`);
-        }
-      }
-    }, [field.value]);
+      }, [field.value]);
 
-    // importo update
-    useEffect(() => {
-      if (field.value && name === amountFieldName) {
-        // importo update
-        if (typeof field.value === 'number') {
-          amountHelpers.setValue(field.value);
-        } else if (typeof field.value === 'string') {
-          amountHelpers.setValue(parseFloat(field.value));
-        } else {
-          throw new Error(`An errror occurred trying to update the amount field: ${field.value}`);
+      // importo update
+      useEffect(() => {
+        if (field.value && name === amountFieldName) {
+          // importo update
+          if (typeof field.value === 'number') {
+            amountHelpers.setValue(field.value);
+          } else if (typeof field.value === 'string') {
+            amountHelpers.setValue(parseFloat(field.value));
+          } else {
+            throw new Error(`An errror occurred trying to update the amount field: ${field.value}`);
+          }
         }
-      }
-    }, [field.value]);
+      }, [field.value]);
 
-    return (
-      <Stack
-        direction="row"
-        gap={2}
-        alignItems="center"
-        sx={{ display: isHidden ? 'none' : 'inherit' }}>
-        <FieldBean
-          {...props}
-          {...field}
-          isDisabled={!isEnabled}
-          hasError={hasError}
-          errorMessage={erroMessage}
-          hasJoinTemplate={hasJoinTemplate}
-          joinTemplate={joinTemplate}
-          allFields={allFields}
-          options={options}
-        />
-        {helpMessage && (
-          <Tooltip title={helpMessage}>
-            <InfoRoundedIcon />
-          </Tooltip>
-        )}
-      </Stack>
-    );
-  };
+      return (
+        <Stack
+          direction="row"
+          gap={2}
+          alignItems="center"
+          sx={{ display: isHidden ? 'none' : 'inherit' }}>
+          <FieldBean
+            {...props}
+            {...field}
+            htmlLabel={label}
+            isDisabled={!isEnabled}
+            hasError={hasError}
+            errorMessage={erroMessage}
+            hasJoinTemplate={hasJoinTemplate}
+            joinTemplate={joinTemplate}
+            allFields={allFields}
+            options={options}
+          />
+          {helpMessage && (
+            <Tooltip title={helpMessage}>
+              <InfoRoundedIcon />
+            </Tooltip>
+          )}
+        </Stack>
+      );
+    };
 
 export default withComputedValues;

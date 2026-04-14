@@ -1,0 +1,645 @@
+{
+    "app": {
+        "info": "Informationen",
+        "modal": {
+            "close": "Modal schließen"
+        },
+        "receiptsSearch": {
+            "title": "Einen Beleg abrufen",
+            "description": "Wenn Sie bereits eine Zahlung geleistet haben, füllen Sie bitte die erforderlichen Felder aus und halten Sie Ihre Quittung bereit.",
+            "sub": "Suche nach der Quittung",
+            "result_zero": "Keine Quittung gefunden",
+            "result_one": "Wir fanden {{count}} Quittung",
+            "result_other": "Wir fanden {{count}} Quittungen",
+            "tab1": {
+                "description": "Geben Sie den Kündigungscode (oder IUV) und die Steuernummer ein, um die Belegsuche zu starten. Wenn Sie die Steuernummer nicht haben, können Sie den Beleg trotzdem abrufen."
+            },
+            "tab2": {
+                "description": "Geben Sie den Kündigungscode (oder IUV) und die Mehrwertsteuernummer ein, um die Belegsuche zu starten."
+            },
+            "noData": {
+                "title": "Keine passenden Quittungen gefunden",
+                "text": "Bitte überprüfen Sie die eingegebenen Daten und versuchen Sie es erneut."
+            }
+        },
+        "debtPositionsSearch": {
+            "title": "Suche nach einer Ausschreibung",
+            "sub": "Suche nach einer Ausschreibung",
+            "result_zero": "Keine Ergebnisse",
+            "result_one": "Wir fanden {{count}} Hinweis",
+            "result_other": "Wir fanden {{count}} Hinweise",
+            "description": "Rufen Sie eine Zahlungsmitteilung ab, indem Sie die Felder mit den erforderlichen Daten ausfüllen.",
+            "noData": {
+                "title": "Keine übereinstimmenden Bekanntmachungen gefunden",
+                "text": "Bitte überprüfen Sie die eingegebenen Daten und versuchen Sie es erneut."
+            },
+            "actions": {
+                "download": "Hinweis herunterladen"
+            }
+        },
+        "user": {
+            "title": "Ihre Daten",
+            "subtitle": "Diese Daten stammen von Ihrer SPID oder CIE. Um sie zu ändern, wenden Sie sich an Ihren Anbieter der digitalen Identität.",
+            "info": {
+                "name": "Name",
+                "surname": "Nachname",
+                "identifier": "Steuergesetzbuch",
+                "email": "E-Mail Adresse"
+            }
+        },
+        "cart": {
+            "header": {
+                "title": "Ihr Einkaufswagen",
+                "close": "Warenkorb schließen",
+                "amount": "Gesamt Teilweise"
+            },
+            "empty": {
+                "title": "Ihr Einkaufswagen ist leer",
+                "description": "Fügen Sie eine oder mehrere Ausschreibungen zu Ihrem Warenkorb hinzu, um mit der Zahlung fortzufahren",
+                "button": "Zurück zu den Warnungen"
+            },
+            "items": {
+                "alert": "Der Betrag wird automatisch aktualisiert, so dass Sie immer zahlen, was Sie schulden, und Strafen oder andere Zinsen vermeiden. <link1>Wollen Sie mehr wissen?<\/link1>",
+                "back": "Zurück zu den Warnungen",
+                "pay": "Zur Zahlung gehen",
+                "full": "Sie können nicht mehr als 5 Ausschreibungen zu Ihrem Warenkorb hinzufügen",
+                "info": "Sie können bis zu 5 Bescheide zusammen bezahlen"
+            }
+        },
+        "installmentsDrawer": {
+            "title": "Ihr Ratenzahlungsplan",
+            "description": "Überprüfen Sie Ihre Raten, prüfen Sie Beträge und Fristen und wählen Sie die Raten aus, die Sie jetzt zahlen möchten.",
+            "selectedInstallments": "Sie werden gleich bezahlen:",
+            "availableInstallments": "Verfügbare Preise:",
+            "expiredInstallments": "Überfällige Raten",
+            "installment": {
+                "installmentNumber": "Ratenzahlung {{installmentNumber}} von {{totalInstallments}}",
+                "dueDate": "Von <strong>{{date}}<\/strong>",
+                "expireDate": "die <strong>{{date}}<\/strong>"
+            },
+            "actions": {
+                "add": "In den Warenkorb legen ({{count}})",
+                "pay": "Weiter zur Zahlung ({{count}})"
+            }
+        },
+        "receiptDetail": {
+            "title": "Einzelheiten",
+            "subtitle": "Sie können die Ihrer Suche entsprechenden Belegdaten einsehen und herunterladen.",
+            "download": "Beleg herunterladen",
+            "amount": "Betrag",
+            "remittanceInformation": "Gegenstand der Zahlung",
+            "noticeCode": "Hinweis Code",
+            "beneficiary": "Begünstigte Einrichtung",
+            "beneficiaryFiscalCode": "Abgabenordnung Institution",
+            "debtor": "Eigentümer",
+            "debtorFiscalCode": "Abgabenordnung Schuldner",
+            "paymentInformation": "TRANSAKTIONSINFORMATIONEN",
+            "psp": "Transaktionsmanager (PSP)",
+            "paymentDate": "Datum und Uhrzeit",
+            "authorizationCode": "Zulassungscode",
+            "iur": "IUR",
+            "iud": "IUP",
+            "downloadError": "Der Beleg konnte nicht abgerufen werden."
+        },
+        "assistance": {
+            "title": "Wie können wir Ihnen helfen?",
+            "description": "Wenn Sie Unterstützung bei der Nutzung des Portals benötigen, geben Sie bitte die erforderlichen Daten ein, um Hilfe zu erhalten.",
+            "cardTitle": "Ihre E-Mail Adresse",
+            "cardDescription": "Geben Sie die E-Mail-Adresse an, an die Sie Antworten vom Support erhalten möchten.",
+            "input1Placeholder": "Bitte geben Sie Ihre E-Mail Adresse ein",
+            "input1Helper": "Bitte geben Sie eine gültige E-Mail Adresse ein",
+            "input2Helper": "E-Mail-Adressen müssen übereinstimmen",
+            "input2Placeholder": "E-Mail Adresse bestätigen",
+            "privacy": "Indem Sie fortfahren, erklären Sie, dass Sie die <link1>Datenschutzerklärung <\/link1> des Citizen Assistance Service gelesen haben",
+            "confirm": "Konfirmation",
+            "modalTitle": "Willst du wirklich ausgehen?",
+            "modalDescription": "Wenn Sie den Ort verlassen, geht der Antrag auf Unterstützung verloren."
+        },
+        "login": {
+            "auth": {
+                "title": "Zugang zu Ihrem persönlichen Profil",
+                "description": "Verwalten Sie Ihre pagoPA-Zahlscheine und konsultieren Sie Ihre Belege schnell und einfach.",
+                "CTA": "Zugangsprofil"
+            },
+            "noAuth": {
+                "title": "Sind Sie in Eile?",
+                "description": "Führen Sie eine spontane Zahlung durch oder rufen Sie den Beleg einer bereits getätigten Zahlung ab, ohne sich anzumelden.",
+                "CTA1": "Eine spontane Zahlung vornehmen",
+                "CTA2": "Einen Beleg abrufen",
+                "CTA3": "Suche nach einer Ausschreibung"
+            }
+        },
+        "dashboard": {
+            "title": "Auf Wiedersehen, {{username}}",
+            "greetings": "Willkommen",
+            "newPayment": "Eine Zahlung leisten",
+            "lastTransactions": "Ihre Quittungen",
+            "seeAllTransactions": "Alle sehen",
+            "lastDebtPositions": "Ihre Schuldenpositionen",
+            "IOAlert": {
+                "title": "Möchten Sie schneller auf Ihre Quittungen und Zahlungsbescheide zugreifen?",
+                "description": "Anzeigen und Verwalten Ihrer Zahlungsmittel und aller Quittungen",
+                "cta": "IO-App herunterladen"
+            }
+        },
+        "retry": {
+            "title": "Wir können die Daten aufgrund eines Problems nicht abrufen.",
+            "action": "Erneut versuchen"
+        },
+        "receipts": {
+            "searchByName": "Suche nach Name",
+            "subtitle": "Hier finden Sie Quittungen auf Ihren Namen. Wenn Sie nach Quittungen auf den Namen einer anderen Person suchen, klicken Sie auf",
+            "subtitleLink": "Einen Beleg abrufen",
+            "searchBy": "Suche nach",
+            "orderBy": "Sortieren nach",
+            "mostRecent": "am aktuellsten",
+            "leastRecent": "weniger neu",
+            "payee": "Name der Einrichtung",
+            "status": "Status",
+            "date": "Datum",
+            "paymentDateTime": "Bezahlt am",
+            "amount": "Betrag",
+            "higherAmount": "höchste Summe",
+            "lowerAmount": "niedrigste Menge",
+            "multiEntities": "Mehrere Warnungen",
+            "paid": "Bezahlt",
+            "viewDetail": "Transaktionsdetails anzeigen",
+            "empty": {
+                "title": "Hier sehen Sie Ihre Quittungen",
+                "subtitle": "Sie finden sie hier, nachdem Sie eine Schuldposition bei einem beliebigen freigegebenen Kanal bezahlt haben.",
+                "back": "Zurück zu Ihrem Profil",
+                "link": "Eine Zahlung leisten"
+            }
+        },
+        "debtPositions": {
+            "empty": {
+                "title": "Wir haben keine Schuldenpositionen gefunden",
+                "subtitle": "Um eine Zahlung zu leisten, geben Sie Ihre Positionsdaten über die Schaltfläche \"Zahlung leisten\" ein."
+            },
+            "debtPositionItem": {
+                "amount": "Betrag",
+                "dueDate": "Zu zahlen von",
+                "noDueDate": "Mehr Zahlungsmöglichkeiten"
+            },
+            "list": {
+                "title": "Zu zahlende Beträge",
+                "subtitle": "Hier finden Sie Bescheide, die noch zu zahlen sind oder bereits in Raten begonnen haben. Wenn Sie nach einem Bescheid suchen, der auf den Namen einer anderen Person lautet, klicken Sie auf",
+                "subtitleLink": "Achten Sie auf einen Warnhinweis."
+            },
+            "download": {
+                "title": "Der Download der Bekanntmachung ist im Gange",
+                "subtitle": "Wenn es nicht automatisch startet, <link>laden Sie die Warnung manuell herunter<\/link>.",
+                "link": "Aktivierte Kanäle entdecken"
+            }
+        },
+        "debtPositionDetail": {
+            "title": "Schuldenstand im Detail",
+            "paymentData": "Zahlungsdaten",
+            "org": "Gläubigerorganisation",
+            "cf": "Steuerkennzeichen der Entität",
+            "iupd": "Eindeutige Kennung der Schuldenposition (IUPD)",
+            "paymentOptions": "Zahlungsoptionen",
+            "payNow": "Jetzt bezahlen",
+            "payLater": "In Raten zahlen",
+            "addItemToCart": "Zum Einkaufswagen hinzufügen",
+            "removeItemFromCart": "Aus dem Einkaufswagen entfernen",
+            "paymentOptionSingleInstallment": "Einzigartige Lösung",
+            "paymentOptionInstallments": "Lösung auf Raten",
+            "installment": "rate",
+            "installments": "preise",
+            "before": "von",
+            "receipts": "Quittungen",
+            "paidOptionReceipt": "Erhalt von {{date}} von {{amount}}",
+            "downloadReceipt": "Download der Quittung",
+            "status": {
+                "PAID": "Bezahlt",
+                "UNPAID": "Zu zahlen",
+                "EXPIRED": "Abgelaufen"
+            },
+            "dueDate": {
+                "EXPIRED": "die {{dueDate}}",
+                "UNPAID": "von <strong>{{dueDate}}<\/strong>",
+                "PAID": "die {{paymentDateTime}}",
+                "REPORTED": "die {{paymentDateTime}}"
+            }
+        },
+        "paymentNotice": {
+            "preview": {
+                "title": "Suche nach Ihren pagoPA-Zahlungsbescheiden",
+                "description": "Hier finden Sie die Bescheide, die die Gläubiger uns mitgeteilt haben und die in Ihrem Namen zu zahlen sind.",
+                "action": "Suche in Ihren Ausschreibungen"
+            },
+            "empty": {
+                "title": "Wir haben keine Zahlungsaufforderungen gefunden",
+                "description": "Wenn Sie einen pagoPA-Bescheid erhalten haben, klicken Sie auf \"Bescheid bezahlen\" und geben Sie die Daten ein.",
+                "button": "Eine Kündigung bezahlen"
+            },
+            "filtered.nodata": {
+                "paidByMe": {
+                    "title": "Hier sehen Sie Quittungen für von Ihnen getätigte Zahlungen",
+                    "text": "Wenn Sie über einen anderen Weg gezahlt haben, wenden Sie sich bitte an die kreditgebende Einrichtung, um eine Quittung zu erhalten."
+                },
+                "ownedByMe": {
+                    "title": "Hier sehen Sie Quittungen für Zahlungen, die auf Sie ausgestellt wurden",
+                    "text": "Wenn Sie keine Quittung finden, wenden Sie sich an die Gläubigeragentur."
+                }
+            },
+            "error": {
+                "description": "Wir können die Daten aufgrund eines Problems nicht abrufen.",
+                "button": "Erneut versuchen"
+            },
+            "card": {
+                "amount": "Betrag",
+                "multiPayment": "Andere Zahlungsmöglichkeiten",
+                "expiringDate": "Einmalige Rate bis",
+                "detail": "Detail ansehen"
+            }
+        },
+        "paymentNotices": {
+            "title": "Ihre Zahlungsbescheide",
+            "found_one": "Wir fanden {{count}} Hinweis",
+            "found_other": "Wir fanden {{count}} Hinweise",
+            "notice": "bekanntmachungen",
+            "updated": "Aktualisiert am",
+            "loading": "Wir durchsuchen die Archive der an dem Dienst beteiligten Gläubigerorganisationen...",
+            "bottomAlert": {
+                "info": "Die Zahlungsaufforderungen wurden uns von den Gläubigereinrichtungen übermittelt. Bei Problemen wenden Sie sich bitte an die Einrichtung."
+            },
+            "noticesAlert": {
+                "info": "Dies sind die Zahlungsaufforderungen, die die Einrichtungen an PagoPA übermittelt haben. Wenn Sie einen Bescheid nicht finden, wenden Sie sich an den Zahlungsempfänger oder klicken Sie auf \"Bescheid bezahlen\" und geben Sie die Daten ein.",
+                "action": "Eine Kündigung bezahlen"
+            },
+            "optin": {
+                "title": "Erlauben Sie PagoPA die Suche in Ihren Alerts?",
+                "body": "Wenn Sie dies bestätigen, erlauben Sie PagoPA, in den Archiven der am Dienst teilnehmenden Stellen nach Zahlungsmitteilungen in Ihrem Namen zu suchen.",
+                "privacy": "Wenn Sie fortfahren, akzeptieren Sie die <a1>Datenschutzrichtlinie<\/a1> und die <a2>Nutzungsbedingungen<\/a2> des Dienstes."
+            }
+        },
+        "routes": {
+            "back": "Zurück",
+            "exit": "Ausfahrt",
+            "cancel": "Abbrechen",
+            "continue": "Fortsetzung",
+            "consent": "Erlauben Sie",
+            "breadcrumbs": "semmelbrösel",
+            "breadcrumbsElementClickable": "Anklickbares Breadcrumbs-Element",
+            "breadcrumbsElement": "Element Brotkrümel",
+            "home": "Homepage",
+            "transactionDetail": "Detail der Transaktion",
+            "transactions": "Quittungen",
+            "user": "Ihre Daten",
+            "paymentNotices": "Zahlungsmitteilungen",
+            "paymentNoticeDetail": "Notiz Detail"
+        },
+        "transactionDetail": {
+            "title": "Detail der Transaktion",
+            "card2": {
+                "title": "Informationen zur Transaktion"
+            },
+            "downloadReceipt": "Beleg herunterladen",
+            "downloadReceiptError": "Der Beleg konnte nicht abgerufen werden.",
+            "noReceipt": "Die pagoPA-Quittung ist nicht verfügbar. Wenden Sie sich an die Stelle des Zahlungsempfängers, wenn Sie den Zahlungsbeleg, d. h. das Dokument, das die Begleichung einer Schuld bescheinigt, benötigen.",
+            "downloadQuiettance": "Beleg herunterladen",
+            "createdOn": "Erstellt am",
+            "paidBy": "Durchgeführt von",
+            "authCode": "Zulassungscode",
+            "transactionId": "Transaktions-ID",
+            "accountHolder": "Auf dem Weg zu",
+            "paymentMethod": "Zahlungsmethode",
+            "PSP": "Transaktionsmanager (PSP)",
+            "dateAndTime": "Datum und Uhrzeit",
+            "subject": "Objekt",
+            "creditorEntity": "Gläubigerorganisation",
+            "creditorFiscalCode": "Abgabenordnung Institution",
+            "debtor": "Schuldner",
+            "noticeCode": "Warn-\/IUV-Code",
+            "partialAmount": "Teilbetrag",
+            "amount": "Betrag",
+            "commission": "Kommission",
+            "total": "Insgesamt",
+            "somethingDoesntAddUp": "Stimmt da etwas nicht?",
+            "contactSupport": "Kontakt zum Support",
+            "totalLabel": "Der Gesamtbetrag umfasst die <strong>{{fee}}<\/strong> Provision, die von {{psp}}"
+        },
+        "paymentNoticeDetail": {
+            "title": "Notiz Detail",
+            "card1": {
+                "title": "Zahlungsdaten",
+                "amount": "Betrag",
+                "paFullname": "Gläubigerorganisation",
+                "subject": "Gegenstand der Zahlung",
+                "dueDate": "Unter",
+                "iuv": "Warn-\/IUV-Code",
+                "paTaxCode": "Steuerkennzeichen der Entität"
+            },
+            "card2": {
+                "title": "Wie viel und wann ist zu zahlen?",
+                "firstInstallmentDate": "Einmalige Rate bis",
+                "firstInstallmentAmount": "Betrag",
+                "button1": "Jetzt bezahlen",
+                "label1": "Oder",
+                "button2": "Download pagoPA-Hinweis",
+                "addItemToCart": "Zum Einkaufswagen hinzufügen",
+                "removeItemFromCart": "Aus dem Einkaufswagen entfernen"
+            },
+            "modal": {
+                "title": "Siehst du einen anderen Betrag?",
+                "description": "das pagoPA aktualisiert den Betrag automatisch, um sicherzustellen, dass Sie genau den Betrag bezahlt haben, den Sie schulden, und um so Strafen oder andere Zinsen zu vermeiden."
+            }
+        }
+    },
+    "aria": {
+        "a11y": "Erreichbarkeit",
+        "help": "Hilfe"
+    },
+    "dates": {
+        "from": "Von",
+        "to": "Unter",
+        "validation": "Ungültiges Datum"
+    },
+    "actions": {
+        "filter": "Filter",
+        "resetFilters": "Filter entfernen",
+        "search": "Suche",
+        "detail": "Einzelheiten",
+        "download": "Herunterladen",
+        "close": "Schließen Sie",
+        "payNow": "Jetzt bezahlen",
+        "addItemToCart": "Zum Einkaufswagen hinzufügen"
+    },
+    "fields": {
+        "iuv": "Hinweis\/IUV-Code",
+        "fiscalcode": "Steuergesetzbuch",
+        "piva": "Steuernummer\/VAT-Code",
+        "anonymous": "Ich habe keine Steuernummer",
+        "orgName": "Gläubiger Körperschaft",
+        "amount": "Betrag",
+        "noticeCode": "Hinweis Code",
+        "status": "Status"
+    },
+    "installment": {
+        "status": {
+            "CANCELLED": "Abgesagt",
+            "DRAFT": "Entwurf",
+            "EXPIRED": "Abgelaufen",
+            "INVALID": "Ungültig",
+            "PAID": "Bezahlt",
+            "REPORTED": "Bezahlt",
+            "TO_SYNC": "Zu synchronisieren",
+            "UNPAID": "Zu zahlen",
+            "UNPAYABLE": "Nicht zahlbar"
+        }
+    },
+    "common": {
+        "person": "Natürliche Person",
+        "company": "Juristische Person"
+    },
+    "general": {
+        "and": "e",
+        "PagoPA": "PagoPA S.p.A"
+    },
+    "menu": {
+        "description": "Navigieren im Portal",
+        "homepage": "Homepage",
+        "receipts": {
+            "menuTitle": "Quittungen",
+            "pageTitle": "Quittungen"
+        },
+        "navigationMenu": "Menü Navigation",
+        "menu": "Menü",
+        "debtPositions": "Zu zahlende Beträge"
+    },
+    "sidebar": {
+        "collapse": "Menü \"Komprimieren",
+        "expand": "Menü ausklappen"
+    },
+    "errors": {
+        "resourceNotAvailable": "Ressource nicht verfügbar",
+        "form": {
+            "required": "Dieses Feld darf nicht leer sein."
+        },
+        "toast": {
+            "403": "Sie haben keine Berechtigung, diese Aktion durchzuführen.",
+            "404": "Ressource nicht gefunden.",
+            "500": "Serverfehler, bitte versuchen Sie es später noch einmal.",
+            "default": "Es ist ein unerwarteter Fehler aufgetreten. Bitte versuchen Sie es später noch einmal.",
+            "drawer": "Fehler beim Hinzufügen zum Einkaufswagen. Bitte versuchen Sie es später noch einmal.",
+            "payment": "Fehler beim Bezahlen. Bitte versuchen Sie es später noch einmal."
+        },
+        "empty": {
+            "search": "Keine Ergebnisse"
+        }
+    },
+    "ui": {
+        "a11y": {
+            "cart": "Warenkorb anzeigen",
+            "home": "Zur Startseite gehen"
+        },
+        "header": {
+            "profile": "Ihre Daten",
+            "logout": "Ausfahrt",
+            "skipToContent": "Zum Hauptinhalt springen"
+        },
+        "footer": {
+            "a11y": "Erreichbarkeit",
+            "help": "Hilfe",
+            "privacy": "Datenschutzbestimmungen",
+            "personalData": "Recht auf Schutz personenbezogener Daten",
+            "termsAndConditions": "Bedingungen und Konditionen"
+        }
+    },
+    "courtesyPage": {
+        "default": {
+            "title": "Etwas hat nicht funktioniert",
+            "body": "Wir arbeiten daran, dieses Problem so schnell wie möglich zu lösen. Bitte versuchen Sie es später noch einmal."
+        },
+        "400": {
+            "title": "Etwas hat nicht funktioniert",
+            "body": "Es ist ein unerwarteter Fehler aufgetreten. Bitte versuchen Sie es in ein paar Minuten erneut.",
+            "cta": "Erneut versuchen"
+        },
+        "401": {
+            "title": "Ihre Sitzung ist abgelaufen",
+            "body": "Bitte melden Sie sich an, um die Website weiter zu nutzen.",
+            "cta": "Eintragen"
+        },
+        "403": {
+            "title": "Die von Ihnen gesuchte Seite ist nicht verfügbar",
+            "body": "Sie können zur Startseite zurückkehren oder eine neue Seite besuchen",
+            "cta": "Zurück zur Startseite"
+        },
+        "404": {
+            "title": "Die von Ihnen gesuchte Seite existiert nicht",
+            "body": "Sie können zur Startseite zurückkehren oder eine neue Seite besuchen",
+            "cta": "Zurück zur Startseite"
+        },
+        "408": {
+            "title": "Es war nicht möglich, Zugang zu",
+            "body": "Beim Einloggen ist ein Problem aufgetreten. Bitte versuchen Sie es in ein paar Minuten erneut.",
+            "cta": "Erneut versuchen"
+        },
+        "420": {
+            "title": "Zahlung abgeschlossen",
+            "body": "Ihre Zahlung ist erfolgreich eingegangen.",
+            "cta": "Zurück nach Hause"
+        },
+        "422": {
+            "title": "Wir können nicht mit der Zahlung fortfahren",
+            "body": "Weitere Informationen über die Bekanntmachung erhalten Sie von der Gläubigerstelle.",
+            "cta": "Schließen Sie"
+        },
+        "424": {
+            "title": "Die Zahlung ist fehlgeschlagen",
+            "body": "Sie können es erneut versuchen oder die pagoPA-Benachrichtigung herunterladen und auf allen freigegebenen Kanälen bezahlen.",
+            "cta": "Erneut versuchen",
+            "downloadCta": "Hinweis herunterladen"
+        },
+        "425": {
+            "title": "Sie haben Ihre Zahlung storniert",
+            "body": "Wenn Sie möchten, können Sie den pagoPA-Hinweis herunterladen und bei allen freigegebenen Kanälen bezahlen.",
+            "cta": "Zurück nach Hause",
+            "downloadCta": "Hinweis herunterladen"
+        },
+        "423": {
+            "title": "Wir waren nicht in der Lage, die Zahlung zu veranlassen",
+            "body": "Versuchen Sie es in ein paar Minuten noch einmal.",
+            "cta": "Schließen Sie"
+        },
+        "500": {
+            "title": "Server-Fehler",
+            "body": "Es ist ein Serverfehler aufgetreten. Bitte versuchen Sie es später noch einmal.",
+            "cta": "Zurück zur Startseite"
+        }
+    },
+    "pageTitles": {
+        "dashboard": "Ihr Dashboard",
+        "notices": "Ihre Zahlungsbelege",
+        "courtesy": "Höflichkeitsseite",
+        "userpage": "Ihre Daten",
+        "login": "Eintragen",
+        "debtPositions": "Zu zahlende Beträge",
+        "debtPositionDetail": "Verschuldungsgrad",
+        "debtPositionsSearch": "Suche nach einer Ausschreibung",
+        "debtPositionsList": "Zu zahlende Beträge",
+        "paymentReceipt": "Zahlungseingang",
+        "receiptDetail": "Detail der Quittung",
+        "receiptsSearch": "Einen Beleg abrufen",
+        "receiptsList": "Quittungsliste",
+        "spontanei": "Spontane Zahlungen",
+        "assistance": "Unterstützung",
+        "paymentOutcomeOk": "Zahlung abgeschlossen",
+        "pp": "Datenschutzbestimmungen",
+        "tos": "Bedingungen der Dienstleistung"
+    },
+    "spontanei": {
+        "drawer": {
+            "title": "BEZAHLEN SIE EINE ANZEIGE",
+            "card1": {
+                "title": "Haben Sie eine Zahlungsaufforderung erhalten?",
+                "description": "Sie haben bereits die Codes oder einen QR-Code, um mit der Zahlung fortzufahren",
+                "cta": "Zur Zahlung gehen"
+            },
+            "card2": {
+                "title": "Möchten Sie eine spontane Zahlung leisten?",
+                "description": "Sie wollen die öffentliche Verwaltung bezahlen, weil Sie Lust dazu haben und weil Sie gut sind",
+                "cta": "Zahlung konfigurieren"
+            }
+        },
+        "form": {
+            "description": "Füllen Sie die erforderlichen Schritte aus und fahren Sie mit der Zahlung fort.",
+            "steps": {
+                "step1": {
+                    "step": "Einrichtung auswählen",
+                    "title": "Wählen Sie die begünstigte Organisation",
+                    "description": "Beginnen Sie mit der Eingabe des Namens der Einrichtung, die die Zahlung erhält, und wählen Sie sie aus der Liste aus.",
+                    "search": "Suche nach Entitätsname"
+                },
+                "step2": {
+                    "search": "Suche nach Dienstname",
+                    "mostUsedDebtTypes": "Basierend auf Ihrer Suche"
+                },
+                "step3": {
+                    "step": "Daten eingeben",
+                    "requiredField": "* Obligatorisches Feld",
+                    "debtor": {
+                        "useYourData": "Nutzen Sie Ihre Daten",
+                        "F": {
+                            "title": "Natürliche Person"
+                        },
+                        "G": {
+                            "title": "Juristische Person",
+                            "name": "Name",
+                            "code": "Steuernummer\/VAT-Code",
+                            "email": "E-Mail"
+                        },
+                        "noFiscalCode": "Ich habe keine Steuernummer"
+                    },
+                    "paymentData": {
+                        "title": "Daten zur Zahlungsaufforderung",
+                        "amount": "Betrag",
+                        "description": "Gegenstand der Zahlung"
+                    }
+                },
+                "step4": {
+                    "step": "Prüfen Sie die Daten",
+                    "title": "Prüfen Sie die eingegebenen Daten",
+                    "description": "Die Zahlung ist nur für die von Ihnen gewählte Gemeinde gültig ",
+                    "org": {
+                        "title": "Begünstigte Einrichtung",
+                        "name": " Name der Entität",
+                        "code": "Steuerkennzeichen der Entität"
+                    },
+                    "service": {
+                        "title": "Dienst",
+                        "name": "Name des Dienstes"
+                    },
+                    "debtor": {
+                        "G": {
+                            "name": "Name",
+                            "code": "Steuernummer\/VAT-Code",
+                            "email": "E-Mail"
+                        }
+                    },
+                    "payment": {
+                        "title": "Daten zur Zahlungsaufforderung",
+                        "description": "Gegenstand der Zahlung",
+                        "amount": "Betrag"
+                    }
+                },
+                "step5": {
+                    "step": "Schließen Sie die Zahlung ab",
+                    "title": "Wie wollen Sie bezahlen?",
+                    "description": "Sie können entweder sofort online bezahlen oder den Bescheid herunterladen und später bezahlen.",
+                    "pay": {
+                        "title": "Online bezahlen",
+                        "description": "Sie können Karte, Konto und Zahlungs-App verwenden.",
+                        "addItemToCartButton": "Zum Einkaufswagen hinzufügen",
+                        "payButton": "Jetzt bezahlen"
+                    },
+                    "download": {
+                        "title": "Download der Zahlungsaufforderung",
+                        "description": "Sie können damit an Schaltern, Banken oder anderen für pagoPA-Zahlungen freigegebenen Kanälen bezahlen.",
+                        "downloadButton": "Hinweis herunterladen"
+                    }
+                }
+            },
+            "continue": "Fortsetzung",
+            "confirm": "Konfirmation",
+            "abort": "Ausfahrt",
+            "back": "Zurück",
+            "errors": {
+                "description": "Ursache: zu kurz oder fehlend.",
+                "amount": "Ungültiger Betrag.",
+                "fullName": "Bitte geben Sie Ihren Vor- und Nachnamen ein",
+                "fiscalCode": "Geben Sie Ihre Steuernummer ein",
+                "email": "Bitte geben Sie eine E-Mail Adresse ein",
+                "org": "Die Auswahl der Einrichtung ist obligatorisch.",
+                "debtType": "*Wählen Sie einen Dienst aus der obersten oder meistgenutzten Liste"
+            }
+        },
+        "download": {
+            "title": "Der Download der Bekanntmachung ist im Gange",
+            "help": "Wenn es nicht automatisch startet, <link1>laden Sie die Warnung manuell herunter<\/link1>."
+        }
+    }
+}
