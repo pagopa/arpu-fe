@@ -1,6 +1,7 @@
 {
   "app": {
     "info": "Information",
+    "title": "Area Riservata Piattaforma Unitaria",
     "modal": {
       "close": "Close modal"
     },
