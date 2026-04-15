@@ -63,7 +63,7 @@ const Spontanei = () => {
 
   const validate = (values: PaymentNoticeInfo) => {
     const errors: Record<string | number, string> = {};
-    const result = PaymentNoticeInfoSchema(t).safeParse(values);
+    const result = PaymentNoticeInfoSchema().safeParse(values);
     if (!result.success) {
       result.error.issues.forEach((issue: z.ZodIssue) => (errors[issue.path[0]] = issue.message));
     }
