@@ -216,7 +216,9 @@ const DebtTypeSelect = () => {
                 </Stack>
               </>
             )}
-          {debtTypeMeta.touched && <Typography color="error">{debtTypeMeta.error}</Typography>}
+          {debtTypeMeta.touched && debtTypeMeta.error && (
+            <Typography color="error">{t(debtTypeMeta.error)}</Typography>
+          )}
         </Stack>
       </StepWrapper>
       <Controls shouldContinue={shouldContinue} />

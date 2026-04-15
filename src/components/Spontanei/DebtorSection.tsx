@@ -134,7 +134,7 @@ const DebtorSection = ({ allowedEntityType, hasFlagAnonymousFiscalCode }: Debtor
               {...fullName}
               id="fullName"
               error={fullNameMeta.touched && Boolean(fullNameMeta.error)}
-              helperText={fullNameMeta.touched && fullNameMeta.error}
+              helperText={fullNameMeta.touched && fullNameMeta.error && t(fullNameMeta.error)}
               sx={{ width: '-webkit-fill-available' }}
             />
             <TextField
@@ -149,7 +149,7 @@ const DebtorSection = ({ allowedEntityType, hasFlagAnonymousFiscalCode }: Debtor
               {...fiscalCode}
               id="fiscalCode"
               error={fiscalCodeMeta.touched && Boolean(fiscalCodeMeta.error)}
-              helperText={fiscalCodeMeta.touched && fiscalCodeMeta.error}
+              helperText={fiscalCodeMeta.touched && fiscalCodeMeta.error && t(fiscalCodeMeta.error)}
               sx={{ width: '-webkit-fill-available' }}
             />
             <TextField
@@ -164,7 +164,7 @@ const DebtorSection = ({ allowedEntityType, hasFlagAnonymousFiscalCode }: Debtor
               {...email}
               id="email"
               error={emailMeta.touched && Boolean(emailMeta.error)}
-              helperText={emailMeta.touched && emailMeta.error}
+              helperText={emailMeta.touched && emailMeta.error && t(emailMeta.error)}
               sx={{ width: '-webkit-fill-available' }}
             />
           </Stack>

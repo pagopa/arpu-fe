@@ -5,7 +5,6 @@ import { OUTCOMES, ROUTES } from 'routes/routes';
  * Downloads a file
  */
 const downloadFile = (file: File, filename: string) => {
-  console.log(file.name);
   const url = URL.createObjectURL(file);
 
   // Create a temporary <a> tag for downloading

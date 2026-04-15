@@ -80,7 +80,7 @@ const StandardForm = ({
                   }}
                   value={amount.value / 100}
                   error={amountMeta.touched && Boolean(amountMeta.error)}
-                  helperText={amountMeta.touched && amountMeta.error}
+                  helperText={amountMeta.touched && amountMeta.error && t(amountMeta.error)}
                 />
                 <TextField
                   label={t('spontanei.form.steps.step3.paymentData.description')}
