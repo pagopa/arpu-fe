@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect } from 'react';
 import { Link, useLocation, useParams } from 'react-router-dom';
 import { Stack, Typography, Button, Link as MuiLink } from '@mui/material';
 import { Trans, useTranslation } from 'react-i18next';
@@ -59,13 +59,8 @@ export const DebtPositionDownload = () => {
     }
   };
 
-  const hasDownloaded = useRef(false);
-
   useEffect(() => {
-    if (!hasDownloaded.current) {
-      hasDownloaded.current = true;
-      onDownload();
-    }
+    onDownload();
   }, []);
 
   return (
