@@ -16,7 +16,7 @@ const CartItem = (props: Omit<CartItem, 'nav' | 'paTaxCode'>) => {
   const { paFullName: title, description, amount, iuv: id } = props;
 
   return (
-    <Stack sx={styles.item}>
+    <Stack sx={styles.itemContainer}>
       <Grid container justifyContent={'space-between'} flexWrap="nowrap">
         <Grid size={{ xs: 7 }}>
           <Typography variant="body1" fontWeight={600} noWrap title={title}>
