@@ -1,651 +1,651 @@
 {
-    "app": {
-        "info": "Informations",
-        "modal": {
-            "close": "Fermer la fenêtre modale"
-        },
-        "receiptsSearch": {
-            "title": "Récupérer un reçu",
-            "description": "Si vous avez déjà effectué un paiement, veuillez remplir les champs requis et rechercher votre reçu.",
-            "sub": "Recherche du reçu",
-            "result_zero": "Aucun reçu n'a été trouvé",
-            "result_one": "Nous avons trouvé {{count}} reçu",
-            "result_other": "Nous avons trouvé {{count}} reçus",
-            "tab1": {
-                "description": "Saisissez le code de l'avis (ou de l'UVI) et le code fiscal pour lancer la recherche du reçu. Si vous n'avez pas le code fiscal, vous pouvez quand même récupérer le reçu."
-            },
-            "tab2": {
-                "description": "Saisissez le code de notification (ou l'UIV) et le numéro de TVA pour lancer la recherche de reçus."
-            },
-            "noData": {
-                "title": "Aucun reçu correspondant n'a été trouvé",
-                "text": "Veuillez vérifier les données saisies et réessayer."
-            }
-        },
-        "debtPositionsSearch": {
-            "title": "Recherche d'une alerte",
-            "sub": "Recherche d'une alerte",
-            "result_zero": "Pas de résultats",
-            "result_one": "Nous avons trouvé {{count}} notice",
-            "result_other": "Nous avons trouvé {{count}} notices",
-            "description": "Récupérez un avis de paiement en remplissant les champs avec les données requises.",
-            "noData": {
-                "title": "Aucun avis correspondant n'a été trouvé",
-                "text": "Veuillez vérifier les données saisies et réessayer."
-            },
-            "actions": {
-                "download": "Télécharger l'avis"
-            }
-        },
-        "user": {
-            "title": "Vos données",
-            "subtitle": "Ces données proviennent de votre SPID ou de votre CIE. Pour les modifier, contactez votre fournisseur d'identité numérique.",
-            "info": {
-                "name": "Nom",
-                "surname": "Nom de famille",
-                "identifier": "Code fiscal",
-                "email": "Adresse électronique"
-            }
-        },
-        "cart": {
-            "header": {
-                "title": "Votre panier d'achat",
-                "close": "Fermer le panier",
-                "amount": "Total Partiel"
-            },
-            "empty": {
-                "title": "Votre panier est vide",
-                "description": "Ajoutez une ou plusieurs alertes à votre panier pour procéder au paiement",
-                "button": "Retour aux alertes"
-            },
-            "items": {
-                "alert": "Le montant est mis à jour automatiquement, de sorte que vous payez toujours ce que vous devez et que vous évitez les pénalités ou autres intérêts. <link1>Vous voulez en savoir plus?<\/link1>",
-                "back": "Retour aux alertes",
-                "pay": "Aller au paiement",
-                "full": "Vous ne pouvez pas ajouter plus de 5 alertes à votre panier",
-                "info": "Vous pouvez payer jusqu'à 5 avis en même temps"
-            }
-        },
-        "installmentsDrawer": {
-            "title": "Votre plan de paiement",
-            "description": "Consultez vos versements, vérifiez les montants et les échéances et sélectionnez ceux que vous voulez payer maintenant.",
-            "selectedInstallments": "Vous allez payer :",
-            "availableInstallments": "Tarifs disponibles :",
-            "expiredInstallments": "Paiements en retard",
-            "installment": {
-                "installmentNumber": "Paiement échelonné {{installmentNumber}} de {{totalInstallments}}",
-                "dueDate": "Par <strong>{{date}}<\/strong>",
-                "expireDate": "{{date}}la <strong>COPY00 <\/strong>"
-            },
-            "actions": {
-                "add": "Ajouter au panier ({{count}})",
-                "pay": "Aller au paiement ({{count}})"
-            }
-        },
-        "receiptDetail": {
-            "title": "Détail",
-            "subtitle": "Vous pouvez consulter les données du reçu correspondant à votre recherche et les télécharger.",
-            "download": "Télécharger le reçu",
-            "amount": "Montant",
-            "remittanceInformation": "Objet du paiement",
-            "noticeCode": "Code de notification",
-            "beneficiary": "Organisme bénéficiaire",
-            "beneficiaryFiscalCode": "Code fiscal Institution",
-            "debtor": "Propriétaire",
-            "debtorFiscalCode": "Code fiscal Débiteur",
-            "paymentInformation": "INFORMATIONS SUR LES TRANSACTIONS",
-            "psp": "Gestionnaire de transactions (PSP)",
-            "paymentDate": "Date et heure",
-            "authorizationCode": "Code d'autorisation",
-            "iur": "IUR",
-            "iud": "DIU",
-            "downloadError": "Le reçu n'a pas pu être récupéré."
-        },
-        "assistance": {
-            "title": "Comment pouvons-nous vous aider ?",
-            "description": "Si vous avez besoin d'aide pour utiliser le portail, veuillez saisir les données requises pour recevoir de l'aide.",
-            "cardTitle": "Votre adresse électronique",
-            "cardDescription": "Indiquez l'adresse électronique à laquelle vous souhaitez recevoir les réponses du service d'assistance.",
-            "input1Placeholder": "Veuillez saisir votre adresse électronique",
-            "input1Helper": "Veuillez saisir une adresse électronique valide",
-            "input2Helper": "Les adresses électroniques doivent correspondre",
-            "input2Placeholder": "Confirmer l'adresse électronique",
-            "privacy": "En continuant, vous déclarez avoir pris connaissance de la <link1> Politique de confidentialité <\/link1> du Service d'assistance aux citoyens",
-            "confirm": "Confirmation",
-            "modalTitle": "Voulez-vous vraiment sortir ?",
-            "modalDescription": "Si vous partez, la demande d'assistance sera perdue."
-        },
-        "login": {
-            "auth": {
-                "title": "Accéder à votre profil personnel",
-                "description": "Gérez vos fiches de paiement pagoPA et consultez vos reçus rapidement et facilement.",
-                "CTA": "Profil d'accès"
-            },
-            "noAuth": {
-                "title": "Êtes-vous pressé ?",
-                "description": "Effectuez un paiement spontané ou récupérez le reçu d'un paiement déjà effectué, le tout sans vous connecter.",
-                "CTA1": "Effectuer un paiement spontané",
-                "CTA2": "Récupérer un reçu",
-                "CTA3": "Recherche d'une alerte"
-            }
-        },
-        "dashboard": {
-            "title": "Au revoir, {{username}}",
-            "greetings": "Bienvenue",
-            "newPayment": "Effectuer un paiement",
-            "lastTransactions": "Vos reçus",
-            "seeAllTransactions": "Voir tous",
-            "lastDebtPositions": "Vos positions d'endettement",
-            "IOAlert": {
-                "title": "Vous souhaitez accéder plus rapidement à vos reçus et à vos avis de paiement ?",
-                "description": "Consultez et gérez vos modes de paiement et tous vos reçus",
-                "cta": "Télécharger l'application IO"
-            }
-        },
-        "retry": {
-            "title": "Nous ne sommes pas en mesure de récupérer les données en raison d'un problème.",
-            "action": "Réessayer"
-        },
-        "receipts": {
-            "searchByName": "Recherche par nom",
-            "subtitle": "Vous trouverez ici les reçus à votre nom. Si vous cherchez des reçus au nom de quelqu'un d'autre, cliquez sur",
-            "subtitleLink": "Récupérer un reçu",
-            "searchBy": "Rechercher",
-            "orderBy": "Trier par",
-            "mostRecent": "le plus récent",
-            "leastRecent": "moins récente",
-            "payee": "Nom de l'entité",
-            "status": "Statut",
-            "date": "Date",
-            "paymentDateTime": "Payé le",
-            "amount": "Montant",
-            "higherAmount": "montant le plus élevé",
-            "lowerAmount": "montant le plus bas",
-            "multiEntities": "Alertes multiples",
-            "paid": "Payé",
-            "viewDetail": "Voir les détails de la transaction",
-            "empty": {
-                "title": "Vous y trouverez vos reçus",
-                "subtitle": "Vous les trouverez ici après avoir payé une position de dette sur n'importe quel canal activé.",
-                "back": "Retour à votre profil",
-                "link": "Effectuer un paiement"
-            }
-        },
-        "debtPositions": {
-            "empty": {
-                "title": "Nous n'avons trouvé aucune position de dette",
-                "subtitle": "Pour effectuer un paiement, saisissez les données relatives à votre position en cliquant sur le bouton \"Effectuer un paiement\"."
-            },
-            "debtPositionItem": {
-                "amount": "Montant",
-                "dueDate": "A payer par",
-                "noDueDate": "Plus d'options de paiement"
-            },
-            "list": {
-                "title": "Montants à payer",
-                "subtitle": "Vous trouverez ici les avis qui doivent encore être payés ou qui ont déjà fait l'objet d'un paiement échelonné. Si vous recherchez un avis au nom d'une autre personne, cliquez sur",
-                "subtitleLink": "Recherchez une alerte."
-            },
-            "download": {
-                "title": "Le téléchargement de l'avis est en cours",
-                "subtitle": "S'il ne démarre pas automatiquement, <link>téléchargez l'avertissement manuellement<\/link>.",
-                "link": "Découvrir les canaux activés"
-            }
-        },
-        "debtPositionDetail": {
-            "title": "Détail de la position de la dette",
-            "paymentData": "Données de paiement",
-            "org": "Entité créancière",
-            "cf": "Code fiscal de l'entité",
-            "iupd": "Identifiant unique de la position de la dette (IUPD)",
-            "paymentOptions": "Options de paiement",
-            "payNow": "Payer maintenant",
-            "payLater": "Paiement échelonné",
-            "addItemToCart": "Ajouter au panier",
-            "removeItemFromCart": "Retirer du panier",
-            "paymentOptionSingleInstallment": "Une solution unique",
-            "paymentOptionInstallments": "Paiement en plusieurs fois",
-            "installment": "versement",
-            "installments": "taux",
-            "before": "par",
-            "receipts": "Recettes",
-            "paidOptionReceipt": "Réception de {{date}} de {{amount}}",
-            "downloadReceipt": "Télécharger le reçu",
-            "status": {
-                "PAID": "Payé",
-                "UNPAID": "A payer",
-                "EXPIRED": "Expiré"
-            },
-            "dueDate": {
-                "EXPIRED": "les {{dueDate}}",
-                "UNPAID": "{{dueDate}}par <strong>COPY00 <\/strong>",
-                "PAID": "les {{paymentDateTime}}",
-                "REPORTED": "les {{paymentDateTime}}"
-            }
-        },
-        "paymentNotice": {
-            "preview": {
-                "title": "Recherchez vos avis de paiement pagoPA",
-                "description": "Vous trouverez ici les avis à payer en votre nom que les créanciers nous ont communiqués.",
-                "action": "Recherchez vos alertes"
-            },
-            "empty": {
-                "title": "Nous n'avons trouvé aucun avis de paiement",
-                "description": "Si vous avez reçu un avis de paiement, cliquez sur \"Payer un avis\" et saisissez les données.",
-                "button": "Payer un avis"
-            },
-            "filtered.nodata": {
-                "paidByMe": {
-                    "title": "Vous y trouverez les reçus des paiements que vous avez effectués",
-                    "text": "Si vous avez payé par un autre canal, veuillez contacter l'institution créancière pour obtenir un reçu."
-                },
-                "ownedByMe": {
-                    "title": "Vous y trouverez les reçus des paiements effectués en votre faveur",
-                    "text": "Si vous ne trouvez pas de reçu, contactez l'organisme créancier."
-                }
-            },
-            "error": {
-                "description": "Nous ne sommes pas en mesure de récupérer les données en raison d'un problème.",
-                "button": "Réessayer"
-            },
-            "card": {
-                "amount": "Montant",
-                "multiPayment": "Autres options de paiement",
-                "expiringDate": "Versement unique par",
-                "detail": "Voir le détail"
-            }
-        },
-        "paymentNotices": {
-            "title": "Vos avis de paiement",
-            "found_one": "Nous avons trouvé {{count}} notice",
-            "found_other": "Nous avons trouvé {{count}} notices",
-            "notice": "avis",
-            "updated": "Mise à jour le",
-            "loading": "Nous recherchons dans les archives des entités créancières participant au service...",
-            "bottomAlert": {
-                "info": "Les avis de paiement nous ont été communiqués par les entités créancières. En cas de problème, veuillez contacter l'institution."
-            },
-            "noticesAlert": {
-                "info": "Il s'agit des avis de paiement que les entités ont communiqués à PagoPA. Si vous ne trouvez pas d'avis, contactez l'entité créancière ou cliquez sur \"Payer un avis\" et saisissez les données.",
-                "action": "Payer un avis"
-            },
-            "optin": {
-                "title": "Autorisez-vous PagoPA à effectuer des recherches dans vos alertes ?",
-                "body": "Si vous confirmez, vous autorisez PagoPA à rechercher des avis de paiement à votre nom dans les archives des entités participant au service.",
-                "privacy": "En continuant, vous acceptez la <a1>Politique de confidentialité<\/a1> et les <a2>Termes et conditions d'utilisation<\/a2> du service."
-            }
-        },
-        "routes": {
-            "back": "Retour",
-            "exit": "Sortie",
-            "cancel": "Annuler",
-            "continue": "Suite",
-            "consent": "Autoriser",
-            "breadcrumbs": "chapelure",
-            "breadcrumbsElementClickable": "Élément de fil d'Ariane cliquable",
-            "breadcrumbsElement": "Élément \"miettes de pain",
-            "home": "Page d'accueil",
-            "transactionDetail": "Détail de la transaction",
-            "transactions": "Recettes",
-            "user": "Vos données",
-            "paymentNotices": "Avis de paiement",
-            "paymentNoticeDetail": "Détail de l'avis"
-        },
-        "transactionDetail": {
-            "title": "Détail de la transaction",
-            "card2": {
-                "title": "Informations sur les transactions"
-            },
-            "downloadReceipt": "Télécharger le reçu",
-            "downloadReceiptError": "Le reçu n'a pas pu être récupéré.",
-            "noReceipt": "Le reçu de paiement n'est pas disponible. Contactez l'organisme créancier si vous avez besoin du reçu de paiement, c'est-à-dire du document attestant qu'une dette a été réglée.",
-            "downloadQuiettance": "Télécharger le reçu",
-            "createdOn": "Créé le",
-            "paidBy": "Exécuté par",
-            "authCode": "Code d'autorisation",
-            "transactionId": "ID de la transaction",
-            "accountHolder": "En route pour",
-            "paymentMethod": "Mode de paiement",
-            "PSP": "Gestionnaire de transactions (PSP)",
-            "dateAndTime": "Date et heure",
-            "subject": "Objet",
-            "creditorEntity": "Entité créancière",
-            "creditorFiscalCode": "Code fiscal Institution",
-            "debtor": "Débiteur",
-            "noticeCode": "Code d'avertissement\/IUV",
-            "partialAmount": "Montant partiel",
-            "amount": "Montant",
-            "commission": "La Commission",
-            "total": "Total",
-            "somethingDoesntAddUp": "Quelque chose ne colle pas ?",
-            "contactSupport": "Contacter le support",
-            "totalLabel": "{{fee}}Le total comprend la commission <strong>COPY00 <\/strong>, facturée par <strong>la Banque de France<\/strong> {{psp}}"
-        },
-        "paymentNoticeDetail": {
-            "title": "Détail de l'avis",
-            "card1": {
-                "title": "Données de paiement",
-                "amount": "Montant",
-                "paFullname": "Entité créancière",
-                "subject": "Objet du paiement",
-                "dueDate": "Par",
-                "iuv": "Code d'avertissement\/IUV",
-                "paTaxCode": "Code fiscal de l'entité"
-            },
-            "card2": {
-                "title": "Combien et quand payer ?",
-                "firstInstallmentDate": "Versement unique par",
-                "firstInstallmentAmount": "Montant",
-                "button1": "Payer maintenant",
-                "label1": "Ou",
-                "button2": "Télécharger l'avis de pagoPA",
-                "addItemToCart": "Ajouter au panier",
-                "removeItemFromCart": "Retirer du panier"
-            },
-            "modal": {
-                "title": "Voyez-vous un montant différent ?",
-                "description": "pagoPA met automatiquement à jour le montant pour s'assurer que vous avez payé exactement ce que vous devez et éviter ainsi les pénalités ou autres intérêts."
-            }
-        }
+  "app": {
+    "info": "Informations",
+    "modal": {
+      "close": "Fermer la fenêtre modale"
     },
-    "aria": {
-        "a11y": "Accessibilité",
-        "help": "Aide"
+    "receiptsSearch": {
+      "title": "Récupérer un reçu",
+      "description": "Si vous avez déjà effectué un paiement, veuillez remplir les champs requis et rechercher votre reçu.",
+      "sub": "Recherche du reçu",
+      "result_zero": "Aucun reçu n'a été trouvé",
+      "result_one": "Nous avons trouvé {{count}} reçu",
+      "result_other": "Nous avons trouvé {{count}} reçus",
+      "tab1": {
+        "description": "Saisissez le code de l'avis (ou de l'UVI) et le code fiscal pour lancer la recherche du reçu. Si vous n'avez pas le code fiscal, vous pouvez quand même récupérer le reçu."
+      },
+      "tab2": {
+        "description": "Saisissez le code de notification (ou l'UIV) et le numéro de TVA pour lancer la recherche de reçus."
+      },
+      "noData": {
+        "title": "Aucun reçu correspondant n'a été trouvé",
+        "text": "Veuillez vérifier les données saisies et réessayer."
+      }
     },
-    "dates": {
-        "from": "De",
-        "to": "Au",
-        "validation": "Date invalide"
+    "debtPositionsSearch": {
+      "title": "Recherche d'une alerte",
+      "sub": "Recherche d'une alerte",
+      "result_zero": "Pas de résultats",
+      "result_one": "Nous avons trouvé {{count}} notice",
+      "result_other": "Nous avons trouvé {{count}} notices",
+      "description": "Récupérez un avis de paiement en remplissant les champs avec les données requises.",
+      "noData": {
+        "title": "Aucun avis correspondant n'a été trouvé",
+        "text": "Veuillez vérifier les données saisies et réessayer."
+      },
+      "actions": {
+        "download": "Télécharger l'avis"
+      }
     },
-    "actions": {
-        "filter": "Filtre",
-        "resetFilters": "Supprimer les filtres",
-        "search": "Recherche",
-        "detail": "Détail",
-        "download": "Télécharger",
-        "close": "Fermer",
-        "payNow": "Payer maintenant",
-        "addItemToCart": "Ajouter au panier"
+    "user": {
+      "title": "Vos données",
+      "subtitle": "Ces données proviennent de votre SPID ou de votre CIE. Pour les modifier, contactez votre fournisseur d'identité numérique.",
+      "info": {
+        "name": "Nom",
+        "surname": "Nom de famille",
+        "identifier": "Code fiscal",
+        "email": "Adresse électronique"
+      }
     },
-    "fields": {
-        "iuv": "Avis\/code UV",
-        "fiscalcode": "Code des impôts",
-        "piva": "Code fiscal\/Code TVA",
-        "anonymous": "Je n'ai pas de code fiscal",
-        "orgName": "Entité créancière",
+    "cart": {
+      "header": {
+        "title": "Votre panier d'achat",
+        "close": "Fermer le panier",
+        "amount": "Total Partiel"
+      },
+      "empty": {
+        "title": "Votre panier est vide",
+        "description": "Ajoutez une ou plusieurs alertes à votre panier pour procéder au paiement",
+        "button": "Retour aux alertes"
+      },
+      "items": {
+        "alert": "Le montant est mis à jour automatiquement, de sorte que vous payez toujours ce que vous devez et que vous évitez les pénalités ou autres intérêts. <link1>Vous voulez en savoir plus?<\/link1>",
+        "back": "Retour aux alertes",
+        "pay": "Aller au paiement",
+        "full": "Vous ne pouvez pas ajouter plus de 5 alertes à votre panier",
+        "info": "Vous pouvez payer jusqu'à 5 avis en même temps"
+      }
+    },
+    "installmentsDrawer": {
+      "title": "Votre plan de paiement",
+      "description": "Consultez vos versements, vérifiez les montants et les échéances et sélectionnez ceux que vous voulez payer maintenant.",
+      "selectedInstallments": "Vous allez payer :",
+      "availableInstallments": "Tarifs disponibles :",
+      "expiredInstallments": "Paiements en retard",
+      "installment": {
+        "installmentNumber": "Paiement échelonné {{installmentNumber}} de {{totalInstallments}}",
+        "dueDate": "Par <strong>{{date}}<\/strong>",
+        "expireDate": "{{date}}la <strong>COPY00 <\/strong>"
+      },
+      "actions": {
+        "add": "Ajouter au panier ({{count}})",
+        "pay": "Aller au paiement ({{count}})"
+      }
+    },
+    "receiptDetail": {
+      "title": "Détail",
+      "subtitle": "Vous pouvez consulter les données du reçu correspondant à votre recherche et les télécharger.",
+      "download": "Télécharger le reçu",
+      "amount": "Montant",
+      "remittanceInformation": "Objet du paiement",
+      "noticeCode": "Code de notification",
+      "beneficiary": "Organisme bénéficiaire",
+      "beneficiaryFiscalCode": "Code fiscal Institution",
+      "debtor": "Propriétaire",
+      "debtorFiscalCode": "Code fiscal Débiteur",
+      "paymentInformation": "INFORMATIONS SUR LES TRANSACTIONS",
+      "psp": "Gestionnaire de transactions (PSP)",
+      "paymentDate": "Date et heure",
+      "authorizationCode": "Code d'autorisation",
+      "iur": "IUR",
+      "iud": "DIU",
+      "downloadError": "Le reçu n'a pas pu être récupéré."
+    },
+    "assistance": {
+      "title": "Comment pouvons-nous vous aider ?",
+      "description": "Si vous avez besoin d'aide pour utiliser le portail, veuillez saisir les données requises pour recevoir de l'aide.",
+      "cardTitle": "Votre adresse électronique",
+      "cardDescription": "Indiquez l'adresse électronique à laquelle vous souhaitez recevoir les réponses du service d'assistance.",
+      "input1Placeholder": "Veuillez saisir votre adresse électronique",
+      "input1Helper": "Veuillez saisir une adresse électronique valide",
+      "input2Helper": "Les adresses électroniques doivent correspondre",
+      "input2Placeholder": "Confirmer l'adresse électronique",
+      "privacy": "En continuant, vous déclarez avoir pris connaissance de la <link1> Politique de confidentialité <\/link1> du Service d'assistance aux citoyens",
+      "confirm": "Confirmation",
+      "modalTitle": "Voulez-vous vraiment sortir ?",
+      "modalDescription": "Si vous partez, la demande d'assistance sera perdue."
+    },
+    "login": {
+      "auth": {
+        "title": "Accéder à votre profil personnel",
+        "description": "Gérez vos fiches de paiement pagoPA et consultez vos reçus rapidement et facilement.",
+        "CTA": "Profil d'accès"
+      },
+      "noAuth": {
+        "title": "Êtes-vous pressé ?",
+        "description": "Effectuez un paiement spontané ou récupérez le reçu d'un paiement déjà effectué, le tout sans vous connecter.",
+        "CTA1": "Effectuer un paiement spontané",
+        "CTA2": "Récupérer un reçu",
+        "CTA3": "Recherche d'une alerte"
+      }
+    },
+    "dashboard": {
+      "title": "Au revoir, {{username}}",
+      "greetings": "Bienvenue",
+      "newPayment": "Effectuer un paiement",
+      "lastTransactions": "Vos reçus",
+      "seeAllTransactions": "Voir tous",
+      "lastDebtPositions": "Vos positions d'endettement",
+      "IOAlert": {
+        "title": "Vous souhaitez accéder plus rapidement à vos reçus et à vos avis de paiement ?",
+        "description": "Consultez et gérez vos modes de paiement et tous vos reçus",
+        "cta": "Télécharger l'application IO"
+      }
+    },
+    "retry": {
+      "title": "Nous ne sommes pas en mesure de récupérer les données en raison d'un problème.",
+      "action": "Réessayer"
+    },
+    "receipts": {
+      "searchByName": "Recherche par nom",
+      "subtitle": "Vous trouverez ici les reçus à votre nom. Si vous cherchez des reçus au nom de quelqu'un d'autre, cliquez sur",
+      "subtitleLink": "Récupérer un reçu",
+      "searchBy": "Rechercher",
+      "orderBy": "Trier par",
+      "mostRecent": "le plus récent",
+      "leastRecent": "moins récente",
+      "payee": "Nom de l'entité",
+      "status": "Statut",
+      "date": "Date",
+      "paymentDateTime": "Payé le",
+      "amount": "Montant",
+      "higherAmount": "montant le plus élevé",
+      "lowerAmount": "montant le plus bas",
+      "multiEntities": "Alertes multiples",
+      "paid": "Payé",
+      "viewDetail": "Voir les détails de la transaction",
+      "empty": {
+        "title": "Vous y trouverez vos reçus",
+        "subtitle": "Vous les trouverez ici après avoir payé une position de dette sur n'importe quel canal activé.",
+        "back": "Retour à votre profil",
+        "link": "Effectuer un paiement"
+      }
+    },
+    "debtPositions": {
+      "empty": {
+        "title": "Nous n'avons trouvé aucune position de dette",
+        "subtitle": "Pour effectuer un paiement, saisissez les données relatives à votre position en cliquant sur le bouton \"Effectuer un paiement\"."
+      },
+      "debtPositionItem": {
         "amount": "Montant",
-        "noticeCode": "Code de notification",
-        "status": "Statut"
+        "dueDate": "A payer par",
+        "noDueDate": "Plus d'options de paiement"
+      },
+      "list": {
+        "title": "Montants à payer",
+        "subtitle": "Vous trouverez ici les avis qui doivent encore être payés ou qui ont déjà fait l'objet d'un paiement échelonné. Si vous recherchez un avis au nom d'une autre personne, cliquez sur",
+        "subtitleLink": "Recherchez une alerte."
+      },
+      "download": {
+        "title": "Le téléchargement de l'avis est en cours",
+        "subtitle": "S'il ne démarre pas automatiquement, <link>téléchargez l'avertissement manuellement<\/link>.",
+        "link": "Découvrir les canaux activés"
+      }
     },
-    "installment": {
-        "status": {
-            "CANCELLED": "Annulé",
-            "DRAFT": "Projet",
-            "EXPIRED": "Expiré",
-            "INVALID": "Invalide",
-            "PAID": "Payé",
-            "REPORTED": "Payé",
-            "TO_SYNC": "A synchroniser",
-            "UNPAID": "A payer",
-            "UNPAYABLE": "Non payable"
+    "debtPositionDetail": {
+      "title": "Détail de la position de la dette",
+      "paymentData": "Données de paiement",
+      "org": "Entité créancière",
+      "cf": "Code fiscal de l'entité",
+      "iupd": "Identifiant unique de la position de la dette (IUPD)",
+      "paymentOptions": "Options de paiement",
+      "payNow": "Payer maintenant",
+      "payLater": "Paiement échelonné",
+      "addItemToCart": "Ajouter au panier",
+      "removeItemFromCart": "Retirer du panier",
+      "paymentOptionSingleInstallment": "Une solution unique",
+      "paymentOptionInstallments": "Paiement en plusieurs fois",
+      "installment": "versement",
+      "installments": "taux",
+      "before": "par",
+      "receipts": "Recettes",
+      "paidOptionReceipt": "Réception de {{date}} de {{amount}}",
+      "downloadReceipt": "Télécharger le reçu",
+      "status": {
+        "PAID": "Payé",
+        "UNPAID": "A payer",
+        "EXPIRED": "Expiré"
+      },
+      "dueDate": {
+        "EXPIRED": "les {{dueDate}}",
+        "UNPAID": "{{dueDate}}par <strong>COPY00 <\/strong>",
+        "PAID": "les {{paymentDateTime}}",
+        "REPORTED": "les {{paymentDateTime}}"
+      }
+    },
+    "paymentNotice": {
+      "preview": {
+        "title": "Recherchez vos avis de paiement pagoPA",
+        "description": "Vous trouverez ici les avis à payer en votre nom que les créanciers nous ont communiqués.",
+        "action": "Recherchez vos alertes"
+      },
+      "empty": {
+        "title": "Nous n'avons trouvé aucun avis de paiement",
+        "description": "Si vous avez reçu un avis de paiement, cliquez sur \"Payer un avis\" et saisissez les données.",
+        "button": "Payer un avis"
+      },
+      "filtered.nodata": {
+        "paidByMe": {
+          "title": "Vous y trouverez les reçus des paiements que vous avez effectués",
+          "text": "Si vous avez payé par un autre canal, veuillez contacter l'institution créancière pour obtenir un reçu."
+        },
+        "ownedByMe": {
+          "title": "Vous y trouverez les reçus des paiements effectués en votre faveur",
+          "text": "Si vous ne trouvez pas de reçu, contactez l'organisme créancier."
         }
+      },
+      "error": {
+        "description": "Nous ne sommes pas en mesure de récupérer les données en raison d'un problème.",
+        "button": "Réessayer"
+      },
+      "card": {
+        "amount": "Montant",
+        "multiPayment": "Autres options de paiement",
+        "expiringDate": "Versement unique par",
+        "detail": "Voir le détail"
+      }
     },
-    "common": {
-        "person": "Personne physique",
-        "company": "Entité légale"
+    "paymentNotices": {
+      "title": "Vos avis de paiement",
+      "found_one": "Nous avons trouvé {{count}} notice",
+      "found_other": "Nous avons trouvé {{count}} notices",
+      "notice": "avis",
+      "updated": "Mise à jour le",
+      "loading": "Nous recherchons dans les archives des entités créancières participant au service...",
+      "bottomAlert": {
+        "info": "Les avis de paiement nous ont été communiqués par les entités créancières. En cas de problème, veuillez contacter l'institution."
+      },
+      "noticesAlert": {
+        "info": "Il s'agit des avis de paiement que les entités ont communiqués à PagoPA. Si vous ne trouvez pas d'avis, contactez l'entité créancière ou cliquez sur \"Payer un avis\" et saisissez les données.",
+        "action": "Payer un avis"
+      },
+      "optin": {
+        "title": "Autorisez-vous PagoPA à effectuer des recherches dans vos alertes ?",
+        "body": "Si vous confirmez, vous autorisez PagoPA à rechercher des avis de paiement à votre nom dans les archives des entités participant au service.",
+        "privacy": "En continuant, vous acceptez la <a1>Politique de confidentialité<\/a1> et les <a2>Termes et conditions d'utilisation<\/a2> du service."
+      }
     },
-    "general": {
-        "and": "e",
-        "PagoPA": "PagoPA S.p.A"
+    "routes": {
+      "back": "Retour",
+      "exit": "Sortie",
+      "cancel": "Annuler",
+      "continue": "Suite",
+      "consent": "Autoriser",
+      "breadcrumbs": "chapelure",
+      "breadcrumbsElementClickable": "Élément de fil d'Ariane cliquable",
+      "breadcrumbsElement": "Élément \"miettes de pain",
+      "home": "Page d'accueil",
+      "transactionDetail": "Détail de la transaction",
+      "transactions": "Recettes",
+      "user": "Vos données",
+      "paymentNotices": "Avis de paiement",
+      "paymentNoticeDetail": "Détail de l'avis"
     },
-    "menu": {
-        "description": "Naviguer sur le portail",
-        "homepage": "Page d'accueil",
-        "receipts": {
-            "menuTitle": "Recettes",
-            "pageTitle": "Recettes"
-        },
-        "navigationMenu": "Menu de navigation",
-        "menu": "Menu",
-        "debtPositions": "Montants à payer"
+    "transactionDetail": {
+      "title": "Détail de la transaction",
+      "card2": {
+        "title": "Informations sur les transactions"
+      },
+      "downloadReceipt": "Télécharger le reçu",
+      "downloadReceiptError": "Le reçu n'a pas pu être récupéré.",
+      "noReceipt": "Le reçu de paiement n'est pas disponible. Contactez l'organisme créancier si vous avez besoin du reçu de paiement, c'est-à-dire du document attestant qu'une dette a été réglée.",
+      "downloadQuiettance": "Télécharger le reçu",
+      "createdOn": "Créé le",
+      "paidBy": "Exécuté par",
+      "authCode": "Code d'autorisation",
+      "transactionId": "ID de la transaction",
+      "accountHolder": "En route pour",
+      "paymentMethod": "Mode de paiement",
+      "PSP": "Gestionnaire de transactions (PSP)",
+      "dateAndTime": "Date et heure",
+      "subject": "Objet",
+      "creditorEntity": "Entité créancière",
+      "creditorFiscalCode": "Code fiscal Institution",
+      "debtor": "Débiteur",
+      "noticeCode": "Code d'avertissement\/IUV",
+      "partialAmount": "Montant partiel",
+      "amount": "Montant",
+      "commission": "La Commission",
+      "total": "Total",
+      "somethingDoesntAddUp": "Quelque chose ne colle pas ?",
+      "contactSupport": "Contacter le support",
+      "totalLabel": "{{fee}}Le total comprend la commission <strong>COPY00 <\/strong>, facturée par <strong>la Banque de France<\/strong> {{psp}}"
     },
-    "sidebar": {
-        "collapse": "Menu Compression",
-        "expand": "Développer le menu"
-    },
-    "errors": {
-        "resourceNotAvailable": "Ressource non disponible",
-        "form": {
-            "required": "Ce champ ne peut pas être vide."
-        },
-        "toast": {
-            "403": "Vous n'avez pas les autorisations nécessaires pour effectuer cette action.",
-            "404": "Ressource non trouvée.",
-            "500": "Erreur de serveur, veuillez réessayer plus tard.",
-            "default": "Une erreur inattendue s'est produite. Veuillez réessayer plus tard.",
-            "drawer": "Erreur lors de l'ajout au panier de paiement. Veuillez réessayer plus tard.",
-            "payment": "Erreur lors du paiement. Veuillez réessayer plus tard."
-        },
-        "empty": {
-            "search": "Aucun résultat"
-        }
-    },
-    "ui": {
-        "a11y": {
-            "cart": "Voir le panier de paiement",
-            "home": "Aller à la page d'accueil"
-        },
-        "header": {
-            "profile": "Vos données",
-            "logout": "Quitter",
-            "skipToContent": "Skip to main content"
-        },
-        "footer": {
-            "a11y": "Accessibilité",
-            "help": "Aide",
-            "privacy": "Politique de confidentialité",
-            "personalData": "Droit à la protection des données personnelles",
-            "termsAndConditions": "Conditions générales d'utilisation"
-        }
-    },
-    "courtesyPage": {
-        "default": {
-            "title": "Une erreur s’est produite",
-            "body": "Nous travaillons à résoudre le problème dans les plus brefs délais. Veuillez réessayer plus tard."
-        },
-        "400": {
-            "title": "Quelque chose n'a pas fonctionné",
-            "body": "Une erreur inattendue s'est produite. Veuillez réessayer dans quelques minutes.",
-            "cta": "Réessayer"
-        },
-        "401": {
-            "title": "Votre session a expiré",
-            "body": "Veuillez vous connecter pour continuer à utiliser le site.",
-            "cta": "Se connecter"
-        },
-        "403": {
-            "title": "La page que vous recherchez n'est pas disponible",
-            "body": "Vous pouvez revenir à la page d'accueil ou visiter une nouvelle page",
-            "cta": "Retour à la page d'accueil"
-        },
-        "404": {
-            "title": "La page que vous recherchez n'existe pas",
-            "body": "Vous pouvez revenir à la page d'accueil ou visiter une nouvelle page",
-            "cta": "Retour à la page d'accueil"
-        },
-        "408": {
-            "title": "Il n'a pas été possible d'accéder aux",
-            "body": "Un problème est survenu lors de la connexion. Veuillez réessayer dans quelques minutes.",
-            "cta": "Réessayer"
-        },
-        "420": {
-            "title": "Paiement effectué",
-            "body": "Votre paiement a été reçu avec succès.",
-            "cta": "Retour à l'accueil"
-        },
-        "422": {
-            "title": "Nous ne pouvons pas procéder au paiement",
-            "body": "Pour plus d'informations sur l'avis, contactez l'organisme créancier.",
-            "cta": "Fermer"
-        },
-        "424": {
-            "title": "Le paiement a échoué",
-            "body": "Vous pouvez réessayer ou télécharger l'avis pagoPA et payer sur tous les canaux activés.",
-            "cta": "Réessayer",
-            "downloadCta": "Télécharger l'avis"
-        },
-        "425": {
-            "title": "Vous avez annulé votre paiement",
-            "body": "Si vous le souhaitez, vous pouvez télécharger l'avis pagoPA et payer sur tous les canaux activés.",
-            "cta": "Retour à l'accueil",
-            "downloadCta": "Télécharger l'avis"
-        },
-        "423": {
-            "title": "Nous n'avons pas pu initier le paiement",
-            "body": "Réessayez dans quelques minutes.",
-            "cta": "Fermer"
-        },
-        "500": {
-            "title": "Erreur du serveur",
-            "body": "Une erreur de serveur s'est produite. Veuillez réessayer plus tard.",
-            "cta": "Retour à la page d'accueil"
-        }
-    },
-    "pageTitles": {
-        "dashboard": "Votre tableau de bord",
-        "notices": "Vos reçus de paiement",
-        "courtesy": "Page de courtoisie",
-        "userpage": "Vos informations",
-        "login": "Se connecter",
-        "debtPositions": "Montants à payer",
-        "debtPositionDetail": "Situation de dette",
-        "debtPositionsSearch": "Rechercher un avis",
-        "debtPositionsList": "Montants à payer",
-        "paymentReceipt": "Reçu de paiement",
-        "receiptDetail": "Détail du reçu",
-        "receiptsSearch": "Récupérer un reçu",
-        "receiptsList": "Liste des reçus",
-        "spontanei": "Paiements spontanés",
-        "assistance": "Assistance",
-        "paymentOutcomeOk": "Paiement effectué",
-        "pp": "Politique de confidentialité",
-        "tos": "Conditions d'utilisation"
-    },
-    "spontanei": {
-        "drawer": {
-            "title": "PAYER UN AVIS",
-            "card1": {
-                "title": "Avez-vous reçu un avis de paiement ?",
-                "description": "Vous disposez déjà des codes ou d'un code QR pour procéder au paiement",
-                "cta": "Aller au paiement"
-            },
-            "card2": {
-                "title": "Vous souhaitez effectuer un paiement spontané ?",
-                "description": "Vous voulez payer l'administration publique parce que vous en avez envie et parce que vous êtes bon",
-                "cta": "Configurer le paiement"
-            }
-        },
-        "form": {
-            "description": "Complétez les étapes requises et procédez au paiement.",
-            "steps": {
-                "step1": {
-                    "step": "Sélectionner l'organisme",
-                    "title": "Sélectionner l'organisation bénéficiaire",
-                    "description": "Commencez à taper le nom de l'organisme bénéficiaire du paiement et sélectionnez-le dans la liste.",
-                    "search": "Rechercher par nom de l'organisme"
-                },
-                "step2": {
-                    "search": "Rechercher par nom du service",
-                    "mostUsedDebtTypes": "Selon votre recherche"
-                },
-                "step3": {
-                    "step": "Saisir les informations",
-                    "requiredField": "* Champ obligatoire",
-                    "debtor": {
-                        "useYourData": "Utilisez vos données",
-                        "F": {
-                            "title": "Personne physique"
-                        },
-                        "G": {
-                            "title": "Personne morale",
-                            "name": "Nom",
-                            "code": "Code fiscal\/Code TVA",
-                            "email": "E-mail"
-                        },
-                        "noFiscalCode": "Je n'ai pas de code fiscal"
-                    },
-                    "paymentData": {
-                        "title": "Données de l'avis de paiement",
-                        "amount": "Montant",
-                        "description": "Objet du paiement"
-                    }
-                },
-                "step4": {
-                    "step": "Vérifier les informations",
-                    "title": "Vérifier les informations saisies",
-                    "description": "Le paiement ne sera valable que pour la commune que vous avez sélectionnée ",
-                    "org": {
-                        "title": "Organisme bénéficiaire",
-                        "name": " Nom de l'organisme",
-                        "code": "Code fiscal de l'organisme"
-                    },
-                    "service": {
-                        "title": "Service",
-                        "name": "Nom du service"
-                    },
-                    "debtor": {
-                        "G": {
-                            "name": "Nom",
-                            "code": "Code fiscal\/Code TVA",
-                            "email": "E-mail"
-                        }
-                    },
-                    "payment": {
-                        "title": "Données de l'avis de paiement",
-                        "description": "Objet du paiement",
-                        "amount": "Montant"
-                    }
-                },
-                "step5": {
-                    "step": "Compléter le paiement",
-                    "title": "Comment voulez-vous payer ?",
-                    "description": "Vous pouvez choisir de payer immédiatement en ligne ou de télécharger l'avis et de payer plus tard.",
-                    "pay": {
-                        "title": "Payer en ligne",
-                        "description": "Vous pouvez utiliser la carte, le compte et les applications de paiement.",
-                        "addItemToCartButton": "Ajouter au panier",
-                        "payButton": "Payer maintenant"
-                    },
-                    "download": {
-                        "title": "Télécharger l'avis de paiement",
-                        "description": "Vous pouvez l'utiliser pour payer aux guichets, dans les banques ou dans d'autres canaux permettant les paiements pagoPA.",
-                        "downloadButton": "Télécharger l'avis"
-                    }
-                }
-            },
-            "continue": "Continuer",
-            "confirm": "Confirmer",
-            "abort": "Quitter",
-            "back": "Retour",
-            "errors": {
-                "description": "Cause trop courte ou manquante",
-                "amount": "Montant non valide",
-                "fullName": "Saisir le nom et le prénom",
-                "fiscalCode": {
-                    "required": "Saisir le code fiscal",
-                    "invalid": "Saisir un code fiscal valide"
-                },
-                "email": {
-                    "required": "Saisir une adresse e-mail",
-                    "invalid": "Saisir une adresse e-mail valide"
-                },
-                "org": "La sélection de l’organisme est obligatoire",
-                "debtType": "Sélectionner un service dans la liste ci-dessus ou dans la liste des services les plus utilisés"
-            }
-        },
-        "download": {
-            "title": "Le téléchargement de l'avis est en cours",
-            "help": "S'il ne démarre pas automatiquement, <link1>téléchargez l'avis manuellement<\/link1>."
-        }
+    "paymentNoticeDetail": {
+      "title": "Détail de l'avis",
+      "card1": {
+        "title": "Données de paiement",
+        "amount": "Montant",
+        "paFullname": "Entité créancière",
+        "subject": "Objet du paiement",
+        "dueDate": "Par",
+        "iuv": "Code d'avertissement\/IUV",
+        "paTaxCode": "Code fiscal de l'entité"
+      },
+      "card2": {
+        "title": "Combien et quand payer ?",
+        "firstInstallmentDate": "Versement unique par",
+        "firstInstallmentAmount": "Montant",
+        "button1": "Payer maintenant",
+        "label1": "Ou",
+        "button2": "Télécharger l'avis de pagoPA",
+        "addItemToCart": "Ajouter au panier",
+        "removeItemFromCart": "Retirer du panier"
+      },
+      "modal": {
+        "title": "Voyez-vous un montant différent ?",
+        "description": "pagoPA met automatiquement à jour le montant pour s'assurer que vous avez payé exactement ce que vous devez et éviter ainsi les pénalités ou autres intérêts."
+      }
     }
+  },
+  "aria": {
+    "a11y": "Accessibilité",
+    "help": "Aide"
+  },
+  "dates": {
+    "from": "De",
+    "to": "Au",
+    "validation": "Date invalide"
+  },
+  "actions": {
+    "filter": "Filtre",
+    "resetFilters": "Supprimer les filtres",
+    "search": "Recherche",
+    "detail": "Détail",
+    "download": "Télécharger",
+    "close": "Fermer",
+    "payNow": "Payer maintenant",
+    "addItemToCart": "Ajouter au panier"
+  },
+  "fields": {
+    "iuv": "Avis\/code UV",
+    "fiscalcode": "Code des impôts",
+    "piva": "Code fiscal\/Code TVA",
+    "anonymous": "Je n'ai pas de code fiscal",
+    "orgName": "Entité créancière",
+    "amount": "Montant",
+    "noticeCode": "Code de notification",
+    "status": "Statut"
+  },
+  "installment": {
+    "status": {
+      "CANCELLED": "Annulé",
+      "DRAFT": "Projet",
+      "EXPIRED": "Expiré",
+      "INVALID": "Invalide",
+      "PAID": "Payé",
+      "REPORTED": "Payé",
+      "TO_SYNC": "A synchroniser",
+      "UNPAID": "A payer",
+      "UNPAYABLE": "Non payable"
+    }
+  },
+  "common": {
+    "person": "Personne physique",
+    "company": "Entité légale"
+  },
+  "general": {
+    "and": "e",
+    "PagoPA": "PagoPA S.p.A"
+  },
+  "menu": {
+    "description": "Naviguer sur le portail",
+    "homepage": "Page d'accueil",
+    "receipts": {
+      "menuTitle": "Recettes",
+      "pageTitle": "Recettes"
+    },
+    "navigationMenu": "Menu de navigation",
+    "menu": "Menu",
+    "debtPositions": "Montants à payer"
+  },
+  "sidebar": {
+    "collapse": "Menu Compression",
+    "expand": "Développer le menu"
+  },
+  "errors": {
+    "resourceNotAvailable": "Ressource non disponible",
+    "form": {
+      "required": "Ce champ ne peut pas être vide."
+    },
+    "toast": {
+      "403": "Vous n'avez pas les autorisations nécessaires pour effectuer cette action.",
+      "404": "Ressource non trouvée.",
+      "500": "Erreur de serveur, veuillez réessayer plus tard.",
+      "default": "Une erreur inattendue s'est produite. Veuillez réessayer plus tard.",
+      "drawer": "Erreur lors de l'ajout au panier de paiement. Veuillez réessayer plus tard.",
+      "payment": "Erreur lors du paiement. Veuillez réessayer plus tard."
+    },
+    "empty": {
+      "search": "Aucun résultat"
+    }
+  },
+  "ui": {
+    "a11y": {
+      "cart": "Voir le panier de paiement",
+      "home": "Aller à la page d'accueil"
+    },
+    "header": {
+      "profile": "Vos données",
+      "logout": "Quitter",
+      "skipToContent": "Skip to main content"
+    },
+    "footer": {
+      "a11y": "Accessibilité",
+      "help": "Aide",
+      "privacy": "Politique de confidentialité",
+      "personalData": "Droit à la protection des données personnelles",
+      "termsAndConditions": "Conditions générales d'utilisation"
+    }
+  },
+  "courtesyPage": {
+    "default": {
+      "title": "Une erreur s’est produite",
+      "body": "Nous travaillons à résoudre le problème dans les plus brefs délais. Veuillez réessayer plus tard."
+    },
+    "400": {
+      "title": "Quelque chose n'a pas fonctionné",
+      "body": "Une erreur inattendue s'est produite. Veuillez réessayer dans quelques minutes.",
+      "cta": "Réessayer"
+    },
+    "401": {
+      "title": "Votre session a expiré",
+      "body": "Veuillez vous connecter pour continuer à utiliser le site.",
+      "cta": "Se connecter"
+    },
+    "403": {
+      "title": "La page que vous recherchez n'est pas disponible",
+      "body": "Vous pouvez revenir à la page d'accueil ou visiter une nouvelle page",
+      "cta": "Retour à la page d'accueil"
+    },
+    "404": {
+      "title": "La page que vous recherchez n'existe pas",
+      "body": "Vous pouvez revenir à la page d'accueil ou visiter une nouvelle page",
+      "cta": "Retour à la page d'accueil"
+    },
+    "408": {
+      "title": "Il n'a pas été possible d'accéder aux",
+      "body": "Un problème est survenu lors de la connexion. Veuillez réessayer dans quelques minutes.",
+      "cta": "Réessayer"
+    },
+    "420": {
+      "title": "Paiement effectué",
+      "body": "Votre paiement a été reçu avec succès.",
+      "cta": "Retour à l'accueil"
+    },
+    "422": {
+      "title": "Nous ne pouvons pas procéder au paiement",
+      "body": "Pour plus d'informations sur l'avis, contactez l'organisme créancier.",
+      "cta": "Fermer"
+    },
+    "424": {
+      "title": "Le paiement a échoué",
+      "body": "Vous pouvez réessayer ou télécharger l'avis pagoPA et payer sur tous les canaux activés.",
+      "cta": "Réessayer",
+      "downloadCta": "Télécharger l'avis"
+    },
+    "425": {
+      "title": "Vous avez annulé votre paiement",
+      "body": "Si vous le souhaitez, vous pouvez télécharger l'avis pagoPA et payer sur tous les canaux activés.",
+      "cta": "Retour à l'accueil",
+      "downloadCta": "Télécharger l'avis"
+    },
+    "423": {
+      "title": "Nous n'avons pas pu initier le paiement",
+      "body": "Réessayez dans quelques minutes.",
+      "cta": "Fermer"
+    },
+    "500": {
+      "title": "Erreur du serveur",
+      "body": "Une erreur de serveur s'est produite. Veuillez réessayer plus tard.",
+      "cta": "Retour à la page d'accueil"
+    }
+  },
+  "pageTitles": {
+    "dashboard": "Votre tableau de bord",
+    "notices": "Vos reçus de paiement",
+    "courtesy": "Page de courtoisie",
+    "userpage": "Vos informations",
+    "login": "Se connecter",
+    "debtPositions": "Montants à payer",
+    "debtPositionDetail": "Situation de dette",
+    "debtPositionsSearch": "Rechercher un avis",
+    "debtPositionsList": "Montants à payer",
+    "paymentReceipt": "Reçu de paiement",
+    "receiptDetail": "Détail du reçu",
+    "receiptsSearch": "Récupérer un reçu",
+    "receiptsList": "Liste des reçus",
+    "spontanei": "Paiements spontanés",
+    "assistance": "Assistance",
+    "paymentOutcomeOk": "Paiement effectué",
+    "pp": "Politique de confidentialité",
+    "tos": "Conditions d'utilisation"
+  },
+  "spontanei": {
+    "drawer": {
+      "title": "PAYER UN AVIS",
+      "card1": {
+        "title": "Avez-vous reçu un avis de paiement ?",
+        "description": "Vous disposez déjà des codes ou d'un code QR pour procéder au paiement",
+        "cta": "Aller au paiement"
+      },
+      "card2": {
+        "title": "Vous souhaitez effectuer un paiement spontané ?",
+        "description": "Vous voulez payer l'administration publique parce que vous en avez envie et parce que vous êtes bon",
+        "cta": "Configurer le paiement"
+      }
+    },
+    "form": {
+      "description": "Complétez les étapes requises et procédez au paiement.",
+      "steps": {
+        "step1": {
+          "step": "Sélectionner l'organisme",
+          "title": "Sélectionner l'organisation bénéficiaire",
+          "description": "Commencez à taper le nom de l'organisme bénéficiaire du paiement et sélectionnez-le dans la liste.",
+          "search": "Rechercher par nom de l'organisme"
+        },
+        "step2": {
+          "search": "Rechercher par nom du service",
+          "mostUsedDebtTypes": "Selon votre recherche"
+        },
+        "step3": {
+          "step": "Saisir les informations",
+          "requiredField": "* Champ obligatoire",
+          "debtor": {
+            "useYourData": "Utilisez vos données",
+            "F": {
+              "title": "Personne physique"
+            },
+            "G": {
+              "title": "Personne morale",
+              "name": "Nom",
+              "code": "Code fiscal\/Code TVA",
+              "email": "E-mail"
+            },
+            "noFiscalCode": "Je n'ai pas de code fiscal"
+          },
+          "paymentData": {
+            "title": "Données de l'avis de paiement",
+            "amount": "Montant",
+            "description": "Objet du paiement"
+          }
+        },
+        "step4": {
+          "step": "Vérifier les informations",
+          "title": "Vérifier les informations saisies",
+          "description": "Le paiement ne sera valable que pour la commune que vous avez sélectionnée ",
+          "org": {
+            "title": "Organisme bénéficiaire",
+            "name": " Nom de l'organisme",
+            "code": "Code fiscal de l'organisme"
+          },
+          "service": {
+            "title": "Service",
+            "name": "Nom du service"
+          },
+          "debtor": {
+            "G": {
+              "name": "Nom",
+              "code": "Code fiscal\/Code TVA",
+              "email": "E-mail"
+            }
+          },
+          "payment": {
+            "title": "Données de l'avis de paiement",
+            "description": "Objet du paiement",
+            "amount": "Montant"
+          }
+        },
+        "step5": {
+          "step": "Compléter le paiement",
+          "title": "Comment voulez-vous payer ?",
+          "description": "Vous pouvez choisir de payer immédiatement en ligne ou de télécharger l'avis et de payer plus tard.",
+          "pay": {
+            "title": "Payer en ligne",
+            "description": "Vous pouvez utiliser la carte, le compte et les applications de paiement.",
+            "addItemToCartButton": "Ajouter au panier",
+            "payButton": "Payer maintenant"
+          },
+          "download": {
+            "title": "Télécharger l'avis de paiement",
+            "description": "Vous pouvez l'utiliser pour payer aux guichets, dans les banques ou dans d'autres canaux permettant les paiements pagoPA.",
+            "downloadButton": "Télécharger l'avis"
+          }
+        }
+      },
+      "continue": "Continuer",
+      "confirm": "Confirmer",
+      "abort": "Quitter",
+      "back": "Retour",
+      "errors": {
+        "description": "Cause trop courte ou manquante",
+        "amount": "Montant non valide",
+        "fullName": "Saisir le nom et le prénom",
+        "fiscalCode": {
+          "required": "Saisir le code fiscal",
+          "invalid": "Saisir un code fiscal valide"
+        },
+        "email": {
+          "required": "Saisir une adresse e-mail",
+          "invalid": "Saisir une adresse e-mail valide"
+        },
+        "org": "La sélection de l’organisme est obligatoire",
+        "debtType": "Sélectionner un service dans la liste ci-dessus ou dans la liste des services les plus utilisés"
+      }
+    },
+    "download": {
+      "title": "Le téléchargement de l'avis est en cours",
+      "help": "S'il ne démarre pas automatiquement, <link1>téléchargez l'avis manuellement<\/link1>."
+    }
+  }
 }
