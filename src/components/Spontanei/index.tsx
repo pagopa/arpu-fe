@@ -101,7 +101,7 @@ const Spontanei = () => {
   return (
     <>
       <Box width={'100%'} component="main">
-        <Formik initialValues={defaultPaymentNoticeInfo} validate={validate} onSubmit={console.log}>
+        <Formik initialValues={defaultPaymentNoticeInfo} validate={validate} onSubmit={() => {}}>
           <FormContext.Provider value={contextValue}>
             <Stack direction={'column'} justifyContent={'start'}>
               <Typography variant="h4" component="h1" mb={1} data-testid="spontanei-title">
