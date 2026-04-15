@@ -189,7 +189,9 @@
       "download": {
         "title": "Il download dell’avviso è in corso",
         "subtitle": "Se non parte in automatico, <link>scarica l’avviso manualmente<\/link>",
-        "link": "Scopri i canali abilitati"
+        "link": "Scopri i canali abilitati",
+        "help": "Se non parte automaticamente, <CustomLink>clicca qui</CustomLink>.",
+        "info": ""
       }
     },
     "debtPositionDetail": {
@@ -438,7 +440,8 @@
     "header": {
       "profile": "I tuoi dati",
       "logout": "Esci",
-      "skipToContent": "Vai al contenuto principale"
+      "skipToContent": "Vai al contenuto principale",
+      "help": "Assistenza"
     },
     "footer": {
       "a11y": "Accessibilità",
@@ -546,6 +549,7 @@
       }
     },
     "form": {
+      "title": "Effettua un pagamento spontaneo",
       "description": "Completa i passaggi richiesti e procedi con il pagamento.",
       "steps": {
         "step1": {
@@ -555,16 +559,25 @@
           "search": "Cerca per nome dell'ente"
         },
         "step2": {
-          "search": "Cerca per nome del servizio",
+          "step": "Seleziona il servizio",
+          "title": "Seleziona il servizio",
+          "description": "Inizia a digitare il nome del servizio per il quale vuoi effettuare il pagamento e selezionalo dalla lista.",
+          "search": "Cerca per servizio",
           "mostUsedDebtTypes": "In base alla tua ricerca"
         },
         "step3": {
           "step": "Inserisci i dati",
+          "title": "Inserisci i dati",
+          "description": "Compila i campi con i dati richiesti per completare l'operazione.",
           "requiredField": "* Campo obbligatorio",
           "debtor": {
+            "title": "Dati del debitore",
             "useYourData": "Usa i tuoi dati",
             "F": {
-              "title": "Persona fisica"
+              "title": "Persona fisica",
+              "name": "Nome e Cognome debitore",
+              "code": "Codice Fiscale",
+              "email": "Email"
             },
             "G": {
               "title": "Soggetto giuridico",
@@ -578,12 +591,15 @@
             "title": "Dati dell'avviso di pagamento",
             "amount": "Importo",
             "description": "Oggetto del pagamento"
+          },
+          "custom": {
+            "title": "Inserisci i dati richiesti:"
           }
         },
         "step4": {
-          "step": "Controlla i dati",
-          "title": "Controlla i dati inseriti",
-          "description": "Il pagamento sarà valido solo per il Comune che hai selezionato ",
+          "step": "Riepilogo",
+          "title": "Ecco i dati che hai inserito.",
+          "description": "Controlla i dati inseriti e conferma per procedere al pagamento.",
           "org": {
             "title": "Ente beneficiario",
             "name": " Nome Ente",
@@ -594,6 +610,12 @@
             "name": "Nome servizio"
           },
           "debtor": {
+            "title": "Dati del debitore",
+            "F": {
+              "name": "Nome e cognome",
+              "code": "Codice Fiscale",
+              "email": "Email"
+            },
             "G": {
               "name": "Denominazione",
               "code": "Codice Fiscale\/P.IVA",
