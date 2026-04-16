@@ -123,6 +123,9 @@ let schemaObject = {};
 export const BuildFormSchema = (fields: Array<SpontaneousFormField>) => {
   fields.forEach((field) => {
     if (field.subfields) BuildFormSchema(field.subfields);
+    if (field.htmlRender === RenderType.MULTIFIELD || field.htmlRender === RenderType.TAB) {
+      return;
+    }
     const name = field.name;
     const isRequired = field.required;
     const regex = field.regex;
@@ -220,6 +223,10 @@ export const BuildFormState = (fields: Array<SpontaneousFormField>): CustomFormV
           ...intialState,
           [name]: normalizeSelectValue(defaultValue, initialOptions)
         };
+        return
+      }
+      if (htmlRender === RenderType.CURRENCY || htmlRender === RenderType.CURRENCY_LABEL || htmlRender === RenderType.DYNAMIC_AMOUNT_LABEL) {
+        intialState = { ...intialState, [name]: 0 };
         return
       }
       intialState = { ...intialState, [name]: defaultValue };

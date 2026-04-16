@@ -86,8 +86,9 @@ const withComputedValues =
 
       useEffect(() => {
         if (hasValuDependsOn && valueDependsOn) {
-          const newValue = computeValue<string>(valueDependsOn, values);
-          helpers.setValue(newValue, false);
+          const newValue = computeValue(valueDependsOn, values);
+          const convertedValue = !isNaN(newValue) ? Number(newValue) : value;
+          helpers.setValue(convertedValue, false);
         }
       }, [values]);
 
