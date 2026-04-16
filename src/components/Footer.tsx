@@ -57,7 +57,6 @@ export const Footer = () => {
             <FooterLink href={ROUTES.PRIVACY_POLICY}>{t('ui.footer.privacy')}</FooterLink>
             <FooterLink href={ROUTES.TOS}>{t('ui.footer.termsAndConditions')}</FooterLink>
             <FooterLink href={a11yLink}>{t('ui.footer.a11y')}</FooterLink>
-            <FooterLink href="#">{t('ui.footer.personalData')}</FooterLink>
             <LangSwitch
               currentLangCode={language}
               onLanguageChanged={changeLanguage}

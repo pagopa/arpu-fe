@@ -36,19 +36,15 @@ describe('Footer', () => {
     expect(screen.getByText('ui.footer.privacy')).toBeInTheDocument();
     expect(screen.getByText('ui.footer.termsAndConditions')).toBeInTheDocument();
     expect(screen.getByText('ui.footer.a11y')).toBeInTheDocument();
-    expect(screen.getByText('ui.footer.personalData')).toBeInTheDocument();
   });
 
   it('renders external links with target blank and rel attributes', () => {
     render(<Footer />);
 
     const a11yLink = screen.getByText('ui.footer.a11y').closest('a');
-    const personalDataLink = screen.getByText('ui.footer.personalData').closest('a');
 
     expect(a11yLink).toHaveAttribute('target', '_blank');
     expect(a11yLink).toHaveAttribute('rel', 'noopener noreferrer');
-    expect(personalDataLink).toHaveAttribute('target', '_blank');
-    expect(personalDataLink).toHaveAttribute('rel', 'noopener noreferrer');
   });
 
   it('renders default a11y link when brokerInfo has no a11yLink', () => {
