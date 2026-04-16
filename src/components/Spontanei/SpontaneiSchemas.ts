@@ -39,4 +39,11 @@ const getPaymentNoticeInfoSchema = () =>
       .pipe(z.string().email('spontanei.form.errors.email.invalid'))
   });
 
+export type Option = { label: string; value: string };
+
+export const OptionSchema = z.object({
+  label: z.string(),
+  value: z.string()
+})
+
 export default getPaymentNoticeInfoSchema;

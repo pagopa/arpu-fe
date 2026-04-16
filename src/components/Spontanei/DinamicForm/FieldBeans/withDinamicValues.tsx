@@ -13,8 +13,7 @@ import InfoRoundedIcon from '@mui/icons-material/InfoRounded';
 import { PaymentNoticeInfo } from 'components/Spontanei';
 import FormContext, { FormContextType } from 'components/Spontanei/FormContext';
 import i18n from '../../../../translations/i18n';
-
-export type Option = { label: string; value: string };
+import { Option } from 'components/Spontanei/SpontaneiSchemas';
 
 export interface computedPROPS extends SpontaneousFormField, FieldInputProps<CustomFormValues['']> {
   isHidden?: boolean;

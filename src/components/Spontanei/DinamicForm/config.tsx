@@ -1,7 +1,7 @@
 import React from 'react';
 import * as z from 'zod';
 import { SpontaneousFormField } from '../../../../generated/data-contracts';
-import { Option } from './FieldBeans/withDinamicValues';
+import { Option, OptionSchema } from 'components/Spontanei/SpontaneiSchemas';
 
 // SANDBOX
 import sand from '@nyariv/sandboxjs';
@@ -96,8 +96,8 @@ export function computeValue<T>(code: string, scope = {}) {
   }
 }
 
-// This function is used to convert the values of the form to the original scope
-// This is needed because the form values are converted to the original scope
+// This function is used to convert the values of the specific fields to the original form
+
 // For example, if the form has a field with a value of { label: 'test', value: 'test' },
 // this function will convert it to 'test'
 // This is required to have full retrocompatibility with the existing code
@@ -106,9 +106,14 @@ export function computeValue<T>(code: string, scope = {}) {
 const backToOriginalScope = (values: CustomFormValues) => {
   const scopeValues = { ...values };
   Object.keys(scopeValues).forEach((key) => {
-    if (Array.isArray(scopeValues[key])) {
+    const value = scopeValues[key];
+    if (isOption(value)) {
+      scopeValues[key] = value.value;
+    }
+    if (Array.isArray(scopeValues[key]) && scopeValues[key].every(isOption)) {
       scopeValues[key] = scopeValues[key]?.map((opt: Option) => opt.value);
     }
+
   });
   return scopeValues;
 }
@@ -131,15 +136,11 @@ export const BuildFormSchema = (fields: Array<SpontaneousFormField>) => {
     if (isAmountField) {
       fieldSchema = isRequired ? z.number().min(0, errorMessage) : z.number();
     } else if (type === RenderType.SINGLESELECT || type === RenderType.DYNAMIC_SELECT) {
-      fieldSchema = z
-        .object({
-          label: z.string(),
-          value: z.string()
-        })
+      fieldSchema = OptionSchema
         .nullable()
         .refine((option) => isRequired && option !== null, errorMessage);
     } else if (type === RenderType.MULTISELECT) {
-      fieldSchema = isRequired ? z.array(z.string()).min(1, errorMessage) : z.array(z.string());
+      fieldSchema = isRequired ? z.array(OptionSchema).min(1, errorMessage) : z.array(OptionSchema);
     } else {
       fieldSchema = isRequired ? z.string().min(1, errorMessage) : z.string();
       if (regex) {

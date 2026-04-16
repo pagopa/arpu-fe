@@ -46,6 +46,8 @@ const CustomForm = (props: CustomFormProps) => {
     await submitForm();
     const globalFormErrors = await validateForm();
     const customFormErrors = validate(values);
+    console.log('globalFormErrors', globalFormErrors);
+    console.log('customFormErrors', customFormErrors);
     setErrors({ ...globalFormErrors, ...customFormErrors });
     return isEmpty(globalFormErrors || {}) && isEmpty(customFormErrors || {});
   };
