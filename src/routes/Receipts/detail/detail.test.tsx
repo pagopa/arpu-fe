@@ -179,9 +179,9 @@ describe('ReceiptDetail', () => {
       const downloadButton = screen.getByRole('button', { name: 'app.receiptDetail.download' });
       fireEvent.click(downloadButton);
 
-      expect(mockNavigate).toHaveBeenCalledWith('/receipt/456/30123456789012345678/download', {
-        state: { fiscalCode: 'RSSMRA80A01H501U' }
-      });
+      expect(mockNavigate).toHaveBeenCalledWith(
+        '/receipt/456/30123456789012345678/download#debtorFiscalCode=RSSMRA80A01H501U'
+      );
     });
 
     it('does not render bottom action buttons for authenticated user', () => {
@@ -225,10 +225,7 @@ describe('ReceiptDetail', () => {
       fireEvent.click(downloadButton);
 
       expect(mockNavigate).toHaveBeenCalledWith(
-        '/public/receipt/456/30123456789012345678/download',
-        {
-          state: { fiscalCode: 'RSSMRA80A01H501U' }
-        }
+        '/public/receipt/456/30123456789012345678/download#debtorFiscalCode=RSSMRA80A01H501U'
       );
     });
 
@@ -336,9 +333,9 @@ describe('ReceiptDetail', () => {
       const downloadButton = screen.getByRole('button', { name: 'app.receiptDetail.download' });
       fireEvent.click(downloadButton);
 
-      expect(mockNavigate).toHaveBeenCalledWith(expect.any(String), {
-        state: { fiscalCode: 'RSSMRA80A01H501U' }
-      });
+      expect(mockNavigate).toHaveBeenCalledWith(
+        expect.stringContaining('#debtorFiscalCode=RSSMRA80A01H501U')
+      );
     });
 
     it('renders payment amount correctly', () => {
