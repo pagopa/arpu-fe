@@ -8,19 +8,18 @@ import { useTranslation } from 'react-i18next';
 
 const SELECT = (props: computedPROPS & { multiple?: boolean }) => {
   const { t } = useTranslation();
-  const { name, onBlur, htmlLabel, hasError, required, errorMessage, options = [] } = props;
+  const { name, onBlur, htmlLabel, hasError, required, errorMessage, options = [], multiple } = props;
 
-  const [fieldValue, , helpers] = useField<Option | null>(name);
+  const [fieldValue, , helpers] = useField<Option | Option[] | null>(name);
 
   const handleChange = (
     _event: React.SyntheticEvent<Element, Event>,
-    option: Option | string | null
+    option: Option | Option[] | string | null
   ) => {
     if (!option || typeof option === 'string') {
       helpers.setValue(null);
     } else {
-      const selectedOption = options?.find((o) => o.value === option?.value) || null;
-      helpers.setValue(selectedOption);
+      helpers.setValue(option);
     }
   };
 
@@ -32,6 +31,7 @@ const SELECT = (props: computedPROPS & { multiple?: boolean }) => {
         onBlur={onBlur}
         noOptionsText={t('errors.empty.search')}
         value={fieldValue.value}
+        multiple={multiple}
         getOptionKey={(opt) => (opt as Option).value}
         getOptionLabel={(org) => (org as Option).label}
         id={name}

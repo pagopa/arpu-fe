@@ -26,6 +26,7 @@ export interface computedPROPS extends SpontaneousFormField, FieldInputProps<Cus
   allFields?: SpontaneousFormField[];
   options?: Option[];
   subfields?: SpontaneousFormField[];
+  direction?: 'row' | 'column';
 }
 
 const withComputedValues =
@@ -48,7 +49,8 @@ const withComputedValues =
         sourceParams = [],
         enumerationList = [],
         amountFieldName,
-        subfields
+        subfields,
+        direction = 'row'
       } = props;
 
       const initialOptions = enumerationList.map((enumeration) => ({
@@ -173,7 +175,7 @@ const withComputedValues =
 
       return (
         <Stack
-          direction="row"
+          direction={direction}
           gap={2}
           alignItems="center"
           sx={{ display: isHidden ? 'none' : 'inherit' }}>

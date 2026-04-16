@@ -33,6 +33,7 @@ const CustomForm = (props: CustomFormProps) => {
   const customFormValuesSchema = BuildFormSchema(fields);
 
   const validate = (values: CustomFormValues) => {
+    console.log('validate', values);
     const errors: Record<string | number, string> = {};
     const result = customFormValuesSchema.safeParse(values);
     if (!result.success) {

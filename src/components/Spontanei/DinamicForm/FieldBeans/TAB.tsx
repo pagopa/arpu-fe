@@ -2,84 +2,63 @@ import React from 'react';
 
 import { TabContext, TabList, TabPanel } from '@mui/lab';
 import { Stack, Tab } from '@mui/material';
-import { BuildFormInputs, FieldBeanPros, computeValue } from '../config';
+import { BuildFormInputs, computeValue } from '../config';
 import { useField, useFormikContext } from 'formik';
 import withComputedValues, { computedPROPS } from './withDinamicValues';
 
-export const TABold = (props: FieldBeanPros) => {
-  const { input } = props;
-  const { name } = input;
-  const [field, , { setValue }] = useField(name);
-  const defaultValue = input.defaultValue || (input.subfields && input.subfields[0].name);
-  const value = field.value || defaultValue;
-  //const { values } = useFormikContext();
+const TAB = (props: { name: string, htmlLabel: string }) => {
+  const { name, htmlLabel } = props;
+  return <Tab key={name} label={htmlLabel} value={name} />
+}
+
+const TABPANEL = withComputedValues((props: computedPROPS) => {
+  const { name, subfields, isDisabled } = props;
+  return (
+    <TabPanel value={name} key={name} sx={{ padding: 0 }}>
+      <fieldset style={{ padding: '16px' }} disabled={isDisabled}>
+        <Stack gap={2} direction="row">
+          {BuildFormInputs(subfields || [])}
+        </Stack>
+      </fieldset>
+    </TabPanel>
+
+  )
+})
+
+const TABLIST = (props: computedPROPS) => {
+  const { name, subfields } = props;
+  const [_fieldValue, , helpers] = useField<string>(name);
+  const handleChange = (_event: React.SyntheticEvent, newValue: string) => {
+    helpers.setValue(newValue);
+  };
+
+  const { values } = useFormikContext();
+
 
   return (
-    <TabContext value={value}>
-      <TabList variant="fullWidth" onChange={(_, value) => setValue(value)}>
-        {input.subfields?.map((field) => {
-          return <Tab label={field.htmlLabel} value={field.name} />;
-        })}
-      </TabList>
-      {input.subfields?.map((field) => {
-        return (
-          <TabPanel value={field.name} key={field.name} sx={{ padding: 0 }}>
-            <fieldset style={{ padding: '16px' }}>
-              <Stack gap={2} direction="row">
-                {BuildFormInputs(field.subfields || [])}
-              </Stack>
-            </fieldset>
-          </TabPanel>
-        );
-      })}
-    </TabContext>
+    <Stack direction="column">
+      <TabContext value={_fieldValue.value}>
+        <TabList onChange={handleChange}>
+          {subfields?.map((field) => {
+            const { enabledDependsOn } = field;
+            const hasEnabledDependsOn = Boolean(enabledDependsOn);
+
+            const enabled =
+              hasEnabledDependsOn && enabledDependsOn
+                ? computeValue(enabledDependsOn, values)
+                : false;
+            return (
+              <Tab key={field.name} label={field.htmlLabel || ''} value={field.name} disabled={!enabled} />)
+          }
+          )
+          }
+        </TabList>
+        {subfields?.map((field) => <TABPANEL {...field} />)}
+      </TabContext>
+    </Stack>
   );
 };
 
-const TAB = (props: computedPROPS) => {
-  const { value, subfields, onChange } = props;
-  //const defaultValue = input.defaultValue || (input.subfields && input.subfields[0].name);
-  //const value = field.value || defaultValue;
-  //const { values } = useFormikContext();
-
-  return (
-    <TabContext value={"tab_belluno"}>
-      <TabList variant="fullWidth" onChange={(_, value) => onChange(value)}>
-        {subfields?.map((field) => {
-          // const { enabledDependsOn } = field;
-          // const hasEnabledDependsOn = Boolean(enabledDependsOn);
-
-          // const enabled =
-          //   hasEnabledDependsOn && enabledDependsOn
-          //     ? computeValue(enabledDependsOn, values)
-          //     : false;
-          return <Tab label={field.htmlLabel} value={field.name} />;
-        })}
-      </TabList>
-      {subfields?.map((field) => {
-        // const { enabledDependsOn } = field;
-        // const hasEnabledDependsOn = Boolean(enabledDependsOn);
-
-        // const enabled =
-        //   hasEnabledDependsOn && enabledDependsOn ? computeValue(enabledDependsOn, values) : false;
-        return (
-          <TabPanel value={field.name} key={field.name} sx={{ padding: 0 }}>
-            <fieldset style={{ padding: '16px' }}>
-              <Stack gap={2} direction="row">
-                {
-                  (() => {
-                    return BuildFormInputs(field.subfields || [])
-                  })()
-                }
-              </Stack>
-            </fieldset>
-          </TabPanel>
-        );
-      })}
-    </TabContext>
-  );
-};
-
-export default withComputedValues(TAB);
+export default withComputedValues(TABLIST);
 
 

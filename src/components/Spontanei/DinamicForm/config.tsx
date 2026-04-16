@@ -88,11 +88,29 @@ export const buildDinamicValue = (
 
 export function computeValue<T>(code: string, scope = {}) {
   try {
-    return sandbox.compile(code)(scope).run() as T;
+    const scopeValues = backToOriginalScope(scope);
+    return sandbox.compile(code)(scopeValues).run() as T;
   } catch (error) {
     console.error('something went wrong in computeValue', code, error);
     return;
   }
+}
+
+// This function is used to convert the values of the form to the original scope
+// This is needed because the form values are converted to the original scope
+// For example, if the form has a field with a value of { label: 'test', value: 'test' },
+// this function will convert it to 'test'
+// This is required to have full retrocompatibility with the existing code
+// The problem is particularly evident with select fields converted to object {label, value} or array of objects
+// But old code assumes that the values are strings or arrays of strings
+const backToOriginalScope = (values: CustomFormValues) => {
+  const scopeValues = { ...values };
+  Object.keys(scopeValues).forEach((key) => {
+    if (Array.isArray(scopeValues[key])) {
+      scopeValues[key] = scopeValues[key]?.map((opt: Option) => opt.value);
+    }
+  });
+  return scopeValues;
 }
 
 /** set the form schema for validation */
@@ -253,29 +271,29 @@ export const BuildFormInputs = (
 ) => {
   const fields = [...elements];
 
-  if (!amountFieldName) {
-    fields.push({
-      name: 'amount',
-      required: true,
-      htmlRender: RenderType.TEXT,
-      htmlClass: 'center',
-      htmlLabel: 'Importo',
-      defaultValue: '',
-      insertableOrder: 0,
-      indexable: false,
-      renderableOrder: 0,
-      searchableOrder: 0,
-      listableOrder: 0,
-      minOccurences: 0,
-      maxOccurences: 0,
-      insertable: false,
-      renderable: false,
-      listable: false,
-      detailLink: false,
-      searchable: false,
-      association: false
-    });
-  }
+  // if (!amountFieldName) {
+  //   fields.push({
+  //     name: 'amount',
+  //     required: true,
+  //     htmlRender: RenderType.TEXT,
+  //     htmlClass: 'center',
+  //     htmlLabel: 'Importo',
+  //     defaultValue: '',
+  //     insertableOrder: 0,
+  //     indexable: false,
+  //     renderableOrder: 0,
+  //     searchableOrder: 0,
+  //     listableOrder: 0,
+  //     minOccurences: 0,
+  //     maxOccurences: 0,
+  //     insertable: false,
+  //     renderable: false,
+  //     listable: false,
+  //     detailLink: false,
+  //     searchable: false,
+  //     association: false
+  //   });
+  // }
 
   return fields
     .sort((a, b) => a.renderableOrder - b.renderableOrder)
