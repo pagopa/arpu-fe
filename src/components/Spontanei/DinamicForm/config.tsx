@@ -87,7 +87,12 @@ export const buildDinamicValue = (
 };
 
 export function computeValue<T>(code: string, scope = {}) {
-  return sandbox.compile(code)(scope).run() as T;
+  try {
+    return sandbox.compile(code)(scope).run() as T;
+  } catch (error) {
+    console.error('something went wrong in computeValue', code, error);
+    return;
+  }
 }
 
 /** set the form schema for validation */
@@ -168,7 +173,6 @@ export const normalizeSelectValue = (value: unknown, options: Option[] = []): Op
 /** set the form state considering the initial value */
 let intialState: CustomFormValues = {};
 export const BuildFormState = (fields: Array<SpontaneousFormField>): CustomFormValues => {
-  intialState = {};
   fields.forEach(({ name, defaultValue, subfields, htmlRender, enumerationList }) => {
     if (subfields) BuildFormState(subfields);
     /* I fields MULTFIELD sono solo contenitori di altri fields
@@ -183,7 +187,9 @@ export const BuildFormState = (fields: Array<SpontaneousFormField>): CustomFormV
       // perchè defaultValue dovrebbe essere un array di valori
       if (htmlRender == RenderType.MULTISELECT) {
         intialState = { ...intialState, [name]: [] };
-      } else if (
+        return
+      }
+      if (
         htmlRender === RenderType.SINGLESELECT ||
         htmlRender === RenderType.DYNAMIC_SELECT
       ) {
@@ -195,9 +201,9 @@ export const BuildFormState = (fields: Array<SpontaneousFormField>): CustomFormV
           ...intialState,
           [name]: normalizeSelectValue(defaultValue, initialOptions)
         };
-      } else {
-        intialState = { ...intialState, [name]: defaultValue };
+        return
       }
+      intialState = { ...intialState, [name]: defaultValue };
     }
   });
   return intialState;
@@ -207,11 +213,11 @@ export const BuildFormState = (fields: Array<SpontaneousFormField>): CustomFormV
 export const BuildInput = (
   element: SpontaneousFormField,
   allElements?: SpontaneousFormField[],
-  amountFieldName = 'importo'
+  amountFieldName = 'amount'
 ) => {
   switch (element.htmlRender) {
     case RenderType.TAB:
-      return <TAB input={element} />;
+      return <TAB {...element} />;
     case RenderType.SINGLESELECT:
       return <SINGLESELECT {...element} />;
     case RenderType.DYNAMIC_SELECT:
@@ -245,11 +251,11 @@ export const BuildFormInputs = (
   elements: Array<SpontaneousFormField>,
   amountFieldName?: string
 ) => {
-  const fields = elements;
+  const fields = [...elements];
 
   if (!amountFieldName) {
     fields.push({
-      name: 'importo',
+      name: 'amount',
       required: true,
       htmlRender: RenderType.TEXT,
       htmlClass: 'center',

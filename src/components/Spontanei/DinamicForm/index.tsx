@@ -17,13 +17,10 @@ export type CustomFormProps = {
 };
 
 const CustomForm = ({ fieldBeans, amountFieldName }: CustomFormProps) => {
-  const { t } = useTranslation();
-
-  const { setFormikState } = useFormikContext<PaymentNoticeInfo>();
-  const context = useContext<FormContextType | null>(FormContext);
-
   const fields = BuildFormInputs(fieldBeans, amountFieldName);
-  const initialValues: CustomFormValues = BuildFormState(fieldBeans);
+  const context = useContext<FormContextType | null>(FormContext);
+  const { t } = useTranslation();
+  const { setFormikState } = useFormikContext<PaymentNoticeInfo>();
 
   useEffect(() => {
     const direction =
@@ -34,6 +31,8 @@ const CustomForm = ({ fieldBeans, amountFieldName }: CustomFormProps) => {
         : 0;
 
     // This means that the dinamic form will be reset only when the user goes back to the previous step
+    const initialValues: CustomFormValues = BuildFormState(fieldBeans);
+    console.log('initialValues', initialValues);
     if (direction > 0) {
       setFormikState((state) => {
         return {
