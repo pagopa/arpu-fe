@@ -50,7 +50,7 @@ const Controls = (props: ControlsProps) => {
   return (
     <Stack
       direction="row"
-      justifyContent={showBackButton ? 'space-between' : 'flex-end'}
+      justifyContent={showBackButton ? 'space-between' : { xs: 'center', sm: 'flex-end' }}
       data-testid="spontanei-controls-container">
       {showBackButton && (
         <Button
