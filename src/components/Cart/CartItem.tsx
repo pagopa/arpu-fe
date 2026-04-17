@@ -17,8 +17,8 @@ const CartItem = (props: Omit<CartItem, 'nav' | 'paTaxCode'>) => {
 
   return (
     <Stack sx={styles.itemContainer}>
-      <Grid container justifyContent={'space-between'} flexWrap="nowrap">
-        <Grid size={{ xs: 7 }}>
+      <Grid container justifyContent={'space-between'} flexWrap="nowrap" alignItems="center">
+        <Grid size="grow" sx={{ minWidth: 0 }}>
           <Typography variant="body1" fontWeight={600} noWrap title={title}>
             {title}
           </Typography>
@@ -26,19 +26,18 @@ const CartItem = (props: Omit<CartItem, 'nav' | 'paTaxCode'>) => {
             {description}
           </Typography>
         </Grid>
-        <Grid size={{ xs: 5 }}>
-          <Stack sx={{ ...styles.item, marginTop: 0, marginBottom: 0 }}>
-            <Typography variant="body1" fontWeight={600} mr={2}>
-              {toEuroOrMissingValue(amount)}
-            </Typography>
-            <ButtonNaked
-              color="error"
-              onClick={() => deleteItem(id)}
-              aria-label={t('ui.a11y.removeCartItem')}
-              name="removeCartItemButton">
-              <DeleteIcon />
-            </ButtonNaked>
-          </Stack>
+        <Grid size="auto" sx={{ display: 'flex', alignItems: 'center', pl: 2 }}>
+          <Typography variant="body1" fontWeight={600} mr={2}>
+            {toEuroOrMissingValue(amount)}
+          </Typography>
+          <ButtonNaked
+            color="error"
+            onClick={() => deleteItem(id)}
+            aria-label={t('ui.a11y.removeCartItem')}
+            name="removeCartItemButton"
+            sx={{ padding: 0 }}>
+            <DeleteIcon />
+          </ButtonNaked>
         </Grid>
       </Grid>
     </Stack>

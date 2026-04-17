@@ -56,7 +56,10 @@ export const CartDrawer = () => {
           {/* Header Section */}
           <Box>
             <Stack direction="row" sx={styles.header}>
-              <ButtonNaked onClick={toggleCartDrawer} aria-label={t('app.cart.header.close')}>
+              <ButtonNaked
+                onClick={toggleCartDrawer}
+                aria-label={t('app.cart.header.close')}
+                sx={{ padding: 0 }}>
                 <CloseIcon />
               </ButtonNaked>
             </Stack>
