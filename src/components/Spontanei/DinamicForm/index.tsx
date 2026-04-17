@@ -52,7 +52,7 @@ const CustomForm = ({ fieldBeans, amountFieldName }: CustomFormProps) => {
     <>
       <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale="it">
         <ResponsiveCard variant="outlined">
-          <Typography variant="h6" mb={2}>
+          <Typography variant="body2" fontWeight={600} component="h3" mb={2}>
             {t('spontanei.form.steps.step3.custom.title')}
           </Typography>
           <Form>

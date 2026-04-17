@@ -112,7 +112,9 @@ const DebtorSection = ({ allowedEntityType, hasFlagAnonymousFiscalCode }: Debtor
       )}
       <ResponsiveCard variant="outlined">
         <Stack gap={2}>
-          <Typography variant="h6">{t('spontanei.form.steps.step3.debtor.title')}</Typography>
+          <Typography variant="body2" fontWeight={600} component="h3">
+            {t('spontanei.form.steps.step3.debtor.title')}
+          </Typography>
           {isFisica && !isAnonymous && (
             <FormControlLabel
               control={<Switch sx={{ mx: 1 }} onChange={handleUseYourDataSwitch} />}

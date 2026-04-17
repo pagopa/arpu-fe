@@ -1,6 +1,5 @@
 import { Button, Card, Stack, Typography } from '@mui/material';
 import React, { useContext, useEffect, useMemo, useState } from 'react';
-import Controls from '../Controls';
 import { useTranslation } from 'react-i18next';
 import { addItem, isItemInCart, setCartEmail, toggleCartDrawer } from 'store/CartStore';
 import notify from 'utils/notify';
@@ -20,10 +19,12 @@ import appStore from 'store/appStore';
 import { flattenObject } from '../DinamicForm/config';
 import { useRecaptcha } from 'components/RecaptchaProvider/RecaptchaProvider';
 import styled from '@mui/system/styled';
+import { ResponsiveCard } from 'components/ResponsiveCard';
 
 const SpacedStack = styled(Stack)(({ theme }) => ({
-  gap: theme.spacing(2),
-  padding: theme.spacing(4)
+  gap: theme.spacing(3),
+  paddingY: theme.spacing(4),
+  paddingX: { xs: 0, md: theme.spacing(3) }
 }));
 
 const Payment = () => {
@@ -176,25 +177,26 @@ const Payment = () => {
 
   return (
     <>
-      <Card variant="outlined" data-testid="spontanei-step4-payment-container">
-        <SpacedStack>
-          <Typography variant="h6">{t('spontanei.form.steps.step5.title')}</Typography>
-          <Typography>{t('spontanei.form.steps.step5.description')}</Typography>
+      <Card variant="elevation" data-testid="spontanei-step4-payment-container" sx={{ padding: 2 }}>
+        <Stack gap={4}>
+          <Stack gap={1}>
+            <Typography variant="h4" component="h2">
+              {t('spontanei.form.steps.step5.title')}
+            </Typography>
+            <Typography>{t('spontanei.form.steps.step5.description')}</Typography>
+          </Stack>
 
-          <Card variant="outlined" data-testid="payment-methods-card">
-            <SpacedStack
-              direction={{ xs: 'column', sm: 'row' }}
-              textAlign={{ xs: 'center', sm: 'left' }}
-              justifyContent={{ xs: 'center', sm: 'space-between' }}>
+          <ResponsiveCard variant="outlined" data-testid="payment-methods-card">
+            <SpacedStack direction={{ xs: 'column', sm: 'row' }} justifyContent="space-between">
               <Stack>
-                <Typography fontSize="18px" fontWeight="600">
+                <Typography variant="h6" component="h3" fontWeight="600">
                   {t('spontanei.form.steps.step5.pay.title')}
                 </Typography>
                 <Typography fontSize="16px" fontWeight="400" color="action.active">
                   {t('spontanei.form.steps.step5.pay.description')}
                 </Typography>
               </Stack>
-              <Stack direction="row" spacing={2} justifyContent="center">
+              <Stack direction="row" spacing={2}>
                 {appStore.value.brokerInfo?.config?.useCart && (
                   <Button
                     size="large"
@@ -210,36 +212,35 @@ const Payment = () => {
                 </Button>
               </Stack>
             </SpacedStack>
-          </Card>
+          </ResponsiveCard>
 
-          <Card variant="outlined" data-testid="download-notice-card">
-            <SpacedStack
-              direction={{ xs: 'column', sm: 'row' }}
-              textAlign={{ xs: 'center', sm: 'left' }}
-              justifyContent={{ xs: 'center', sm: 'space-between' }}>
+          <ResponsiveCard variant="outlined" data-testid="download-notice-card">
+            <SpacedStack direction={{ xs: 'column', sm: 'row' }} justifyContent="space-between">
               <Stack>
-                <Typography fontSize="18px" fontWeight="600">
+                <Typography variant="h6" component="h3" fontWeight="600">
                   {t('spontanei.form.steps.step5.download.title')}
                 </Typography>
                 <Typography fontSize="16px" fontWeight="400" color="action.active">
                   {t('spontanei.form.steps.step5.download.description')}
                 </Typography>
               </Stack>
-              <Button
-                variant="text"
-                size="large"
-                startIcon={<FileDownloadIcon />}
-                data-testid="download-notice-button"
-                component={Link}
-                target="_blank"
-                to={downloadUrl}>
-                {t('spontanei.form.steps.step5.download.downloadButton')}
-              </Button>
+              <Stack direction="row">
+                <Button
+                  sx={{ padding: 0 }}
+                  variant="text"
+                  size="large"
+                  startIcon={<FileDownloadIcon />}
+                  data-testid="download-notice-button"
+                  component={Link}
+                  target="_blank"
+                  to={downloadUrl}>
+                  {t('spontanei.form.steps.step5.download.downloadButton')}
+                </Button>
+              </Stack>
             </SpacedStack>
-          </Card>
-        </SpacedStack>
+          </ResponsiveCard>
+        </Stack>
       </Card>
-      <Controls hideContinue={true} />
     </>
   );
 };
