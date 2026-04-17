@@ -201,6 +201,7 @@ const Payment = () => {
                   <Button
                     size="large"
                     variant="text"
+                    sx={{ padding: 0 }}
                     onClick={addToCart}
                     startIcon={<ShoppingCartIcon />}
                     data-testid="add-to-cart-button">
