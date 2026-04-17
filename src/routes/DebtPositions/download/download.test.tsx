@@ -3,6 +3,7 @@ import React from 'react';
 import { render, screen, waitFor } from '__tests__/renderers';
 import * as ReactRouterDom from 'react-router-dom';
 import { DebtPositionDownload } from '../download';
+import appStore from 'store/appStore';
 
 const mockMutateAsync = vi.fn();
 const mockDownloadBlob = vi.fn();
@@ -85,6 +86,19 @@ vi.mock('components/RecaptchaProvider/RecaptchaProvider', () => ({
   })
 }));
 
+const baseBrokerInfo = {
+  brokerId: 1,
+  externalId: 'ext-default',
+  brokerName: 'Test Broker',
+  brokerFiscalCode: '00000000000'
+};
+
+const defaultStoreValue = {
+  isReady: true,
+  brokerInfo: null,
+  brokerCode: null
+};
+
 describe('DebtPositionDownload', () => {
   beforeEach(() => {
     vi.clearAllMocks();
@@ -105,6 +119,8 @@ describe('DebtPositionDownload', () => {
     });
 
     mockExecuteRecaptcha.mockResolvedValue('test-recaptcha-token');
+
+    appStore.value = defaultStoreValue;
   });
 
   describe('Rendering', () => {
@@ -136,6 +152,61 @@ describe('DebtPositionDownload', () => {
 
       const closeButton = screen.getByRole('link', { name: 'actions.close' });
       expect(closeButton).toHaveAttribute('href', '/login');
+    });
+
+    it('renders back-to-home button pointing to homeLink when homeLink is configured', () => {
+      appStore.value = {
+        ...defaultStoreValue,
+        brokerInfo: {
+          ...baseBrokerInfo,
+          config: {
+            translation: {},
+            homeLink: 'https://home.example.com'
+          }
+        }
+      };
+
+      render(<DebtPositionDownload />);
+
+      const homeButton = screen.getByRole('link', { name: 'actions.backToHome' });
+      expect(homeButton).toBeInTheDocument();
+      expect(homeButton).toHaveAttribute('href', 'https://home.example.com');
+      expect(homeButton).not.toHaveAttribute('target', '_blank');
+    });
+
+    it('does not render close button when homeLink is configured', () => {
+      appStore.value = {
+        ...defaultStoreValue,
+        brokerInfo: {
+          ...baseBrokerInfo,
+          config: {
+            translation: {},
+            homeLink: 'https://home.example.com'
+          }
+        }
+      };
+
+      render(<DebtPositionDownload />);
+
+      expect(screen.queryByRole('link', { name: 'actions.close' })).not.toBeInTheDocument();
+    });
+
+    it('renders close button when homeLink is not configured', () => {
+      appStore.value = {
+        ...defaultStoreValue,
+        brokerInfo: {
+          ...baseBrokerInfo,
+          config: {
+            translation: {}
+          }
+        }
+      };
+
+      render(<DebtPositionDownload />);
+
+      const closeButton = screen.getByRole('link', { name: 'actions.close' });
+      expect(closeButton).toBeInTheDocument();
+      expect(screen.queryByRole('link', { name: 'actions.backToHome' })).not.toBeInTheDocument();
     });
   });
 

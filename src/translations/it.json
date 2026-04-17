@@ -60,7 +60,7 @@
         "button": "Torna agli avvisi"
       },
       "items": {
-        "alert": "L’importo si aggiorna in automatico, così paghi sempre quanto dovuto ed eviti more o altri interessi. <link1>Vuoi saperne di più?<\/link1>",
+        "alert": "L’importo si aggiorna in automatico, così paghi sempre quanto dovuto ed eviti more o altri interessi. <link1>Vuoi saperne di più?</link1>",
         "back": "Torna agli avvisi",
         "pay": "Vai al pagamento",
         "full": "Non puoi aggiungere più di 5 avvisi al carrello",
@@ -75,8 +75,8 @@
       "expiredInstallments": "Rate scadute",
       "installment": {
         "installmentNumber": "Rata {{installmentNumber}} di {{totalInstallments}}",
-        "dueDate": "Entro il <strong>{{date}}<\/strong>",
-        "expireDate": "il <strong>{{date}}<\/strong>"
+        "dueDate": "Entro il <strong>{{date}}</strong>",
+        "expireDate": "il <strong>{{date}}</strong>"
       },
       "actions": {
         "add": "Aggiungi al carrello ({{count}})",
@@ -111,7 +111,7 @@
       "input1Helper": "Inserisci un indirizzo email valido",
       "input2Helper": "Gli indirizzi email devono coincidere",
       "input2Placeholder": "Conferma l'indirizzo email",
-      "privacy": "Proseguendo dichiari di aver letto la <link1> Privacy Policy <\/link1> del servizio di assistenza al cittadino",
+      "privacy": "Proseguendo dichiari di aver letto la <link1> Privacy Policy </link1> del servizio di assistenza al cittadino",
       "confirm": "Conferma",
       "modalTitle": "Vuoi davvero uscire?",
       "modalDescription": "Se esci, la richiesta di assistenza andrà persa."
@@ -189,7 +189,7 @@
       },
       "download": {
         "title": "Il download dell’avviso è in corso",
-        "subtitle": "Se non parte in automatico, <link>scarica l’avviso manualmente<\/link>",
+        "subtitle": "Se non parte in automatico, <link>scarica l’avviso manualmente</link>",
         "link": "Scopri i canali abilitati",
         "help": "Se non parte automaticamente, <CustomLink>clicca qui</CustomLink>.",
         "info": ""
@@ -221,7 +221,7 @@
       },
       "dueDate": {
         "EXPIRED": "il {{dueDate}}",
-        "UNPAID": "entro il <strong>{{dueDate}}<\/strong>",
+        "UNPAID": "entro il <strong>{{dueDate}}</strong>",
         "PAID": "il {{paymentDateTime}}",
         "REPORTED": "il {{paymentDateTime}}"
       }
@@ -275,7 +275,7 @@
       "optin": {
         "title": "Consenti a PagoPA di ricercare i tuoi avvisi?",
         "body": "Se confermi, consenti a PagoPA di ricercare gli avvisi di pagamento a tuo nome tra gli archivi degli enti aderenti al servizio.",
-        "privacy": "Proseguendo accetti l’<a1>Informativa Privacy<\/a1> e i <a2>Termini e Condizioni d’uso<\/a2> del servizio."
+        "privacy": "Proseguendo accetti l’<a1>Informativa Privacy</a1> e i <a2>Termini e Condizioni d’uso</a2> del servizio."
       }
     },
     "routes": {
@@ -315,14 +315,14 @@
       "creditorEntity": "Ente creditore",
       "creditorFiscalCode": "Codice Fiscale Ente",
       "debtor": "Debitore",
-      "noticeCode": "Codice avviso\/IUV",
+      "noticeCode": "Codice avviso/IUV",
       "partialAmount": "Importo parziale",
       "amount": "Importo",
       "commission": "Commissione",
       "total": "Totale",
       "somethingDoesntAddUp": "Qualcosa non torna?",
       "contactSupport": "Contatta l'assistenza",
-      "totalLabel": "Il totale comprende <strong>{{fee}}<\/strong> di commissione, applicata da {{psp}}"
+      "totalLabel": "Il totale comprende <strong>{{fee}}</strong> di commissione, applicata da {{psp}}"
     },
     "paymentNoticeDetail": {
       "title": "Dettaglio avviso",
@@ -332,7 +332,7 @@
         "paFullname": "Ente creditore",
         "subject": "Oggetto del pagamento",
         "dueDate": "Entro il",
-        "iuv": "Codice avviso\/IUV",
+        "iuv": "Codice avviso/IUV",
         "paTaxCode": "Codice fiscale ente"
       },
       "card2": {
@@ -368,12 +368,13 @@
     "download": "Scarica",
     "close": "Chiudi",
     "payNow": "Paga ora",
-    "addItemToCart": "Aggiungi al carrello"
+    "addItemToCart": "Aggiungi al carrello",
+    "backToHome": "Torna alla home"
   },
   "fields": {
-    "iuv": "Codice Avviso\/IUV",
+    "iuv": "Codice Avviso/IUV",
     "fiscalcode": "Codice Fiscale",
-    "piva": "Codice Fiscale\/P.IVA",
+    "piva": "Codice Fiscale/P.IVA",
     "anonymous": "Non ho il Codice Fiscale",
     "orgName": "Ente Creditore",
     "amount": "Importo",
@@ -583,7 +584,7 @@
             "G": {
               "title": "Soggetto giuridico",
               "name": "Denominazione",
-              "code": "Codice Fiscale\/P.IVA",
+              "code": "Codice Fiscale/P.IVA",
               "email": "Email"
             },
             "noFiscalCode": "Non ho il Codice Fiscale"
@@ -619,7 +620,7 @@
             },
             "G": {
               "name": "Denominazione",
-              "code": "Codice Fiscale\/P.IVA",
+              "code": "Codice Fiscale/P.IVA",
               "email": "Email"
             }
           },
@@ -668,7 +669,7 @@
     },
     "download": {
       "title": "Il download dell’avviso è in corso",
-      "help": "Se non parte in automatico, <link1>scarica l’avviso manualmente<\/link1>"
+      "help": "Se non parte in automatico, <link1>scarica l’avviso manualmente</link1>"
     }
   }
 }
