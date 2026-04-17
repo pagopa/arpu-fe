@@ -195,9 +195,9 @@ export const normalizeSelectValue = (value: unknown, options: Option[] = []): Op
   return options.find((option) => option.value === value || option.label === value) || null;
 };
 
+let intialState: CustomFormValues = {};
 /** set the form state considering the initial value */
 export const BuildFormState = (fields: Array<SpontaneousFormField>): CustomFormValues => {
-  let intialState: CustomFormValues = {};
   fields.forEach(({ name, defaultValue, subfields, htmlRender, enumerationList }) => {
     if (subfields) BuildFormState(subfields);
     /* I fields MULTFIELD sono solo contenitori di altri fields
@@ -287,7 +287,7 @@ export const BuildFormInputs = (
     fields.push({
       name: amountFieldName,
       required: true,
-      htmlRender: RenderType.TEXT,
+      htmlRender: RenderType.CURRENCY,
       htmlClass: 'center',
       htmlLabel: 'Importo',
       defaultValue: '',

@@ -6,11 +6,6 @@ import { BuildFormInputs, computeValue } from '../config';
 import { useField, useFormikContext } from 'formik';
 import withComputedValues, { computedPROPS } from './withDinamicValues';
 
-const TAB = (props: { name: string, htmlLabel: string }) => {
-  const { name, htmlLabel } = props;
-  return <Tab key={name} label={htmlLabel} value={name} />
-}
-
 const TABPANEL = withComputedValues((props: computedPROPS) => {
   const { name, subfields, isDisabled } = props;
   return (
@@ -27,18 +22,20 @@ const TABPANEL = withComputedValues((props: computedPROPS) => {
 
 const TABLIST = (props: computedPROPS) => {
   const { name, subfields } = props;
-  const [_fieldValue, , helpers] = useField<string>(name);
+  const [fieldValue, , helpers] = useField<string>(name);
   const handleChange = (_event: React.SyntheticEvent, newValue: string) => {
     helpers.setValue(newValue);
   };
 
   const { values } = useFormikContext();
 
+  const firstTabValue = subfields?.[0]?.name;
+  const value = fieldValue.value || firstTabValue || '';
 
   return (
     <Stack direction="column">
-      <TabContext value={_fieldValue.value}>
-        <TabList onChange={handleChange}>
+      <TabContext value={value}>
+        <TabList onChange={handleChange} variant="fullWidth">
           {subfields?.map((field) => {
             const { enabledDependsOn } = field;
             const hasEnabledDependsOn = Boolean(enabledDependsOn);
