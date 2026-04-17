@@ -99,7 +99,7 @@ describe('Layout', () => {
   describe('anonymous mode', () => {
     it('should render HeaderAccount with assistance button', () => {
       render(<Layout anonymous />);
-      expect(screen.getByText('Assistenza')).toBeInTheDocument();
+      expect(screen.getByText('ui.header.help')).toBeInTheDocument();
     });
 
     it('should open assistance link when clicking assistance button and link is configured', () => {
@@ -120,7 +120,7 @@ describe('Layout', () => {
       };
 
       render(<Layout anonymous />);
-      fireEvent.click(screen.getByText('Assistenza'));
+      fireEvent.click(screen.getByText('ui.header.help'));
       expect(mockOpen).toHaveBeenCalledWith('https://assistenza.pagopa.gov.it/hc/it/faq', '_blank');
       mockOpen.mockRestore();
     });
@@ -129,14 +129,14 @@ describe('Layout', () => {
       const mockOpen = vi.spyOn(window, 'open').mockImplementation(() => null);
 
       render(<Layout anonymous />);
-      fireEvent.click(screen.getByText('Assistenza'));
+      fireEvent.click(screen.getByText('ui.header.help'));
       expect(mockOpen).not.toHaveBeenCalled();
       mockOpen.mockRestore();
     });
 
     it('should render assistance button even when link is not configured', () => {
       render(<Layout anonymous />);
-      expect(screen.getByText('Assistenza')).toBeInTheDocument();
+      expect(screen.getByText('ui.header.help')).toBeInTheDocument();
     });
 
     describe('rootLink brokerLink', () => {

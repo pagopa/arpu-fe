@@ -68,8 +68,8 @@ const OrgSelect = () => {
   return (
     <>
       <StepWrapper isPending={serviceQuery.isPending}>
-        <Stack spacing={2} padding={4}>
-          <Typography variant="h6" data-testid="spontanei-step1-title">
+        <Stack spacing={2} padding={2}>
+          <Typography variant="h4" component="h2" data-testid="spontanei-step1-title">
             {t('spontanei.form.steps.step1.title')}
           </Typography>
           <Typography data-testid="spontanei-step1-description">

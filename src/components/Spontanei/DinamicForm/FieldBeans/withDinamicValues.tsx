@@ -12,6 +12,7 @@ import { Stack, Tooltip } from '@mui/material';
 import InfoRoundedIcon from '@mui/icons-material/InfoRounded';
 import { PaymentNoticeInfo } from 'components/Spontanei';
 import FormContext, { FormContextType } from 'components/Spontanei/FormContext';
+import i18n from '../../../../translations/i18n';
 
 export type Option = { label: string; value: string };
 
@@ -36,6 +37,7 @@ const withComputedValues =
       enabledDependsOn,
       name,
       htmlRender,
+      htmlLabel,
       valueDependsOn,
       errorMessage: errMsg,
       helpMessage: helpMsg,
@@ -59,6 +61,8 @@ const withComputedValues =
     const { values } = useFormikContext<CustomFormValues>();
     const context = useContext<FormContextType | null>(FormContext);
 
+    const dictionary = context?.dictionary || {};
+
     const isHidden = hiddenDependsOn
       ? computeValue<boolean>(hiddenDependsOn, values)
       : htmlRender === RenderType.NONE;
@@ -71,8 +75,11 @@ const withComputedValues =
 
     const hasValuDependsOn = Boolean(valueDependsOn);
 
-    const erroMessage = errMsg || extraAttr?.error_message || '';
-    const helpMessage = helpMsg || extraAttr?.help_message || '';
+    const erroMessage =
+      dictionary?.[i18n.language]?.[name]?.errorMessage || errMsg || extraAttr?.error_message || '';
+    const helpMessage =
+      dictionary?.[i18n.language]?.[name]?.helpMessage || helpMsg || extraAttr?.help_message || '';
+    const label = dictionary?.[i18n.language]?.[name]?.htmlLabel || htmlLabel || '';
 
     useEffect(() => {
       if (hasValuDependsOn && valueDependsOn) {
@@ -171,6 +178,7 @@ const withComputedValues =
         <FieldBean
           {...props}
           {...field}
+          htmlLabel={label}
           isDisabled={!isEnabled}
           hasError={hasError}
           errorMessage={erroMessage}
