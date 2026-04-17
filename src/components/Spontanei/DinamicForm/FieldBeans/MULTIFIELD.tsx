@@ -9,7 +9,7 @@ const MULTFIELD = (props: FieldBeanPros) => {
       <CardContent>
         <Box display={'flex'} flexDirection="column" mb={2} gap={2}>
           <h3>{input.htmlLabel}</h3>
-          {BuildFormInputs(input.subfields || [])}
+          {BuildFormInputs(input.subfields || [], false)}
         </Box>
       </CardContent>
     </Card>

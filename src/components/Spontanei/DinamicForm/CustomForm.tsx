@@ -30,10 +30,9 @@ const CustomForm = (props: CustomFormProps) => {
   const { t } = useTranslation();
   const { values, validateForm, submitForm, setErrors } = useFormikContext();
 
-  const customFormValuesSchema = BuildFormSchema(fields);
+  const customFormValuesSchema = BuildFormSchema(fields, amountFieldName);
 
   const validate = (values: CustomFormValues) => {
-    console.log('validate', values);
     const errors: Record<string | number, string> = {};
     const result = customFormValuesSchema.safeParse(values);
     if (!result.success) {
@@ -46,8 +45,6 @@ const CustomForm = (props: CustomFormProps) => {
     await submitForm();
     const globalFormErrors = await validateForm();
     const customFormErrors = validate(values);
-    console.log('globalFormErrors', globalFormErrors);
-    console.log('customFormErrors', customFormErrors);
     setErrors({ ...globalFormErrors, ...customFormErrors });
     return isEmpty(globalFormErrors || {}) && isEmpty(customFormErrors || {});
   };

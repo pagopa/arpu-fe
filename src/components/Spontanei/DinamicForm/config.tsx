@@ -119,9 +119,12 @@ const backToOriginalScope = (values: CustomFormValues) => {
 }
 
 /** set the form schema for validation */
-let schemaObject = {};
-export const BuildFormSchema = (fields: Array<SpontaneousFormField>) => {
+export const BuildFormSchema = (fields: Array<SpontaneousFormField>, amountFieldName?: string) => {
+  let schemaObject = {};
   fields.forEach((field) => {
+    if (amountFieldName) {
+      schemaObject = { ...schemaObject, [amountFieldName]: z.number().min(1, 'spontanei.form.errors.amount') };
+    }
     if (field.subfields) BuildFormSchema(field.subfields);
     if (field.htmlRender === RenderType.MULTIFIELD || field.htmlRender === RenderType.TAB) {
       return;
@@ -193,8 +196,8 @@ export const normalizeSelectValue = (value: unknown, options: Option[] = []): Op
 };
 
 /** set the form state considering the initial value */
-let intialState: CustomFormValues = {};
 export const BuildFormState = (fields: Array<SpontaneousFormField>): CustomFormValues => {
+  let intialState: CustomFormValues = {};
   fields.forEach(({ name, defaultValue, subfields, htmlRender, enumerationList }) => {
     if (subfields) BuildFormState(subfields);
     /* I fields MULTFIELD sono solo contenitori di altri fields
@@ -275,33 +278,34 @@ export const BuildInput = (
 /** Render a group of inputs */
 export const BuildFormInputs = (
   elements: Array<SpontaneousFormField>,
-  amountFieldName?: string
+  addTotaleField = false,
+  amountFieldName = 'amount'
 ) => {
   const fields = [...elements];
 
-  // if (!amountFieldName) {
-  //   fields.push({
-  //     name: 'amount',
-  //     required: true,
-  //     htmlRender: RenderType.TEXT,
-  //     htmlClass: 'center',
-  //     htmlLabel: 'Importo',
-  //     defaultValue: '',
-  //     insertableOrder: 0,
-  //     indexable: false,
-  //     renderableOrder: 0,
-  //     searchableOrder: 0,
-  //     listableOrder: 0,
-  //     minOccurences: 0,
-  //     maxOccurences: 0,
-  //     insertable: false,
-  //     renderable: false,
-  //     listable: false,
-  //     detailLink: false,
-  //     searchable: false,
-  //     association: false
-  //   });
-  // }
+  if (addTotaleField) {
+    fields.push({
+      name: amountFieldName,
+      required: true,
+      htmlRender: RenderType.TEXT,
+      htmlClass: 'center',
+      htmlLabel: 'Importo',
+      defaultValue: '',
+      insertableOrder: 0,
+      indexable: false,
+      renderableOrder: 0,
+      searchableOrder: 0,
+      listableOrder: 0,
+      minOccurences: 0,
+      maxOccurences: 0,
+      insertable: false,
+      renderable: false,
+      listable: false,
+      detailLink: false,
+      searchable: false,
+      association: false
+    });
+  }
 
   return fields
     .sort((a, b) => a.renderableOrder - b.renderableOrder)

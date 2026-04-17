@@ -17,7 +17,7 @@ export type CustomFormProps = {
 };
 
 const CustomForm = ({ fieldBeans, amountFieldName }: CustomFormProps) => {
-  const fields = BuildFormInputs(fieldBeans, amountFieldName);
+  const fields = BuildFormInputs(fieldBeans, !amountFieldName, amountFieldName);
   const context = useContext<FormContextType | null>(FormContext);
   const { t } = useTranslation();
   const { setFormikState } = useFormikContext<PaymentNoticeInfo>();
