@@ -25,7 +25,7 @@ export const DebtPositionDownload = () => {
 
   const params = useParams();
   const nav = params?.nav;
-  const organizationId = Number(params?.organizationId ?? params?.orgId);
+  const organizationId = Number(params?.orgId);
 
   if (isNaN(organizationId) || !nav || !brokerId || !debtorFiscalCode) {
     throw new Error('Missing required parameters');

@@ -55,7 +55,7 @@ export const Actions = ({ installment }: ActionsProps) => {
     if (installment?.nav && installment?.organizationId && installment?.debtor?.fiscalCode) {
       const path = generatePath(downloadRoute, {
         nav: installment.nav,
-        organizationId: installment.organizationId
+        orgId: installment.organizationId
       });
 
       navigate(`${path}#debtorFiscalCode=${installment.debtor.fiscalCode}`);

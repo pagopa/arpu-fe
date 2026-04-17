@@ -74,7 +74,8 @@ vi.mock('react-router-dom', async () => {
       path
         .replace(':nav', params.nav)
         .replace(':receiptId', params.receiptId)
-        .replace(':organizationId', params.organizationId)
+        .replace(':orgId', params.orgId ?? params.organizationId)
+        .replace(':organizationId', params.orgId ?? params.organizationId)
     )
   };
 });
@@ -82,11 +83,11 @@ vi.mock('react-router-dom', async () => {
 vi.mock('routes/routes', () => ({
   ROUTES: {
     RECEIPT: '/receipt/:organizationId/:receiptId',
-    DEBT_POSITION_DOWNLOAD: '/download/:nav/:organizationId',
+    DEBT_POSITION_DOWNLOAD: '/download/:nav/:orgId',
     COURTESY_PAGE: '/courtesy/:error',
     public: {
       RECEIPT: '/public/receipt/:organizationId/:receiptId',
-      DEBT_POSITION_DOWNLOAD: '/public/download/:nav/:organizationId',
+      DEBT_POSITION_DOWNLOAD: '/public/download/:nav/:orgId',
       COURTESY_PAGE: '/public/courtesy/:error'
     }
   }

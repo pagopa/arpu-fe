@@ -60,7 +60,7 @@ vi.mock('react-router-dom', async () => {
     ...actual,
     useParams: vi.fn(() => ({
       nav: 'NAV123',
-      organizationId: '456'
+      orgId: '456'
     })),
     useLocation: vi.fn(() => ({
       state: { fiscalCode: 'RSSMRA80A01H501U' },
@@ -291,10 +291,10 @@ describe('DebtPositionDownload', () => {
   });
 
   describe('Required parameters guard', () => {
-    it('throws when organizationId is missing', () => {
+    it('throws when orgId is missing', () => {
       vi.spyOn(ReactRouterDom, 'useParams').mockReturnValue({
         nav: 'NAV123',
-        organizationId: undefined
+        orgId: undefined
       });
 
       expect(() => render(<DebtPositionDownload />)).toThrow('Missing required parameters');
@@ -303,7 +303,7 @@ describe('DebtPositionDownload', () => {
     it('throws when nav is missing', () => {
       vi.spyOn(ReactRouterDom, 'useParams').mockReturnValue({
         nav: undefined,
-        organizationId: '456'
+        orgId: '456'
       });
 
       expect(() => render(<DebtPositionDownload />)).toThrow('Missing required parameters');
