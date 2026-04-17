@@ -1,6 +1,11 @@
 import { SxProps, Theme } from '@mui/material';
 
 export const cartDrawerStyles = (theme: Theme): Record<string, SxProps> => ({
+  itemContainer: {
+    marginTop: theme.spacing(2),
+    marginBottom: theme.spacing(2),
+    width: '100%'
+  },
   container: {
     zIndex: 10,
     position: 'fixed',
