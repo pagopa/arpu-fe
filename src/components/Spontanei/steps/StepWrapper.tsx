@@ -20,7 +20,7 @@ const StepWrapper = ({
 
   return (
     <>
-      <Card variant="outlined">
+      <Card variant="elevation">
         {viewSkeleton ? (
           <Skeleton
             variant="rectangular"

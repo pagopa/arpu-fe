@@ -1,5 +1,5 @@
 import React, { useContext } from 'react';
-import { Divider, Grid, Stack, Typography } from '@mui/material';
+import { Card, Divider, Grid, Stack, Typography } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import FormContext, { FormContextType } from '../FormContext';
 import utils from 'utils';
@@ -319,7 +319,7 @@ const Summary = () => {
 
   return (
     <>
-      <ResponsiveCard sx={{ padding: 2 }} data-testid="spontanei-step3-summary">
+      <Card variant="elevation" sx={{ padding: 2 }} data-testid="spontanei-step3-summary">
         <Typography variant="h4" fontWeight={600} component="h2" mb={2}>
           {t('spontanei.form.steps.step4.title')}
         </Typography>
@@ -344,7 +344,7 @@ const Summary = () => {
           />
           <PaymentSummary summaryFields={[SummaryFields.AMOUNT, SummaryFields.DESCRIPTION]} />
         </Stack>
-      </ResponsiveCard>
+      </Card>
       <Controls shouldContinue={async () => true} />
     </>
   );
