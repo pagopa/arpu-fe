@@ -131,16 +131,9 @@ const backToOriginalScope = (values: CustomFormValues) => {
 };
 
 /** set the form schema for validation */
-export const BuildFormSchema = (fields: Array<SpontaneousFormField>, amountFieldName?: string) => {
-  let schemaObject = {};
+const buildSchemaObject = (fields: Array<SpontaneousFormField>, schemaObject: any = {}) => {
   fields.forEach((field) => {
-    if (amountFieldName) {
-      schemaObject = {
-        ...schemaObject,
-        [amountFieldName]: z.number().min(1, 'spontanei.form.errors.amount')
-      };
-    }
-    if (field.subfields) BuildFormSchema(field.subfields);
+    if (field.subfields) buildSchemaObject(field.subfields, schemaObject);
     if (field.htmlRender === RenderType.MULTIFIELD || field.htmlRender === RenderType.TAB) {
       return;
     }
@@ -169,8 +162,19 @@ export const BuildFormSchema = (fields: Array<SpontaneousFormField>, amountField
         fieldSchema = fieldSchema.regex(new RegExp(regex || ''), errorMessage);
       }
     }
-    schemaObject = { ...schemaObject, [name]: fieldSchema };
+    schemaObject[name] = fieldSchema;
   });
+  return schemaObject;
+};
+
+/** set the form schema for validation */
+export const BuildFormSchema = (fields: Array<SpontaneousFormField>, amountFieldName?: string) => {
+  const schemaObject = buildSchemaObject(fields);
+
+  if (amountFieldName) {
+    schemaObject[amountFieldName] = z.number().min(1, 'spontanei.form.errors.amount');
+  }
+
   return z.object(schemaObject);
 };
 
@@ -215,11 +219,14 @@ export const normalizeSelectValue = (value: unknown, options: Option[] = []): Op
   return options.find((option) => option.value === value || option.label === value) || null;
 };
 
-let intialState: CustomFormValues = {};
 /** set the form state considering the initial value */
-export const BuildFormState = (fields: Array<SpontaneousFormField>): CustomFormValues => {
+export const BuildFormState = (
+  fields: Array<SpontaneousFormField>,
+  currentState: CustomFormValues = {}
+): CustomFormValues => {
+  let newState = { ...currentState };
   fields.forEach(({ name, defaultValue, subfields, htmlRender, enumerationList }) => {
-    if (subfields) BuildFormState(subfields);
+    if (subfields) newState = BuildFormState(subfields, newState);
     /* I fields MULTFIELD sono solo contenitori di altri fields
       non hanno un value associato e per questo motivo non è
       necessario tenere tracciao dello stato
@@ -231,7 +238,7 @@ export const BuildFormState = (fields: Array<SpontaneousFormField>): CustomFormV
       // iniziale. In questo caso è più complesso
       // perchè defaultValue dovrebbe essere un array di valori
       if (htmlRender == RenderType.MULTISELECT) {
-        intialState = { ...intialState, [name]: [] };
+        newState[name] = [];
         return;
       }
       if (htmlRender === RenderType.SINGLESELECT || htmlRender === RenderType.DYNAMIC_SELECT) {
@@ -239,10 +246,7 @@ export const BuildFormState = (fields: Array<SpontaneousFormField>): CustomFormV
           label: enumeration,
           value: enumeration
         }));
-        intialState = {
-          ...intialState,
-          [name]: normalizeSelectValue(defaultValue, initialOptions)
-        };
+        newState[name] = normalizeSelectValue(defaultValue, initialOptions);
         return;
       }
       if (
@@ -250,13 +254,13 @@ export const BuildFormState = (fields: Array<SpontaneousFormField>): CustomFormV
         htmlRender === RenderType.CURRENCY_LABEL ||
         htmlRender === RenderType.DYNAMIC_AMOUNT_LABEL
       ) {
-        intialState = { ...intialState, [name]: 0 };
+        newState[name] = 0;
         return;
       }
-      intialState = { ...intialState, [name]: defaultValue };
+      newState[name] = defaultValue;
     }
   });
-  return intialState;
+  return newState;
 };
 
 /** Render a single input */

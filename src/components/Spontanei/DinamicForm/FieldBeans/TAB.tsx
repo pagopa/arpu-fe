@@ -1,19 +1,22 @@
 import React from 'react';
 
 import { TabContext, TabList, TabPanel } from '@mui/lab';
-import { Stack, Tab } from '@mui/material';
-import { BuildFormInputs, computeValue } from '../config';
+import { Tab } from '@mui/material';
+import { BuildFormInputs, computeValue, CustomFormValues } from '../config';
 import { useField, useFormikContext } from 'formik';
 import withComputedValues, { computedPROPS } from './withDinamicValues';
+import { Box, Grid } from '@mui/system';
 
 const TABPANEL = withComputedValues((props: computedPROPS) => {
   const { name, subfields, isDisabled } = props;
   return (
     <TabPanel value={name} key={name} sx={{ padding: 0 }}>
       <fieldset style={{ padding: '16px' }} disabled={isDisabled}>
-        <Stack gap={2} direction="row">
-          {BuildFormInputs(subfields || [])}
-        </Stack>
+        <Grid container spacing={2}>
+          {subfields?.map((field) => (
+            <Grid size={{ xs: 12, md: 6, lg: 6 }}>{BuildFormInputs([field])}</Grid>
+          ))}
+        </Grid>
       </fieldset>
     </TabPanel>
   );
@@ -26,13 +29,13 @@ const TABLIST = (props: computedPROPS) => {
     helpers.setValue(newValue);
   };
 
-  const { values } = useFormikContext();
+  const { values } = useFormikContext<CustomFormValues>();
 
   const firstTabValue = subfields?.[0]?.name;
   const value = fieldValue.value || firstTabValue || '';
 
   return (
-    <Stack direction="column">
+    <Box minWidth={'100%'}>
       <TabContext value={value}>
         <TabList onChange={handleChange} variant="fullWidth">
           {subfields?.map((field) => {
@@ -55,7 +58,7 @@ const TABLIST = (props: computedPROPS) => {
         </TabList>
         {subfields?.map((field) => <TABPANEL {...field} />)}
       </TabContext>
-    </Stack>
+    </Box>
   );
 };
 

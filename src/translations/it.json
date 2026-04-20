@@ -594,7 +594,7 @@
             "description": "Oggetto del pagamento"
           },
           "custom": {
-            "title": "Inserisci i dati richiesti:"
+            "title": "Inserisci i dati richiesti"
           }
         },
         "step4": {

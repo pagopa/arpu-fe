@@ -72,7 +72,7 @@ describe('Spontanei dynamic form config', () => {
         payer: { city: 'Roma', cap: 12345 },
         enabled: true,
         note: null
-      })
+      } as any)
     ).toEqual({
       'payer.city': 'Roma',
       'payer.cap': 12345,
@@ -156,7 +156,7 @@ describe('Spontanei dynamic form config', () => {
       schema.safeParse({
         comune: { label: 'Roma', value: 'RM' },
         causale: 'RINNOVO',
-        tags: ['A'],
+        tags: [{ label: 'A', value: 'A' }],
         amount: 100
       }).success
     ).toBe(true);
@@ -178,15 +178,15 @@ describe('Spontanei dynamic form config', () => {
     }
   });
 
-  it('accumulates schema state across invocations', () => {
+  it('does not accumulate schema state across invocations', () => {
     const firstSchema = BuildFormSchema([createField({ name: 'first', required: true })]);
-    // Schema now contains: comune, causale, tags, amount (from previous test) + first
-    // So parsing with just { first: 'ok' } fails because previous fields are still required
-    expect(firstSchema.safeParse({ first: 'ok' }).success).toBe(false);
+    // Schema should ONLY contain 'first'
+    expect(firstSchema.safeParse({ first: 'ok' }).success).toBe(true);
 
     const secondSchema = BuildFormSchema([createField({ name: 'second', required: true })]);
-    // second is added on top of everything already accumulated
-    expect(secondSchema.safeParse({ second: 'ok' }).success).toBe(false);
+    // Schema should ONLY contain 'second'
+    expect(secondSchema.safeParse({ second: 'ok' }).success).toBe(true);
+    expect(secondSchema.safeParse({ first: 'ok' }).success).toBe(false);
   });
 
   it('supports optional number, multi-select and plain text fields', () => {
@@ -208,17 +208,9 @@ describe('Spontanei dynamic form config', () => {
       })
     ]);
 
-    // Schema has accumulated required fields from previous tests,
-    // so we must provide valid values for all of them
+    // Schema has NO accumulated required fields from previous tests
     expect(
       schema.safeParse({
-        // accumulated required fields from previous tests
-        comune: { label: 'Roma', value: 'RM' },
-        causale: 'RINNOVO',
-        tags: ['A'],
-        amount: 100,
-        first: 'ok',
-        second: 'ok',
         // actual optional fields under test
         optionalAmount: 0,
         optionalTags: [],
@@ -252,6 +244,8 @@ describe('Spontanei dynamic form config', () => {
     ]);
 
     expect(firstState).toEqual({
+      comune: { label: 'Roma', value: 'Roma' },
+      tags: [],
       note: 'memo'
     });
 
@@ -319,14 +313,14 @@ describe('Spontanei dynamic form config', () => {
       })
     ];
 
-    const builtInputs = BuildFormInputs(sourceFields);
+    const builtInputs = BuildFormInputs(sourceFields, true);
 
-    expect(sourceFields).toHaveLength(3);
+    expect(sourceFields).toHaveLength(2);
     expect(builtInputs).toHaveLength(3);
-    expect(getElementName(builtInputs[0])).toBe('importo');
+    expect(getElementName(builtInputs[0])).toBe('amount');
     expect(getElementName(builtInputs[1])).toBe('first');
     expect(getElementName(builtInputs[2])).toBe('second');
-    expect(builtInputs.some((element) => getElementName(element) === 'importo')).toBe(true);
+    expect(builtInputs.some((element) => getElementName(element) === 'amount')).toBe(true);
   });
 
   it('does not append the implicit importo field when amountFieldName is provided', () => {
@@ -337,6 +331,7 @@ describe('Spontanei dynamic form config', () => {
           renderableOrder: 1
         })
       ],
+      false,
       'customAmount'
     );
 
