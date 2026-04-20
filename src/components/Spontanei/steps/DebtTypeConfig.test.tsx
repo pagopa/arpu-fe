@@ -66,6 +66,8 @@ const getDefaultContext = (overrides: Partial<FormContextType> = {}): FormContex
   setSubmitFields: vi.fn(),
   amountFieldName: 'amount',
   setAmountFieldName: vi.fn(),
+  dictionary: {},
+  setDictionary: vi.fn(),
   ...overrides
 });
 

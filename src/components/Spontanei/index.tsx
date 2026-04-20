@@ -14,6 +14,7 @@ import {
   DebtPositionTypeOrgsWithSpontaneousDTO,
   OrganizationsWithSpontaneousDTO,
   PersonEntityType,
+  SpontaneousForm,
   SpontaneousFormStructure
 } from '../../../generated/data-contracts';
 import Payment from './steps/Payment';
@@ -44,6 +45,8 @@ const Spontanei = () => {
   const [submitFields, setSubmitFields] = React.useState<SpontaneousFormStructure['submitFields']>(
     []
   );
+  // dictionary state
+  const [dictionary, setDictionary] = React.useState<SpontaneousForm['dictionary']>({});
   const [amountFieldName, setAmountFieldName] = React.useState<string>('amount');
   const { t } = useTranslation();
 
@@ -70,7 +73,7 @@ const Spontanei = () => {
 
   const validate = (values: PaymentNoticeInfo) => {
     const errors: Record<string | number, string> = {};
-    const result = PaymentNoticeInfoSchema(t).safeParse(values);
+    const result = PaymentNoticeInfoSchema().safeParse(values);
     if (!result.success) {
       result.error.issues.forEach((issue: z.ZodIssue) => (errors[issue.path[0]] = issue.message));
     }
@@ -89,10 +92,20 @@ const Spontanei = () => {
       setSummaryFields,
       submitFields,
       setSubmitFields,
+      dictionary,
+      setDictionary,
       amountFieldName,
       setAmountFieldName
     }),
-    [omitFirstStep, step, causaleHasJoinTemplate, summaryFields, submitFields, amountFieldName]
+    [
+      omitFirstStep,
+      step,
+      causaleHasJoinTemplate,
+      summaryFields,
+      submitFields,
+      dictionary,
+      amountFieldName
+    ]
   );
 
   // Define step translations to announce them
@@ -109,10 +122,10 @@ const Spontanei = () => {
   return (
     <>
       <Box width={'100%'} component="main">
-        <Formik initialValues={defaultPaymentNoticeInfo} validate={validate} onSubmit={console.log}>
+        <Formik initialValues={defaultPaymentNoticeInfo} validate={validate} onSubmit={() => {}}>
           <FormContext.Provider value={contextValue}>
             <Stack direction={'column'} justifyContent={'start'}>
-              <Typography variant="h4" component="h1" mb={1} data-testid="spontanei-title">
+              <Typography variant="h3" component="h1" mb={1} data-testid="spontanei-title">
                 {t('spontanei.form.title')}
               </Typography>
               <Typography data-testid="spontanei-description">

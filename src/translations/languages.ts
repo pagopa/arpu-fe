@@ -4,7 +4,6 @@ const langMap = {
   it: 'Italiano',
   en: 'English',
   fr: 'Français',
-  sl: 'Slovenski',
   de: 'Deutsch'
 };
 
@@ -13,6 +12,5 @@ export const languages: Languages = {
   it: langMap,
   en: langMap,
   fr: langMap,
-  sl: langMap,
   de: langMap
 };

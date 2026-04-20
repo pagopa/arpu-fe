@@ -57,9 +57,9 @@ const CustomForm = (props: CustomFormProps) => {
 
   return (
     <>
-      <Card variant="outlined">
-        <Stack spacing={2} padding={4}>
-          <Typography variant="h6" component={'h2'}>
+      <Card variant="elevation">
+        <Stack spacing={2} padding={2}>
+          <Typography variant="h4" component="h2">
             {t('spontanei.form.steps.step3.title')}
           </Typography>
           <Typography>{t('spontanei.form.steps.step3.description')}</Typography>

@@ -117,8 +117,8 @@ const DebtTypeSelect = () => {
   return (
     <>
       <StepWrapper isPending={isDebtPositionTypeOrgsWithSpontaneousPending}>
-        <Stack spacing={2} padding={4}>
-          <Typography variant="h6" data-testid="spontanei-step2-title" component={'h2'}>
+        <Stack spacing={2} padding={2}>
+          <Typography variant="h4" component="h2" data-testid="spontanei-step2-title">
             {t('spontanei.form.steps.step2.title')}
           </Typography>
           <Typography data-testid="spontanei-step2-description">
@@ -221,7 +221,9 @@ const DebtTypeSelect = () => {
                 </Stack>
               </>
             )}
-          {debtTypeMeta.touched && <Typography color="error">{debtTypeMeta.error}</Typography>}
+          {debtTypeMeta.touched && debtTypeMeta.error && (
+            <Typography color="error">{t(debtTypeMeta.error)}</Typography>
+          )}
         </Stack>
       </StepWrapper>
       <Controls shouldContinue={shouldContinue} />

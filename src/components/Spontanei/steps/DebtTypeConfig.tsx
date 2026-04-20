@@ -44,6 +44,14 @@ const DebtTypeConfig = () => {
 
   const summaryFields = data?.formCustom?.structure.summaryFields || [];
   const submitFields = data?.formCustom?.structure.submitFields || [];
+  const dictionary = data?.formCustom?.dictionary || {};
+
+  /**
+   * Sets the dictionary in the context.
+   */
+  useEffect(() => {
+    context?.setDictionary(dictionary);
+  }, [dictionary]);
 
   /**
    * Sets the summary fields in the context.

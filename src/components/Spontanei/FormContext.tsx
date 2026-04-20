@@ -1,5 +1,5 @@
 import { createContext } from 'react';
-import { SpontaneousFormStructure } from '../../../generated/data-contracts';
+import { SpontaneousForm, SpontaneousFormStructure } from '../../../generated/data-contracts';
 
 export type FormContextType = {
   omitFirstStep: boolean;
@@ -10,6 +10,8 @@ export type FormContextType = {
   setSummaryFields: React.Dispatch<React.SetStateAction<SpontaneousFormStructure['summaryFields']>>;
   submitFields: SpontaneousFormStructure['submitFields'];
   setSubmitFields: React.Dispatch<React.SetStateAction<SpontaneousFormStructure['submitFields']>>;
+  dictionary: SpontaneousForm['dictionary'];
+  setDictionary: React.Dispatch<React.SetStateAction<SpontaneousForm['dictionary']>>;
   amountFieldName: string;
   setAmountFieldName: React.Dispatch<React.SetStateAction<string>>;
   causaleHasJoinTemplate: boolean;

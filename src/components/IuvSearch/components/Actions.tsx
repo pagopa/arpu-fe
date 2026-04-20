@@ -58,7 +58,7 @@ export const Actions = ({ installment }: ActionsProps) => {
         organizationId: installment.organizationId
       });
 
-      navigate(path, { state: { fiscalCode: installment.debtor.fiscalCode } });
+      navigate(`${path}#debtorFiscalCode=${installment.debtor.fiscalCode}`);
     } else {
       notify.emit(t('errors.toast.default'));
     }

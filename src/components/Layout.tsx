@@ -29,10 +29,10 @@ import { SubHeader } from './Header/SubHeader';
 import { ProductLogo } from 'components/ProductLogo';
 import { HeaderAccount, RootLinkType } from '@pagopa/mui-italia';
 import { PageTitleProvider } from './PageTitleProvider';
-import { t } from 'i18next';
 import appStore from 'store/appStore';
 import { StorageItems } from 'utils/storage';
 import { RouteGuard } from './RouteGuard';
+import { useTranslation } from 'react-i18next';
 import '../styles.css';
 
 const defaultRouteHandle: RouteHandleObject = {};
@@ -43,6 +43,7 @@ export function Layout(props: { anonymous?: boolean }) {
     state: { cart, installmentsDrawer, paymentTypeDrawerVisibilityStatus }
   } = useStore();
 
+  const { t } = useTranslation();
   const lg = useMediaQuery((theme: Theme) => theme.breakpoints.up('lg'));
 
   const overlay = utils.sidemenu.status.overlay.value;
@@ -106,6 +107,7 @@ export function Layout(props: { anonymous?: boolean }) {
             rootLink={rootLink}
             onAssistanceClick={onAssistanceClick}
             enableLogin={false}
+            translationsMap={{ assistance: t('ui.header.help') }}
           />
         )}
         {subHeader && <SubHeader product={<ProductLogo maxWidth="160px" />} />}

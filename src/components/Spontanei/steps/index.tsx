@@ -8,11 +8,11 @@ const Steps = (props: { activeStep: number }) => {
   const context = useContext<FormContextType | null>(FormContext);
   const { t } = useTranslation();
   const initialSteps = [
-    t('spontanei.form.steps.step1.step'),
-    t('spontanei.form.steps.step2.step'),
-    t('spontanei.form.steps.step3.step'),
-    t('spontanei.form.steps.step4.step'),
-    t('spontanei.form.steps.step5.step')
+    'spontanei.form.steps.step1.step',
+    'spontanei.form.steps.step2.step',
+    'spontanei.form.steps.step3.step',
+    'spontanei.form.steps.step4.step',
+    'spontanei.form.steps.step5.step'
   ];
   const [steps, setSteps] = React.useState(initialSteps);
   const [stepBaseNumber, setStepBaseNumber] = React.useState(0);
@@ -49,10 +49,10 @@ const Steps = (props: { activeStep: number }) => {
           {steps.map((label) => {
             return (
               <Step
-                key={label}
+                key={t(label)}
                 role="tab"
                 aria-selected={props.activeStep - stepBaseNumber === steps.indexOf(label)}>
-                <StepLabel>{label}</StepLabel>
+                <StepLabel>{t(label)}</StepLabel>
               </Step>
             );
           })}
