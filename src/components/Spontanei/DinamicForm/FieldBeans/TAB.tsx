@@ -10,11 +10,13 @@ import { Box, Grid } from '@mui/system';
 const TABPANEL = withComputedValues((props: computedPROPS) => {
   const { name, subfields, isDisabled } = props;
   return (
-    <TabPanel value={name} key={name} sx={{ padding: 0 }}>
+    <TabPanel value={name} sx={{ padding: 0 }}>
       <fieldset style={{ padding: '16px' }} disabled={isDisabled}>
         <Grid container spacing={2}>
           {subfields?.map((field) => (
-            <Grid size={{ xs: 12, md: 6, lg: 6 }}>{BuildFormInputs([field])}</Grid>
+            <Grid size={{ xs: 12, md: 6, lg: 6 }} key={field.name}>
+              {BuildFormInputs([field])}
+            </Grid>
           ))}
         </Grid>
       </fieldset>
@@ -56,7 +58,7 @@ const TABLIST = (props: computedPROPS) => {
             );
           })}
         </TabList>
-        {subfields?.map((field) => <TABPANEL {...field} />)}
+        {subfields?.map((field) => <TABPANEL {...field} key={field.name} />)}
       </TabContext>
     </Box>
   );

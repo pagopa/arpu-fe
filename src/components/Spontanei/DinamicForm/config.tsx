@@ -106,7 +106,7 @@ export function computeValue<T>(code: string, scope = {}) {
     const scopeValues = backToOriginalScope(scope);
     return sandbox.compile(code)(scopeValues).run() as T;
   } catch (error) {
-    console.error('something went wrong in computeValue', code, error);
+    console.warn('something went wrong in computeValue', code, error);
     return;
   }
 }
@@ -272,32 +272,33 @@ export const BuildInput = (
   allElements?: SpontaneousFormField[],
   amountFieldName = 'amount'
 ) => {
+  const key = element.name;
   switch (element.htmlRender) {
     case RenderType.TAB:
-      return <TAB {...element} />;
+      return <TAB {...element} key={key} />;
     case RenderType.SINGLESELECT:
-      return <SINGLESELECT {...element} />;
+      return <SINGLESELECT {...element} key={key} />;
     case RenderType.DYNAMIC_SELECT:
-      return <DYNAMIC_SELECT {...element} />;
+      return <DYNAMIC_SELECT {...element} key={key} />;
     case RenderType.MULTISELECT:
-      return <MULTISELECT {...element} />;
+      return <MULTISELECT {...element} key={key} />;
     case RenderType.DATE:
-      return <DATEPICKER {...element} />;
+      return <DATEPICKER {...element} key={key} />;
     case RenderType.NONE:
-      return <NONE {...element} allFields={allElements} />;
+      return <NONE {...element} allFields={allElements} key={key} />;
     case RenderType.TEXT:
-      return <TEXT {...element} />;
+      return <TEXT {...element} key={key} />;
     case RenderType.MULTIFIELD:
-      return <MULTIFIELD input={element} />;
+      return <MULTIFIELD input={element} key={key} />;
     // amount
     case RenderType.CURRENCY:
-      return <CURRENCY {...element} amountFieldName={amountFieldName} />;
+      return <CURRENCY {...element} amountFieldName={amountFieldName} key={key} />;
     // readonly amount
     case RenderType.CURRENCY_LABEL:
-      return <CURRENCY_LABEL {...element} amountFieldName={amountFieldName} />;
+      return <CURRENCY_LABEL {...element} amountFieldName={amountFieldName} key={key} />;
     // dynamic readonly amount (amount that changes based on other fields and an API call)
     case RenderType.DYNAMIC_AMOUNT_LABEL:
-      return <DYNAMIC_AMOUNTLABEL {...element} amountFieldName={amountFieldName} />;
+      return <DYNAMIC_AMOUNTLABEL {...element} amountFieldName={amountFieldName} key={key} />;
     default:
       return null;
   }
