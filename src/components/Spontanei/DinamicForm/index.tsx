@@ -55,9 +55,7 @@ const CustomForm = ({ fieldBeans, amountFieldName }: CustomFormProps) => {
           <Typography variant="h6" mb={2}>
             {t('spontanei.form.steps.step3.custom.title')}
           </Typography>
-          <Form>
-            {isFormReady && <Stack gap={2}>{fields}</Stack>}
-          </Form>
+          <Form>{isFormReady && <Stack gap={2}>{fields}</Stack>}</Form>
         </ResponsiveCard>
       </LocalizationProvider>
     </>
