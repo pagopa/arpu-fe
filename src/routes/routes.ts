@@ -11,7 +11,7 @@ export const ROUTES = {
   AUTH_CALLBACK: `${config.deployPath}/auth-callback`,
   DASHBOARD: rootPrefix,
   RECEIPT: `${rootPrefix}/ricevute/:receiptId/:organizationId`,
-  DEBT_POSITION_DOWNLOAD: `${rootPrefix}/posizioni-debitorie/download/:nav/:organizationId`,
+  DEBT_POSITION_DOWNLOAD: `${rootPrefix}/posizioni-debitorie/download/:nav/:orgId`,
   RECEIPTS: `${rootPrefix}/ricevute`,
   DEBT_POSITION: `${rootPrefix}/posizioni-debitorie/:debtPositionId/:organizationId`,
   DEBT_POSITIONS: `${rootPrefix}/posizioni-debitorie`,
@@ -28,7 +28,7 @@ export const ROUTES = {
     COURTESY_PAGE: `${rootPrefix}/public/esito/:outcome`,
     RECEIPTS_SEARCH: `${rootPrefix}/public/ricevute/ricerca`,
     RECEIPT: `${rootPrefix}/public/ricevute/:receiptId/:organizationId`,
-    DEBT_POSITION_DOWNLOAD: `${rootPrefix}/public/posizioni-debitorie/download/:nav/:organizationId`,
+    DEBT_POSITION_DOWNLOAD: `${rootPrefix}/public/posizioni-debitorie/download/:nav/:orgId`,
     DEBT_POSITION_SEARCH: `${rootPrefix}/public/posizioni-debitorie/ricerca`
   }
 };

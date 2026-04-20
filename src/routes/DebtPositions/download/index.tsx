@@ -9,6 +9,7 @@ import notify from 'utils/notify';
 import { useAppRoutes } from 'hooks/useAppRoutes';
 import { useRecaptcha } from 'components/RecaptchaProvider/RecaptchaProvider';
 import queryString from 'query-string';
+import appStore from 'store/appStore';
 
 export const DebtPositionDownload = () => {
   const { t } = useTranslation();
@@ -19,10 +20,12 @@ export const DebtPositionDownload = () => {
 
   const location = useLocation();
   const { debtorFiscalCode } = queryString.parse(location.hash);
+  const downloadInfoLink = appStore.value.brokerInfo?.config?.downloadInfoLink;
+  const homeLink = appStore.value.brokerInfo?.config?.homeLink;
 
   const params = useParams();
   const nav = params?.nav;
-  const organizationId = Number(params?.organizationId);
+  const organizationId = Number(params?.orgId);
 
   if (isNaN(organizationId) || !nav || !brokerId || !debtorFiscalCode) {
     throw new Error('Missing required parameters');
@@ -64,7 +67,7 @@ export const DebtPositionDownload = () => {
   }, []);
 
   return (
-    <Stack gap={4} padding={25} alignItems="center" justifyContent="center">
+    <Stack gap={4} padding={8} alignItems="center" justifyContent="center">
       <img src="/cittadini/pictograms/hourglass.svg" aria-hidden="true" height={60} width={60} />
       <Stack gap={1} alignItems="center" textAlign="center" maxWidth={(theme) => theme.spacing(48)}>
         <Typography variant="h4" component="h1" fontWeight={600}>
@@ -82,18 +85,28 @@ export const DebtPositionDownload = () => {
           <Trans
             i18nKey="app.debtPositions.download.info"
             components={{
-              CustomLink: <MuiLink onClick={onDownload} sx={{ cursor: 'pointer' }} />
+              CustomLink: downloadInfoLink ? (
+                <MuiLink href={downloadInfoLink} target="_blank" rel="noopener" />
+              ) : (
+                <MuiLink onClick={onDownload} sx={{ cursor: 'pointer' }} />
+              )
             }}
           />
         </Typography>
       </Stack>
-      <Button
-        variant="contained"
-        size="large"
-        component={Link}
-        to={isAnonymous ? routes.LOGIN : routes.DASHBOARD}>
-        {t('actions.close')}
-      </Button>
+      {homeLink ? (
+        <Button variant="contained" size="large" component="a" href={homeLink}>
+          {t('actions.backToHome')}
+        </Button>
+      ) : (
+        <Button
+          variant="contained"
+          size="large"
+          component={Link}
+          to={isAnonymous ? routes.LOGIN : routes.DASHBOARD}>
+          {t('actions.close')}
+        </Button>
+      )}
       <Link to={externalRoutes.PAYMENT_LINKS} target="_blank">
         {t('app.debtPositions.download.link')}
       </Link>

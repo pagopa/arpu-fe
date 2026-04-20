@@ -160,6 +160,12 @@ describe('appStore', () => {
       expect(appStore.value.brokerInfo?.config?.homeLink).toBe('https://home.example.com');
     });
 
+    it('should leave homeLink undefined when not provided', () => {
+      setBrokerInfo(baseParsedConfig, 'broker-code');
+
+      expect(appStore.value.brokerInfo?.config?.homeLink).toBeUndefined();
+    });
+
     it('should store brokerLink from config', () => {
       setBrokerInfo(
         {
@@ -176,6 +182,26 @@ describe('appStore', () => {
       setBrokerInfo(baseParsedConfig, 'broker-code');
 
       expect(appStore.value.brokerInfo?.config?.brokerLink).toBeUndefined();
+    });
+
+    it('should store downloadInfoLink from config', () => {
+      setBrokerInfo(
+        {
+          ...baseParsedConfig,
+          config: { translation: {}, downloadInfoLink: 'https://download.example.com/info' }
+        },
+        'broker-code'
+      );
+
+      expect(appStore.value.brokerInfo?.config?.downloadInfoLink).toBe(
+        'https://download.example.com/info'
+      );
+    });
+
+    it('should leave downloadInfoLink undefined when not provided', () => {
+      setBrokerInfo(baseParsedConfig, 'broker-code');
+
+      expect(appStore.value.brokerInfo?.config?.downloadInfoLink).toBeUndefined();
     });
 
     it('should store availableRoutes from config', () => {

@@ -115,6 +115,78 @@ describe('brokerconfig', () => {
         expect.any(Object)
       );
     });
+
+    it('parses homeLink when present', () => {
+      const validConfig = {
+        translation: { en: { greeting: 'Hello' } },
+        homeLink: 'https://home.example.com'
+      };
+
+      const result = parseBrokerConfig(JSON.stringify(validConfig));
+
+      expect(console.warn).not.toHaveBeenCalled();
+      expect(result.homeLink).toBe('https://home.example.com');
+    });
+
+    it('returns undefined homeLink when not present', () => {
+      const validConfig = {
+        translation: { en: { greeting: 'Hello' } }
+      };
+
+      const result = parseBrokerConfig(JSON.stringify(validConfig));
+
+      expect(result.homeLink).toBeUndefined();
+    });
+
+    it('fails validation when homeLink is not a valid URL', () => {
+      const invalidConfig = {
+        translation: { en: { greeting: 'Hello' } },
+        homeLink: 'not-a-url'
+      };
+
+      parseBrokerConfig(JSON.stringify(invalidConfig));
+
+      expect(console.warn).toHaveBeenCalledWith(
+        '[brokerConfig] validation failed:',
+        expect.any(Object)
+      );
+    });
+
+    it('parses downloadInfoLink when present', () => {
+      const validConfig = {
+        translation: { en: { greeting: 'Hello' } },
+        downloadInfoLink: 'https://download.example.com/info'
+      };
+
+      const result = parseBrokerConfig(JSON.stringify(validConfig));
+
+      expect(console.warn).not.toHaveBeenCalled();
+      expect(result.downloadInfoLink).toBe('https://download.example.com/info');
+    });
+
+    it('returns undefined downloadInfoLink when not present', () => {
+      const validConfig = {
+        translation: { en: { greeting: 'Hello' } }
+      };
+
+      const result = parseBrokerConfig(JSON.stringify(validConfig));
+
+      expect(result.downloadInfoLink).toBeUndefined();
+    });
+
+    it('fails validation when downloadInfoLink is not a valid URL', () => {
+      const invalidConfig = {
+        translation: { en: { greeting: 'Hello' } },
+        downloadInfoLink: 'not-a-url'
+      };
+
+      parseBrokerConfig(JSON.stringify(invalidConfig));
+
+      expect(console.warn).toHaveBeenCalledWith(
+        '[brokerConfig] validation failed:',
+        expect.any(Object)
+      );
+    });
   });
 
   describe('applyBrokerTranslations', () => {
