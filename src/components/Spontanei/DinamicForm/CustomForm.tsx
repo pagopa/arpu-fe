@@ -8,6 +8,7 @@ import Controls from '../Controls';
 import { useFormikContext } from 'formik';
 import { BuildFormSchema, CustomFormValues } from './config';
 import * as z from 'zod';
+import focusOnFirstError from '../utils/focusOnFirstError';
 
 function isEmpty(obj) {
   for (const prop in obj) {
@@ -45,8 +46,13 @@ const CustomForm = (props: CustomFormProps) => {
     await submitForm();
     const globalFormErrors = await validateForm();
     const customFormErrors = validate(values);
-    setErrors({ ...globalFormErrors, ...customFormErrors });
-    return isEmpty(globalFormErrors || {}) && isEmpty(customFormErrors || {});
+    const allErrors = { ...globalFormErrors, ...customFormErrors };
+    setErrors(allErrors);
+    const isValid = isEmpty(globalFormErrors || {}) && isEmpty(customFormErrors || {});
+    if (!isValid) {
+      focusOnFirstError(allErrors as Record<string, string>);
+    }
+    return isValid;
   };
 
   return (

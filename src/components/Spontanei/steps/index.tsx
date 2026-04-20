@@ -45,10 +45,13 @@ const Steps = (props: { activeStep: number }) => {
       {viewSkeleton ? (
         <Skeleton variant="rectangular" height={'64px'} sx={{ p: 4 }} animation={'wave'}></Skeleton>
       ) : (
-        <Stepper activeStep={props.activeStep - stepBaseNumber} alternativeLabel>
+        <Stepper activeStep={props.activeStep - stepBaseNumber} alternativeLabel role="tablist">
           {steps.map((label) => {
             return (
-              <Step key={t(label)}>
+              <Step
+                key={t(label)}
+                role="tab"
+                aria-selected={props.activeStep - stepBaseNumber === steps.indexOf(label)}>
                 <StepLabel>{t(label)}</StepLabel>
               </Step>
             );

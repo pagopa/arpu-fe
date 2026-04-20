@@ -1,4 +1,4 @@
-import React, { useContext, useEffect } from 'react';
+import React, { useContext, useEffect, useRef } from 'react';
 import {
   Autocomplete,
   Divider,
@@ -36,6 +36,7 @@ const DebtTypeSelect = () => {
   const [org] = useField<PaymentNoticeInfo['org']>('org');
   const [debtType, debtTypeMeta, debtTypeHelpers] =
     useField<PaymentNoticeInfo['debtType']>('debtType');
+  const firstRadioRef = useRef<HTMLInputElement>(null);
 
   const organizationId = org.value?.organizationId || 0;
 
@@ -101,6 +102,9 @@ const DebtTypeSelect = () => {
   const shouldContinue = async () => {
     formik.setTouched({ debtType: true });
     const errors = await formik.validateForm();
+    if (errors.debtType) {
+      firstRadioRef.current?.focus();
+    }
     return !errors.org && !errors.debtType;
   };
 
@@ -132,14 +136,14 @@ const DebtTypeSelect = () => {
                     <FormControlLabel
                       sx={{ my: 0.5 }}
                       value={debtTypeOption.debtPositionTypeOrgId}
-                      control={<Radio />}
+                      control={<Radio inputRef={index === 0 ? firstRadioRef : null} />}
                       label={getLocalizedDescription(
                         debtTypeOption.descriptionI18n,
                         i18n.language,
                         debtTypeOption.description
                       )}
                     />
-                    {index !== debtTypeOptions.length - 1 && <Divider />}
+                    {index !== debtTypeOptions.length - 1 && <Divider aria-hidden="true" />}
                   </Box>
                 ))}
               </RadioGroup>
@@ -191,12 +195,13 @@ const DebtTypeSelect = () => {
                     aria-label="debt-type"
                     name="debtTypeCode"
                     data-testid="spontanei-step2-radioGroup">
-                    {mostUsedDebtTypesQuery.data.map((MostUsedDebtType) => (
+                    {mostUsedDebtTypesQuery.data.map((MostUsedDebtType, index) => (
                       <FormControl key={MostUsedDebtType.debtPositionTypeOrgId}>
                         <FormControlLabel
                           value={MostUsedDebtType.debtPositionTypeOrgId}
                           control={
                             <Radio
+                              inputRef={index === 0 ? firstRadioRef : null}
                               onChange={() => onChange(MostUsedDebtType)}
                               checked={
                                 debtType?.value?.debtPositionTypeOrgId ===
