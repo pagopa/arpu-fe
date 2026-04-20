@@ -8,7 +8,16 @@ import { useTranslation } from 'react-i18next';
 
 const SELECT = (props: computedPROPS & { multiple?: boolean }) => {
   const { t } = useTranslation();
-  const { name, onBlur, htmlLabel, hasError, required, errorMessage, options = [], multiple } = props;
+  const {
+    name,
+    onBlur,
+    htmlLabel,
+    hasError,
+    required,
+    errorMessage,
+    options = [],
+    multiple
+  } = props;
 
   const [fieldValue, , helpers] = useField<Option | Option[] | null>(name);
 

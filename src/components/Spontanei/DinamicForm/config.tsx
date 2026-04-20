@@ -67,7 +67,11 @@ function formatString(formatString: string, dataObject: { [key: string]: unknown
   });
 }
 
-export const flattenObject = (obj: CustomFormValues, delimiter = '.', prefix = ''): Record<string, string | number> =>
+export const flattenObject = (
+  obj: CustomFormValues,
+  delimiter = '.',
+  prefix = ''
+): Record<string, string | number> =>
   Object.keys(obj).reduce<Record<string, string | number>>((acc, k) => {
     const pre = prefix.length ? `${prefix}${delimiter}` : '';
     if (typeof obj[k] === 'object' && obj[k] !== null && Object.keys(obj[k]).length > 0)
@@ -124,14 +128,17 @@ const backToOriginalScope = (values: CustomFormValues) => {
     }
   });
   return scopeValues;
-}
+};
 
 /** set the form schema for validation */
 export const BuildFormSchema = (fields: Array<SpontaneousFormField>, amountFieldName?: string) => {
   let schemaObject = {};
   fields.forEach((field) => {
     if (amountFieldName) {
-      schemaObject = { ...schemaObject, [amountFieldName]: z.number().min(1, 'spontanei.form.errors.amount') };
+      schemaObject = {
+        ...schemaObject,
+        [amountFieldName]: z.number().min(1, 'spontanei.form.errors.amount')
+      };
     }
     if (field.subfields) BuildFormSchema(field.subfields);
     if (field.htmlRender === RenderType.MULTIFIELD || field.htmlRender === RenderType.TAB) {
@@ -150,9 +157,10 @@ export const BuildFormSchema = (fields: Array<SpontaneousFormField>, amountField
     if (isAmountField) {
       fieldSchema = isRequired ? z.number().min(0, errorMessage) : z.number();
     } else if (type === RenderType.SINGLESELECT || type === RenderType.DYNAMIC_SELECT) {
-      fieldSchema = OptionSchema
-        .nullable()
-        .refine((option) => isRequired && option !== null, errorMessage);
+      fieldSchema = OptionSchema.nullable().refine(
+        (option) => isRequired && option !== null,
+        errorMessage
+      );
     } else if (type === RenderType.MULTISELECT) {
       fieldSchema = isRequired ? z.array(OptionSchema).min(1, errorMessage) : z.array(OptionSchema);
     } else {
@@ -224,12 +232,9 @@ export const BuildFormState = (fields: Array<SpontaneousFormField>): CustomFormV
       // perchè defaultValue dovrebbe essere un array di valori
       if (htmlRender == RenderType.MULTISELECT) {
         intialState = { ...intialState, [name]: [] };
-        return
+        return;
       }
-      if (
-        htmlRender === RenderType.SINGLESELECT ||
-        htmlRender === RenderType.DYNAMIC_SELECT
-      ) {
+      if (htmlRender === RenderType.SINGLESELECT || htmlRender === RenderType.DYNAMIC_SELECT) {
         const initialOptions = (enumerationList || []).map((enumeration) => ({
           label: enumeration,
           value: enumeration
@@ -238,11 +243,15 @@ export const BuildFormState = (fields: Array<SpontaneousFormField>): CustomFormV
           ...intialState,
           [name]: normalizeSelectValue(defaultValue, initialOptions)
         };
-        return
+        return;
       }
-      if (htmlRender === RenderType.CURRENCY || htmlRender === RenderType.CURRENCY_LABEL || htmlRender === RenderType.DYNAMIC_AMOUNT_LABEL) {
+      if (
+        htmlRender === RenderType.CURRENCY ||
+        htmlRender === RenderType.CURRENCY_LABEL ||
+        htmlRender === RenderType.DYNAMIC_AMOUNT_LABEL
+      ) {
         intialState = { ...intialState, [name]: 0 };
-        return
+        return;
       }
       intialState = { ...intialState, [name]: defaultValue };
     }

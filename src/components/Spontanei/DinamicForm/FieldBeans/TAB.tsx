@@ -16,9 +16,8 @@ const TABPANEL = withComputedValues((props: computedPROPS) => {
         </Stack>
       </fieldset>
     </TabPanel>
-
-  )
-})
+  );
+});
 
 const TABLIST = (props: computedPROPS) => {
   const { name, subfields } = props;
@@ -45,10 +44,14 @@ const TABLIST = (props: computedPROPS) => {
                 ? computeValue(enabledDependsOn, values)
                 : false;
             return (
-              <Tab key={field.name} label={field.htmlLabel || ''} value={field.name} disabled={!enabled} />)
-          }
-          )
-          }
+              <Tab
+                key={field.name}
+                label={field.htmlLabel || ''}
+                value={field.name}
+                disabled={!enabled}
+              />
+            );
+          })}
         </TabList>
         {subfields?.map((field) => <TABPANEL {...field} />)}
       </TabContext>
@@ -57,5 +60,3 @@ const TABLIST = (props: computedPROPS) => {
 };
 
 export default withComputedValues(TABLIST);
-
-
