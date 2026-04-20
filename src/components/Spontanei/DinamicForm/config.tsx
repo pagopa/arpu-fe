@@ -131,7 +131,10 @@ const backToOriginalScope = (values: CustomFormValues) => {
 };
 
 /** set the form schema for validation */
-const buildSchemaObject = (fields: Array<SpontaneousFormField>, schemaObject: any = {}) => {
+const buildSchemaObject = (
+  fields: Array<SpontaneousFormField>,
+  schemaObject: Record<string, z.ZodTypeAny> = {}
+) => {
   fields.forEach((field) => {
     if (field.subfields) buildSchemaObject(field.subfields, schemaObject);
     if (field.htmlRender === RenderType.MULTIFIELD || field.htmlRender === RenderType.TAB) {

@@ -33,7 +33,7 @@ describe('brokerconfig', () => {
     });
 
     it('warns when JSON does not match the schema', () => {
-      parseBrokerConfig(JSON.stringify({ unexpected: 'field' }));
+      parseBrokerConfig(JSON.stringify({ useCart: 'not-a-boolean' }));
 
       expect(console.warn).toHaveBeenCalledWith(
         '[brokerConfig] validation failed:',

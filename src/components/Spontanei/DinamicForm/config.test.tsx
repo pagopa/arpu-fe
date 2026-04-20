@@ -72,6 +72,7 @@ describe('Spontanei dynamic form config', () => {
         payer: { city: 'Roma', cap: 12345 },
         enabled: true,
         note: null
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
       } as any)
     ).toEqual({
       'payer.city': 'Roma',
