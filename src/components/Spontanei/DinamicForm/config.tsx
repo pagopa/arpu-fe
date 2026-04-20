@@ -21,6 +21,7 @@ import CURRENCY from './FieldBeans/CURRENCY';
 import DYNAMIC_AMOUNTLABEL from './FieldBeans/DYNAMIC_AMOUNT_LABEL';
 import CURRENCY_LABEL from './FieldBeans/CURRENCY_LABEL';
 import { RenderType } from '../../../../generated/apiClient';
+import { FormikErrors } from 'formik';
 
 export type FieldName = SpontaneousFormField['name'];
 
@@ -31,6 +32,16 @@ export type ZodIssues = z.ZodIssue[];
 /** return a bolean if the input has an error based on zod issues */
 export const inputHasError = (issues: z.ZodIssue[], fieldName: string) =>
   issues.filter((error) => error.path.includes(fieldName)).length > 0;
+
+/** return true if the object is empty */
+export function isEmpty(obj: FormikErrors<unknown>) {
+  for (const prop in obj) {
+    if (Object.prototype.hasOwnProperty.call(obj, prop)) {
+      return false;
+    }
+  }
+  return true;
+}
 
 /** return the error message for an input based on zod issues and its name */
 export const getErrorMessage = (issues: z.ZodIssue[], fieldName: string) =>
@@ -56,16 +67,16 @@ function formatString(formatString: string, dataObject: { [key: string]: unknown
   });
 }
 
-export const flattenObject = (obj, delimiter = '.', prefix = ''): Record<string, string | number> =>
-  Object.keys(obj).reduce((acc, k) => {
+export const flattenObject = (obj: CustomFormValues, delimiter = '.', prefix = ''): Record<string, string | number> =>
+  Object.keys(obj).reduce<Record<string, string | number>>((acc, k) => {
     const pre = prefix.length ? `${prefix}${delimiter}` : '';
     if (typeof obj[k] === 'object' && obj[k] !== null && Object.keys(obj[k]).length > 0)
-      Object.assign(acc, flattenObject(obj[k], delimiter, pre + k));
-    else acc[pre + k] = obj[k];
+      Object.assign(acc, flattenObject(obj[k] as CustomFormValues, delimiter, pre + k));
+    else acc[pre + k] = obj[k] as string | number;
     return acc;
   }, {});
 
-/** usata per la causale */
+/** Used to build the causale */
 export const buildDinamicValue = (
   stringTemplate: string,
   templateVars: object,
@@ -97,7 +108,6 @@ export function computeValue<T>(code: string, scope = {}) {
 }
 
 // This function is used to convert the values of the specific fields to the original form
-
 // For example, if the form has a field with a value of { label: 'test', value: 'test' },
 // this function will convert it to 'test'
 // This is required to have full retrocompatibility with the existing code
@@ -109,11 +119,9 @@ const backToOriginalScope = (values: CustomFormValues) => {
     const value = scopeValues[key];
     if (isOption(value)) {
       scopeValues[key] = value.value;
+    } else if (isOptionArray(value)) {
+      scopeValues[key] = value.map((opt: Option) => opt.value);
     }
-    if (Array.isArray(scopeValues[key]) && scopeValues[key].every(isOption)) {
-      scopeValues[key] = scopeValues[key]?.map((opt: Option) => opt.value);
-    }
-
   });
   return scopeValues;
 }
@@ -159,7 +167,7 @@ export const BuildFormSchema = (fields: Array<SpontaneousFormField>, amountField
 };
 
 export interface CustomFormValues {
-  [key: string]: string | string[] | number | number[] | Option | null | undefined;
+  [key: string]: string | string[] | number | number[] | Option | Option[] | null | undefined;
   debtPositionTypeOrgCode?: string;
   debtPositionTypeOrgId?: number;
   debtPositionTypeOrgDescription?: string;
@@ -181,6 +189,10 @@ const isOption = (value: unknown): value is Option =>
   'value' in value &&
   typeof (value as Option).label === 'string' &&
   typeof (value as Option).value === 'string';
+
+/** Type guard to check if a value is an array of Option */
+export const isOptionArray = (value: unknown): value is Option[] =>
+  Array.isArray(value) && value.every(isOption);
 
 /** Normalize a select value to a proper Option or null */
 export const normalizeSelectValue = (value: unknown, options: Option[] = []): Option | null => {
@@ -290,6 +302,9 @@ export const BuildFormInputs = (
       htmlRender: RenderType.CURRENCY,
       htmlClass: 'center',
       htmlLabel: 'Importo',
+      extraAttr: {
+        error_message: 'Inserire un importo valido'
+      },
       defaultValue: '',
       insertableOrder: 0,
       indexable: false,

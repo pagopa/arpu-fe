@@ -6,17 +6,8 @@ import { PersonEntityType, SpontaneousFormField } from '../../../../generated/da
 import StaticFormSection from '../DebtorSection';
 import Controls from '../Controls';
 import { useFormikContext } from 'formik';
-import { BuildFormSchema, CustomFormValues } from './config';
+import { BuildFormSchema, CustomFormValues, isEmpty } from './config';
 import * as z from 'zod';
-
-function isEmpty(obj) {
-  for (const prop in obj) {
-    if (Object.hasOwn(obj, prop)) {
-      return false;
-    }
-  }
-  return true;
-}
 
 interface CustomFormProps {
   fields: SpontaneousFormField[];
@@ -28,7 +19,7 @@ interface CustomFormProps {
 const CustomForm = (props: CustomFormProps) => {
   const { fields, amountFieldName, hasFlagAnonymousFiscalCode = false } = props;
   const { t } = useTranslation();
-  const { values, validateForm, submitForm, setErrors } = useFormikContext();
+  const { values, validateForm, submitForm, setErrors } = useFormikContext<CustomFormValues>();
 
   const customFormValuesSchema = BuildFormSchema(fields, amountFieldName);
 
