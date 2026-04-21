@@ -50,10 +50,13 @@ const CustomForm = ({ fieldBeans, amountFieldName }: CustomFormProps) => {
     setIsFormReady(true);
   }, []);
 
-  useEffect(() => () => {
-    descriptionHelpers.setValue('');
-    amountHelpers.setValue(0);
-  }, []);
+  useEffect(
+    () => () => {
+      descriptionHelpers.setValue('');
+      amountHelpers.setValue(0);
+    },
+    []
+  );
 
   return (
     <>
