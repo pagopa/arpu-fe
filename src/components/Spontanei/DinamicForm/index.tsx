@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState } from 'react';
-import { Form, useFormikContext } from 'formik';
+import { Form, useField, useFormikContext } from 'formik';
 import { BuildFormInputs, BuildFormState, CustomFormValues } from './config';
 import { Stack, Typography } from '@mui/material';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
@@ -21,6 +21,8 @@ const CustomForm = ({ fieldBeans, amountFieldName }: CustomFormProps) => {
   const context = useContext<FormContextType | null>(FormContext);
   const { t } = useTranslation();
   const { setFormikState } = useFormikContext<PaymentNoticeInfo>();
+  const [, , descriptionHelpers] = useField<PaymentNoticeInfo['description']>('description');
+  const [, , amountHelpers] = useField<PaymentNoticeInfo['amount']>('amount');
 
   const fields = BuildFormInputs(fieldBeans, !amountFieldName, amountFieldName);
 
@@ -46,6 +48,11 @@ const CustomForm = ({ fieldBeans, amountFieldName }: CustomFormProps) => {
       });
     }
     setIsFormReady(true);
+  }, []);
+
+  useEffect(() => () => {
+    descriptionHelpers.setValue('');
+    amountHelpers.setValue(0);
   }, []);
 
   return (

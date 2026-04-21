@@ -88,7 +88,7 @@ const StandardForm = ({
                     required
                     {...description}
                     error={descriptionMeta.touched && Boolean(descriptionMeta.error)}
-                    helperText={descriptionMeta.touched && descriptionMeta.error}
+                    helperText={descriptionMeta.touched && descriptionMeta.error && t(descriptionMeta.error)}
                     sx={{ width: '-webkit-fill-available' }}
                   />
                 </Stack>
