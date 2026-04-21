@@ -70,7 +70,8 @@ const Payment = () => {
    */
   const formType = context?.formType;
 
-  const userRemittanceInformation = formType === 'CUSTOM' ? debtType.value?.description : description.value;
+  const userRemittanceInformation =
+    formType === 'CUSTOM' ? debtType.value?.description : description.value;
 
   const body: DebtPositionRequestDTO = {
     organizationId: organizationId,
@@ -117,10 +118,10 @@ const Payment = () => {
 
   const { data: debtPositionResponse } = isAnonymous
     ? utils.loaders.public.createPublicSpontaneousDebtPosition(
-      Number(brokerId),
-      body,
-      recaptchaToken
-    )
+        Number(brokerId),
+        body,
+        recaptchaToken
+      )
     : utils.loaders.createSpontaneousDebtPosition(Number(brokerId), body);
 
   const addToCart = () => {

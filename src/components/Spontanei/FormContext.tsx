@@ -1,5 +1,9 @@
 import { createContext } from 'react';
-import { FormTypeEnum, SpontaneousForm, SpontaneousFormStructure } from '../../../generated/data-contracts';
+import {
+  FormTypeEnum,
+  SpontaneousForm,
+  SpontaneousFormStructure
+} from '../../../generated/data-contracts';
 
 export type FormContextType = {
   omitFirstStep: boolean;
