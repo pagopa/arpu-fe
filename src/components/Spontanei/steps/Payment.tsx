@@ -180,10 +180,10 @@ const Payment = () => {
       <Card variant="elevation" data-testid="spontanei-step4-payment-container" sx={{ padding: 2 }}>
         <Stack gap={4}>
           <Stack gap={1}>
-            <Typography variant="h4" component="h2">
+            <Typography variant="h5" component="h2">
               {t('spontanei.form.steps.step5.title')}
             </Typography>
-            <Typography>{t('spontanei.form.steps.step5.description')}</Typography>
+            <Typography variant="body2">{t('spontanei.form.steps.step5.description')}</Typography>
           </Stack>
 
           <ResponsiveCard variant="outlined" data-testid="payment-methods-card">

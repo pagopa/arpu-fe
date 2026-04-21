@@ -10,6 +10,12 @@ declare module '@mui/material/Button' {
   }
 }
 
+declare module '@mui/material/FormControlLabel' {
+  interface FormControlLabelProps {
+    variant?: 'radio';
+  }
+}
+
 const customTheme = createTheme({
   ...theme,
   breakpoints: {
@@ -21,8 +27,39 @@ const customTheme = createTheme({
       xl: 1536
     }
   },
+  typography: {
+    ...theme.typography,
+    h4: {
+      ...theme.typography.h4,
+      [theme.breakpoints.down('sm')]: {
+        fontSize: '24px'
+      }
+    },
+    h5: {
+      ...theme.typography.h5,
+      [theme.breakpoints.down('sm')]: {
+        fontSize: '20px'
+      }
+    }
+  },
   components: {
     ...theme?.components,
+    MuiTextField: {
+      styleOverrides: {
+        root: {
+          '& .MuiInputBase-input': {
+            fontSize: theme.typography.body2.fontSize
+          }
+        }
+      }
+    },
+    MuiOutlinedInput: {
+      styleOverrides: {
+        input: {
+          fontSize: theme.typography.body2.fontSize
+        }
+      }
+    },
     MuiTab: {
       styleOverrides: {
         root: ({ theme }) => ({
@@ -65,6 +102,31 @@ const customTheme = createTheme({
           })
         }
       ]
+    },
+    MuiFormControlLabel: {
+      ...theme?.components?.MuiFormControlLabel,
+      styleOverrides: {
+        root: ({ ownerState, theme }) => ({
+          ...(ownerState.variant === 'radio' && {
+            display: 'flex',
+            flexDirection: 'row',
+            gap: theme.spacing(1),
+            alignItems: 'center',
+            paddingTop: theme.spacing(2),
+            paddingBottom: theme.spacing(2),
+            fontWeight: '500',
+            '& .MuiRadio-root': {
+              padding: 0,
+              marginLeft: theme.spacing(1)
+            },
+            '& .MuiTypography-root': {
+              font: 'inherit',
+              alignItems: 'center',
+              marginTop: '5px'
+            }
+          })
+        })
+      }
     }
   }
 } as ThemeOptions);

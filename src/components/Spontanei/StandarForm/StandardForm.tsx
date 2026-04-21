@@ -40,11 +40,11 @@ const StandardForm = ({
   return (
     <>
       <Card variant="elevation" sx={{ padding: 2 }}>
-        <Stack gap={2}>
-          <Typography variant="body2" fontWeight={600} component="h2">
+        <Stack gap={1}>
+          <Typography variant="h5" component="h2">
             {t('spontanei.form.steps.step3.title')}
           </Typography>
-          <Typography>{t('spontanei.form.steps.step3.description')}</Typography>
+          <Typography variant="body2">{t('spontanei.form.steps.step3.description')}</Typography>
           <Typography color="error.dark">
             {t('spontanei.form.steps.step3.requiredField')}
           </Typography>
