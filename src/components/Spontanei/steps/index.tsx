@@ -45,7 +45,15 @@ const Steps = (props: { activeStep: number }) => {
       {viewSkeleton ? (
         <Skeleton variant="rectangular" height={'64px'} sx={{ p: 4 }} animation={'wave'}></Skeleton>
       ) : (
-        <Stepper activeStep={props.activeStep - stepBaseNumber} alternativeLabel role="tablist">
+        <Stepper
+          activeStep={props.activeStep - stepBaseNumber}
+          alternativeLabel
+          role="tablist"
+          sx={{
+            '& .MuiStepIcon-root': {
+              overflow: 'visible'
+            }
+          }}>
           {steps.map((label) => {
             return (
               <Step
