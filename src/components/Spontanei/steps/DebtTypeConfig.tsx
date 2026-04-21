@@ -42,31 +42,32 @@ const DebtTypeConfig = () => {
 
   const type = data?.formType;
 
-  const summaryFields = data?.formCustom?.structure.summaryFields || [];
-  const submitFields = data?.formCustom?.structure.submitFields || [];
-  const dictionary = data?.formCustom?.dictionary || {};
+  const summaryFields = data?.formCustom?.structure.summaryFields;
+  const submitFields = data?.formCustom?.structure.submitFields;
+  const dictionary = data?.formCustom?.dictionary;
 
   /**
    * Sets the dictionary in the context.
    */
   useEffect(() => {
-    context?.setDictionary(dictionary);
+    dictionary && context?.setDictionary(dictionary);
   }, [dictionary]);
 
   /**
    * Sets the summary fields in the context.
    */
   useEffect(() => {
-    context?.setSummaryFields(summaryFields);
-  }, [summaryFields.length]);
+    summaryFields && context?.setSummaryFields(summaryFields);
+  }, [summaryFields]);
 
   /**
    * Sets the submit fields in the context.
    */
   useEffect(() => {
-    context?.setSubmitFields(submitFields);
-    context?.setAmountFieldName(data?.formCustom?.structure.amountFieldName || 'amount');
-  }, [submitFields.length]);
+    submitFields && context?.setSubmitFields(submitFields);
+    data?.formCustom?.structure.amountFieldName &&
+      context?.setAmountFieldName(data?.formCustom?.structure.amountFieldName);
+  }, [submitFields, data?.formCustom?.structure.amountFieldName]);
 
   const hasFlagAnonymousFiscalCode = data?.flagAnonymousFiscalCode;
   const allowedEntityType = data?.allowedEntityType;
