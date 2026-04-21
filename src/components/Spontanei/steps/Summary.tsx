@@ -6,7 +6,7 @@ import utils from 'utils';
 import { useField, useFormikContext } from 'formik';
 import { PaymentNoticeInfo } from '..';
 import Controls from '../Controls';
-import { flattenObject } from '../DinamicForm/config';
+import { CustomFormValues, flattenObject } from '../DinamicForm/config';
 import getLocalizedDescription from '../GetLocalizedDescription';
 import { ResponsiveCard } from 'components/ResponsiveCard';
 
@@ -100,7 +100,7 @@ const ExtraSummaryFields = (props: { extraSummaryFields: string[] }) => {
   const { t, i18n } = useTranslation();
   const { extraSummaryFields } = props;
 
-  const { values } = useFormikContext<PaymentNoticeInfo>();
+  const { values } = useFormikContext<PaymentNoticeInfo & CustomFormValues>();
   const flattenedValues = flattenObject(values);
 
   const context = useContext<FormContextType | null>(FormContext);
@@ -150,10 +150,10 @@ const OrgAndServiceSummary = WithSummaryFieldsOrHidden((props: WithSummaryFields
   const orgCode = org.value?.orgFiscalCode || '';
   const debtTypeName = debtType.value
     ? getLocalizedDescription(
-        debtType.value.descriptionI18n,
-        i18n.language,
-        debtType.value.description
-      )
+      debtType.value.descriptionI18n,
+      i18n.language,
+      debtType.value.description
+    )
     : '';
 
   return (
@@ -162,7 +162,7 @@ const OrgAndServiceSummary = WithSummaryFieldsOrHidden((props: WithSummaryFields
       variant="outlined"
       data-testid="spontanei-step3-org-and-service-summary">
       {summaryFields?.includes(SummaryFields.ORG_NAME) ||
-      summaryFields?.includes(SummaryFields.ORG_CODE) ? (
+        summaryFields?.includes(SummaryFields.ORG_CODE) ? (
         <SummaryStructure
           title={t('spontanei.form.steps.step4.org.title')}
           dataTestId="summary-org">
@@ -261,11 +261,11 @@ const PaymentSummary = WithSummaryFieldsOrHidden((props: WithSummaryFieldsProps)
   const causaleHasJoinTemplate = context?.causaleHasJoinTemplate;
 
   const descriptionLabel = causaleHasJoinTemplate
-    ? getLocalizedDescription(
-        debtType.value?.descriptionI18n,
-        i18n.language,
-        debtType.value?.description || ''
-      )
+    ? "Pagamento on-the-fly " + getLocalizedDescription(
+      debtType.value?.descriptionI18n,
+      i18n.language,
+      debtType.value?.description || ''
+    )
     : description.value;
   const { summaryFields } = props;
 

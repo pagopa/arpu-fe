@@ -30,21 +30,28 @@ const DebtTypeConfig = () => {
 
   const { data } = isAnonymous
     ? utils.loaders.public.getPublicDebtPositionTypeOrgsWithSpontaneousDetail(
-        brokerId,
-        organizationId,
-        debtPositionTypeOrgId
-      )
+      brokerId,
+      organizationId,
+      debtPositionTypeOrgId
+    )
     : utils.loaders.getDebtPositionTypeOrgsWithSpontaneousDetail(
-        brokerId,
-        organizationId,
-        debtPositionTypeOrgId
-      );
+      brokerId,
+      organizationId,
+      debtPositionTypeOrgId
+    );
 
   const type = data?.formType;
 
   const summaryFields = data?.formCustom?.structure.summaryFields;
   const submitFields = data?.formCustom?.structure.submitFields;
   const dictionary = data?.formCustom?.dictionary;
+
+  /**
+   * Sets the form type in the context.
+   */
+  useEffect(() => {
+    type && context?.setFormType(type);
+  }, [type]);
 
   /**
    * Sets the dictionary in the context.
