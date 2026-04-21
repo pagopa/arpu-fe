@@ -18,14 +18,7 @@ import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 import appStore from 'store/appStore';
 import { flattenObject } from '../DinamicForm/config';
 import { useRecaptcha } from 'components/RecaptchaProvider/RecaptchaProvider';
-import styled from '@mui/system/styled';
 import { ResponsiveCard } from 'components/ResponsiveCard';
-
-const SpacedStack = styled(Stack)(({ theme }) => ({
-  gap: theme.spacing(3),
-  paddingY: theme.spacing(4),
-  paddingX: { xs: 0, md: theme.spacing(3) }
-}));
 
 const Payment = () => {
   const context = useContext<FormContextType | null>(FormContext);
@@ -187,8 +180,8 @@ const Payment = () => {
           </Stack>
 
           <ResponsiveCard variant="outlined" data-testid="payment-methods-card">
-            <SpacedStack direction={{ xs: 'column', sm: 'row' }} justifyContent="space-between">
-              <Stack>
+            <Stack direction={{ xs: 'column', sm: 'row' }} gap={3} justifyContent="space-between">
+              <Stack py={0.8}>
                 <Typography variant="h6" component="h3" fontWeight="600">
                   {t('spontanei.form.steps.step5.pay.title')}
                 </Typography>
@@ -212,12 +205,12 @@ const Payment = () => {
                   {t('spontanei.form.steps.step5.pay.payButton')}
                 </Button>
               </Stack>
-            </SpacedStack>
+            </Stack>
           </ResponsiveCard>
 
           <ResponsiveCard variant="outlined" data-testid="download-notice-card">
-            <SpacedStack direction={{ xs: 'column', sm: 'row' }} justifyContent="space-between">
-              <Stack>
+            <Stack direction={{ xs: 'column', sm: 'row' }} gap={2} justifyContent="space-between">
+              <Stack py={0.8}>
                 <Typography variant="h6" component="h3" fontWeight="600">
                   {t('spontanei.form.steps.step5.download.title')}
                 </Typography>
@@ -238,7 +231,7 @@ const Payment = () => {
                   {t('spontanei.form.steps.step5.download.downloadButton')}
                 </Button>
               </Stack>
-            </SpacedStack>
+            </Stack>
           </ResponsiveCard>
         </Stack>
       </Card>
