@@ -40,10 +40,24 @@ const customTheme = createTheme({
       [theme.breakpoints.down('sm')]: {
         fontSize: '20px'
       }
+    },
+    h6: {
+      ...theme.typography.h6,
+      [theme.breakpoints.down('sm')]: {
+        fontSize: '18px'
+      }
     }
   },
   components: {
     ...theme?.components,
+    MuiFormLabel: {
+      styleOverrides: {
+        root: {
+          fontSize: theme.typography.body2.fontSize,
+          fontWeight: '500'
+        }
+      }
+    },
     MuiTextField: {
       styleOverrides: {
         root: {
