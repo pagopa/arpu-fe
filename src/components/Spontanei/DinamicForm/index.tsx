@@ -26,13 +26,14 @@ const CustomForm = ({ fieldBeans, amountFieldName }: CustomFormProps) => {
 
   const fields = BuildFormInputs(fieldBeans, !amountFieldName, amountFieldName);
 
+  const direction =
+    context?.step?.current && context?.step?.previous
+      ? context?.step?.current > context?.step?.previous
+        ? 1
+        : -1
+      : 0;
+
   useEffect(() => {
-    const direction =
-      context?.step?.current && context?.step?.previous
-        ? context?.step?.current > context?.step?.previous
-          ? 1
-          : -1
-        : 0;
     // This means that the dinamic form will be reset only when the user goes back to the previous step
     const initialValues: CustomFormValues = BuildFormState(fieldBeans);
     if (direction > 0) {
@@ -52,8 +53,11 @@ const CustomForm = ({ fieldBeans, amountFieldName }: CustomFormProps) => {
 
   useEffect(
     () => () => {
-      descriptionHelpers.setValue('');
-      amountHelpers.setValue(0);
+      // reset description and amount only if the user goes back to the previous step
+      if (direction < 0) {
+        descriptionHelpers.setValue('');
+        amountHelpers.setValue(0);
+      }
     },
     []
   );
