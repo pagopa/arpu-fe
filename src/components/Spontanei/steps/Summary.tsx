@@ -120,10 +120,7 @@ const ExtraSummaryFields = (props: { extraSummaryFields: string[] }) => {
   };
 
   return (
-    <ResponsiveCard
-      sx={{ marginBottom: 2 }}
-      variant="outlined"
-      data-testid="spontanei-step4-extra-summary">
+    <ResponsiveCard variant="outlined" data-testid="spontanei-step4-extra-summary">
       <SummaryStructure
         title={t('spontanei.form.steps.step4.extra.title')}
         dataTestId="summary-extra">

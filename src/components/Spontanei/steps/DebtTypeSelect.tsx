@@ -117,7 +117,7 @@ const DebtTypeSelect = () => {
   return (
     <>
       <StepWrapper isPending={isDebtPositionTypeOrgsWithSpontaneousPending}>
-        <Stack spacing={3} padding={2}>
+        <Stack gap={{ xs: 2, md: 3 }} padding={2}>
           <Stack gap={1}>
             <Typography variant="h5" component="h2" data-testid="spontanei-step2-title">
               {t('spontanei.form.steps.step2.title')}
