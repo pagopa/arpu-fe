@@ -60,7 +60,9 @@ const Steps = (props: { activeStep: number }) => {
                 key={t(label)}
                 role="tab"
                 aria-selected={props.activeStep - stepBaseNumber === steps.indexOf(label)}>
-                <StepLabel>{t(label)}</StepLabel>
+                <StepLabel sx={{ '& .MuiStepLabel-label': { fontSize: '16px', fontWeight: 500 } }}>
+                  {t(label)}
+                </StepLabel>
               </Step>
             );
           })}

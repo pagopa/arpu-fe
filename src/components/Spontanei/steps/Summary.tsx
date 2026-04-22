@@ -54,28 +54,31 @@ const SummaryStructure = (props: {
 }) => (
   <Stack
     direction="column"
-    padding={{ xs: 0, sm: 3 }}
-    gap={1}
+    gap={{ xs: 1, sm: 2 }}
     data-testid={props.dataTestId || 'spontanei-step3-summary-structure'}>
     <Typography
-      fontSize={24}
-      fontWeight={600}
-      fontStyle="semibold"
+      variant="h6"
       component="h3"
       data-testid={`${props.dataTestId || 'spontanei-step3-summary-structure'}-title`}>
       {props.title}
     </Typography>
-    <Stack gap={1} divider={<Divider aria-hidden sx={{ display: { xs: 'block', sm: 'none' } }} />}>
+    <Stack
+      gap={{ xs: 0, sm: 2 }}
+      divider={<Divider aria-hidden sx={{ display: { xs: 'block', sm: 'none' }, py: '0.1px' }} />}>
       {props.children}
     </Stack>
   </Stack>
 );
 
 const SummaryItem = (props: { label: string; value: string; dataTestId?: string }) => (
-  <Grid container data-testid={props.dataTestId || 'spontanei-step3-summary-item'}>
+  <Grid
+    container
+    data-testid={props.dataTestId || 'spontanei-step3-summary-item'}
+    py={{ xs: 1.5, sm: 0 }}>
     <Grid size={{ xs: 12, sm: 6, md: 4 }}>
       <Typography
         variant="body2"
+        fontSize={14}
         sx={{ overflowWrap: 'anywhere' }}
         data-testid={`${props.dataTestId || 'spontanei-step3-summary-item'}-label`}>
         {props.label}
@@ -85,6 +88,7 @@ const SummaryItem = (props: { label: string; value: string; dataTestId?: string 
       <Typography
         variant="body2"
         fontWeight={600}
+        fontSize={14}
         data-testid={`${props.dataTestId || 'spontanei-step3-summary-item'}-value`}>
         {props.value}
       </Typography>
@@ -119,10 +123,7 @@ const ExtraSummaryFields = (props: { extraSummaryFields: string[] }) => {
   };
 
   return (
-    <ResponsiveCard
-      sx={{ marginBottom: 2 }}
-      variant="outlined"
-      data-testid="spontanei-step4-extra-summary">
+    <ResponsiveCard variant="outlined" data-testid="spontanei-step4-extra-summary">
       <SummaryStructure
         title={t('spontanei.form.steps.step4.extra.title')}
         dataTestId="summary-extra">
@@ -320,13 +321,13 @@ const Summary = () => {
   return (
     <>
       <Card variant="elevation" sx={{ padding: 2 }} data-testid="spontanei-step3-summary">
-        <Typography variant="h4" fontWeight={600} component="h2" mb={2}>
-          {t('spontanei.form.steps.step4.title')}
-        </Typography>
-        <Typography variant="body1" mb={3}>
-          {t('spontanei.form.steps.step4.description')}
-        </Typography>
-        <Stack direction="column">
+        <Stack gap={{ xs: 3, sm: 2 }}>
+          <Stack gap={{ xs: 0, sm: 1 }}>
+            <Typography variant="h5" component="h2">
+              {t('spontanei.form.steps.step4.title')}
+            </Typography>
+            <Typography variant="body2">{t('spontanei.form.steps.step4.description')}</Typography>
+          </Stack>
           {hasExtraSummaryFields && <ExtraSummaryFields extraSummaryFields={extraSummaryFields} />}
           <OrgAndServiceSummary
             summaryFields={[

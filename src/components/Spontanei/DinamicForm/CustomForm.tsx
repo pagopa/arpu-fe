@@ -49,11 +49,13 @@ const CustomForm = (props: CustomFormProps) => {
   return (
     <>
       <Card variant="elevation">
-        <Stack spacing={2} padding={2}>
-          <Typography variant="h4" component="h2">
-            {t('spontanei.form.steps.step3.title')}
-          </Typography>
-          <Typography>{t('spontanei.form.steps.step3.description')}</Typography>
+        <Stack gap={3} padding={2}>
+          <Stack gap={1}>
+            <Typography variant="h5" component="h2">
+              {t('spontanei.form.steps.step3.title')}
+            </Typography>
+            <Typography variant="body2">{t('spontanei.form.steps.step3.description')}</Typography>
+          </Stack>
           <Stack direction="column" justifyContent={'space-between'} spacing={2}>
             <StaticFormSection
               allowedEntityType={props.allowedEntityType}
