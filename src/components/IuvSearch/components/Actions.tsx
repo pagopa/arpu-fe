@@ -119,7 +119,8 @@ export const Actions = ({ installment }: ActionsProps) => {
         iuv: installment.iuv,
         nav: installment.nav,
         paFullName: installment.orgName,
-        paTaxCode: installment.orgFiscalCode
+        paTaxCode: installment.orgFiscalCode,
+        allCCP: installment.allCCP ?? false
       });
     }
   };
@@ -142,7 +143,8 @@ export const Actions = ({ installment }: ActionsProps) => {
           iuv: installment.iuv,
           nav: installment.nav,
           paFullName: installment.orgName,
-          paTaxCode: installment.orgFiscalCode
+          paTaxCode: installment.orgFiscalCode,
+          allCCP: installment.allCCP ?? false
         };
         carts.mutate({ notices: [cartItem], email: installment?.debtor?.email });
       }

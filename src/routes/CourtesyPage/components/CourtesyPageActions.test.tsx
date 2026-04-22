@@ -425,7 +425,9 @@ describe('CourtesyPageActions – pagamento-annullato (425)', () => {
     expect(downloadLink).toHaveAttribute('target', '_blank');
     expect(downloadLink).toHaveAttribute(
       'href',
-      expect.stringContaining('/spontanei/download/99/NAV-001#debtorFiscalCode=DEBTOR-FC-001')
+      expect.stringContaining(
+        '/public/spontanei/download/99/NAV-001#debtorFiscalCode=DEBTOR-FC-001'
+      )
     );
   });
 

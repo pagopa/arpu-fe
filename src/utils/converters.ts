@@ -187,6 +187,12 @@ const getPaymentOutcomes = (carts: CartItem[]) => {
   };
 };
 
+/**
+ * cart.allCCP = true only if ALL the items have allCCP true.
+ */
+const aggregateAllCCP = (cartItems: CartItem[]): boolean =>
+  cartItems.length > 0 && cartItems.every((item) => item.allCCP);
+
 const cartItemsToCartsRequest = (cartItems: CartItem[]) => {
   const ORIGIN = window.location.origin;
   const isAnonymous = utils.storage.user.isAnonymous();
@@ -205,7 +211,8 @@ const cartItemsToCartsRequest = (cartItems: CartItem[]) => {
       returnOkUrl: `${ORIGIN}${isAnonymous ? COURTESY.OK : ROUTES.DASHBOARD}`,
       returnCancelUrl: `${ORIGIN}${isAnonymous ? COURTESY.CANCEL : ROUTES.DEBT_POSITIONS}`,
       returnErrorUrl: `${ORIGIN}${isAnonymous ? COURTESY.KO : ROUTES.DEBT_POSITIONS}`
-    }
+    },
+    allCCP: aggregateAllCCP(cartItems)
   };
 };
 

@@ -542,7 +542,8 @@ describe('Actions', () => {
               iuv: '222222222222222222',
               nav: 'NAV003',
               paFullName: 'Test Org 5',
-              paTaxCode: '00000000005'
+              paTaxCode: '00000000005',
+              allCCP: false
             }
           ],
           email: 'test@example.com'

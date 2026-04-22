@@ -18,7 +18,8 @@ const items: InstallmentDrawerItem[] = [
     iuv: 'IUV1234567890',
     nav: 'NAV1234567890',
     remittanceInformation: 'Description 1',
-    status: InstallmentStatus.EXPIRED
+    status: InstallmentStatus.EXPIRED,
+    allCCP: false
   },
   {
     installmentId: 2,
@@ -32,7 +33,8 @@ const items: InstallmentDrawerItem[] = [
     iuv: 'IUV1234567891',
     nav: 'NAV1234567891',
     remittanceInformation: 'Description 2',
-    status: InstallmentStatus.PAID
+    status: InstallmentStatus.PAID,
+    allCCP: false
   },
   {
     installmentId: 3,
@@ -46,7 +48,8 @@ const items: InstallmentDrawerItem[] = [
     iuv: 'IUV1234567892',
     nav: 'NAV1234567892',
     remittanceInformation: 'Description 3',
-    status: InstallmentStatus.UNPAID
+    status: InstallmentStatus.UNPAID,
+    allCCP: false
   },
   {
     installmentId: 4,
@@ -60,7 +63,8 @@ const items: InstallmentDrawerItem[] = [
     iuv: 'IUV1234567893',
     nav: 'NAV1234567893',
     remittanceInformation: 'Description 4',
-    status: InstallmentStatus.UNPAID
+    status: InstallmentStatus.UNPAID,
+    allCCP: false
   }
 ];
 

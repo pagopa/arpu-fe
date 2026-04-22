@@ -259,19 +259,15 @@ export const getPaymentNotice = (
     throwOnError: true
   });
 
-type PublicPaymentNoticeMutationArgs = {
-  recaptchaToken?: string | null;
-};
-
 export const getPublicPaymentNotice = (
   brokerId: number,
   organizationId: number,
   query: GetPaymentNoticeQueryParam,
-  debtorFiscalCode: string
+  debtorFiscalCode?: string
 ) =>
   useMutation({
-    mutationKey: ['getPaymentNotice'],
-    mutationFn: async (args?: PublicPaymentNoticeMutationArgs) => {
+    mutationKey: ['getPublicPaymentNotice'],
+    mutationFn: async (args?: { recaptchaToken?: string | null }) => {
       const response = await utils.apiClient.public.getPublicPaymentNotice(
         brokerId,
         organizationId,
@@ -284,6 +280,7 @@ export const getPublicPaymentNotice = (
           }
         }
       );
+
       const contentDisposition = response.headers['content-disposition'] || '';
       const filename = utils.converters.extractFilename(contentDisposition);
       return { data: response.data, filename };
@@ -421,6 +418,7 @@ const getDebtPositionDetail = (brokerId: number, debtPositionId: number, organiz
         debtPositionId,
         { organizationId }
       );
+      parseAndLog(zodSchema.debtorUnpaidDebtPositionOverviewDTOSchema, data, false);
       return data;
     }
   });

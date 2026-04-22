@@ -126,7 +126,13 @@ const Payment = () => {
   const addToCart = () => {
     if (!debtPositionResponse) return;
     const { orgFiscalCode, orgName, paymentDetails } = debtPositionResponse;
-    const { iuv, amountCents: amount, nav, remittanceInformation: description } = paymentDetails;
+    const {
+      iuv,
+      amountCents: amount,
+      nav,
+      remittanceInformation: description,
+      allCCP
+    } = paymentDetails;
     if (!iuv || !nav) return;
     if (isItemInCart(iuv)) return;
     if (cart.items.length >= 5) return notify.emit(t('app.cart.items.full'), 'error');
@@ -137,7 +143,8 @@ const Payment = () => {
       paFullName: orgName,
       iuv,
       nav,
-      description
+      description,
+      allCCP: allCCP ?? false
     });
     toggleCartDrawer();
   };
@@ -152,7 +159,8 @@ const Payment = () => {
   const pay = () => {
     if (!debtPositionResponse?.paymentDetails) return;
     const { orgFiscalCode, orgName } = debtPositionResponse;
-    const { amountCents, nav, iuv, remittanceInformation } = debtPositionResponse.paymentDetails;
+    const { amountCents, nav, iuv, remittanceInformation, allCCP } =
+      debtPositionResponse.paymentDetails;
     if (!nav || !iuv) return;
     const item: CartItem = {
       amount: amountCents,
@@ -160,7 +168,8 @@ const Payment = () => {
       iuv,
       paTaxCode: orgFiscalCode,
       paFullName: orgName,
-      description: remittanceInformation
+      description: remittanceInformation,
+      allCCP: allCCP ?? false
     };
     carts.mutate({
       notices: [item],

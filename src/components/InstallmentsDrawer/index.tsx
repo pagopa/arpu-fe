@@ -94,7 +94,8 @@ const InstallmentsDrawer = () => {
           nav,
           remittanceInformation: description,
           amountCents: amount,
-          installmentId
+          installmentId,
+          allCCP
         } = installment;
         if (!iuv || !nav || !amount) {
           throw new Error('Something went wrong trying to add the item: missing required data');
@@ -108,7 +109,8 @@ const InstallmentsDrawer = () => {
           paTaxCode,
           installmentId,
           debtPositionId,
-          paymentOptionId
+          paymentOptionId,
+          allCCP
         });
       });
       toggleCartDrawer();
@@ -125,6 +127,7 @@ const InstallmentsDrawer = () => {
     amount?: number;
     paFullName: string;
     paTaxCode: string;
+    allCCP: boolean;
   };
 
   function checkItemsIntegrity(items: MaybeCorruptedCartItem[]): items is CartItem[] {
@@ -145,7 +148,8 @@ const InstallmentsDrawer = () => {
           remittanceInformation: description,
           amountCents: amount,
           paFullName,
-          paTaxCode
+          paTaxCode,
+          allCCP
         } = installment;
         return {
           iuv,
@@ -153,7 +157,8 @@ const InstallmentsDrawer = () => {
           description,
           amount,
           paFullName,
-          paTaxCode
+          paTaxCode,
+          allCCP
         };
       });
 

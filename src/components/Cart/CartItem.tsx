@@ -9,7 +9,7 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import { deleteItem } from 'store/CartStore';
 import { CartItem } from 'models/Cart';
 
-const CartItem = (props: Omit<CartItem, 'nav' | 'paTaxCode'>) => {
+const CartItem = (props: Omit<CartItem, 'nav' | 'paTaxCode' | 'allCCP'>) => {
   const theme = useTheme();
   const styles = cartDrawerStyles(theme);
   const { t } = useTranslation();

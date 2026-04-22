@@ -58,7 +58,8 @@ const PaymentOptionsActions = (props: paymentOptionsActionProps) => {
         nav,
         remittanceInformation: description,
         amountCents: amount,
-        installmentId
+        installmentId,
+        allCCP
       } = installments[0];
       if (!iuv || !nav || !amount) {
         throw new Error('Something went wrong trying to add the item: missing required data');
@@ -72,7 +73,8 @@ const PaymentOptionsActions = (props: paymentOptionsActionProps) => {
         paTaxCode,
         installmentId,
         debtPositionId,
-        paymentOptionId: selectedPaymentOptionId
+        paymentOptionId: selectedPaymentOptionId,
+        allCCP: allCCP ?? false
       });
       toggleCartDrawer();
     } catch (e) {
@@ -87,7 +89,8 @@ const PaymentOptionsActions = (props: paymentOptionsActionProps) => {
         iuv,
         nav,
         amountCents: amount,
-        remittanceInformation: description
+        remittanceInformation: description,
+        allCCP
       } = props.installments[0];
       if (!iuv || !nav || !amount) {
         throw new Error('Something went wrong trying to add the item: missing required data');
@@ -99,7 +102,8 @@ const PaymentOptionsActions = (props: paymentOptionsActionProps) => {
         description,
         amount,
         paFullName,
-        paTaxCode
+        paTaxCode,
+        allCCP: allCCP ?? false
       };
       carts.mutate({ notices: [cartItem], email });
     } catch (e) {

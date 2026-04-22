@@ -14,6 +14,7 @@ describe('PaymentOptionActions: single installment', () => {
   setBrokerInfo(
     {
       brokerId: 1,
+      externalId: 'test-external-id',
       brokerName: 'TestBrokerName',
       brokerFiscalCode: 'TestBrokerTaxCode',
       config: {
@@ -53,7 +54,8 @@ describe('PaymentOptionActions: single installment', () => {
       paFullName: 'TestOrgName',
       paTaxCode: 'TestOrgId',
       debtPositionId: 1,
-      paymentOptionId: mockSingleUnpaidInstallmentPaymentOption.paymentOptionId
+      paymentOptionId: mockSingleUnpaidInstallmentPaymentOption.paymentOptionId,
+      allCCP: false
     });
 
     const payButton = screen.getByTestId('payment-option-action-pay');
@@ -71,7 +73,8 @@ describe('PaymentOptionActions: single installment', () => {
       paFullName: 'TestOrgName',
       paTaxCode: 'TestOrgId',
       debtPositionId: 1,
-      paymentOptionId: mockSingleUnpaidInstallmentPaymentOption.paymentOptionId
+      paymentOptionId: mockSingleUnpaidInstallmentPaymentOption.paymentOptionId,
+      allCCP: false
     });
 
     render(
