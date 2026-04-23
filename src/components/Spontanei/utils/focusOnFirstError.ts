@@ -1,11 +1,11 @@
 /**
  * Focuses on the first form field that has a validation error,
- * following the visual order in the DOM rather than the 
+ * following the visual order in the DOM rather than the
  * alphabetical or insertion order of the error object keys.
  *
  * @param errors - Formik errors object (e.g., { email: 'Invalid', firstName: 'Required' })
  */
-const focusOnFirstError = (errors: Record<string, any>): void => {
+const focusOnFirstError = (errors: Record<string, unknown>): void => {
   if (!errors || Object.keys(errors).length === 0) return;
 
   // 1. Select all potential input fields in the order they appear in the DOM

@@ -34,7 +34,7 @@ describe('focusOnFirstError', () => {
     // Object keys: firstName comes first
     const errors = {
       firstName: 'First name is required',
-      lastName: 'Last name is required',
+      lastName: 'Last name is required'
     };
 
     focusOnFirstError(errors);
@@ -53,7 +53,6 @@ describe('focusOnFirstError', () => {
 
     expect(focusSpy).toHaveBeenCalled();
   });
-
 
   it('should support various input types including select and textarea', () => {
     document.body.innerHTML = `
