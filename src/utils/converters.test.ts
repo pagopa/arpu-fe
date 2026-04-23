@@ -183,8 +183,17 @@ describe('utils.converters.formatDateOrMissingValue', () => {
       format: DateFormat.LONG,
       withTime: true
     });
-    expect(out).toMatch(/2024/);
-    expect(out).toMatch(/\d{2}:\d{2}/);
+    expect(out).toContain('2024');
+    const timeMatch = out
+      .split(' ')
+      .some(
+        (token) =>
+          token.length === 5 &&
+          token[2] === ':' &&
+          !Number.isNaN(Number(token.slice(0, 2))) &&
+          !Number.isNaN(Number(token.slice(3, 5)))
+      );
+    expect(timeMatch).toBe(true);
   });
 });
 
