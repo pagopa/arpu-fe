@@ -257,8 +257,6 @@ describe('CourtesyPageActions – pagamento-non-riuscito (424)', () => {
     );
   });
 
-  // Test for download failure is no longer applicable here as download logic moved to Download component.
-  // Instead, verify that the link is still valid even if fetch fails (it uses defaults)
   it('renders download link using defaults when installment fetch fails', async () => {
     mockInstallmentsMutateAsync.mockRejectedValue(new Error('fail'));
     setupSearchParams({ nav: 'NAV-001', org_fiscal_code: 'ORG-FC-001', installment_id: '42' });
@@ -336,7 +334,7 @@ describe('CourtesyPageActions – pagamento-non-riuscito (424)', () => {
     );
   });
 
-  it('generates correct filename in the link when server returns no filename (not directly relevant but kept for logic check)', async () => {
+  it('generates correct filename in the link when server returns no filename', async () => {
     mockInstallmentsMutateAsync.mockResolvedValue([INSTALLMENT_MATCH]);
     setupSearchParams({ nav: 'NAV-001', org_fiscal_code: 'ORG-FC-001', installment_id: '42' });
     render(<CourtesyPageActions code={CODE_424} />);
@@ -347,6 +345,46 @@ describe('CourtesyPageActions – pagamento-non-riuscito (424)', () => {
 
     const downloadLink = screen.getByTestId('courtesyPage.downloadCta');
     expect(downloadLink).toHaveAttribute('href', expect.stringContaining('NAV-001'));
+  });
+
+  it('navigates to sconosciuto when retry is clicked before installment is resolved', () => {
+    mockInstallmentsMutateAsync.mockReturnValue(new Promise(() => {}));
+    setupSearchParams({
+      nav: 'NAV-001',
+      org_fiscal_code: 'ORG-FC-001',
+      installment_id: '42'
+    });
+
+    render(<CourtesyPageActions code={CODE_424} />);
+
+    fireEvent.click(screen.getByTestId('courtesyPage.cta'));
+
+    expect(mockPostCartsMutate).not.toHaveBeenCalled();
+    expect(mockNavigate).toHaveBeenCalledWith(
+      ROUTES.public.COURTESY_PAGE.replace(':outcome', String(OUTCOMES['sconosciuto']))
+    );
+  });
+
+  it('renders the download link as anonymous on the 424 outcome', async () => {
+    (utils.storage.user.isAnonymous as Mock).mockReturnValue(true);
+    mockInstallmentsMutateAsync.mockResolvedValue([INSTALLMENT_MATCH]);
+    setupSearchParams({
+      nav: 'NAV-001',
+      org_fiscal_code: 'ORG-FC-001',
+      installment_id: '42'
+    });
+
+    render(<CourtesyPageActions code={CODE_424} />);
+
+    await waitFor(() => {
+      expect(mockInstallmentsMutateAsync).toHaveBeenCalled();
+    });
+
+    const downloadLink = screen.getByTestId('courtesyPage.downloadCta');
+    expect(downloadLink).toHaveAttribute(
+      'href',
+      expect.stringContaining('/public/spontanei/download/99/NAV-001')
+    );
   });
 });
 
@@ -431,7 +469,6 @@ describe('CourtesyPageActions – pagamento-annullato (425)', () => {
     );
   });
 
-  // Test for download failure removed as download moved to Download component.
   it('renders download link using defaults when fetch fails for cancelled payment', async () => {
     mockInstallmentsMutateAsync.mockRejectedValue(new Error('fail'));
     setupSearchParams({ nav: 'NAV-001', org_fiscal_code: 'ORG-FC-001', installment_id: '42' });
