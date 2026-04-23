@@ -12,6 +12,7 @@ import { useTranslation } from 'react-i18next';
 import { Formik } from 'formik';
 import {
   DebtPositionTypeOrgsWithSpontaneousDTO,
+  FormTypeEnum,
   OrganizationsWithSpontaneousDTO,
   PersonEntityType,
   SpontaneousForm,
@@ -47,6 +48,8 @@ const Spontanei = () => {
   );
   // dictionary state
   const [dictionary, setDictionary] = React.useState<SpontaneousForm['dictionary']>({});
+  // form type state
+  const [formType, setFormType] = React.useState<FormTypeEnum | null>(null);
   const [amountFieldName, setAmountFieldName] = React.useState<string>('amount');
   const { t } = useTranslation();
 
@@ -95,7 +98,9 @@ const Spontanei = () => {
       dictionary,
       setDictionary,
       amountFieldName,
-      setAmountFieldName
+      setAmountFieldName,
+      formType,
+      setFormType
     }),
     [
       omitFirstStep,
@@ -104,7 +109,9 @@ const Spontanei = () => {
       summaryFields,
       submitFields,
       dictionary,
-      amountFieldName
+      amountFieldName,
+      formType,
+      setFormType
     ]
   );
 

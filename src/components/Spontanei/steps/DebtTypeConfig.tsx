@@ -47,6 +47,13 @@ const DebtTypeConfig = () => {
   const dictionary = data?.formCustom?.dictionary;
 
   /**
+   * Sets the form type in the context.
+   */
+  useEffect(() => {
+    type && context?.setFormType(type);
+  }, [type]);
+
+  /**
    * Sets the dictionary in the context.
    */
   useEffect(() => {

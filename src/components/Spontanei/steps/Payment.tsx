@@ -16,7 +16,7 @@ import { CartItem } from 'models/Cart';
 import FileDownloadIcon from '@mui/icons-material/FileDownload';
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 import appStore from 'store/appStore';
-import { flattenObject } from '../DinamicForm/config';
+import { CustomFormValues, flattenObject } from '../DinamicForm/config';
 import { useRecaptcha } from 'components/RecaptchaProvider/RecaptchaProvider';
 import { ResponsiveCard } from 'components/ResponsiveCard';
 
@@ -24,7 +24,7 @@ const Payment = () => {
   const context = useContext<FormContextType | null>(FormContext);
   const { submitFields } = context || {};
 
-  const { values } = useFormikContext<PaymentNoticeInfo>();
+  const { values } = useFormikContext<PaymentNoticeInfo & CustomFormValues>();
   const flattenedValues = flattenObject(values);
 
   const [fullName] = useField<PaymentNoticeInfo['fullName']>('fullName');
@@ -65,6 +65,14 @@ const Payment = () => {
     state: { cart }
   } = useStore();
 
+  /** When the form type is CUSTOM, it means that sys_type (equal to description.value) is valued possibly with PII data
+   * Since the user has not inserted any text, we have to value userRemittanceInformation with a placeholder
+   */
+  const formType = context?.formType;
+
+  const userRemittanceInformation =
+    formType === 'CUSTOM' ? debtType.value?.description : description.value;
+
   const body: DebtPositionRequestDTO = {
     organizationId: organizationId,
     debtPositionTypeOrgId: debtPositionTypeOrgId,
@@ -75,7 +83,7 @@ const Payment = () => {
           {
             amountCents: amount.value,
             remittanceInformation: description.value,
-            userRemittanceInformation: description.value,
+            userRemittanceInformation,
             debtor: {
               entityType: entityType.value,
               fiscalCode: fiscalCode.value,

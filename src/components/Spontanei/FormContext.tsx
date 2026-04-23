@@ -1,5 +1,9 @@
 import { createContext } from 'react';
-import { SpontaneousForm, SpontaneousFormStructure } from '../../../generated/data-contracts';
+import {
+  FormTypeEnum,
+  SpontaneousForm,
+  SpontaneousFormStructure
+} from '../../../generated/data-contracts';
 
 export type FormContextType = {
   omitFirstStep: boolean;
@@ -16,6 +20,8 @@ export type FormContextType = {
   setAmountFieldName: React.Dispatch<React.SetStateAction<string>>;
   causaleHasJoinTemplate: boolean;
   setCausaleHasJoinTemplate: React.Dispatch<React.SetStateAction<boolean>>;
+  formType: FormTypeEnum | null;
+  setFormType: React.Dispatch<React.SetStateAction<FormTypeEnum | null>>;
 };
 
 const FormContext = createContext<FormContextType | null>(null);

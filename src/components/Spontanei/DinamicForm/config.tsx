@@ -183,17 +183,7 @@ export const BuildFormSchema = (fields: Array<SpontaneousFormField>, amountField
 
 export interface CustomFormValues {
   [key: string]: string | string[] | number | number[] | Option | Option[] | null | undefined;
-  debtPositionTypeOrgCode?: string;
-  debtPositionTypeOrgId?: number;
-  debtPositionTypeOrgDescription?: string;
-  organizationId?: number;
-  organizationName?: string;
-  orgFiscalCode?: string;
-  ipaCode?: string;
-  fullName?: string;
-  email?: string;
-  fiscalCode?: string;
-  description?: string;
+  sys_type?: string;
 }
 
 /** Type guard to check if a value is a valid Option */

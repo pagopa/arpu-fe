@@ -6,7 +6,7 @@ import utils from 'utils';
 import { useField, useFormikContext } from 'formik';
 import { PaymentNoticeInfo } from '..';
 import Controls from '../Controls';
-import { flattenObject } from '../DinamicForm/config';
+import { CustomFormValues, flattenObject } from '../DinamicForm/config';
 import getLocalizedDescription from '../GetLocalizedDescription';
 import { ResponsiveCard } from 'components/ResponsiveCard';
 
@@ -100,7 +100,7 @@ const ExtraSummaryFields = (props: { extraSummaryFields: string[] }) => {
   const { t, i18n } = useTranslation();
   const { extraSummaryFields } = props;
 
-  const { values } = useFormikContext<PaymentNoticeInfo>();
+  const { values } = useFormikContext<PaymentNoticeInfo & CustomFormValues>();
   const flattenedValues = flattenObject(values);
 
   const context = useContext<FormContextType | null>(FormContext);
@@ -261,7 +261,8 @@ const PaymentSummary = WithSummaryFieldsOrHidden((props: WithSummaryFieldsProps)
   const causaleHasJoinTemplate = context?.causaleHasJoinTemplate;
 
   const descriptionLabel = causaleHasJoinTemplate
-    ? getLocalizedDescription(
+    ? 'Pagamento on-the-fly ' +
+      getLocalizedDescription(
         debtType.value?.descriptionI18n,
         i18n.language,
         debtType.value?.description || ''

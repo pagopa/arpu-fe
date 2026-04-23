@@ -68,6 +68,8 @@ const getDefaultContext = (overrides: Partial<FormContextType> = {}): FormContex
   setAmountFieldName: vi.fn(),
   dictionary: {},
   setDictionary: vi.fn(),
+  formType: null,
+  setFormType: vi.fn(),
   ...overrides
 });
 
