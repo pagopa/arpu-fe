@@ -3,78 +3,68 @@ import focusOnFirstError from './focusOnFirstError';
 
 describe('focusOnFirstError', () => {
   beforeEach(() => {
+    // Clear the document body before each test
     document.body.innerHTML = '';
-    vi.restoreAllMocks();
   });
 
-  it('Focus on the first element', () => {
-    const input1 = document.createElement('input');
-    input1.id = 'email';
-    const input2 = document.createElement('input');
-    input2.id = 'password';
-
-    document.body.appendChild(input1);
-    document.body.appendChild(input2);
-
-    const focusSpy = vi.spyOn(input1, 'focus');
-
-    focusOnFirstError({
-      email: 'Email non valida',
-      password: 'Password richiesta'
-    });
-
-    expect(focusSpy).toHaveBeenCalledTimes(1);
-  });
-
-  it('Focus on the first element also if there are many', () => {
-    const input1 = document.createElement('input');
-    input1.id = 'first';
-    const input2 = document.createElement('input');
-    input2.id = 'second';
-
-    document.body.appendChild(input1);
-    document.body.appendChild(input2);
-
-    const focusSpy1 = vi.spyOn(input1, 'focus');
-    const focusSpy2 = vi.spyOn(input2, 'focus');
-
-    focusOnFirstError({
-      first: 'Errore 1',
-      second: 'Errore 2'
-    });
-
-    expect(focusSpy1).toHaveBeenCalled();
-    expect(focusSpy2).not.toHaveBeenCalled();
-  });
-
-  it('Does nothing', () => {
-    const getElementSpy = vi.spyOn(document, 'getElementById');
-
-    focusOnFirstError({
-      missing: 'Errore'
-    });
-
-    expect(getElementSpy).toHaveBeenCalledWith('missing');
-    // nessun errore lanciato
-  });
-
-  it('Does nothing if errors is empty', () => {
-    const getElementSpy = vi.spyOn(document, 'getElementById');
+  it('should do nothing if errors object is empty', () => {
+    document.body.innerHTML = '<input name="email" id="email" />';
+    const focusSpy = vi.spyOn(window.HTMLElement.prototype, 'focus');
 
     focusOnFirstError({});
 
-    expect(getElementSpy).not.toHaveBeenCalled();
+    expect(focusSpy).not.toHaveBeenCalled();
   });
 
-  it('Does nothing if element is null', () => {
-    vi.spyOn(document, 'getElementById').mockReturnValue(null);
+  it('should focus the first invalid element based on DOM order, not key order', () => {
+    // Setup: 'lastName' is physically first in DOM, but 'firstName' is first in the object
+    document.body.innerHTML = `
+      <form>
+        <input name="lastName" id="lastName" />
+        <input name="firstName" id="firstName" />
+      </form>
+    `;
 
-    const focusMock = vi.fn();
+    const lastNameInput = document.getElementsByName('lastName')[0];
+    const firstNameInput = document.getElementsByName('firstName')[0];
 
-    focusOnFirstError({
-      test: 'Errore'
-    });
+    const lastNameSpy = vi.spyOn(lastNameInput, 'focus');
+    const firstNameSpy = vi.spyOn(firstNameInput, 'focus');
 
-    expect(focusMock).not.toHaveBeenCalled();
+    // Object keys: firstName comes first
+    const errors = {
+      firstName: 'First name is required',
+      lastName: 'Last name is required'
+    };
+
+    focusOnFirstError(errors);
+
+    // Should have focused lastName because it appears first in the HTML
+    expect(lastNameSpy).toHaveBeenCalled();
+    expect(firstNameSpy).not.toHaveBeenCalled();
+  });
+
+  it('should find element by ID if name attribute is missing', () => {
+    document.body.innerHTML = '<input id="uniqueId" />';
+    const input = document.getElementById('uniqueId');
+    const focusSpy = vi.spyOn(input!, 'focus');
+
+    focusOnFirstError({ uniqueId: 'Error message' });
+
+    expect(focusSpy).toHaveBeenCalled();
+  });
+
+  it('should support various input types including select and textarea', () => {
+    document.body.innerHTML = `
+      <textarea name="description"></textarea>
+      <select name="country"><option value="IT">Italy</option></select>
+    `;
+
+    const textarea = document.getElementsByName('description')[0];
+    const focusSpy = vi.spyOn(textarea, 'focus');
+
+    focusOnFirstError({ description: 'Too short' });
+
+    expect(focusSpy).toHaveBeenCalled();
   });
 });
