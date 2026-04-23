@@ -55,10 +55,10 @@ export const Actions = ({ installment }: ActionsProps) => {
     if (installment?.nav && installment?.organizationId && installment?.debtor?.fiscalCode) {
       const path = generatePath(downloadRoute, {
         nav: installment.nav,
-        organizationId: installment.organizationId
+        orgId: installment.organizationId
       });
 
-      navigate(path, { state: { fiscalCode: installment.debtor.fiscalCode } });
+      navigate(`${path}#debtorFiscalCode=${installment.debtor.fiscalCode}`);
     } else {
       notify.emit(t('errors.toast.default'));
     }
@@ -119,7 +119,8 @@ export const Actions = ({ installment }: ActionsProps) => {
         iuv: installment.iuv,
         nav: installment.nav,
         paFullName: installment.orgName,
-        paTaxCode: installment.orgFiscalCode
+        paTaxCode: installment.orgFiscalCode,
+        allCCP: installment.allCCP ?? false
       });
     }
   };
@@ -142,7 +143,8 @@ export const Actions = ({ installment }: ActionsProps) => {
           iuv: installment.iuv,
           nav: installment.nav,
           paFullName: installment.orgName,
-          paTaxCode: installment.orgFiscalCode
+          paTaxCode: installment.orgFiscalCode,
+          allCCP: installment.allCCP ?? false
         };
         carts.mutate({ notices: [cartItem], email: installment?.debtor?.email });
       }

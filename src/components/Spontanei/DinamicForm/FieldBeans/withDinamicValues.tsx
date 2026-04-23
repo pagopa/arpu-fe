@@ -12,8 +12,8 @@ import { Stack, Tooltip } from '@mui/material';
 import InfoRoundedIcon from '@mui/icons-material/InfoRounded';
 import { PaymentNoticeInfo } from 'components/Spontanei';
 import FormContext, { FormContextType } from 'components/Spontanei/FormContext';
-
-export type Option = { label: string; value: string };
+import i18n from '../../../../translations/i18n';
+import { Option } from 'components/Spontanei/SpontaneiSchemas';
 
 export interface computedPROPS extends SpontaneousFormField, FieldInputProps<CustomFormValues['']> {
   isHidden?: boolean;
@@ -24,6 +24,8 @@ export interface computedPROPS extends SpontaneousFormField, FieldInputProps<Cus
   joinTemplate?: string;
   allFields?: SpontaneousFormField[];
   options?: Option[];
+  subfields?: SpontaneousFormField[];
+  direction?: 'row' | 'column';
 }
 
 const withComputedValues =
@@ -36,6 +38,7 @@ const withComputedValues =
       enabledDependsOn,
       name,
       htmlRender,
+      htmlLabel,
       valueDependsOn,
       errorMessage: errMsg,
       helpMessage: helpMsg,
@@ -44,7 +47,9 @@ const withComputedValues =
       source,
       sourceParams = [],
       enumerationList = [],
-      amountFieldName
+      amountFieldName,
+      subfields,
+      direction = 'row'
     } = props;
 
     const initialOptions = enumerationList.map((enumeration) => ({
@@ -59,6 +64,8 @@ const withComputedValues =
     const { values } = useFormikContext<CustomFormValues>();
     const context = useContext<FormContextType | null>(FormContext);
 
+    const dictionary = context?.dictionary || {};
+
     const isHidden = hiddenDependsOn
       ? computeValue<boolean>(hiddenDependsOn, values)
       : htmlRender === RenderType.NONE;
@@ -71,13 +78,17 @@ const withComputedValues =
 
     const hasValuDependsOn = Boolean(valueDependsOn);
 
-    const erroMessage = errMsg || extraAttr?.error_message || '';
-    const helpMessage = helpMsg || extraAttr?.help_message || '';
+    const erroMessage =
+      dictionary?.[i18n.language]?.[name]?.errorMessage || errMsg || extraAttr?.error_message || '';
+    const helpMessage =
+      dictionary?.[i18n.language]?.[name]?.helpMessage || helpMsg || extraAttr?.help_message || '';
+    const label = dictionary?.[i18n.language]?.[name]?.htmlLabel || htmlLabel || '';
 
     useEffect(() => {
       if (hasValuDependsOn && valueDependsOn) {
-        const newValue = computeValue<string>(valueDependsOn, values);
-        helpers.setValue(newValue, false);
+        const newValue = computeValue(valueDependsOn, values);
+        const convertedValue = !isNaN(newValue) ? Number(newValue) : value;
+        helpers.setValue(convertedValue, false);
       }
     }, [values]);
 
@@ -164,13 +175,14 @@ const withComputedValues =
 
     return (
       <Stack
-        direction="row"
+        direction={direction}
         gap={2}
         alignItems="center"
         sx={{ display: isHidden ? 'none' : 'inherit' }}>
         <FieldBean
           {...props}
           {...field}
+          htmlLabel={label}
           isDisabled={!isEnabled}
           hasError={hasError}
           errorMessage={erroMessage}
@@ -178,6 +190,7 @@ const withComputedValues =
           joinTemplate={joinTemplate}
           allFields={allFields}
           options={options}
+          subfields={subfields}
         />
         {helpMessage && (
           <Tooltip title={helpMessage}>

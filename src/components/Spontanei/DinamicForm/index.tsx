@@ -1,5 +1,5 @@
-import React, { useContext, useEffect } from 'react';
-import { Form, useFormikContext } from 'formik';
+import React, { useContext, useEffect, useState } from 'react';
+import { Form, useField, useFormikContext } from 'formik';
 import { BuildFormInputs, BuildFormState, CustomFormValues } from './config';
 import { Stack, Typography } from '@mui/material';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
@@ -17,23 +17,25 @@ export type CustomFormProps = {
 };
 
 const CustomForm = ({ fieldBeans, amountFieldName }: CustomFormProps) => {
-  const { t } = useTranslation();
-
-  const { setFormikState } = useFormikContext<PaymentNoticeInfo>();
+  const [isFormReady, setIsFormReady] = useState(false);
   const context = useContext<FormContextType | null>(FormContext);
+  const { t } = useTranslation();
+  const { setFormikState } = useFormikContext<PaymentNoticeInfo>();
+  const [, , descriptionHelpers] = useField<PaymentNoticeInfo['description']>('description');
+  const [, , amountHelpers] = useField<PaymentNoticeInfo['amount']>('amount');
 
-  const fields = BuildFormInputs(fieldBeans, amountFieldName);
-  const initialValues: CustomFormValues = BuildFormState(fieldBeans);
+  const fields = BuildFormInputs(fieldBeans, !amountFieldName, amountFieldName);
+
+  const direction =
+    context?.step?.current && context?.step?.previous
+      ? context?.step?.current > context?.step?.previous
+        ? 1
+        : -1
+      : 0;
 
   useEffect(() => {
-    const direction =
-      context?.step?.current && context?.step?.previous
-        ? context?.step?.current > context?.step?.previous
-          ? 1
-          : -1
-        : 0;
-
     // This means that the dinamic form will be reset only when the user goes back to the previous step
+    const initialValues: CustomFormValues = BuildFormState(fieldBeans);
     if (direction > 0) {
       setFormikState((state) => {
         return {
@@ -46,18 +48,28 @@ const CustomForm = ({ fieldBeans, amountFieldName }: CustomFormProps) => {
         };
       });
     }
+    setIsFormReady(true);
   }, []);
+
+  useEffect(
+    () => () => {
+      // reset description and amount only if the user goes back to the previous step
+      if (direction < 0) {
+        descriptionHelpers.setValue('');
+        amountHelpers.setValue(0);
+      }
+    },
+    []
+  );
 
   return (
     <>
       <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale="it">
         <ResponsiveCard variant="outlined">
-          <Typography variant="h6" mb={2}>
+          <Typography variant="body2" fontWeight={600} component="h3" mb={2}>
             {t('spontanei.form.steps.step3.custom.title')}
           </Typography>
-          <Form>
-            <Stack gap={2}>{fields}</Stack>
-          </Form>
+          <Form>{isFormReady && <Stack gap={2}>{fields}</Stack>}</Form>
         </ResponsiveCard>
       </LocalizationProvider>
     </>

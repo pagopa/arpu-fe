@@ -19,7 +19,8 @@ export const mockSingleUnpaidInstallmentPaymentOption: DebtorPaymentOptionOvervi
       dueDate: '2025-11-19',
       amountCents: 150,
       status: InstallmentStatus.UNPAID,
-      remittanceInformation: 'test'
+      remittanceInformation: 'test',
+      allCCP: false
     }
   ]
 };
@@ -37,7 +38,8 @@ export const mockInstallmentsPaymentOption: DebtorPaymentOptionOverviewDTO = {
       dueDate: '2025-07-15',
       amountCents: 100,
       status: InstallmentStatus.EXPIRED,
-      remittanceInformation: 'test'
+      remittanceInformation: 'test',
+      allCCP: false
     },
     {
       iuv: '2',
@@ -47,7 +49,8 @@ export const mockInstallmentsPaymentOption: DebtorPaymentOptionOverviewDTO = {
       paymentDateTime: '2025-08-14',
       amountCents: 100,
       status: InstallmentStatus.PAID,
-      remittanceInformation: 'test'
+      remittanceInformation: 'test',
+      allCCP: false
     },
     {
       iuv: '3',
@@ -56,7 +59,8 @@ export const mockInstallmentsPaymentOption: DebtorPaymentOptionOverviewDTO = {
       dueDate: '2025-09-15',
       amountCents: 150,
       status: InstallmentStatus.UNPAID,
-      remittanceInformation: 'test'
+      remittanceInformation: 'test',
+      allCCP: false
     },
     {
       iuv: '4',
@@ -64,7 +68,8 @@ export const mockInstallmentsPaymentOption: DebtorPaymentOptionOverviewDTO = {
       dueDate: '2025-10-15',
       amountCents: 150,
       status: InstallmentStatus.UNPAID,
-      remittanceInformation: 'test'
+      remittanceInformation: 'test',
+      allCCP: false
     }
   ]
 };

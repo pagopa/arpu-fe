@@ -1,6 +1,5 @@
 import { Button, Card, Stack, Typography } from '@mui/material';
 import React, { useContext, useEffect, useMemo, useState } from 'react';
-import Controls from '../Controls';
 import { useTranslation } from 'react-i18next';
 import { addItem, isItemInCart, setCartEmail, toggleCartDrawer } from 'store/CartStore';
 import notify from 'utils/notify';
@@ -17,20 +16,15 @@ import { CartItem } from 'models/Cart';
 import FileDownloadIcon from '@mui/icons-material/FileDownload';
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 import appStore from 'store/appStore';
-import { flattenObject } from '../DinamicForm/config';
+import { CustomFormValues, flattenObject } from '../DinamicForm/config';
 import { useRecaptcha } from 'components/RecaptchaProvider/RecaptchaProvider';
-import styled from '@mui/system/styled';
-
-const SpacedStack = styled(Stack)(({ theme }) => ({
-  gap: theme.spacing(2),
-  padding: theme.spacing(4)
-}));
+import { ResponsiveCard } from 'components/ResponsiveCard';
 
 const Payment = () => {
   const context = useContext<FormContextType | null>(FormContext);
   const { submitFields } = context || {};
 
-  const { values } = useFormikContext<PaymentNoticeInfo>();
+  const { values } = useFormikContext<PaymentNoticeInfo & CustomFormValues>();
   const flattenedValues = flattenObject(values);
 
   const [fullName] = useField<PaymentNoticeInfo['fullName']>('fullName');
@@ -71,6 +65,14 @@ const Payment = () => {
     state: { cart }
   } = useStore();
 
+  /** When the form type is CUSTOM, it means that sys_type (equal to description.value) is valued possibly with PII data
+   * Since the user has not inserted any text, we have to value userRemittanceInformation with a placeholder
+   */
+  const formType = context?.formType;
+
+  const userRemittanceInformation =
+    formType === 'CUSTOM' ? debtType.value?.description : description.value;
+
   const body: DebtPositionRequestDTO = {
     organizationId: organizationId,
     debtPositionTypeOrgId: debtPositionTypeOrgId,
@@ -81,7 +83,7 @@ const Payment = () => {
           {
             amountCents: amount.value,
             remittanceInformation: description.value,
-            userRemittanceInformation: description.value,
+            userRemittanceInformation,
             debtor: {
               entityType: entityType.value,
               fiscalCode: fiscalCode.value,
@@ -125,7 +127,13 @@ const Payment = () => {
   const addToCart = () => {
     if (!debtPositionResponse) return;
     const { orgFiscalCode, orgName, paymentDetails } = debtPositionResponse;
-    const { iuv, amountCents: amount, nav, remittanceInformation: description } = paymentDetails;
+    const {
+      iuv,
+      amountCents: amount,
+      nav,
+      remittanceInformation: description,
+      allCCP
+    } = paymentDetails;
     if (!iuv || !nav) return;
     if (isItemInCart(iuv)) return;
     if (cart.items.length >= 5) return notify.emit(t('app.cart.items.full'), 'error');
@@ -136,7 +144,8 @@ const Payment = () => {
       paFullName: orgName,
       iuv,
       nav,
-      description
+      description,
+      allCCP: allCCP ?? false
     });
     toggleCartDrawer();
   };
@@ -151,7 +160,8 @@ const Payment = () => {
   const pay = () => {
     if (!debtPositionResponse?.paymentDetails) return;
     const { orgFiscalCode, orgName } = debtPositionResponse;
-    const { amountCents, nav, iuv, remittanceInformation } = debtPositionResponse.paymentDetails;
+    const { amountCents, nav, iuv, remittanceInformation, allCCP } =
+      debtPositionResponse.paymentDetails;
     if (!nav || !iuv) return;
     const item: CartItem = {
       amount: amountCents,
@@ -159,7 +169,8 @@ const Payment = () => {
       iuv,
       paTaxCode: orgFiscalCode,
       paFullName: orgName,
-      description: remittanceInformation
+      description: remittanceInformation,
+      allCCP: allCCP ?? false
     };
     carts.mutate({
       notices: [item],
@@ -176,29 +187,31 @@ const Payment = () => {
 
   return (
     <>
-      <Card variant="outlined" data-testid="spontanei-step4-payment-container">
-        <SpacedStack>
-          <Typography variant="h6">{t('spontanei.form.steps.step5.title')}</Typography>
-          <Typography>{t('spontanei.form.steps.step5.description')}</Typography>
+      <Card variant="elevation" data-testid="spontanei-step4-payment-container" sx={{ padding: 2 }}>
+        <Stack gap={{ xs: 4, sm: 3 }}>
+          <Stack gap={1}>
+            <Typography variant="h5" component="h2">
+              {t('spontanei.form.steps.step5.title')}
+            </Typography>
+            <Typography variant="body2">{t('spontanei.form.steps.step5.description')}</Typography>
+          </Stack>
 
-          <Card variant="outlined" data-testid="payment-methods-card">
-            <SpacedStack
-              direction={{ xs: 'column', sm: 'row' }}
-              textAlign={{ xs: 'center', sm: 'left' }}
-              justifyContent={{ xs: 'center', sm: 'space-between' }}>
-              <Stack>
-                <Typography fontSize="18px" fontWeight="600">
+          <ResponsiveCard variant="outlined" data-testid="payment-methods-card">
+            <Stack direction={{ xs: 'column', sm: 'row' }} gap={3} justifyContent="space-between">
+              <Stack py={0.8}>
+                <Typography variant="h6" component="h3" fontWeight="600">
                   {t('spontanei.form.steps.step5.pay.title')}
                 </Typography>
                 <Typography fontSize="16px" fontWeight="400" color="action.active">
                   {t('spontanei.form.steps.step5.pay.description')}
                 </Typography>
               </Stack>
-              <Stack direction="row" spacing={2} justifyContent="center">
+              <Stack direction="row" spacing={2}>
                 {appStore.value.brokerInfo?.config?.useCart && (
                   <Button
                     size="large"
                     variant="text"
+                    sx={{ padding: 0 }}
                     onClick={addToCart}
                     startIcon={<ShoppingCartIcon />}
                     data-testid="add-to-cart-button">
@@ -209,37 +222,36 @@ const Payment = () => {
                   {t('spontanei.form.steps.step5.pay.payButton')}
                 </Button>
               </Stack>
-            </SpacedStack>
-          </Card>
+            </Stack>
+          </ResponsiveCard>
 
-          <Card variant="outlined" data-testid="download-notice-card">
-            <SpacedStack
-              direction={{ xs: 'column', sm: 'row' }}
-              textAlign={{ xs: 'center', sm: 'left' }}
-              justifyContent={{ xs: 'center', sm: 'space-between' }}>
-              <Stack>
-                <Typography fontSize="18px" fontWeight="600">
+          <ResponsiveCard variant="outlined" data-testid="download-notice-card">
+            <Stack direction={{ xs: 'column', sm: 'row' }} gap={2} justifyContent="space-between">
+              <Stack py={0.8}>
+                <Typography variant="h6" component="h3" fontWeight="600">
                   {t('spontanei.form.steps.step5.download.title')}
                 </Typography>
                 <Typography fontSize="16px" fontWeight="400" color="action.active">
                   {t('spontanei.form.steps.step5.download.description')}
                 </Typography>
               </Stack>
-              <Button
-                variant="text"
-                size="large"
-                startIcon={<FileDownloadIcon />}
-                data-testid="download-notice-button"
-                component={Link}
-                target="_blank"
-                to={downloadUrl}>
-                {t('spontanei.form.steps.step5.download.downloadButton')}
-              </Button>
-            </SpacedStack>
-          </Card>
-        </SpacedStack>
+              <Stack direction="row">
+                <Button
+                  sx={{ padding: 0 }}
+                  variant="text"
+                  size="large"
+                  startIcon={<FileDownloadIcon />}
+                  data-testid="download-notice-button"
+                  component={Link}
+                  target="_blank"
+                  to={downloadUrl}>
+                  {t('spontanei.form.steps.step5.download.downloadButton')}
+                </Button>
+              </Stack>
+            </Stack>
+          </ResponsiveCard>
+        </Stack>
       </Card>
-      <Controls hideContinue={true} />
     </>
   );
 };

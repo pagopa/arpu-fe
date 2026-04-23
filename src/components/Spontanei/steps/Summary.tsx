@@ -1,13 +1,14 @@
 import React, { useContext } from 'react';
-import { Card, Grid, Stack, Typography } from '@mui/material';
+import { Card, Divider, Grid, Stack, Typography } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import FormContext, { FormContextType } from '../FormContext';
 import utils from 'utils';
 import { useField, useFormikContext } from 'formik';
 import { PaymentNoticeInfo } from '..';
 import Controls from '../Controls';
-import { flattenObject } from '../DinamicForm/config';
+import { CustomFormValues, flattenObject } from '../DinamicForm/config';
 import getLocalizedDescription from '../GetLocalizedDescription';
+import { ResponsiveCard } from 'components/ResponsiveCard';
 
 enum SummaryFields {
   ORG_NAME = 'orgName',
@@ -53,25 +54,31 @@ const SummaryStructure = (props: {
 }) => (
   <Stack
     direction="column"
-    padding={3}
-    gap={2}
+    gap={{ xs: 1, sm: 2 }}
     data-testid={props.dataTestId || 'spontanei-step3-summary-structure'}>
     <Typography
-      fontSize={18}
-      fontWeight={600}
-      fontStyle="semibold"
+      variant="h6"
+      component="h3"
       data-testid={`${props.dataTestId || 'spontanei-step3-summary-structure'}-title`}>
       {props.title}
     </Typography>
-    {props.children}
+    <Stack
+      gap={{ xs: 0, sm: 2 }}
+      divider={<Divider aria-hidden sx={{ display: { xs: 'block', sm: 'none' }, py: '0.1px' }} />}>
+      {props.children}
+    </Stack>
   </Stack>
 );
 
 const SummaryItem = (props: { label: string; value: string; dataTestId?: string }) => (
-  <Grid container data-testid={props.dataTestId || 'spontanei-step3-summary-item'}>
+  <Grid
+    container
+    data-testid={props.dataTestId || 'spontanei-step3-summary-item'}
+    py={{ xs: 1.5, sm: 0 }}>
     <Grid size={{ xs: 12, sm: 6, md: 4 }}>
       <Typography
         variant="body2"
+        fontSize={14}
         sx={{ overflowWrap: 'anywhere' }}
         data-testid={`${props.dataTestId || 'spontanei-step3-summary-item'}-label`}>
         {props.label}
@@ -81,6 +88,7 @@ const SummaryItem = (props: { label: string; value: string; dataTestId?: string 
       <Typography
         variant="body2"
         fontWeight={600}
+        fontSize={14}
         data-testid={`${props.dataTestId || 'spontanei-step3-summary-item'}-value`}>
         {props.value}
       </Typography>
@@ -92,7 +100,7 @@ const ExtraSummaryFields = (props: { extraSummaryFields: string[] }) => {
   const { t, i18n } = useTranslation();
   const { extraSummaryFields } = props;
 
-  const { values } = useFormikContext<PaymentNoticeInfo>();
+  const { values } = useFormikContext<PaymentNoticeInfo & CustomFormValues>();
   const flattenedValues = flattenObject(values);
 
   const context = useContext<FormContextType | null>(FormContext);
@@ -115,7 +123,7 @@ const ExtraSummaryFields = (props: { extraSummaryFields: string[] }) => {
   };
 
   return (
-    <Card sx={{ marginBottom: 2 }} variant="outlined" data-testid="spontanei-step4-extra-summary">
+    <ResponsiveCard variant="outlined" data-testid="spontanei-step4-extra-summary">
       <SummaryStructure
         title={t('spontanei.form.steps.step4.extra.title')}
         dataTestId="summary-extra">
@@ -128,7 +136,7 @@ const ExtraSummaryFields = (props: { extraSummaryFields: string[] }) => {
           />
         ))}
       </SummaryStructure>
-    </Card>
+    </ResponsiveCard>
   );
 };
 
@@ -149,7 +157,7 @@ const OrgAndServiceSummary = WithSummaryFieldsOrHidden((props: WithSummaryFields
     : '';
 
   return (
-    <Card
+    <ResponsiveCard
       sx={{ marginBottom: 2 }}
       variant="outlined"
       data-testid="spontanei-step3-org-and-service-summary">
@@ -185,7 +193,7 @@ const OrgAndServiceSummary = WithSummaryFieldsOrHidden((props: WithSummaryFields
           />
         </SummaryStructure>
       )}
-    </Card>
+    </ResponsiveCard>
   );
 });
 
@@ -199,7 +207,10 @@ const DebtTypeSummary = WithSummaryFieldsOrHidden((props: WithSummaryFieldsProps
   const summaryFields = props.summaryFields;
 
   return (
-    <Card sx={{ marginBottom: 2 }} variant="outlined" data-testid="spontanei-step3-debtor-summary">
+    <ResponsiveCard
+      sx={{ marginBottom: 2 }}
+      variant="outlined"
+      data-testid="spontanei-step3-debtor-summary">
       <SummaryStructure
         title={t('spontanei.form.steps.step4.debtor.title')}
         dataTestId="summary-debtor">
@@ -237,7 +248,7 @@ const DebtTypeSummary = WithSummaryFieldsOrHidden((props: WithSummaryFieldsProps
           />
         )}
       </SummaryStructure>
-    </Card>
+    </ResponsiveCard>
   );
 });
 
@@ -250,7 +261,8 @@ const PaymentSummary = WithSummaryFieldsOrHidden((props: WithSummaryFieldsProps)
   const causaleHasJoinTemplate = context?.causaleHasJoinTemplate;
 
   const descriptionLabel = causaleHasJoinTemplate
-    ? getLocalizedDescription(
+    ? 'Pagamento on-the-fly ' +
+      getLocalizedDescription(
         debtType.value?.descriptionI18n,
         i18n.language,
         debtType.value?.description || ''
@@ -259,7 +271,10 @@ const PaymentSummary = WithSummaryFieldsOrHidden((props: WithSummaryFieldsProps)
   const { summaryFields } = props;
 
   return (
-    <Card sx={{ marginBottom: 2 }} variant="outlined" data-testid="spontanei-step3-payment-summary">
+    <ResponsiveCard
+      sx={{ marginBottom: 2 }}
+      variant="outlined"
+      data-testid="spontanei-step3-payment-summary">
       <SummaryStructure
         title={t('spontanei.form.steps.step4.payment.title')}
         dataTestId="summary-payment">
@@ -278,7 +293,7 @@ const PaymentSummary = WithSummaryFieldsOrHidden((props: WithSummaryFieldsProps)
           />
         ) : null}
       </SummaryStructure>
-    </Card>
+    </ResponsiveCard>
   );
 });
 
@@ -306,14 +321,14 @@ const Summary = () => {
 
   return (
     <>
-      <Card sx={{ padding: 3 }} data-testid="spontanei-step3-summary">
-        <Typography variant="h6" mb={2}>
-          {t('spontanei.form.steps.step4.title')}
-        </Typography>
-        <Typography variant="body1" mb={3}>
-          {t('spontanei.form.steps.step4.description')}
-        </Typography>
-        <Stack direction="column">
+      <Card variant="elevation" sx={{ padding: 2 }} data-testid="spontanei-step3-summary">
+        <Stack gap={{ xs: 3, sm: 2 }}>
+          <Stack gap={{ xs: 0, sm: 1 }}>
+            <Typography variant="h5" component="h2">
+              {t('spontanei.form.steps.step4.title')}
+            </Typography>
+            <Typography variant="body2">{t('spontanei.form.steps.step4.description')}</Typography>
+          </Stack>
           {hasExtraSummaryFields && <ExtraSummaryFields extraSummaryFields={extraSummaryFields} />}
           <OrgAndServiceSummary
             summaryFields={[

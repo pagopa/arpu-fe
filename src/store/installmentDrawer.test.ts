@@ -23,6 +23,7 @@ export const items: InstallmentsDrawerState['items'] = [
     amountCents: 100,
     dueDate: '2024-11-31',
     status: InstallmentStatus.UNPAID,
+    allCCP: false,
     nav: '00001',
     iuv: '000001'
   },
@@ -37,6 +38,7 @@ export const items: InstallmentsDrawerState['items'] = [
     amountCents: 100,
     dueDate: '2024-12-31',
     status: InstallmentStatus.UNPAID,
+    allCCP: false,
     nav: '00002',
     iuv: '000002'
   }

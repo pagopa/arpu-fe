@@ -8,11 +8,11 @@ const Steps = (props: { activeStep: number }) => {
   const context = useContext<FormContextType | null>(FormContext);
   const { t } = useTranslation();
   const initialSteps = [
-    t('spontanei.form.steps.step1.step'),
-    t('spontanei.form.steps.step2.step'),
-    t('spontanei.form.steps.step3.step'),
-    t('spontanei.form.steps.step4.step'),
-    t('spontanei.form.steps.step5.step')
+    'spontanei.form.steps.step1.step',
+    'spontanei.form.steps.step2.step',
+    'spontanei.form.steps.step3.step',
+    'spontanei.form.steps.step4.step',
+    'spontanei.form.steps.step5.step'
   ];
   const [steps, setSteps] = React.useState(initialSteps);
   const [stepBaseNumber, setStepBaseNumber] = React.useState(0);
@@ -45,11 +45,24 @@ const Steps = (props: { activeStep: number }) => {
       {viewSkeleton ? (
         <Skeleton variant="rectangular" height={'64px'} sx={{ p: 4 }} animation={'wave'}></Skeleton>
       ) : (
-        <Stepper activeStep={props.activeStep - stepBaseNumber} alternativeLabel>
+        <Stepper
+          activeStep={props.activeStep - stepBaseNumber}
+          alternativeLabel
+          role="tablist"
+          sx={{
+            '& .MuiStepIcon-root': {
+              overflow: 'visible'
+            }
+          }}>
           {steps.map((label) => {
             return (
-              <Step key={label}>
-                <StepLabel>{label}</StepLabel>
+              <Step
+                key={t(label)}
+                role="tab"
+                aria-selected={props.activeStep - stepBaseNumber === steps.indexOf(label)}>
+                <StepLabel sx={{ '& .MuiStepLabel-label': { fontSize: '16px', fontWeight: 500 } }}>
+                  {t(label)}
+                </StepLabel>
               </Step>
             );
           })}

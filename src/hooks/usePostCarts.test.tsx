@@ -15,7 +15,8 @@ const mockCartItems: CartItem[] = [
     iuv: '7442658002593149',
     nav: '37442658002593149',
     amount: 588,
-    description: 'Test Pull - unica opzione'
+    description: 'Test Pull - unica opzione',
+    allCCP: false
   }
 ];
 
@@ -69,7 +70,8 @@ describe('usePostCarts', () => {
         returnOkUrl: `${ORIGIN}${ROUTES.DASHBOARD}`,
         returnCancelUrl: `${ORIGIN}${ROUTES.DEBT_POSITIONS}`,
         returnErrorUrl: `${ORIGIN}${ROUTES.DEBT_POSITIONS}`
-      }
+      },
+      allCCP: false
     });
     expect(mockOnSuccess).toHaveBeenCalledWith('https://redirect.com');
     expect(mockOnError).not.toHaveBeenCalled();

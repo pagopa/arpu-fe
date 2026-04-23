@@ -248,7 +248,8 @@ describe('Payment Component', () => {
       paFullName: 'Test Org',
       iuv: 'IUV123',
       nav: 'NAV123',
-      description: 'Test Description'
+      description: 'Test Description',
+      allCCP: false
     });
     expect(CartStore.toggleCartDrawer).toHaveBeenCalled();
   });
@@ -266,7 +267,8 @@ describe('Payment Component', () => {
           iuv: 'IUV123',
           paTaxCode: '12345678901',
           paFullName: 'Test Org',
-          description: 'Test Description'
+          description: 'Test Description',
+          allCCP: false
         }
       ],
       email: 'mario.rossi@example.com'

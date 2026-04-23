@@ -5,6 +5,7 @@ export type CartItem = {
   iuv: string;
   nav: string;
   paTaxCode: string;
+  allCCP: boolean;
 };
 
 export type ExtendedCartItem = CartItem & {

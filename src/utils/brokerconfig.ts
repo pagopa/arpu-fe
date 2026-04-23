@@ -12,12 +12,13 @@ const ResourceSchema = z.record(z.string(), ResourceLanguageSchema);
 
 // Zod schema for the broker config string.
 const BrokerConfigSchema = z.object({
-  translation: ResourceSchema,
+  translation: ResourceSchema.optional(),
   useCart: z.boolean().optional(),
   assistanceLink: z.string().url().optional(),
   a11yLink: z.string().optional(),
   homeLink: z.string().url().optional(),
   brokerLink: z.string().url().optional(),
+  downloadInfoLink: z.string().url().optional(),
   availableRoutes: z.array(z.string()).optional()
 });
 

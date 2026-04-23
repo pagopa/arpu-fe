@@ -1,7 +1,7 @@
 {
   "app": {
-    "title": "Area Riservata Piattaforma Unitaria",
     "info": "Informazioni",
+    "title": "Area Riservata Piattaforma Unitaria",
     "modal": {
       "close": "Chiudi modale"
     },
@@ -189,9 +189,10 @@
       },
       "download": {
         "title": "Il download dell’avviso è in corso",
+        "subtitle": "Se non parte in automatico, <link>scarica l’avviso manualmente</link>",
+        "link": "Scopri i canali abilitati",
         "help": "Se non parte automaticamente, <CustomLink>clicca qui</CustomLink>.",
-        "info": "",
-        "link": "Scopri i canali abilitati"
+        "info": ""
       }
     },
     "debtPositionDetail": {
@@ -299,6 +300,7 @@
         "title": "Informazioni sulla transazione"
       },
       "downloadReceipt": "Scarica ricevuta",
+      "downloadReceiptError": "Non è stato possibile recuperare la ricevuta.",
       "noReceipt": "La ricevuta pagoPA non è disponibile. Rivolgiti all’Ente Creditore se hai bisogno della quietanza di pagamento, cioè il documento che attesta di aver saldato un debito.",
       "downloadQuiettance": "Scarica quietanza",
       "createdOn": "Creato il",
@@ -366,7 +368,8 @@
     "download": "Scarica",
     "close": "Chiudi",
     "payNow": "Paga ora",
-    "addItemToCart": "Aggiungi al carrello"
+    "addItemToCart": "Aggiungi al carrello",
+    "backToHome": "Torna alla home"
   },
   "fields": {
     "iuv": "Codice Avviso/IUV",
@@ -393,8 +396,7 @@
   },
   "common": {
     "person": "Persona fisica",
-    "company": "Soggetto giuridico",
-    "openDialog": "apri finestra di dialogo"
+    "company": "Soggetto giuridico"
   },
   "general": {
     "and": "e",
@@ -418,15 +420,7 @@
   "errors": {
     "resourceNotAvailable": "Risorsa non disponibile",
     "form": {
-      "required": "Questo campo non puoi essere vuoto.",
-      "email": {
-        "required": "Inserisci un indirizzo email.",
-        "invalid": "Inserisci un indirizzo email valido."
-      },
-      "fiscalCode": {
-        "required": "Inserisci il codice fiscale.",
-        "invalid": "Il Codice Fiscale non è corretto."
-      }
+      "required": "Questo campo non puoi essere vuoto."
     },
     "toast": {
       "403": "Non hai i permessi per eseguire questa azione.",
@@ -434,11 +428,10 @@
       "500": "Errore del server, riprova più tardi.",
       "default": "Si è verificato un errore imprevisto. Riprova più tardi.",
       "drawer": "Errore durante l'aggiunta all'carrello dei pagamenti. Riprova più tardi.",
-      "payment": "Errore durante il pagamento. Riprova più tardi.",
-      "file": "Non è stato possibile recuperare il file."
+      "payment": "Errore durante il pagamento. Riprova più tardi."
     },
     "empty": {
-      "search": "Nessun risultato trovato."
+      "search": "Nessun risultato"
     }
   },
   "ui": {
@@ -449,8 +442,8 @@
     "header": {
       "profile": "I tuoi dati",
       "logout": "Esci",
-      "help": "Assistenza",
-      "skipToContent": "Vai al contenuto principale"
+      "skipToContent": "Vai al contenuto principale",
+      "help": "Assistenza"
     },
     "footer": {
       "a11y": "Accessibilità",
@@ -463,11 +456,11 @@
   "courtesyPage": {
     "default": {
       "title": "Qualcosa non ha funzionato",
-      "body": "Si è verificato un Errore imprevisto. Riprova tra qualche minuto."
+      "body": "Stiamo lavorando per risolvere il prima possibile. Riprova più tardi."
     },
     "400": {
       "title": "Qualcosa non ha funzionato",
-      "body": "Si è verificato un Errore imprevisto. Riprova tra qualche minuto.",
+      "body": "Si è verificato un errore imprevisto. Riprova tra qualche minuto.",
       "cta": "Riprova"
     },
     "401": {
@@ -476,12 +469,12 @@
       "cta": "Accedi"
     },
     "403": {
-      "title": "La Pagina che stai cercando non è disponibile",
+      "title": "La pagina che stai cercando non è disponibile",
       "body": "Puoi ritornare alla homepage o visitare una nuova pagina",
       "cta": "Ritorna alla homepage"
     },
     "404": {
-      "title": "La Pagina che stai cercando non esiste",
+      "title": "La pagina che stai cercando non esiste",
       "body": "Puoi ritornare alla homepage o visitare una nuova pagina",
       "cta": "Ritorna alla homepage"
     },
@@ -516,11 +509,6 @@
       "title": "Non siamo riusciti ad avviare il pagamento",
       "body": "Riprova tra qualche minuto.",
       "cta": "Chiudi"
-    },
-    "426": {
-      "title": "Verifica di sicurezza non riuscita",
-      "body": "Non siamo riusciti a verificare che tu sia un utente reale. Riprova tra qualche minuto.",
-      "cta": "Riprova"
     },
     "500": {
       "title": "Errore del server",
@@ -563,8 +551,8 @@
       }
     },
     "form": {
-      "title": "Fai un pagamento spontaneo",
-      "description": "Compila i campi richiesti e procedi col pagamento.",
+      "title": "Effettua un pagamento spontaneo",
+      "description": "Completa i passaggi richiesti e procedi con il pagamento.",
       "steps": {
         "step1": {
           "step": "Seleziona l’ente",
@@ -576,7 +564,7 @@
           "step": "Seleziona il servizio",
           "title": "Seleziona il servizio",
           "description": "Inizia a digitare il nome del servizio per il quale vuoi effettuare il pagamento e selezionalo dalla lista.",
-          "search": "Cerca per nome del servizio",
+          "search": "Cerca per servizio",
           "mostUsedDebtTypes": "In base alla tua ricerca"
         },
         "step3": {
@@ -589,9 +577,9 @@
             "useYourData": "Usa i tuoi dati",
             "F": {
               "title": "Persona fisica",
-              "name": "Nome e cognome debitore",
-              "code": "Codice Fiscale debitore",
-              "email": "Email debitore"
+              "name": "Nome e Cognome debitore",
+              "code": "Codice Fiscale",
+              "email": "Email"
             },
             "G": {
               "title": "Soggetto giuridico",
@@ -605,10 +593,13 @@
             "title": "Dati dell'avviso di pagamento",
             "amount": "Importo",
             "description": "Oggetto del pagamento"
+          },
+          "custom": {
+            "title": "Inserisci i dati richiesti"
           }
         },
         "step4": {
-          "step": "Controlla i dati",
+          "step": "Riepilogo",
           "title": "Ecco i dati che hai inserito.",
           "description": "Controlla i dati inseriti e conferma per procedere al pagamento.",
           "org": {
@@ -623,9 +614,9 @@
           "debtor": {
             "title": "Dati del debitore",
             "F": {
-              "name": "Nome e cognome debitore",
-              "code": "Codice Fiscale debitore",
-              "email": "Email debitore"
+              "name": "Nome e cognome",
+              "code": "Codice Fiscale",
+              "email": "Email"
             },
             "G": {
               "name": "Denominazione",
@@ -657,16 +648,28 @@
         }
       },
       "continue": "Continua",
-      "confirm": "Conferma i dati",
+      "confirm": "Conferma",
       "abort": "Esci",
       "back": "Indietro",
       "errors": {
-        "description": "Causale troppo corta o mancante.",
-        "amount": "Importo non valido.",
-        "fullName": "Nome e cognome non validi.",
-        "org": "La selezione dell'ente è obbligatoria.",
+        "description": "Causale troppo corta o mancante",
+        "amount": "Importo non valido",
+        "fullName": "Inserisci nome e cognome",
+        "fiscalCode": {
+          "required": "Inserisci il Codice Fiscale",
+          "invalid": "Il Codice Fiscale non è corretto"
+        },
+        "email": {
+          "required": "Inserisci un indirizzo email",
+          "invalid": "Inserisci un indirizzo email valido"
+        },
+        "org": "La selezione dell'ente è obbligatoria",
         "debtType": "*Seleziona un servizio nella lista superiore o nell'elenco dei più utilizzati"
       }
+    },
+    "download": {
+      "title": "Il download dell’avviso è in corso",
+      "help": "Se non parte in automatico, <link1>scarica l’avviso manualmente</link1>"
     }
   }
 }

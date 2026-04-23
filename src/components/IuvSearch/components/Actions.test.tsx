@@ -74,7 +74,8 @@ vi.mock('react-router-dom', async () => {
       path
         .replace(':nav', params.nav)
         .replace(':receiptId', params.receiptId)
-        .replace(':organizationId', params.organizationId)
+        .replace(':orgId', params.orgId ?? params.organizationId)
+        .replace(':organizationId', params.orgId ?? params.organizationId)
     )
   };
 });
@@ -82,11 +83,11 @@ vi.mock('react-router-dom', async () => {
 vi.mock('routes/routes', () => ({
   ROUTES: {
     RECEIPT: '/receipt/:organizationId/:receiptId',
-    DEBT_POSITION_DOWNLOAD: '/download/:nav/:organizationId',
+    DEBT_POSITION_DOWNLOAD: '/download/:nav/:orgId',
     COURTESY_PAGE: '/courtesy/:error',
     public: {
       RECEIPT: '/public/receipt/:organizationId/:receiptId',
-      DEBT_POSITION_DOWNLOAD: '/public/download/:nav/:organizationId',
+      DEBT_POSITION_DOWNLOAD: '/public/download/:nav/:orgId',
       COURTESY_PAGE: '/public/courtesy/:error'
     }
   }
@@ -315,9 +316,9 @@ describe('Actions', () => {
       render(<Actions installment={mockExpiredInstallment} />);
       fireEvent.click(screen.getByLabelText('actions.download'));
 
-      expect(mockNavigate).toHaveBeenCalledWith('/download/NAV002/321', {
-        state: { fiscalCode: 'RSSMRA80A01H501U' }
-      });
+      expect(mockNavigate).toHaveBeenCalledWith(
+        '/download/NAV002/321#debtorFiscalCode=RSSMRA80A01H501U'
+      );
     });
 
     it('navigates to public download route for anonymous user', () => {
@@ -325,9 +326,9 @@ describe('Actions', () => {
       render(<Actions installment={mockExpiredInstallment} />);
       fireEvent.click(screen.getByLabelText('actions.download'));
 
-      expect(mockNavigate).toHaveBeenCalledWith('/public/download/NAV002/321', {
-        state: { fiscalCode: 'RSSMRA80A01H501U' }
-      });
+      expect(mockNavigate).toHaveBeenCalledWith(
+        '/public/download/NAV002/321#debtorFiscalCode=RSSMRA80A01H501U'
+      );
     });
 
     it('emits default error when nav is missing', () => {
@@ -426,9 +427,9 @@ describe('Actions', () => {
         render(<Actions installment={mockUnpaidInstallment} />);
         fireEvent.click(screen.getByLabelText('actions.download'));
 
-        expect(mockNavigate).toHaveBeenCalledWith('/download/NAV003/654', {
-          state: { fiscalCode: 'RSSMRA80A01H501U' }
-        });
+        expect(mockNavigate).toHaveBeenCalledWith(
+          '/download/NAV003/654#debtorFiscalCode=RSSMRA80A01H501U'
+        );
       });
 
       it('navigates to public download route for anonymous user', () => {
@@ -436,9 +437,9 @@ describe('Actions', () => {
         render(<Actions installment={mockUnpaidInstallment} />);
         fireEvent.click(screen.getByLabelText('actions.download'));
 
-        expect(mockNavigate).toHaveBeenCalledWith('/public/download/NAV003/654', {
-          state: { fiscalCode: 'RSSMRA80A01H501U' }
-        });
+        expect(mockNavigate).toHaveBeenCalledWith(
+          '/public/download/NAV003/654#debtorFiscalCode=RSSMRA80A01H501U'
+        );
       });
 
       it('emits default error when nav is missing', () => {
@@ -541,7 +542,8 @@ describe('Actions', () => {
               iuv: '222222222222222222',
               nav: 'NAV003',
               paFullName: 'Test Org 5',
-              paTaxCode: '00000000005'
+              paTaxCode: '00000000005',
+              allCCP: false
             }
           ],
           email: 'test@example.com'

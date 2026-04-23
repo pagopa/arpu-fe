@@ -10,6 +10,12 @@ declare module '@mui/material/Button' {
   }
 }
 
+declare module '@mui/material/FormControlLabel' {
+  interface FormControlLabelProps {
+    variant?: 'radio';
+  }
+}
+
 const customTheme = createTheme({
   ...theme,
   breakpoints: {
@@ -21,8 +27,53 @@ const customTheme = createTheme({
       xl: 1536
     }
   },
+  typography: {
+    ...theme.typography,
+    h4: {
+      ...theme.typography.h4,
+      [theme.breakpoints.down('sm')]: {
+        fontSize: '24px'
+      }
+    },
+    h5: {
+      ...theme.typography.h5,
+      [theme.breakpoints.down('sm')]: {
+        fontSize: '20px'
+      }
+    },
+    h6: {
+      ...theme.typography.h6,
+      [theme.breakpoints.down('sm')]: {
+        fontSize: '18px'
+      }
+    }
+  },
   components: {
     ...theme?.components,
+    MuiFormLabel: {
+      styleOverrides: {
+        root: {
+          fontSize: theme.typography.body2.fontSize,
+          fontWeight: '500'
+        }
+      }
+    },
+    MuiTextField: {
+      styleOverrides: {
+        root: {
+          '& .MuiInputBase-input': {
+            fontSize: theme.typography.body2.fontSize
+          }
+        }
+      }
+    },
+    MuiOutlinedInput: {
+      styleOverrides: {
+        input: {
+          fontSize: theme.typography.body2.fontSize
+        }
+      }
+    },
     MuiTab: {
       styleOverrides: {
         root: ({ theme }) => ({
@@ -65,6 +116,33 @@ const customTheme = createTheme({
           })
         }
       ]
+    },
+    MuiFormControlLabel: {
+      ...theme?.components?.MuiFormControlLabel,
+      styleOverrides: {
+        root: ({ ownerState, theme }) => ({
+          ...(ownerState.variant === 'radio' && {
+            display: 'flex',
+            flexDirection: 'row',
+            gap: theme.spacing(1),
+            alignItems: 'center',
+            paddingTop: theme.spacing(2),
+            paddingBottom: theme.spacing(2),
+            fontWeight: '500',
+            '& .MuiRadio-root': {
+              padding: 0,
+              width: 20,
+              height: 20,
+              marginLeft: theme.spacing(1)
+            },
+            '& .MuiTypography-root': {
+              alignItems: 'center',
+              fontSize: theme.typography.body2.fontSize,
+              fontWeight: '500'
+            }
+          })
+        })
+      }
     }
   }
 } as ThemeOptions);

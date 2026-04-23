@@ -1,7 +1,7 @@
 import React from 'react';
 import * as z from 'zod';
 import { SpontaneousFormField } from '../../../../generated/data-contracts';
-import { Option } from './FieldBeans/withDinamicValues';
+import { Option, OptionSchema } from 'components/Spontanei/SpontaneiSchemas';
 
 // SANDBOX
 import sand from '@nyariv/sandboxjs';
@@ -21,6 +21,7 @@ import CURRENCY from './FieldBeans/CURRENCY';
 import DYNAMIC_AMOUNTLABEL from './FieldBeans/DYNAMIC_AMOUNT_LABEL';
 import CURRENCY_LABEL from './FieldBeans/CURRENCY_LABEL';
 import { RenderType } from '../../../../generated/apiClient';
+import { FormikErrors } from 'formik';
 
 export type FieldName = SpontaneousFormField['name'];
 
@@ -31,6 +32,16 @@ export type ZodIssues = z.ZodIssue[];
 /** return a bolean if the input has an error based on zod issues */
 export const inputHasError = (issues: z.ZodIssue[], fieldName: string) =>
   issues.filter((error) => error.path.includes(fieldName)).length > 0;
+
+/** return true if the object is empty */
+export function isEmpty(obj: FormikErrors<unknown>) {
+  for (const prop in obj) {
+    if (Object.prototype.hasOwnProperty.call(obj, prop)) {
+      return false;
+    }
+  }
+  return true;
+}
 
 /** return the error message for an input based on zod issues and its name */
 export const getErrorMessage = (issues: z.ZodIssue[], fieldName: string) =>
@@ -56,16 +67,20 @@ function formatString(formatString: string, dataObject: { [key: string]: unknown
   });
 }
 
-export const flattenObject = (obj, delimiter = '.', prefix = ''): Record<string, string | number> =>
-  Object.keys(obj).reduce((acc, k) => {
+export const flattenObject = (
+  obj: CustomFormValues,
+  delimiter = '.',
+  prefix = ''
+): Record<string, string | number> =>
+  Object.keys(obj).reduce<Record<string, string | number>>((acc, k) => {
     const pre = prefix.length ? `${prefix}${delimiter}` : '';
     if (typeof obj[k] === 'object' && obj[k] !== null && Object.keys(obj[k]).length > 0)
-      Object.assign(acc, flattenObject(obj[k], delimiter, pre + k));
-    else acc[pre + k] = obj[k];
+      Object.assign(acc, flattenObject(obj[k] as CustomFormValues, delimiter, pre + k));
+    else acc[pre + k] = obj[k] as string | number;
     return acc;
   }, {});
 
-/** usata per la causale */
+/** Used to build the causale */
 export const buildDinamicValue = (
   stringTemplate: string,
   templateVars: object,
@@ -87,14 +102,44 @@ export const buildDinamicValue = (
 };
 
 export function computeValue<T>(code: string, scope = {}) {
-  return sandbox.compile(code)(scope).run() as T;
+  try {
+    const scopeValues = backToOriginalScope(scope);
+    return sandbox.compile(code)(scopeValues).run() as T;
+  } catch (error) {
+    console.warn('something went wrong in computeValue', code, error);
+    return;
+  }
 }
 
+// This function is used to convert the values of the specific fields to the original form
+// For example, if the form has a field with a value of { label: 'test', value: 'test' },
+// this function will convert it to 'test'
+// This is required to have full retrocompatibility with the existing code
+// The problem is particularly evident with select fields converted to object {label, value} or array of objects
+// But old code assumes that the values are strings or arrays of strings
+const backToOriginalScope = (values: CustomFormValues) => {
+  const scopeValues = { ...values };
+  Object.keys(scopeValues).forEach((key) => {
+    const value = scopeValues[key];
+    if (isOption(value)) {
+      scopeValues[key] = value.value;
+    } else if (isOptionArray(value)) {
+      scopeValues[key] = value.map((opt: Option) => opt.value);
+    }
+  });
+  return scopeValues;
+};
+
 /** set the form schema for validation */
-let schemaObject = {};
-export const BuildFormSchema = (fields: Array<SpontaneousFormField>) => {
+const buildSchemaObject = (
+  fields: Array<SpontaneousFormField>,
+  schemaObject: Record<string, z.ZodTypeAny> = {}
+) => {
   fields.forEach((field) => {
-    if (field.subfields) BuildFormSchema(field.subfields);
+    if (field.subfields) buildSchemaObject(field.subfields, schemaObject);
+    if (field.htmlRender === RenderType.MULTIFIELD || field.htmlRender === RenderType.TAB) {
+      return;
+    }
     const name = field.name;
     const isRequired = field.required;
     const regex = field.regex;
@@ -108,39 +153,37 @@ export const BuildFormSchema = (fields: Array<SpontaneousFormField>) => {
     if (isAmountField) {
       fieldSchema = isRequired ? z.number().min(0, errorMessage) : z.number();
     } else if (type === RenderType.SINGLESELECT || type === RenderType.DYNAMIC_SELECT) {
-      fieldSchema = z
-        .object({
-          label: z.string(),
-          value: z.string()
-        })
-        .nullable()
-        .refine((option) => isRequired && option !== null, errorMessage);
+      fieldSchema = OptionSchema.nullable().refine(
+        (option) => isRequired && option !== null,
+        errorMessage
+      );
     } else if (type === RenderType.MULTISELECT) {
-      fieldSchema = isRequired ? z.array(z.string()).min(1, errorMessage) : z.array(z.string());
+      fieldSchema = isRequired ? z.array(OptionSchema).min(1, errorMessage) : z.array(OptionSchema);
     } else {
       fieldSchema = isRequired ? z.string().min(1, errorMessage) : z.string();
       if (regex) {
         fieldSchema = fieldSchema.regex(new RegExp(regex || ''), errorMessage);
       }
     }
-    schemaObject = { ...schemaObject, [name]: fieldSchema };
+    schemaObject[name] = fieldSchema;
   });
+  return schemaObject;
+};
+
+/** set the form schema for validation */
+export const BuildFormSchema = (fields: Array<SpontaneousFormField>, amountFieldName?: string) => {
+  const schemaObject = buildSchemaObject(fields);
+
+  if (amountFieldName) {
+    schemaObject[amountFieldName] = z.number().min(1, 'spontanei.form.errors.amount');
+  }
+
   return z.object(schemaObject);
 };
 
 export interface CustomFormValues {
-  [key: string]: string | string[] | number | number[] | Option | null | undefined;
-  debtPositionTypeOrgCode?: string;
-  debtPositionTypeOrgId?: number;
-  debtPositionTypeOrgDescription?: string;
-  organizationId?: number;
-  organizationName?: string;
-  orgFiscalCode?: string;
-  ipaCode?: string;
-  fullName?: string;
-  email?: string;
-  fiscalCode?: string;
-  description?: string;
+  [key: string]: string | string[] | number | number[] | Option | Option[] | null | undefined;
+  sys_type?: string;
 }
 
 /** Type guard to check if a value is a valid Option */
@@ -151,6 +194,10 @@ const isOption = (value: unknown): value is Option =>
   'value' in value &&
   typeof (value as Option).label === 'string' &&
   typeof (value as Option).value === 'string';
+
+/** Type guard to check if a value is an array of Option */
+export const isOptionArray = (value: unknown): value is Option[] =>
+  Array.isArray(value) && value.every(isOption);
 
 /** Normalize a select value to a proper Option or null */
 export const normalizeSelectValue = (value: unknown, options: Option[] = []): Option | null => {
@@ -166,11 +213,13 @@ export const normalizeSelectValue = (value: unknown, options: Option[] = []): Op
 };
 
 /** set the form state considering the initial value */
-let intialState: CustomFormValues = {};
-export const BuildFormState = (fields: Array<SpontaneousFormField>): CustomFormValues => {
-  intialState = {};
+export const BuildFormState = (
+  fields: Array<SpontaneousFormField>,
+  currentState: CustomFormValues = {}
+): CustomFormValues => {
+  let newState = { ...currentState };
   fields.forEach(({ name, defaultValue, subfields, htmlRender, enumerationList }) => {
-    if (subfields) BuildFormState(subfields);
+    if (subfields) newState = BuildFormState(subfields, newState);
     /* I fields MULTFIELD sono solo contenitori di altri fields
       non hanno un value associato e per questo motivo non è
       necessario tenere tracciao dello stato
@@ -182,59 +231,64 @@ export const BuildFormState = (fields: Array<SpontaneousFormField>): CustomFormV
       // iniziale. In questo caso è più complesso
       // perchè defaultValue dovrebbe essere un array di valori
       if (htmlRender == RenderType.MULTISELECT) {
-        intialState = { ...intialState, [name]: [] };
-      } else if (
-        htmlRender === RenderType.SINGLESELECT ||
-        htmlRender === RenderType.DYNAMIC_SELECT
-      ) {
+        newState[name] = [];
+        return;
+      }
+      if (htmlRender === RenderType.SINGLESELECT || htmlRender === RenderType.DYNAMIC_SELECT) {
         const initialOptions = (enumerationList || []).map((enumeration) => ({
           label: enumeration,
           value: enumeration
         }));
-        intialState = {
-          ...intialState,
-          [name]: normalizeSelectValue(defaultValue, initialOptions)
-        };
-      } else {
-        intialState = { ...intialState, [name]: defaultValue };
+        newState[name] = normalizeSelectValue(defaultValue, initialOptions);
+        return;
       }
+      if (
+        htmlRender === RenderType.CURRENCY ||
+        htmlRender === RenderType.CURRENCY_LABEL ||
+        htmlRender === RenderType.DYNAMIC_AMOUNT_LABEL
+      ) {
+        newState[name] = 0;
+        return;
+      }
+      newState[name] = defaultValue;
     }
   });
-  return intialState;
+  return newState;
 };
 
 /** Render a single input */
 export const BuildInput = (
   element: SpontaneousFormField,
   allElements?: SpontaneousFormField[],
-  amountFieldName = 'importo'
+  amountFieldName = 'amount'
 ) => {
+  const key = element.name;
   switch (element.htmlRender) {
     case RenderType.TAB:
-      return <TAB input={element} />;
+      return <TAB {...element} key={key} />;
     case RenderType.SINGLESELECT:
-      return <SINGLESELECT {...element} />;
+      return <SINGLESELECT {...element} key={key} />;
     case RenderType.DYNAMIC_SELECT:
-      return <DYNAMIC_SELECT {...element} />;
+      return <DYNAMIC_SELECT {...element} key={key} />;
     case RenderType.MULTISELECT:
-      return <MULTISELECT {...element} />;
+      return <MULTISELECT {...element} key={key} />;
     case RenderType.DATE:
-      return <DATEPICKER {...element} />;
+      return <DATEPICKER {...element} key={key} />;
     case RenderType.NONE:
-      return <NONE {...element} allFields={allElements} />;
+      return <NONE {...element} allFields={allElements} key={key} />;
     case RenderType.TEXT:
-      return <TEXT {...element} />;
+      return <TEXT {...element} key={key} />;
     case RenderType.MULTIFIELD:
-      return <MULTIFIELD input={element} />;
+      return <MULTIFIELD input={element} key={key} />;
     // amount
     case RenderType.CURRENCY:
-      return <CURRENCY {...element} amountFieldName={amountFieldName} />;
+      return <CURRENCY {...element} amountFieldName={amountFieldName} key={key} />;
     // readonly amount
     case RenderType.CURRENCY_LABEL:
-      return <CURRENCY_LABEL {...element} amountFieldName={amountFieldName} />;
+      return <CURRENCY_LABEL {...element} amountFieldName={amountFieldName} key={key} />;
     // dynamic readonly amount (amount that changes based on other fields and an API call)
     case RenderType.DYNAMIC_AMOUNT_LABEL:
-      return <DYNAMIC_AMOUNTLABEL {...element} amountFieldName={amountFieldName} />;
+      return <DYNAMIC_AMOUNTLABEL {...element} amountFieldName={amountFieldName} key={key} />;
     default:
       return null;
   }
@@ -243,17 +297,21 @@ export const BuildInput = (
 /** Render a group of inputs */
 export const BuildFormInputs = (
   elements: Array<SpontaneousFormField>,
-  amountFieldName?: string
+  addTotaleField = false,
+  amountFieldName = 'amount'
 ) => {
-  const fields = elements;
+  const fields = [...elements];
 
-  if (!amountFieldName) {
+  if (addTotaleField) {
     fields.push({
-      name: 'importo',
+      name: amountFieldName,
       required: true,
-      htmlRender: RenderType.TEXT,
+      htmlRender: RenderType.CURRENCY,
       htmlClass: 'center',
       htmlLabel: 'Importo',
+      extraAttr: {
+        error_message: 'Inserire un importo valido'
+      },
       defaultValue: '',
       insertableOrder: 0,
       indexable: false,

@@ -34,6 +34,7 @@ interface InstallmentInfo {
   orgFiscalCode?: string;
   orgName?: string;
   organizationId?: number;
+  allCCP?: boolean;
   debtor?: {
     fiscalCode?: string;
   };
@@ -111,7 +112,8 @@ export const CourtesyPageActions: React.FC<CourtesyPageActionsProps> = ({ code }
       amount: installment.amountCents ?? 0,
       iuv: installment.iuv ?? '',
       nav: installment.nav ?? '',
-      paTaxCode: orgFiscalCode ?? ''
+      paTaxCode: orgFiscalCode ?? '',
+      allCCP: installment.allCCP ?? false
     };
 
     postCarts.mutate({ notices: [cartItem] });

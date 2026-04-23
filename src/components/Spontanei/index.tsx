@@ -12,8 +12,10 @@ import { useTranslation } from 'react-i18next';
 import { Formik } from 'formik';
 import {
   DebtPositionTypeOrgsWithSpontaneousDTO,
+  FormTypeEnum,
   OrganizationsWithSpontaneousDTO,
   PersonEntityType,
+  SpontaneousForm,
   SpontaneousFormStructure
 } from '../../../generated/data-contracts';
 import Payment from './steps/Payment';
@@ -44,8 +46,22 @@ const Spontanei = () => {
   const [submitFields, setSubmitFields] = React.useState<SpontaneousFormStructure['submitFields']>(
     []
   );
+  // dictionary state
+  const [dictionary, setDictionary] = React.useState<SpontaneousForm['dictionary']>({});
+  // form type state
+  const [formType, setFormType] = React.useState<FormTypeEnum | null>(null);
   const [amountFieldName, setAmountFieldName] = React.useState<string>('amount');
   const { t } = useTranslation();
+
+  const stepContainerRef = React.useRef<HTMLDivElement>(null);
+
+  React.useEffect(() => {
+    // Set focus to the step container when step changes to inform screen readers
+    // and start reading the new component's content
+    if (stepContainerRef.current && step.current !== step.previous) {
+      stepContainerRef.current.focus();
+    }
+  }, [step.current]);
 
   const defaultPaymentNoticeInfo: PaymentNoticeInfo = {
     fullName: '',
@@ -60,7 +76,7 @@ const Spontanei = () => {
 
   const validate = (values: PaymentNoticeInfo) => {
     const errors: Record<string | number, string> = {};
-    const result = PaymentNoticeInfoSchema(t).safeParse(values);
+    const result = PaymentNoticeInfoSchema().safeParse(values);
     if (!result.success) {
       result.error.issues.forEach((issue: z.ZodIssue) => (errors[issue.path[0]] = issue.message));
     }
@@ -79,31 +95,66 @@ const Spontanei = () => {
       setSummaryFields,
       submitFields,
       setSubmitFields,
+      dictionary,
+      setDictionary,
       amountFieldName,
-      setAmountFieldName
+      setAmountFieldName,
+      formType,
+      setFormType
     }),
-    [omitFirstStep, step, causaleHasJoinTemplate, summaryFields, submitFields, amountFieldName]
+    [
+      omitFirstStep,
+      step,
+      causaleHasJoinTemplate,
+      summaryFields,
+      submitFields,
+      dictionary,
+      amountFieldName,
+      formType,
+      setFormType
+    ]
   );
+
+  // Define step translations to announce them
+  const stepLabels = [
+    t('spontanei.form.steps.step1.step'),
+    t('spontanei.form.steps.step2.step'),
+    t('spontanei.form.steps.step3.step'),
+    t('spontanei.form.steps.step4.step'),
+    t('spontanei.form.steps.step5.step')
+  ];
+
+  const currentStepName = stepLabels[step.current];
 
   return (
     <>
       <Box width={'100%'} component="main">
-        <Formik initialValues={defaultPaymentNoticeInfo} validate={validate} onSubmit={console.log}>
+        <Formik initialValues={defaultPaymentNoticeInfo} validate={validate} onSubmit={() => {}}>
           <FormContext.Provider value={contextValue}>
             <Stack direction={'column'} justifyContent={'start'}>
-              <Typography variant="h4" component="h1" mb={1} data-testid="spontanei-title">
-                {t('spontanei.form.title')}
-              </Typography>
-              <Typography data-testid="spontanei-description">
-                {t('spontanei.form.description')}
-              </Typography>
+              <Stack gap={1}>
+                <Typography variant="h4" component="h1" data-testid="spontanei-title">
+                  {t('spontanei.form.title')}
+                </Typography>
+                <Typography data-testid="spontanei-description">
+                  {t('spontanei.form.description')}
+                </Typography>
+              </Stack>
               <Stack spacing={4} mt={4}>
                 <Steps activeStep={step.current} />
-                {step.current === 0 && <OrgSelect />}
-                {step.current === 1 && <DebtTypeSelect />}
-                {step.current === 2 && <DebtTypeConfig />}
-                {step.current === 3 && <Summary />}
-                {step.current === 4 && <Payment />}
+
+                {/* Dynamically announce step change and shift focus to the content */}
+                <Box
+                  ref={stepContainerRef}
+                  tabIndex={-1}
+                  aria-live="polite"
+                  aria-label={currentStepName}>
+                  {step.current === 0 && <OrgSelect />}
+                  {step.current === 1 && <DebtTypeSelect />}
+                  {step.current === 2 && <DebtTypeConfig />}
+                  {step.current === 3 && <Summary />}
+                  {step.current === 4 && <Payment />}
+                </Box>
               </Stack>
             </Stack>
           </FormContext.Provider>
