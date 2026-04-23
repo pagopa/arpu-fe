@@ -13,8 +13,7 @@ import InfoRoundedIcon from '@mui/icons-material/InfoRounded';
 import { PaymentNoticeInfo } from 'components/Spontanei';
 import FormContext, { FormContextType } from 'components/Spontanei/FormContext';
 import i18n from '../../../../translations/i18n';
-
-export type Option = { label: string; value: string };
+import { Option } from 'components/Spontanei/SpontaneiSchemas';
 
 export interface computedPROPS extends SpontaneousFormField, FieldInputProps<CustomFormValues['']> {
   isHidden?: boolean;
@@ -25,6 +24,8 @@ export interface computedPROPS extends SpontaneousFormField, FieldInputProps<Cus
   joinTemplate?: string;
   allFields?: SpontaneousFormField[];
   options?: Option[];
+  subfields?: SpontaneousFormField[];
+  direction?: 'row' | 'column';
 }
 
 const withComputedValues =
@@ -46,7 +47,9 @@ const withComputedValues =
       source,
       sourceParams = [],
       enumerationList = [],
-      amountFieldName
+      amountFieldName,
+      subfields,
+      direction = 'row'
     } = props;
 
     const initialOptions = enumerationList.map((enumeration) => ({
@@ -83,8 +86,9 @@ const withComputedValues =
 
     useEffect(() => {
       if (hasValuDependsOn && valueDependsOn) {
-        const newValue = computeValue<string>(valueDependsOn, values);
-        helpers.setValue(newValue, false);
+        const newValue = computeValue(valueDependsOn, values);
+        const convertedValue = !isNaN(newValue) ? Number(newValue) : value;
+        helpers.setValue(convertedValue, false);
       }
     }, [values]);
 
@@ -171,7 +175,7 @@ const withComputedValues =
 
     return (
       <Stack
-        direction="row"
+        direction={direction}
         gap={2}
         alignItems="center"
         sx={{ display: isHidden ? 'none' : 'inherit' }}>
@@ -186,6 +190,7 @@ const withComputedValues =
           joinTemplate={joinTemplate}
           allFields={allFields}
           options={options}
+          subfields={subfields}
         />
         {helpMessage && (
           <Tooltip title={helpMessage}>

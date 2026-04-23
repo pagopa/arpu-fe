@@ -117,15 +117,17 @@ const DebtTypeSelect = () => {
   return (
     <>
       <StepWrapper isPending={isDebtPositionTypeOrgsWithSpontaneousPending}>
-        <Stack spacing={2} padding={2}>
-          <Typography variant="h4" component="h2" data-testid="spontanei-step2-title">
-            {t('spontanei.form.steps.step2.title')}
-          </Typography>
-          <Typography data-testid="spontanei-step2-description">
-            {t('spontanei.form.steps.step2.description')}
-          </Typography>
+        <Stack gap={{ xs: 2, md: 3 }} padding={2}>
+          <Stack gap={1}>
+            <Typography variant="h5" component="h2" data-testid="spontanei-step2-title">
+              {t('spontanei.form.steps.step2.title')}
+            </Typography>
+            <Typography data-testid="spontanei-step2-description" variant="body2">
+              {t('spontanei.form.steps.step2.description')}
+            </Typography>
+          </Stack>
           {!shouldShowMostUsedDebtTypes ? (
-            <FormControl sx={{ pt: 1 }}>
+            <FormControl>
               <RadioGroup
                 aria-labelledby="spontanei-step2-radioGroup"
                 name="controlled-radio-buttons-group"
@@ -134,7 +136,7 @@ const DebtTypeSelect = () => {
                 {debtTypeOptions.map((debtTypeOption, index) => (
                   <Box key={debtTypeOption.debtPositionTypeOrgId}>
                     <FormControlLabel
-                      sx={{ my: 0.5 }}
+                      variant="radio"
                       value={debtTypeOption.debtPositionTypeOrgId}
                       control={<Radio inputRef={index === 0 ? firstRadioRef : null} />}
                       label={getLocalizedDescription(
@@ -182,31 +184,21 @@ const DebtTypeSelect = () => {
                 <Typography variant="subtitle1" data-testid="spontanei-step2-mostUsedDebtTypes">
                   {t('spontanei.form.steps.step2.mostUsedDebtTypes')}
                 </Typography>
-                <Stack
-                  sx={{
-                    borderRadius: 1,
-                    border: '1px solid',
-                    borderColor: errorMessage ? 'error.main' : 'grey.300',
-                    px: 4,
-                    py: 2
-                  }}
-                  spacing={2}>
+                <FormControl>
                   <RadioGroup
                     aria-label="debt-type"
                     name="debtTypeCode"
-                    data-testid="spontanei-step2-radioGroup">
+                    data-testid="spontanei-step2-radioGroup"
+                    value={debtType.value?.debtPositionTypeOrgId}>
                     {mostUsedDebtTypesQuery.data.map((MostUsedDebtType, index) => (
-                      <FormControl key={MostUsedDebtType.debtPositionTypeOrgId}>
+                      <Box key={MostUsedDebtType.debtPositionTypeOrgId}>
                         <FormControlLabel
+                          variant="radio"
                           value={MostUsedDebtType.debtPositionTypeOrgId}
                           control={
                             <Radio
                               inputRef={index === 0 ? firstRadioRef : null}
                               onChange={() => onChange(MostUsedDebtType)}
-                              checked={
-                                debtType?.value?.debtPositionTypeOrgId ===
-                                MostUsedDebtType.debtPositionTypeOrgId
-                              }
                             />
                           }
                           label={getLocalizedDescription(
@@ -215,10 +207,13 @@ const DebtTypeSelect = () => {
                             MostUsedDebtType.description
                           )}
                         />
-                      </FormControl>
+                        {index !== mostUsedDebtTypesQuery.data!.length - 1 && (
+                          <Divider aria-hidden="true" />
+                        )}
+                      </Box>
                     ))}
                   </RadioGroup>
-                </Stack>
+                </FormControl>
               </>
             )}
           {debtTypeMeta.touched && debtTypeMeta.error && (

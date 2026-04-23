@@ -6,18 +6,9 @@ import { PersonEntityType, SpontaneousFormField } from '../../../../generated/da
 import StaticFormSection from '../DebtorSection';
 import Controls from '../Controls';
 import { useFormikContext } from 'formik';
-import { BuildFormSchema, CustomFormValues } from './config';
+import { BuildFormSchema, CustomFormValues, isEmpty } from './config';
 import * as z from 'zod';
 import focusOnFirstError from '../utils/focusOnFirstError';
-
-function isEmpty(obj) {
-  for (const prop in obj) {
-    if (Object.hasOwn(obj, prop)) {
-      return false;
-    }
-  }
-  return true;
-}
 
 interface CustomFormProps {
   fields: SpontaneousFormField[];
@@ -29,9 +20,9 @@ interface CustomFormProps {
 const CustomForm = (props: CustomFormProps) => {
   const { fields, amountFieldName, hasFlagAnonymousFiscalCode = false } = props;
   const { t } = useTranslation();
-  const { values, validateForm, submitForm, setErrors } = useFormikContext();
+  const { values, validateForm, submitForm, setErrors } = useFormikContext<CustomFormValues>();
 
-  const customFormValuesSchema = BuildFormSchema(fields);
+  const customFormValuesSchema = BuildFormSchema(fields, amountFieldName);
 
   const validate = (values: CustomFormValues) => {
     const errors: Record<string | number, string> = {};
@@ -58,11 +49,13 @@ const CustomForm = (props: CustomFormProps) => {
   return (
     <>
       <Card variant="elevation">
-        <Stack spacing={2} padding={2}>
-          <Typography variant="h4" component="h2">
-            {t('spontanei.form.steps.step3.title')}
-          </Typography>
-          <Typography>{t('spontanei.form.steps.step3.description')}</Typography>
+        <Stack gap={3} padding={2}>
+          <Stack gap={1}>
+            <Typography variant="h5" component="h2">
+              {t('spontanei.form.steps.step3.title')}
+            </Typography>
+            <Typography variant="body2">{t('spontanei.form.steps.step3.description')}</Typography>
+          </Stack>
           <Stack direction="column" justifyContent={'space-between'} spacing={2}>
             <StaticFormSection
               allowedEntityType={props.allowedEntityType}

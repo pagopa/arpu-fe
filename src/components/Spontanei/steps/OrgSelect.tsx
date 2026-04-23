@@ -74,12 +74,14 @@ const OrgSelect = () => {
     <>
       <StepWrapper isPending={serviceQuery.isPending}>
         <Stack spacing={2} padding={2}>
-          <Typography variant="h4" component="h2" data-testid="spontanei-step1-title">
-            {t('spontanei.form.steps.step1.title')}
-          </Typography>
-          <Typography data-testid="spontanei-step1-description">
-            {t('spontanei.form.steps.step1.description')}
-          </Typography>
+          <Stack gap={1}>
+            <Typography variant="h5" component="h2" data-testid="spontanei-step1-title">
+              {t('spontanei.form.steps.step1.title')}
+            </Typography>
+            <Typography variant="body2" data-testid="spontanei-step1-description">
+              {t('spontanei.form.steps.step1.description')}
+            </Typography>
+          </Stack>
           <Autocomplete
             data-testid="spontanei-step1-search-input"
             onChange={handleOrgChange}
