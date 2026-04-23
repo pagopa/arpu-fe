@@ -22,7 +22,8 @@ const items: InstallmentDrawerItem[] = [
     iuv: 'IUV1234567889',
     nav: 'NAV1234567889',
     remittanceInformation: 'Description 1',
-    status: InstallmentStatus.EXPIRED
+    status: InstallmentStatus.EXPIRED,
+    allCCP: false
   },
   {
     installmentId: 2,
@@ -36,7 +37,8 @@ const items: InstallmentDrawerItem[] = [
     iuv: 'IUV1234567890',
     nav: 'NAV1234567890',
     remittanceInformation: 'Description 2',
-    status: InstallmentStatus.EXPIRED
+    status: InstallmentStatus.EXPIRED,
+    allCCP: false
   }
 ];
 

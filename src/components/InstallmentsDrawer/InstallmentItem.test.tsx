@@ -16,7 +16,8 @@ const item: InstallmentDrawerItem = {
   iuv: 'IUV1234567890',
   nav: 'NAV1234567890',
   remittanceInformation: 'Description 1',
-  status: InstallmentStatus.UNPAID
+  status: InstallmentStatus.UNPAID,
+  allCCP: false
 };
 
 describe('InstallmentItem', () => {
