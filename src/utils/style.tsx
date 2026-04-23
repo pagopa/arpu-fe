@@ -131,12 +131,14 @@ const customTheme = createTheme({
             fontWeight: '500',
             '& .MuiRadio-root': {
               padding: 0,
+              width: 20,
+              height: 20,
               marginLeft: theme.spacing(1)
             },
             '& .MuiTypography-root': {
-              font: 'inherit',
               alignItems: 'center',
-              marginTop: '5px'
+              fontSize: theme.typography.body2.fontSize,
+              fontWeight: '500'
             }
           })
         })
