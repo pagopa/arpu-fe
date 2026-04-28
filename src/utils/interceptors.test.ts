@@ -37,6 +37,7 @@ describe('setupInterceptors', () => {
   beforeEach(() => {
     (useNavigate as Mock).mockReturnValue(navigate);
     (isRecaptchaError as Mock).mockReturnValue(false);
+    (storage.user.isAnonymous as Mock).mockReturnValue(false);
 
     Object.defineProperty(window, 'location', {
       value: { replace: vi.fn() },
@@ -117,6 +118,21 @@ describe('setupInterceptors', () => {
     expect(window.location.replace).toHaveBeenCalledWith(
       ROUTES.public.COURTESY_PAGE.replace(':outcome', 'verifica-non-riuscita')
     );
+  });
+
+  it('should emit a toast on 401 for anonymous users without logging out or redirecting', () => {
+    (storage.user.isAnonymous as Mock).mockReturnValue(true);
+    const error = { response: { status: 401 } };
+    const notifyEmitMock = vi.spyOn(utils.notify, 'emit');
+
+    setupInterceptors(client);
+    const responseInterceptor = (client.instance.interceptors.response.use as Mock).mock
+      .calls[0][1];
+    responseInterceptor(error).catch(() => {});
+
+    expect(notifyEmitMock).toHaveBeenCalledWith('errors.toast.default');
+    expect(storage.user.logOut).not.toHaveBeenCalled();
+    expect(window.location.replace).not.toHaveBeenCalled();
   });
 
   it('should redirect 401 error', () => {

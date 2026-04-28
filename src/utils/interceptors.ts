@@ -35,6 +35,8 @@ export const setupInterceptors = (client: Client) => {
         if (isRecaptchaError(error)) {
           const toUrl = ROUTES.public.COURTESY_PAGE.replace(':outcome', 'verifica-non-riuscita');
           window.location.replace(toUrl);
+        } else if (utils.storage.user.isAnonymous()) {
+          utils.notify.emit(t('errors.toast.default'));
         } else {
           const toUrl = ROUTES.public.COURTESY_PAGE.replace(':outcome', OUTCOMES['401']);
           utils.storage.user.logOut();
