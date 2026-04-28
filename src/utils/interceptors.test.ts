@@ -120,7 +120,7 @@ describe('setupInterceptors', () => {
     );
   });
 
-  it('should emit a toast on 401 for anonymous users without logging out or redirecting', () => {
+  it('should redirect to errore-server on 401 for anonymous users without logging out', () => {
     (storage.user.isAnonymous as Mock).mockReturnValue(true);
     const error = { response: { status: 401 } };
     const notifyEmitMock = vi.spyOn(utils.notify, 'emit');
@@ -130,9 +130,11 @@ describe('setupInterceptors', () => {
       .calls[0][1];
     responseInterceptor(error).catch(() => {});
 
-    expect(notifyEmitMock).toHaveBeenCalledWith('errors.toast.default');
     expect(storage.user.logOut).not.toHaveBeenCalled();
-    expect(window.location.replace).not.toHaveBeenCalled();
+    expect(notifyEmitMock).not.toHaveBeenCalled();
+    expect(window.location.replace).toHaveBeenCalledWith(
+      ROUTES.public.COURTESY_PAGE.replace(':outcome', 'errore-server')
+    );
   });
 
   it('should redirect 401 error', () => {
