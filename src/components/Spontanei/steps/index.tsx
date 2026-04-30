@@ -1,5 +1,5 @@
 import React, { useContext, useEffect } from 'react';
-import { Skeleton, Step, StepLabel, Stepper } from '@mui/material';
+import { Skeleton, Step, StepLabel, Stepper, Typography } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import FormContext, { FormContextType } from '../FormContext';
 import { useIsFetching } from '@tanstack/react-query';
@@ -45,35 +45,40 @@ const Steps = (props: { activeStep: number }) => {
       {viewSkeleton ? (
         <Skeleton variant="rectangular" height={'64px'} sx={{ p: 4 }} animation={'wave'}></Skeleton>
       ) : (
-        <Stepper
-          activeStep={props.activeStep - stepBaseNumber}
-          alternativeLabel
-          role="tablist"
-          sx={{
-            '& .MuiStepIcon-root': {
-              overflow: 'visible'
-            }
-          }}>
-          {steps.map((label) => {
-            return (
-              <Step
-                key={t(label)}
-                role="tab"
-                aria-selected={props.activeStep - stepBaseNumber === steps.indexOf(label)}>
-                <StepLabel
-                  sx={{
-                    '& .MuiStepLabel-label': {
-                      fontSize: '16px',
-                      fontWeight: 500,
-                      display: { xs: 'none', sm: 'block' }
-                    }
-                  }}>
-                  {t(label)}
-                </StepLabel>
-              </Step>
-            );
-          })}
-        </Stepper>
+        <>
+          <Typography variant="body2" fontWeight="600" display={{ sm: 'none' }}>
+            {t(steps[props.activeStep - stepBaseNumber])}
+          </Typography>
+          <Stepper
+            activeStep={props.activeStep - stepBaseNumber}
+            alternativeLabel
+            role="tablist"
+            sx={{
+              '& .MuiStepIcon-root': {
+                overflow: 'visible'
+              }
+            }}>
+            {steps.map((label) => {
+              return (
+                <Step
+                  key={t(label)}
+                  role="tab"
+                  aria-selected={props.activeStep - stepBaseNumber === steps.indexOf(label)}>
+                  <StepLabel
+                    sx={{
+                      '& .MuiStepLabel-label': {
+                        fontSize: '16px',
+                        fontWeight: 500,
+                        display: { xs: 'none', sm: 'block' }
+                      }
+                    }}>
+                    {t(label)}
+                  </StepLabel>
+                </Step>
+              );
+            })}
+          </Stepper>
+        </>
       )}
     </>
   );
