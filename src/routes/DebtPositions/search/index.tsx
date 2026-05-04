@@ -1,0 +1,18 @@
+import { IuvSearch } from 'components/IuvSearch';
+import React from 'react';
+import { InstallmentType } from 'utils/loaders';
+
+export const DebtPositionsSearch = () => {
+  return (
+    <IuvSearch
+      descriptionKey="app.debtPositionsSearch.description"
+      installmentType={InstallmentType.ALL}
+      noDataTextKey="app.debtPositionsSearch.noData.text"
+      noDataTitleKey="app.debtPositionsSearch.noData.title"
+      resultKey="app.debtPositionsSearch.result"
+      searchErrorKey="app.debtPositionsSearch.searchError"
+      subtitleKey="app.debtPositionsSearch.sub"
+      titleKey="app.debtPositionsSearch.title"
+    />
+  );
+};

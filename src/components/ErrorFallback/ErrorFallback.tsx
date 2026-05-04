@@ -1,7 +1,7 @@
 import React from 'react';
 import { Navigate } from 'react-router-dom';
-import { ArcErrors, ArcRoutes } from 'routes/routes';
+import { ROUTES, OUTCOMES } from 'routes/routes';
 
 export const ErrorFallback = () => (
-  <Navigate to={ArcRoutes.COURTESY_PAGE.replace(':error', ArcErrors['400'])} />
+  <Navigate to={ROUTES.public.COURTESY_PAGE.replace(':outcome', OUTCOMES['400'])} />
 );

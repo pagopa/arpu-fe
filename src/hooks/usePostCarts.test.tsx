@@ -2,11 +2,23 @@ import { renderHook, act, waitFor } from '@testing-library/react';
 import { usePostCarts } from './usePostCarts';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import utils from 'utils';
-import { mockCartItems } from 'stories/utils/PaymentNoticeMocks';
 import React, { ReactNode } from 'react';
 
 import { AxiosResponse } from 'axios';
-import { ArcRoutes } from 'routes/routes';
+import { ROUTES } from 'routes/routes';
+import { CartItem } from 'models/Cart';
+
+const mockCartItems: CartItem[] = [
+  {
+    paTaxCode: '99999000013',
+    paFullName: 'EC Demo Pagamenti Pull Test',
+    iuv: '7442658002593149',
+    nav: '37442658002593149',
+    amount: 588,
+    description: 'Test Pull - unica opzione',
+    allCCP: false
+  }
+];
 
 export const createWrapper = () => {
   const queryClient = new QueryClient();
@@ -26,6 +38,7 @@ describe('usePostCarts', () => {
     const mockData = 'Response with URL=https://redirect.com';
 
     vi.spyOn(utils.cartsClient, 'postCarts').mockResolvedValue({ data: mockData } as AxiosResponse);
+    vi.spyOn(utils.storage.user, 'isAnonymous').mockReturnValue(false);
 
     const { result } = renderHook(
       () => usePostCarts({ onSuccess: mockOnSuccess, onError: mockOnError }),
@@ -40,6 +53,8 @@ describe('usePostCarts', () => {
 
     await waitFor(() => !result.current.isIdle);
 
+    const ORIGIN = window.location.origin;
+
     expect(utils.cartsClient.postCarts).toHaveBeenCalledWith({
       emailNotice: 'test@test.it',
       paymentNotices: [
@@ -52,10 +67,11 @@ describe('usePostCarts', () => {
         }
       ],
       returnUrls: {
-        returnCancelUrl: window.location.origin + ArcRoutes.PAYMENT_NOTICES,
-        returnErrorUrl: window.location.origin + ArcRoutes.PAYMENT_NOTICES,
-        returnOkUrl: window.location.origin + ArcRoutes.DASHBOARD
-      }
+        returnOkUrl: `${ORIGIN}${ROUTES.DASHBOARD}`,
+        returnCancelUrl: `${ORIGIN}${ROUTES.DEBT_POSITIONS}`,
+        returnErrorUrl: `${ORIGIN}${ROUTES.DEBT_POSITIONS}`
+      },
+      allCCP: false
     });
     expect(mockOnSuccess).toHaveBeenCalledWith('https://redirect.com');
     expect(mockOnError).not.toHaveBeenCalled();

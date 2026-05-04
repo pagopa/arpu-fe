@@ -1,0 +1,20 @@
+#skip-to-content {
+    position: absolute;
+    left: -10000px;
+    top: auto;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    z-index: 9999;
+}
+
+#skip-to-content:focus {
+    width: auto;
+    height: auto;
+    left: 1rem;
+    top: 1rem;
+}
+
+.grecaptcha-badge {
+    visibility: hidden;
+}

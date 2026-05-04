@@ -1,6 +1,6 @@
 import React from 'react';
 import { useLoaderData } from 'react-router-dom';
-import { ArcErrors, ArcRoutes } from '../routes';
+import { OUTCOMES, ROUTES } from '../routes';
 import { Box, CircularProgress } from '@mui/material';
 import { getTokenOneidentity } from 'utils/loaders';
 import utils from 'utils';
@@ -10,9 +10,9 @@ export default function AuthCallback() {
 
   if (result) {
     utils.storage.user.setToken(result.accessToken);
-    window.location.replace(ArcRoutes.DASHBOARD);
+    window.location.replace(ROUTES.DASHBOARD);
   } else {
-    window.location.replace(ArcRoutes.COURTESY_PAGE.replace(':error', ArcErrors['408']));
+    window.location.replace(ROUTES.COURTESY_PAGE.replace(':outcome', OUTCOMES['408']));
   }
 
   return (

@@ -1,46 +1,86 @@
 import React from 'react';
-import { Alert, Container, Grid, Snackbar } from '@mui/material';
+import {
+  Alert,
+  Box,
+  Button,
+  Container,
+  Snackbar,
+  Stack,
+  Theme,
+  useMediaQuery
+} from '@mui/material';
 import { grey } from '@mui/material/colors';
 import { Footer } from './Footer';
 import { Sidebar } from './Sidebar/Sidebar';
 import Breadcrumbs from './Breadcrumbs/Breadcrumbs';
 import { NavigateNext } from '@mui/icons-material';
-import { Outlet, ScrollRestoration, useMatches } from 'react-router-dom';
+import { Outlet, useMatches } from 'react-router-dom';
 import { RouteHandleObject } from 'models/Breadcrumbs';
 import { Header } from './Header';
 import { BackButton } from './BackButton';
-import { ArcRoutes } from 'routes/routes';
+import { ROUTES } from 'routes/routes';
 import { ModalSystem } from './Modals';
 import utils from 'utils';
 import { useStore } from 'store/GlobalStore';
 import { CartDrawer } from './Cart/CartDrawer';
+import PaymentTypeDrawer from './Spontanei/PaymentTypeDrawer';
+import InstallmentsDrawer from './InstallmentsDrawer';
+import { SubHeader } from './Header/SubHeader';
+import { ProductLogo } from 'components/ProductLogo';
+import { HeaderAccount, RootLinkType } from '@pagopa/mui-italia';
+import { PageTitleProvider } from './PageTitleProvider';
+import appStore from 'store/appStore';
+import { StorageItems } from 'utils/storage';
+import { RouteGuard } from './RouteGuard';
+import { useTranslation } from 'react-i18next';
+import '../styles.css';
 
-const defaultRouteHandle: RouteHandleObject = {
-  sidebar: { visible: true },
-  crumbs: { routeName: '', elements: [] },
-  backButton: false
-};
+const defaultRouteHandle: RouteHandleObject = {};
 
-export function Layout() {
+export function Layout(props: { anonymous?: boolean }) {
   const matches = useMatches();
   const {
-    state: { cart }
+    state: { cart, installmentsDrawer, paymentTypeDrawerVisibilityStatus }
   } = useStore();
+
+  const { t } = useTranslation();
+  const lg = useMediaQuery((theme: Theme) => theme.breakpoints.up('lg'));
 
   const overlay = utils.sidemenu.status.overlay.value;
   const modalOpen = utils.modal.status.isOpen.value;
 
   document.body.style.overflow = modalOpen || cart.isOpen || overlay ? 'hidden' : 'auto';
 
-  const { crumbs, sidebar, backButton, backButtonText, backButtonFunction } = {
-    ...defaultRouteHandle,
-    ...(matches.find((match) => Boolean(match.handle))?.handle || {})
-  } as RouteHandleObject;
+  const mergeHandles = matches
+    .map((match) => match.handle || defaultRouteHandle)
+    .reduce((prev, match) => ({ ...prev, ...match }), {});
 
-  const sidePadding = sidebar.visible ? 3 : { xs: 3, md: 12, lg: 27, xl: 34 };
+  const { crumbs, sidebar, backButton, backButtonText, backButtonFunction, subHeader, gutters } =
+    mergeHandles as RouteHandleObject;
+
+  const rootLink: RootLinkType = {
+    label: appStore.value.brokerInfo?.brokerName || '',
+    href: appStore.value.brokerInfo?.config?.brokerLink || ROUTES.DASHBOARD,
+    ariaLabel: appStore.value.brokerInfo?.brokerName || '',
+    title: appStore.value.brokerInfo?.brokerName || ''
+  };
+
+  const assistanceLink = appStore.value.brokerInfo?.config?.assistanceLink;
+
+  const onAssistanceClick = () => {
+    if (assistanceLink) {
+      window.open(assistanceLink, '_blank');
+    }
+  };
+
+  const skipToContent = () => {
+    const mainContent = document.getElementById('main-content');
+    mainContent?.focus();
+  };
 
   return (
     <>
+      <PageTitleProvider />
       <Snackbar
         autoHideDuration={6000}
         anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
@@ -51,43 +91,60 @@ export function Layout() {
         </Alert>
       </Snackbar>
       <ModalSystem />
-      <Container
-        maxWidth={false}
-        disableGutters
-        sx={{ display: 'flex', height: '100%', minHeight: '100vh', alignItems: 'baseline' }}>
-        <Grid
-          container
-          height={'100%'}
-          minHeight="100vh"
-          flexDirection="column"
-          flexWrap={'nowrap'}>
-          <Grid flexBasis={{ xs: 'fit-content' }} item xs={12} height="fit-content">
-            <Header onAssistanceClick={() => window.open(ArcRoutes.ASSISTANCE, '_blank')} />
-          </Grid>
-          <Grid
-            item
-            display={'flex'}
-            flexGrow={1}
-            flexWrap={'wrap'}
-            alignContent={'flex-start'}
-            flexBasis={'50vh'}>
-            {sidebar?.visible ? <Sidebar /> : null}
-            <Grid item bgcolor={grey['100']} padding={3} height={'100%'} xs paddingX={sidePadding}>
-              {backButton && <BackButton onClick={backButtonFunction} text={backButtonText} />}
-              {crumbs && (
-                <Breadcrumbs crumbs={crumbs} separator={<NavigateNext fontSize="small" />} />
-              )}
+      <Container maxWidth={false} disableGutters>
+        <Button
+          id="skip-to-content"
+          color="primary"
+          variant="contained"
+          onClick={skipToContent}
+          size="large">
+          {t('ui.header.skipToContent')}
+        </Button>
+        {!props.anonymous ? (
+          <Header />
+        ) : (
+          <HeaderAccount
+            rootLink={rootLink}
+            onAssistanceClick={onAssistanceClick}
+            enableLogin={false}
+            translationsMap={{ assistance: t('ui.header.help') }}
+          />
+        )}
+        {subHeader && <SubHeader product={<ProductLogo maxWidth="160px" />} />}
+        <Stack direction={lg ? 'row' : 'column'} bgcolor={grey['100']}>
+          {sidebar ? <Sidebar /> : null}
+          <Box width={'100%'} component="main" id="main-content" tabIndex={-1}>
+            {backButton || crumbs ? (
+              <Container sx={{ mt: 3 }}>
+                {backButton && <BackButton onClick={backButtonFunction} text={backButtonText} />}
+                {crumbs && (
+                  <Breadcrumbs crumbs={crumbs} separator={<NavigateNext fontSize="small" />} />
+                )}
+              </Container>
+            ) : null}
+            {gutters ? (
+              <Container sx={{ my: 3 }} maxWidth={sidebar ? false : 'lg'}>
+                <Outlet />
+              </Container>
+            ) : (
               <Outlet />
-            </Grid>
-          </Grid>
-          <Grid item xs={12} height="fit-content" flexBasis={{ xs: 'fit-content' }} flexShrink={3}>
-            {/*xs in flex basis is specified to override mui clas.*/}
-            <Footer />
-          </Grid>
-        </Grid>
+            )}
+          </Box>
+        </Stack>
+        <Footer />
         {cart.isOpen ? <CartDrawer /> : null}
+        {installmentsDrawer.isOpen ? <InstallmentsDrawer /> : null}
+        {paymentTypeDrawerVisibilityStatus ? <PaymentTypeDrawer /> : null}
       </Container>
-      <ScrollRestoration />
     </>
   );
 }
+
+const withGuard = (Component: () => React.JSX.Element) => (
+  <RouteGuard itemKeys={[StorageItems.TOKEN]} storage={window.localStorage}>
+    <Component />
+  </RouteGuard>
+);
+
+export const AuthLayout = () => withGuard(() => <Layout />);
+export const PublicLayout = () => <Layout anonymous={true} />;

@@ -1,6 +1,6 @@
-import { CartItem, CartState } from 'models/Cart';
-import utils from 'utils';
+import { ExtendedCartItem, CartState } from 'models/Cart';
 import { usePersistentSignal } from 'hooks/usePersistentSignal';
+import { SessionItems } from 'utils/storage';
 
 const MAXCARTITEMS = 5;
 const ITEMID = 'iuv';
@@ -8,16 +8,14 @@ const ITEMID = 'iuv';
 const defaultCart: CartState = {
   amount: 0,
   isOpen: false,
-  items: []
+  items: [],
+  email: undefined
 };
 
-export const { state: cartState } = usePersistentSignal<CartState>(
-  utils.storage.SessionItems.CART,
-  {
-    storage: sessionStorage,
-    initialValue: defaultCart
-  }
-);
+export const { state: cartState } = usePersistentSignal<CartState>(SessionItems.CART, {
+  storage: sessionStorage,
+  initialValue: defaultCart
+});
 
 export function setCart(cart: CartState) {
   cartState.value = cart;
@@ -35,7 +33,7 @@ function setCartAmount(amount: number) {
   cartState.value = { ...cartState.value, amount: amount };
 }
 
-function updateAmount(items: CartItem[]) {
+function updateAmount(items: ExtendedCartItem[]) {
   const amount = items.reduce(
     (accumulatedAmount, cartItem) => accumulatedAmount + cartItem.amount,
     0
@@ -43,7 +41,7 @@ function updateAmount(items: CartItem[]) {
   setCartAmount(amount);
 }
 
-export function addItem(cartItem: CartItem) {
+export function addItem(cartItem: ExtendedCartItem) {
   // Max cart items check
   if (cartState.value.items.length === MAXCARTITEMS) return;
   // Check for duplicates
@@ -75,4 +73,12 @@ export function getTotalAmout() {
 
 export function isItemInCart(itemId: string) {
   return cartState.value.items.some((item) => item[ITEMID] === itemId);
+}
+
+export function setCartEmail(email?: string) {
+  cartState.value = { ...cartState.value, email };
+}
+
+export function getCartEmail() {
+  return cartState.value.email;
 }

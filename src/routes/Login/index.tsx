@@ -1,21 +1,99 @@
 import { useEffect } from 'react';
 import utils from 'utils';
-import { ArcRoutes } from 'routes/routes';
+import { ROUTES } from 'routes/routes';
+import {
+  Button,
+  Card,
+  CardContent,
+  Container,
+  Grid,
+  Stack,
+  Typography,
+  useTheme
+} from '@mui/material';
+import React from 'react';
+import PermIdentityOutlinedIcon from '@mui/icons-material/PermIdentityOutlined';
+import { useTranslation } from 'react-i18next';
+import { useNavigate } from 'react-router-dom';
 
 const Login = () => {
+  const theme = useTheme();
+  const { t } = useTranslation();
+  const brokerId = utils.storage.app.getBrokerId();
+  utils.storage.app.setBrokerId(brokerId);
+
+  const navigate = useNavigate();
+
+  const logIn = () => window.location.replace(utils.config.loginUrl);
+
   useEffect(() => {
-    if (utils.storage.user.hasToken()) {
-      return window.location.replace(ArcRoutes.DASHBOARD);
-    }
-    // In development it's better to disable this redirect
-    // to allow the developer to set a proper valid
-    // acessToken and navigate the application on localhost
-    if (utils.config.env !== 'LOCAL' || window.location.hostname !== 'localhost') {
-      window.location.replace(utils.config.loginUrl);
-    }
+    if (utils.storage.user.hasToken()) navigate(ROUTES.DASHBOARD);
   }, []);
 
-  return null;
+  const handleCTA1 = () => navigate(ROUTES.public.PAYMENTS_ON_THE_FLY);
+  const handleCTA2 = () => navigate(ROUTES.public.RECEIPTS_SEARCH);
+  const handleCTA3 = () => navigate(ROUTES.public.DEBT_POSITION_SEARCH);
+
+  return (
+    <>
+      <Grid container minHeight={'78vh'}>
+        <Grid size={{ xs: 12, md: 8 }} bgcolor={theme.palette.background.default} pt={16} pb={16}>
+          <Container>
+            <Stack alignItems="center">
+              <Stack width={394} alignItems={'center'} gap={1}>
+                <Typography variant="h3" textAlign="center">
+                  {t('app.login.auth.title')}
+                </Typography>
+                <Typography variant="body1" textAlign="center" mb={4}>
+                  {t('app.login.auth.description')}
+                </Typography>
+                <Card elevation={16}>
+                  <CardContent>
+                    <Button
+                      data-testid="logInButton"
+                      variant="contained"
+                      size="large"
+                      startIcon={<PermIdentityOutlinedIcon />}
+                      onClick={logIn}>
+                      {t('app.login.auth.CTA')}
+                    </Button>
+                  </CardContent>
+                </Card>
+              </Stack>
+            </Stack>
+          </Container>
+        </Grid>
+
+        <Grid size={{ xs: 12, md: 4 }} bgcolor={theme.palette.primary.main} pt={16} pb={16}>
+          <Container>
+            <Stack alignItems="center">
+              <Stack width={336} gap={4}>
+                <Stack gap={2}>
+                  <Typography variant="h3" color={theme.palette.primary.contrastText}>
+                    {t('app.login.noAuth.title')}
+                  </Typography>
+                  <Typography variant="body1" color={theme.palette.primary.contrastText}>
+                    {t('app.login.noAuth.description')}
+                  </Typography>
+                </Stack>
+                <Stack gap={2} width={'75%'}>
+                  <Button variant="contrast" size="large" onClick={handleCTA1}>
+                    {t('app.login.noAuth.CTA1')}
+                  </Button>
+                  <Button variant="contrast" size="large" onClick={handleCTA2}>
+                    {t('app.login.noAuth.CTA2')}
+                  </Button>
+                  <Button variant="contrast" size="large" onClick={handleCTA3}>
+                    {t('app.login.noAuth.CTA3')}
+                  </Button>
+                </Stack>
+              </Stack>
+            </Stack>
+          </Container>
+        </Grid>
+      </Grid>
+    </>
+  );
 };
 
 export default Login;

@@ -1,0 +1,62 @@
+import React from 'react';
+import { FormControl } from '@mui/material';
+import { computedPROPS } from './withDinamicValues';
+import { Autocomplete, TextField } from '@mui/material';
+import { Option } from './withDinamicValues';
+import { useField } from 'formik';
+import { useTranslation } from 'react-i18next';
+
+const SELECT = (props: computedPROPS & { multiple?: boolean }) => {
+  const { t } = useTranslation();
+  const {
+    name,
+    onBlur,
+    htmlLabel,
+    hasError,
+    required,
+    errorMessage,
+    options = [],
+    multiple
+  } = props;
+
+  const [fieldValue, , helpers] = useField<Option | Option[] | null>(name);
+
+  const handleChange = (
+    _event: React.SyntheticEvent<Element, Event>,
+    option: Option | Option[] | string | null
+  ) => {
+    if (!option || typeof option === 'string') {
+      helpers.setValue(null);
+    } else {
+      helpers.setValue(option);
+    }
+  };
+
+  return (
+    <FormControl fullWidth error={hasError} required={required}>
+      <Autocomplete
+        options={options}
+        onChange={handleChange}
+        onBlur={onBlur}
+        noOptionsText={t('errors.empty.search')}
+        value={fieldValue.value}
+        multiple={multiple}
+        getOptionKey={(opt) => (opt as Option).value}
+        getOptionLabel={(org) => (org as Option).label}
+        id={name}
+        renderInput={(params) => (
+          <TextField
+            {...params}
+            label={htmlLabel}
+            name={name}
+            id={name}
+            error={hasError}
+            helperText={hasError && errorMessage}
+          />
+        )}
+      />
+    </FormControl>
+  );
+};
+
+export default SELECT;

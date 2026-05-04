@@ -1,6 +1,7 @@
-import translationIT from './it/translations.json';
-import translationEN from './en/translations.json';
-import translationFR from './fr/translations.json';
+import translationIT from './it.json';
+import translationEN from './en.json';
+import translationFR from './fr.json';
+import translationDE from './de.json';
 
 const lang = {
   it: {
@@ -17,7 +18,12 @@ const lang = {
     label: 'French',
     lang: 'fr-FR',
     translation: translationFR
+  },
+  de: {
+    label: 'German',
+    lang: 'de-DE',
+    translation: translationDE
   }
 };
-/* Are we sure we need a sorting function? The order wouldn't be the one commonly intended by us (which is usually: IT, EN, FR...)*/
+
 export default lang;

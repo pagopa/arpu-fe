@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { ArcRoutes } from 'routes/routes';
+import { ROUTES } from 'routes/routes';
 import {
   Box,
   Divider,
@@ -22,7 +22,6 @@ import ReceiptLongIcon from '@mui/icons-material/ReceiptLong';
 import ViewSidebarIcon from '@mui/icons-material/ViewSidebar';
 import useCollapseMenu from 'hooks/useCollapseMenu';
 import { sidebarStyles } from './sidebar.styles';
-import utils from 'utils';
 
 export const Sidebar: React.FC = () => {
   const { t } = useTranslation();
@@ -42,22 +41,18 @@ export const Sidebar: React.FC = () => {
     {
       label: t('menu.homepage'),
       icon: ViewSidebarIcon,
-      route: ArcRoutes.DASHBOARD,
+      route: ROUTES.DASHBOARD,
       end: true
     },
-    ...(utils.config.showNotices
-      ? [
-          {
-            label: t('menu.paymentNotices'),
-            icon: Payments,
-            route: ArcRoutes.PAYMENT_NOTICES
-          }
-        ]
-      : []),
+    {
+      label: t('menu.debtPositions'),
+      icon: Payments,
+      route: ROUTES.DEBT_POSITIONS
+    },
     {
       label: t('menu.receipts.menuTitle'),
       icon: () => <ReceiptLongIcon sx={{ marginLeft: '-1px' }} />,
-      route: ArcRoutes.TRANSACTIONS
+      route: ROUTES.RECEIPTS
     }
   ];
 
@@ -68,7 +63,6 @@ export const Sidebar: React.FC = () => {
           alignItems="normal"
           display="flex"
           flexDirection="column"
-          item
           component="nav"
           aria-expanded={!collapsed}
           aria-label={t('menu.navigationMenu')}

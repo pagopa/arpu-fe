@@ -1,5 +1,6 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { renderHook, waitFor } from '@testing-library/react';
+import { renderHook, waitFor } from '__tests__/renderers';
 import React, { ReactNode } from 'react';
 import 'whatwg-fetch';
 import loaders from 'utils/loaders';
@@ -10,39 +11,28 @@ import { AxiosResponse } from 'axios';
 // importing schemas from utils
 // causes an import resolution issue
 import * as schemas from '../../generated/zod-schema';
-
+import {
+  debtPositionRequestDTOSchema,
+  debtPositionResponseDTOSchema,
+  debtPositionTypeOrgsWithSpontaneousDTOSchema,
+  organizationsWithSpontaneousDTOSchema,
+  pagedDebtorDebtPositionDTOSchema,
+  debtorUnpaidDebtPositionOverviewDTOSchema
+} from '../../generated/zod-schema';
 // zodock can create mock object
 // from a zod schema
 // if a field is set as optionaal
 // it will be generated as undefined
 import { createMock } from 'zodock';
-import { Params } from 'react-router-dom';
-import { mockNoticeDetails, mockPaymentNoticeDetails } from 'stories/utils/PaymentNoticeMocks';
+import zod from 'zod';
+import { Mock } from 'vitest';
 
-// Mock the utils module
-vi.mock('./utils', () => {
-  const originalModule = vi.importActual('utils');
-  return {
-    ...originalModule,
-    apiClient: {
-      notices: {
-        getNoticesList: vi.fn(),
-        getNoticeReceipt: vi.fn(),
-        getNoticeDetails: vi.fn()
-      },
-      transactions: {
-        getTransactionsList: vi.fn(),
-        getTransactionDetails: vi.fn()
-      },
-      auth: {
-        getUserInfo: vi.fn()
-      },
-      token: {
-        getAuthenticationToken: vi.fn()
-      }
-    }
-  };
-});
+const queryClient = new QueryClient();
+const wrapper = ({ children }: { children: ReactNode }) => (
+  <StoreProvider>
+    <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
+  </StoreProvider>
+);
 
 describe('api loaders', () => {
   const queryClient = new QueryClient();
@@ -54,69 +44,6 @@ describe('api loaders', () => {
 
   beforeEach(() => {
     vi.clearAllMocks();
-  });
-
-  describe('Notices API', () => {
-    beforeEach(() => {
-      vi.clearAllMocks();
-    });
-
-    it('getNoticesList calls API and schema parser correctly', async () => {
-      // you can generate a specific field, even if optionale, using .require()
-      const dataMock = createMock(schemas.noticesListDTOSchema.required());
-
-      const apiMock = vi.spyOn(utils.apiClient.notices, 'getNoticesList').mockResolvedValue({
-        data: dataMock,
-        headers: {}
-      } as AxiosResponse);
-
-      const { result } = renderHook(
-        () => loaders.getNoticesList({ ordering: 'DESC', size: 10 }, ''),
-        { wrapper }
-      );
-
-      await waitFor(() => {
-        expect(apiMock).toHaveBeenCalled();
-        expect(result.current.isSuccess).toBeTruthy();
-        expect(result.current.data?.notices).toEqual(dataMock.notices);
-      });
-    });
-
-    it('getNoticeDetails calls API and schema parser correctly', async () => {
-      const dataMock = createMock(schemas.noticeDetailsDTOSchema);
-
-      const eventId = dataMock.infoNotice?.eventId;
-
-      const apiMock = vi
-        .spyOn(utils.apiClient.notices, 'getNoticeDetails')
-        .mockResolvedValue({ data: dataMock } as AxiosResponse);
-
-      const { result } = renderHook(() => loaders.getNoticeDetails(eventId as string), {
-        wrapper
-      });
-
-      await waitFor(() => {
-        expect(apiMock).toHaveBeenCalledWith(eventId);
-        expect(result.current.isSuccess).toBeTruthy();
-        expect(result.current.data).toEqual(dataMock);
-      });
-    });
-  });
-
-  describe('transactionReceipt', () => {
-    it('getReceiptApi is called', async () => {
-      const transactionId = '1';
-
-      const apiMock = vi
-        .spyOn(utils.apiClient.notices, 'getNoticeReceipt')
-        .mockResolvedValue({ data: null } as AxiosResponse);
-
-      renderHook(() => loaders.getReceiptPDF(transactionId), { wrapper });
-
-      await waitFor(() => {
-        expect(apiMock).toHaveBeenCalledWith(transactionId, { format: 'blob' });
-      });
-    });
   });
 
   describe('userInfo', () => {
@@ -206,33 +133,867 @@ describe('Payment Notices API', () => {
     vi.clearAllMocks();
   });
 
-  const queryClient = new QueryClient();
-  const wrapper = ({ children }: { children: ReactNode }) => (
-    <StoreProvider>
-      <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
-    </StoreProvider>
-  );
+  it('getOrganizationsWithSpontaneous calls API and schema parser correctly', async () => {
+    const dataMock = createMock(zod.array(organizationsWithSpontaneousDTOSchema));
 
-  it('getPaymentNoticeDetails calls API and schema parser correctly', async () => {
     const apiMock = vi
-      .spyOn(utils.apiClient.paymentNotices, 'getPaymentNoticesDetails')
-      .mockResolvedValue({ data: mockPaymentNoticeDetails } as AxiosResponse);
+      .spyOn(utils.apiClient.brokers, 'getOrganizationsWithSpontaneous')
+      .mockResolvedValue({ data: dataMock } as AxiosResponse);
 
-    const params: Params = {
-      id: mockPaymentNoticeDetails.iupd,
-      paTaxCode: mockPaymentNoticeDetails.paTaxCode
-    };
+    const query = renderHook(() => loaders.getOrganizationsWithSpontaneous(1), { wrapper });
 
-    const { result } = renderHook(() => loaders.getPaymentNoticeDetails({ params }), {
+    await waitFor(() => {
+      expect(apiMock).toHaveBeenCalledWith(1);
+      expect(query.result.current.isSuccess).toBeTruthy();
+      expect(query.result.current.data).toEqual(dataMock);
+    });
+  });
+
+  it('getDebtPositionTypeOrgsWithSpontaneous calls API and schema parser correctly', async () => {
+    const dataMock = createMock(zod.array(debtPositionTypeOrgsWithSpontaneousDTOSchema));
+
+    const apiMock = vi
+      .spyOn(utils.apiClient.brokers, 'getDebtPositionTypeOrgsWithSpontaneous')
+      .mockResolvedValue({ data: dataMock } as AxiosResponse);
+
+    const query = renderHook(() => loaders.getDebtPositionTypeOrgsWithSpontaneous(1, 3), {
       wrapper
     });
 
-    const query = renderHook(() => result.current(), { wrapper });
+    await waitFor(() => {
+      expect(apiMock).toHaveBeenCalledWith(1, 3);
+      expect(query.result.current.isSuccess).toBeTruthy();
+      expect(query.result.current.data).toEqual(dataMock);
+    });
+  });
+
+  it('getDebtPositionTypeOrgsWithSpontaneousDetail calls API and schema parser correctly', async () => {
+    const dataMock = createMock(debtPositionTypeOrgsWithSpontaneousDTOSchema);
+
+    const apiMock = vi
+      .spyOn(utils.apiClient.brokers, 'getDebtPositionTypeOrgsWithSpontaneousDetail')
+      .mockResolvedValue({ data: dataMock } as AxiosResponse);
+
+    const query = renderHook(() => loaders.getDebtPositionTypeOrgsWithSpontaneousDetail(1, 2, 3), {
+      wrapper
+    });
 
     await waitFor(() => {
-      expect(apiMock).toHaveBeenCalledWith(params.id, { paTaxCode: params.paTaxCode });
+      expect(apiMock).toHaveBeenCalledWith(1, 2, 3);
       expect(query.result.current.isSuccess).toBeTruthy();
-      expect(query.result.current.data).toEqual(mockNoticeDetails);
+      expect(query.result.current.data).toEqual(dataMock);
+    });
+  });
+
+  it('createSpontaneousDebtPosition calls API and schema parser correctly', async () => {
+    const bodyMock = createMock(debtPositionRequestDTOSchema);
+    const responseMock = createMock(debtPositionResponseDTOSchema);
+
+    const apiMock = vi
+      .spyOn(utils.apiClient.brokers, 'createSpontaneousDebtPosition')
+      .mockResolvedValue({ data: responseMock } as AxiosResponse);
+
+    const query = renderHook(() => loaders.createSpontaneousDebtPosition(1, bodyMock), {
+      wrapper
+    });
+
+    await waitFor(() => {
+      expect(apiMock).toHaveBeenCalledWith(1, bodyMock);
+      expect(query.result.current.isSuccess).toBeTruthy();
+      expect(query.result.current.data).toEqual(responseMock);
+    });
+  });
+
+  it('getPaymentNotice mutation calls API and extract filename correctly', async () => {
+    const apiMock = vi.spyOn(utils.apiClient.brokers, 'getPaymentNotice').mockResolvedValue({
+      data: 'Test',
+      headers: { 'content-disposition': "attachment; filename='test.pdf'" }
+    } as unknown as AxiosResponse);
+
+    const mutation = renderHook(() => loaders.getPaymentNotice(1, 3, { nav: '1' }, 'FISCALCODE'), {
+      wrapper
+    });
+
+    await mutation.result.current.mutateAsync();
+
+    await waitFor(() => {
+      expect(apiMock).toHaveBeenCalledWith(
+        1,
+        3,
+        { nav: '1' },
+        { format: 'blob', headers: { 'X-fiscal-code': 'FISCALCODE' } }
+      );
+      expect(mutation.result.current.isSuccess).toBeTruthy();
+      expect(mutation.result.current.data).toEqual({ data: 'Test', filename: 'test.pdf' });
+    });
+  });
+
+  it('getPublicDebtPositionTypeOrgsWithSpontaneous calls API and schema parser correctly', async () => {
+    const dataMock = createMock(zod.array(debtPositionTypeOrgsWithSpontaneousDTOSchema));
+
+    const apiMock = vi
+      .spyOn(utils.apiClient.public, 'getPublicDebtPositionTypeOrgsWithSpontaneous')
+      .mockResolvedValue({ data: dataMock } as AxiosResponse);
+
+    const query = renderHook(
+      () => loaders.public.getPublicDebtPositionTypeOrgsWithSpontaneous(1, 3),
+      {
+        wrapper
+      }
+    );
+
+    await waitFor(() => {
+      expect(apiMock).toHaveBeenCalledWith(1, 3);
+      expect(query.result.current.isSuccess).toBeTruthy();
+      expect(query.result.current.data).toEqual(dataMock);
+    });
+  });
+
+  it('createPublicSpontaneousDebtPosition calls API with recaptcha header when token is provided', async () => {
+    const bodyMock = createMock(debtPositionRequestDTOSchema);
+    const responseMock = createMock(debtPositionResponseDTOSchema);
+
+    const apiMock = vi
+      .spyOn(utils.apiClient.public, 'createPublicSpontaneousDebtPosition')
+      .mockResolvedValue({ data: responseMock } as AxiosResponse);
+
+    const query = renderHook(
+      () => loaders.public.createPublicSpontaneousDebtPosition(1, bodyMock, 'recaptcha-token-abc'),
+      {
+        wrapper
+      }
+    );
+
+    await waitFor(() => {
+      expect(apiMock).toHaveBeenCalledWith(1, bodyMock, {
+        headers: { 'X-recaptcha-token': 'recaptcha-token-abc' }
+      });
+      expect(query.result.current.isSuccess).toBeTruthy();
+      expect(query.result.current.data).toEqual(responseMock);
+    });
+  });
+
+  it('createPublicSpontaneousDebtPosition calls API without recaptcha header when token is undefined', async () => {
+    const bodyMock = createMock(debtPositionRequestDTOSchema);
+    const responseMock = createMock(debtPositionResponseDTOSchema);
+
+    const apiMock = vi
+      .spyOn(utils.apiClient.public, 'createPublicSpontaneousDebtPosition')
+      .mockResolvedValue({ data: responseMock } as AxiosResponse);
+
+    const query = renderHook(
+      () => loaders.public.createPublicSpontaneousDebtPosition(1, bodyMock, undefined),
+      {
+        wrapper
+      }
+    );
+
+    await waitFor(() => {
+      expect(apiMock).toHaveBeenCalledWith(1, bodyMock, { headers: {} });
+      expect(query.result.current.isSuccess).toBeTruthy();
+    });
+  });
+
+  it('createPublicSpontaneousDebtPosition does not fire query when token is null', () => {
+    const bodyMock = createMock(debtPositionRequestDTOSchema);
+
+    const apiMock = vi
+      .spyOn(utils.apiClient.public, 'createPublicSpontaneousDebtPosition')
+      .mockResolvedValue({ data: {} } as AxiosResponse);
+
+    const query = renderHook(
+      () => loaders.public.createPublicSpontaneousDebtPosition(1, bodyMock, null),
+      {
+        wrapper
+      }
+    );
+
+    expect(apiMock).not.toHaveBeenCalled();
+    expect(query.result.current.fetchStatus).toBe('idle');
+  });
+
+  it('getPublicOrganizationsWithSpontaneous calls API and schema parser correctly', async () => {
+    const dataMock = createMock(zod.array(organizationsWithSpontaneousDTOSchema));
+
+    const apiMock = vi
+      .spyOn(utils.apiClient.public, 'getPublicOrganizationsWithSpontaneous')
+      .mockResolvedValue({ data: dataMock } as AxiosResponse);
+
+    const query = renderHook(() => loaders.public.getPublicOrganizationsWithSpontaneous(1), {
+      wrapper
+    });
+
+    await waitFor(() => {
+      expect(apiMock).toHaveBeenCalledWith(1);
+      expect(query.result.current.isSuccess).toBeTruthy();
+      expect(query.result.current.data).toEqual(dataMock);
+    });
+  });
+
+  it('getPublicDebtPositionTypeOrgsWithSpontaneousDetail calls API and schema parser correctly', async () => {
+    const dataMock = createMock(debtPositionTypeOrgsWithSpontaneousDTOSchema);
+
+    const apiMock = vi
+      .spyOn(utils.apiClient.public, 'getPublicDebtPositionTypeOrgsWithSpontaneousDetail')
+      .mockResolvedValue({ data: dataMock } as AxiosResponse);
+
+    const query = renderHook(
+      () => loaders.public.getPublicDebtPositionTypeOrgsWithSpontaneousDetail(1, 2, 3),
+      {
+        wrapper
+      }
+    );
+
+    await waitFor(() => {
+      expect(apiMock).toHaveBeenCalledWith(1, 2, 3);
+      expect(query.result.current.isSuccess).toBeTruthy();
+      expect(query.result.current.data).toEqual(dataMock);
+    });
+  });
+
+  it('getPublicPaymentNotice mutation calls API with fiscal code header when provided', async () => {
+    const apiMock = vi.spyOn(utils.apiClient.public, 'getPublicPaymentNotice').mockResolvedValue({
+      data: 'Test',
+      headers: { 'content-disposition': "attachment; filename='test.pdf'" }
+    } as unknown as AxiosResponse);
+
+    const mutation = renderHook(
+      () => loaders.public.getPublicPaymentNotice(1, 3, { nav: '1' }, 'FISCALCODE'),
+      {
+        wrapper
+      }
+    );
+
+    await mutation.result.current.mutateAsync();
+
+    await waitFor(() => {
+      expect(apiMock).toHaveBeenCalledWith(
+        1,
+        3,
+        { nav: '1' },
+        { format: 'blob', headers: { 'X-fiscal-code': 'FISCALCODE' } }
+      );
+      expect(mutation.result.current.isSuccess).toBeTruthy();
+      expect(mutation.result.current.data).toEqual({ data: 'Test', filename: 'test.pdf' });
+    });
+  });
+
+  it('getPublicPaymentNotice mutation includes recaptcha header when token is provided', async () => {
+    const apiMock = vi.spyOn(utils.apiClient.public, 'getPublicPaymentNotice').mockResolvedValue({
+      data: 'Test',
+      headers: { 'content-disposition': "attachment; filename='test.pdf'" }
+    } as unknown as AxiosResponse);
+
+    const mutation = renderHook(
+      () => loaders.public.getPublicPaymentNotice(1, 3, { nav: '1' }, 'FISCALCODE'),
+      {
+        wrapper
+      }
+    );
+
+    await mutation.result.current.mutateAsync({ recaptchaToken: 'recaptcha-token-xyz' });
+
+    await waitFor(() => {
+      expect(apiMock).toHaveBeenCalledWith(
+        1,
+        3,
+        { nav: '1' },
+        {
+          format: 'blob',
+          headers: {
+            'X-fiscal-code': 'FISCALCODE',
+            'X-recaptcha-token': 'recaptcha-token-xyz'
+          }
+        }
+      );
+      expect(mutation.result.current.isSuccess).toBeTruthy();
+    });
+  });
+
+  it('getPublicPaymentNotice mutation does not include recaptcha header when token is null', async () => {
+    const apiMock = vi.spyOn(utils.apiClient.public, 'getPublicPaymentNotice').mockResolvedValue({
+      data: 'Test',
+      headers: { 'content-disposition': "attachment; filename='test.pdf'" }
+    } as unknown as AxiosResponse);
+
+    const mutation = renderHook(
+      () => loaders.public.getPublicPaymentNotice(1, 3, { nav: '1' }, 'FISCALCODE'),
+      {
+        wrapper
+      }
+    );
+
+    await mutation.result.current.mutateAsync({ recaptchaToken: null });
+
+    await waitFor(() => {
+      expect(apiMock).toHaveBeenCalledWith(
+        1,
+        3,
+        { nav: '1' },
+        {
+          format: 'blob',
+          headers: { 'X-fiscal-code': 'FISCALCODE' }
+        }
+      );
+    });
+  });
+});
+
+describe('useReceiptDetail', () => {
+  const mockArgs = [1, 'receiptIdExample'] as any;
+  const mockData = {
+    id: 'receiptIdExample',
+    amount: 100,
+    status: 'PAID'
+  };
+
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
+
+  it('returns data correctly on successful fetch', async () => {
+    vi.spyOn(utils.apiClient.brokers, 'getReceiptDetail').mockResolvedValue({
+      data: mockData
+    } as any);
+
+    const { result } = renderHook(() => loaders.useReceiptDetail(mockArgs));
+
+    await waitFor(() => {
+      expect(result.current.isSuccess).toBe(true);
+    });
+
+    expect(result.current.data).toEqual(mockData);
+  });
+
+  it('handles error state correctly', async () => {
+    vi.spyOn(utils.apiClient.brokers, 'getReceiptDetail').mockRejectedValue(new Error('API Error'));
+
+    try {
+      renderHook(() => loaders.useReceiptDetail(mockArgs));
+    } catch (e) {
+      expect(e).toBeInstanceOf(Error);
+      expect((e as Error).message).toBe('API Error');
+    }
+  });
+});
+
+describe('usePublicReceiptDetail', () => {
+  const mockArgs = [1, 'receiptIdExample'] as any;
+  const mockData = {
+    id: 'receiptIdExample',
+    amount: 100,
+    status: 'PAID'
+  };
+
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
+
+  it('returns data correctly on successful fetch', async () => {
+    vi.spyOn(utils.apiClient.public, 'getPublicReceiptDetail').mockResolvedValue({
+      data: mockData
+    } as any);
+
+    const { result } = renderHook(() => loaders.public.usePublicReceiptDetail(mockArgs));
+
+    await waitFor(() => {
+      expect(result.current.isSuccess).toBe(true);
+    });
+
+    expect(result.current.data).toEqual(mockData);
+  });
+
+  it('handles error state correctly', async () => {
+    vi.spyOn(utils.apiClient.public, 'getPublicReceiptDetail').mockRejectedValue(
+      new Error('API Error')
+    );
+
+    try {
+      renderHook(() => loaders.public.usePublicReceiptDetail(mockArgs));
+    } catch (e) {
+      expect(e).toBeInstanceOf(Error);
+      expect((e as Error).message).toBe('API Error');
+    }
+  });
+});
+
+describe('useDownloadReceipt', () => {
+  beforeEach(() => {
+    const mockBlob = new Blob(['test pdf content'], { type: 'application/pdf' });
+
+    vi.spyOn(utils.apiClient.brokers, 'getReceiptPdf').mockResolvedValue({
+      data: mockBlob,
+      headers: {
+        'content-disposition': 'attachment; filename="receipt_123.pdf"'
+      }
+    } as any);
+
+    vi.spyOn(utils.converters, 'extractFilename').mockReturnValue('receipt_123.pdf');
+  });
+
+  afterEach(() => {
+    vi.clearAllMocks();
+  });
+
+  it('downloads receipt successfully', async () => {
+    const args = { brokerId: 999 };
+
+    const { result } = renderHook(() => loaders.useDownloadReceipt(args));
+
+    expect(result.current.isPending).toBe(false);
+
+    const promise = result.current.mutateAsync({
+      organizationId: 456,
+      receiptId: 123
+    });
+
+    await waitFor(() => {
+      expect(result.current.isSuccess).toBe(true);
+    });
+
+    const response = await promise;
+
+    expect(response.blob).toBeInstanceOf(Blob);
+    expect(response.filename).toBe('receipt_123.pdf');
+    expect(utils.apiClient.brokers.getReceiptPdf).toHaveBeenCalledWith(999, 456, 123, {
+      format: 'blob',
+      headers: { 'X-fiscal-code': undefined }
+    });
+  });
+
+  it('handles missing content-disposition header', async () => {
+    const args = { brokerId: 999 };
+
+    vi.spyOn(utils.apiClient.brokers, 'getReceiptPdf').mockResolvedValue({
+      data: new Blob(['test pdf content'], { type: 'application/pdf' }),
+      headers: {}
+    } as any);
+
+    (utils.converters.extractFilename as Mock).mockReturnValue(null);
+
+    const { result } = renderHook(() => loaders.useDownloadReceipt(args));
+
+    const response = await result.current.mutateAsync({ organizationId: 456, receiptId: 123 });
+
+    expect(utils.converters.extractFilename).toHaveBeenCalledWith('');
+    expect(response.filename).toBeNull();
+  });
+
+  it('handles API errors correctly', async () => {
+    const args = { brokerId: 999 };
+    const errorMessage = 'Failed to download receipt';
+
+    vi.spyOn(utils.apiClient.brokers, 'getReceiptPdf').mockRejectedValue(new Error(errorMessage));
+
+    const { result } = renderHook(() => loaders.useDownloadReceipt(args));
+
+    let error;
+    try {
+      await result.current.mutateAsync({ organizationId: 456, receiptId: 123 });
+    } catch (e) {
+      error = e;
+    }
+
+    await waitFor(() => {
+      expect(result.current.isError).toBe(true);
+    });
+
+    expect(error).toBeInstanceOf(Error);
+    expect((error as Error).message).toBe(errorMessage);
+  });
+});
+
+describe('usePublicDownloadReceipt', () => {
+  beforeEach(() => {
+    const mockBlob = new Blob(['test pdf content'], { type: 'application/pdf' });
+
+    vi.spyOn(utils.apiClient.public, 'getPublicReceiptPdf').mockResolvedValue({
+      data: mockBlob,
+      headers: {
+        'content-disposition': 'attachment; filename="receipt_123.pdf"'
+      }
+    } as any);
+
+    vi.spyOn(utils.converters, 'extractFilename').mockReturnValue('receipt_123.pdf');
+  });
+
+  afterEach(() => {
+    vi.clearAllMocks();
+  });
+
+  it('downloads receipt successfully', async () => {
+    const args = { brokerId: 999 };
+
+    const { result } = renderHook(() => loaders.public.usePublicDownloadReceipt(args));
+
+    expect(result.current.isPending).toBe(false);
+
+    const promise = result.current.mutateAsync({
+      organizationId: 456,
+      receiptId: 123
+    });
+
+    await waitFor(() => {
+      expect(result.current.isSuccess).toBe(true);
+    });
+
+    const response = await promise;
+
+    expect(response.blob).toBeInstanceOf(Blob);
+    expect(response.filename).toBe('receipt_123.pdf');
+    expect(utils.apiClient.public.getPublicReceiptPdf).toHaveBeenCalledWith(999, 456, 123, {
+      format: 'blob',
+      headers: { 'X-fiscal-code': undefined }
+    });
+  });
+
+  it('handles missing content-disposition header', async () => {
+    const args = { brokerId: 999 };
+
+    vi.spyOn(utils.apiClient.public, 'getPublicReceiptPdf').mockResolvedValue({
+      data: new Blob(['test pdf content'], { type: 'application/pdf' }),
+      headers: {}
+    } as any);
+
+    (utils.converters.extractFilename as Mock).mockReturnValue(null);
+
+    const { result } = renderHook(() => loaders.public.usePublicDownloadReceipt(args));
+
+    const response = await result.current.mutateAsync({ organizationId: 456, receiptId: 123 });
+
+    expect(utils.converters.extractFilename).toHaveBeenCalledWith('');
+    expect(response.filename).toBeNull();
+  });
+
+  it('handles API errors correctly', async () => {
+    const args = { brokerId: 999 };
+    const errorMessage = 'Failed to download receipt';
+
+    vi.spyOn(utils.apiClient.public, 'getPublicReceiptPdf').mockRejectedValue(
+      new Error(errorMessage)
+    );
+
+    const { result } = renderHook(() => loaders.public.usePublicDownloadReceipt(args));
+
+    let error;
+    try {
+      await result.current.mutateAsync({ organizationId: 456, receiptId: 123 });
+    } catch (e) {
+      error = e;
+    }
+
+    await waitFor(() => {
+      expect(result.current.isError).toBe(true);
+    });
+
+    expect(error).toBeInstanceOf(Error);
+    expect((error as Error).message).toBe(errorMessage);
+  });
+});
+
+describe('getPagedDebtorReceipts', () => {
+  it('calls API enpoint correctly', async () => {
+    const dataMock = createMock(pagedDebtorDebtPositionDTOSchema);
+
+    const apiMock = vi
+      .spyOn(utils.apiClient.brokers, 'getPagedDebtorReceipts')
+      .mockResolvedValue({ data: dataMock } as AxiosResponse);
+
+    const mutation = renderHook(() => loaders.getPagedDebtorReceipts(1), {
+      wrapper
+    });
+
+    await mutation.result.current.mutateAsync({ pagination: { page: 1, size: 10 }, sort: [] });
+
+    await waitFor(() => {
+      expect(apiMock).toHaveBeenCalledWith(1, { page: 1, size: 10, sort: [] });
+      expect(mutation.result.current.isSuccess).toBeTruthy();
+      expect(mutation.result.current.data).toEqual(dataMock);
+    });
+  });
+});
+
+describe('usePagedUnpaidDebtPositions', () => {
+  it('calls API enpoint correctly', async () => {
+    const dataMock = createMock(pagedDebtorDebtPositionDTOSchema);
+
+    const apiMock = vi
+      .spyOn(utils.apiClient.brokers, 'getPagedUnpaidDebtPositions')
+      .mockResolvedValue({ data: dataMock } as AxiosResponse);
+
+    const mutation = renderHook(() => loaders.usePagedUnpaidDebtPositions(1), {
+      wrapper
+    });
+
+    await mutation.result.current.mutateAsync({ pagination: { page: 1, size: 10 }, sort: [] });
+
+    await waitFor(() => {
+      expect(apiMock).toHaveBeenCalledWith(1, { page: 1, size: 10, sort: [] });
+      expect(mutation.result.current.isSuccess).toBeTruthy();
+      expect(mutation.result.current.data).toEqual(dataMock);
+    });
+  });
+});
+
+const mockInstallmentsData = [
+  {
+    iuv: '123456789012345678',
+    orgName: 'Test Organization',
+    amountCents: 10000
+  }
+];
+
+describe('usePublicInstallmentsByIuvOrNav', () => {
+  beforeEach(() => {
+    vi.spyOn(utils.apiClient.public, 'getPublicInstallmentsByIuvOrNav').mockResolvedValue({
+      data: mockInstallmentsData
+    } as any);
+  });
+
+  afterEach(() => {
+    vi.clearAllMocks();
+  });
+
+  it('fetches installments with orgFiscalCode and fiscalCode', async () => {
+    const { result } = renderHook(() => loaders.public.usePublicInstallmentsByIuvOrNav(999));
+
+    await result.current.mutateAsync({
+      iuvOrNav: '123456789012345678',
+      orgFiscalCode: '12345678901',
+      fiscalCode: 'RSSMRA80A01H501U'
+    });
+
+    await waitFor(() => {
+      expect(result.current.isSuccess).toBe(true);
+    });
+
+    expect(utils.apiClient.public.getPublicInstallmentsByIuvOrNav).toHaveBeenCalledWith(
+      999,
+      { iuvOrNav: '123456789012345678', orgFiscalCode: '12345678901' },
+      { headers: { 'X-fiscal-code': 'RSSMRA80A01H501U' } }
+    );
+  });
+
+  it('fetches installments with orgFiscalCode only (no fiscalCode)', async () => {
+    const { result } = renderHook(() => loaders.public.usePublicInstallmentsByIuvOrNav(999));
+
+    await result.current.mutateAsync({
+      iuvOrNav: '123456789012345678',
+      orgFiscalCode: '12345678901'
+    });
+
+    await waitFor(() => {
+      expect(result.current.isSuccess).toBe(true);
+    });
+
+    expect(utils.apiClient.public.getPublicInstallmentsByIuvOrNav).toHaveBeenCalledWith(
+      999,
+      { iuvOrNav: '123456789012345678', orgFiscalCode: '12345678901' },
+      {}
+    );
+  });
+
+  it('handles API errors', async () => {
+    vi.spyOn(utils.apiClient.public, 'getPublicInstallmentsByIuvOrNav').mockRejectedValue(
+      new Error('Failed')
+    );
+
+    const { result } = renderHook(() => loaders.public.usePublicInstallmentsByIuvOrNav(999));
+
+    try {
+      await result.current.mutateAsync({
+        iuvOrNav: '123456789012345678',
+        orgFiscalCode: '12345678901'
+      });
+    } catch (e) {
+      // Expected error
+    }
+
+    await waitFor(() => {
+      expect(result.current.isError).toBe(true);
+    });
+  });
+});
+
+describe('getDebtPositionDetail', () => {
+  it('calls API enpoint correctly', async () => {
+    const dataMock = createMock(debtorUnpaidDebtPositionOverviewDTOSchema);
+
+    const apiMock = vi
+      .spyOn(utils.apiClient.brokers, 'getDebtorUnpaidDebtPositionOverview')
+      .mockResolvedValue({ data: dataMock } as AxiosResponse);
+
+    const query = renderHook(() => loaders.getDebtPositionDetail(1, 1, 1), {
+      wrapper
+    });
+
+    await waitFor(() => {
+      expect(apiMock).toHaveBeenCalledWith(1, 1, { organizationId: 1 });
+      expect(query.result.current.isSuccess).toBeTruthy();
+      expect(query.result.current.data).toEqual(dataMock);
+    });
+  });
+});
+
+describe('getMostUsedSpontaneousDebtPositionTypeOrgsForCurrentYear', () => {
+  it('calls API enpoint correctly', async () => {
+    const dataMock = createMock(debtPositionTypeOrgsWithSpontaneousDTOSchema);
+
+    const apiMock = vi
+      .spyOn(utils.apiClient.brokers, 'getMostUsedSpontaneousDebtPositionTypeOrgsForCurrentYear')
+      .mockResolvedValue({ data: dataMock } as AxiosResponse);
+
+    const query = renderHook(
+      () => loaders.getMostUsedSpontaneousDebtPositionTypeOrgsForCurrentYear(1, 1),
+      {
+        wrapper
+      }
+    );
+
+    await waitFor(() => {
+      expect(apiMock).toHaveBeenCalledWith(1, 1);
+      expect(query.result.current.isSuccess).toBeTruthy();
+      expect(query.result.current.data).toEqual(dataMock);
+    });
+  });
+});
+
+describe('getPublicMostUsedSpontaneousDebtPositionTypeOrgsForCurrentYear', () => {
+  it('calls API enpoint correctly', async () => {
+    const dataMock = createMock(debtPositionTypeOrgsWithSpontaneousDTOSchema);
+
+    const apiMock = vi
+      .spyOn(
+        utils.apiClient.public,
+        'getPublicMostUsedSpontaneousDebtPositionTypeOrgsForCurrentYear'
+      )
+      .mockResolvedValue({ data: dataMock } as AxiosResponse);
+
+    const query = renderHook(
+      () => loaders.public.getPublicMostUsedSpontaneousDebtPositionTypeOrgsForCurrentYear(1, 1),
+      {
+        wrapper
+      }
+    );
+
+    await waitFor(() => {
+      expect(apiMock).toHaveBeenCalledWith(1, 1);
+      expect(query.result.current.isSuccess).toBeTruthy();
+      expect(query.result.current.data).toEqual(dataMock);
+    });
+  });
+});
+
+describe('useResourceContent', () => {
+  const mockContent = '<h1>Terms of Service</h1><p>Lorem ipsum</p>';
+
+  const createNoRetryWrapper = () => {
+    const qc = new QueryClient({
+      defaultOptions: { queries: { retry: false } }
+    });
+    return ({ children }: { children: ReactNode }) => (
+      <StoreProvider>
+        <QueryClientProvider client={qc}>{children}</QueryClientProvider>
+      </StoreProvider>
+    );
+  };
+
+  beforeEach(() => {
+    vi.clearAllMocks();
+    global.fetch = vi.fn();
+  });
+
+  afterEach(() => {
+    vi.restoreAllMocks();
+  });
+
+  it('fetches and returns resource content on success', async () => {
+    (global.fetch as any).mockResolvedValue({
+      ok: true,
+      headers: { get: () => 'text/markdown' },
+      text: () => Promise.resolve(mockContent)
+    });
+
+    const { result } = renderHook(() => loaders.useResourceContent('tos', 'it'), {
+      wrapper: createNoRetryWrapper()
+    });
+
+    await waitFor(() => {
+      expect(result.current.isSuccess).toBe(true);
+    });
+
+    expect(result.current.data).toBe(mockContent);
+    expect(global.fetch).toHaveBeenCalledTimes(1);
+  });
+
+  it('throws error when response is not ok', async () => {
+    (global.fetch as any).mockResolvedValue({
+      ok: false,
+      status: 404
+    });
+
+    const { result } = renderHook(() => loaders.useResourceContent('pp', 'it'), {
+      wrapper: createNoRetryWrapper()
+    });
+
+    await waitFor(() => {
+      expect(result.current.isError).toBe(true);
+    });
+  });
+
+  it('handles fetch network error', async () => {
+    (global.fetch as any).mockRejectedValue(new Error('Network error'));
+
+    const { result } = renderHook(() => loaders.useResourceContent('tos', 'en'), {
+      wrapper: createNoRetryWrapper()
+    });
+
+    await waitFor(() => {
+      expect(result.current.isError).toBe(true);
+    });
+  });
+
+  it('uses different query keys for different resource types', async () => {
+    (global.fetch as any).mockResolvedValue({
+      ok: true,
+      headers: { get: () => 'text/markdown' },
+      text: () => Promise.resolve(mockContent)
+    });
+
+    const noRetryWrapper = createNoRetryWrapper();
+
+    const { result: tosResult } = renderHook(() => loaders.useResourceContent('tos', 'it'), {
+      wrapper: noRetryWrapper
+    });
+
+    await waitFor(() => {
+      expect(tosResult.current.isSuccess).toBe(true);
+    });
+
+    const { result: ppResult } = renderHook(() => loaders.useResourceContent('pp', 'it'), {
+      wrapper: noRetryWrapper
+    });
+
+    await waitFor(() => {
+      expect(ppResult.current.isSuccess).toBe(true);
+    });
+
+    expect(global.fetch).toHaveBeenCalledTimes(2);
+  });
+  it('throws error when response content-type is text/html (SPA fallback)', async () => {
+    (global.fetch as any).mockResolvedValue({
+      ok: true,
+      headers: {
+        get: (name: string) => (name === 'content-type' ? 'text/html; charset=utf-8' : null)
+      }
+    });
+
+    const { result } = renderHook(() => loaders.useResourceContent('tos', 'it'), {
+      wrapper: createNoRetryWrapper()
+    });
+
+    await waitFor(() => {
+      expect(result.current.isError).toBe(true);
     });
   });
 });

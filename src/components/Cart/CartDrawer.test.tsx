@@ -5,7 +5,8 @@ import { CartDrawer } from './CartDrawer';
 import { toggleCartDrawer } from 'store/CartStore';
 import { useNavigate } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { ArcRoutes } from 'routes/routes';
+import { ROUTES } from 'routes/routes';
+import utils from 'utils';
 
 vi.mock(import('store/CartStore'), async (importOriginal) => {
   const actual = await importOriginal();
@@ -78,7 +79,7 @@ describe('CartDrawer', () => {
     fireEvent.click(emptyButton);
 
     expect(toggleCartDrawer).toHaveBeenCalled();
-    expect(mockNavigate).toHaveBeenCalledWith(ArcRoutes.PAYMENT_NOTICES);
+    expect(mockNavigate).toHaveBeenCalledWith(ROUTES.DEBT_POSITIONS);
   });
 
   it('allow the click on pay button when the cart is not empty', () => {
@@ -104,5 +105,25 @@ describe('CartDrawer', () => {
     );
     const payButton = screen.getByText('app.cart.items.pay');
     fireEvent.click(payButton);
+  });
+
+  it('does not show the back button when the user is anonymous', () => {
+    mockUseStore.mockReturnValue({
+      state: {
+        cart: {
+          items: []
+        }
+      }
+    });
+
+    vi.spyOn(utils.storage.user, 'isAnonymous').mockReturnValue(true);
+
+    render(
+      <QueryClientProvider client={queryClient}>
+        <CartDrawer />
+      </QueryClientProvider>
+    );
+    const backButton = screen.queryByTestId('cart-back-button');
+    expect(backButton).not.toBeInTheDocument();
   });
 });

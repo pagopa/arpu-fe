@@ -1,12 +1,8 @@
-import { TransactionProps } from 'components/Transactions/Transaction';
 import {
   PaymentNoticeDTO,
-  PaymentNoticesListDTO,
   PaymentOptionDTO,
-  NoticesListDTO,
   NoticeDetailsDTO,
-  InfoNoticeDTO,
-  PaymentNoticeDetailsDTO
+  InfoNoticeDTO
 } from '../../generated/apiClient';
 import { NoticeDetail } from 'models/NoticeDetail';
 import { DateFormat, datetools } from './datetools';
@@ -14,7 +10,6 @@ import utils from 'utils';
 import {
   NoticeImage,
   PaymentInstallmentType,
-  PaymentNoticeDetailsType,
   PaymentNoticeEnum,
   PaymentNoticeType,
   PaymentOptionMultiple,
@@ -22,7 +17,8 @@ import {
   PaymentOptionType
 } from 'models/PaymentNotice';
 import { CartItem } from 'models/Cart';
-import { ArcRoutes } from 'routes/routes';
+import { ROUTES } from 'routes/routes';
+import { generatePath } from 'react-router-dom';
 
 // This high order function is useful to 'decorate' existing function to add
 // the functionality to manage undefined (not optional) parameters and output a global character instead
@@ -34,7 +30,7 @@ const withMissingValue =
       : missingValue || utils.config.missingValue;
   };
 
-const fromTaxCodeToSrcImage = (payeeTaxCode: string) =>
+export const fromTaxCodeToSrcImage = (payeeTaxCode: string) =>
   `${utils.config.entitiesLogoCdn}/${payeeTaxCode.replace(/^0+/, '')}.png`;
 
 const toEuro = (amount: number, decimalDigits: number = 2, fractionDigits: number = 2): string =>
@@ -48,41 +44,6 @@ const toEuro = (amount: number, decimalDigits: number = 2, fractionDigits: numbe
 export const toEuroOrMissingValue = withMissingValue(toEuro);
 export const formatDateOrMissingValue = withMissingValue(datetools.formatDate);
 export const propertyOrMissingValue = withMissingValue((property: string) => property);
-
-interface PrepareRowsData {
-  notices: NoticesListDTO['notices'];
-  status: {
-    label: string;
-    color?: string;
-  };
-  payee: {
-    /** text to shown when more than an entities are in involved within a single transaction */
-    multi: string;
-    /** alt text for entity logo */
-    altImg?: string;
-  };
-}
-
-/** This function transforms Transaction[] list returned by transaction service into transactionProps[] item */
-const prepareRowsData = (data: PrepareRowsData): TransactionProps[] => {
-  return (
-    data.notices?.map((element) => ({
-      date: formatDateOrMissingValue(element.noticeDate),
-      amount: toEuroOrMissingValue(element.amount),
-      id: propertyOrMissingValue(element.eventId),
-      payee: {
-        name: element.payeeName || data.payee.multi,
-        srcImg: element.payeeTaxCode && fromTaxCodeToSrcImage(element.payeeTaxCode),
-        altImg: data.payee.altImg || `Logo Ente`
-      },
-      // needs to be updated when status can be different from success
-      status: {
-        label: data.status.label,
-        color: 'success'
-      }
-    })) || []
-  );
-};
 
 const prepareNoticeDetailData = (noticeDetail: NoticeDetailsDTO): NoticeDetail | undefined => {
   const { infoNotice, carts } = noticeDetail;
@@ -204,81 +165,56 @@ const normalizePaymentNotice = (paymentNotice: PaymentNoticeDTO): PaymentNoticeT
   }
 };
 
-/**
- * Transforms a PaymentNoticeDetailsDTO into a PaymentNoticeDetailsType.
- *
- * Determines whether it's a single or multiple payment notice based on paymentOptions.length
- * and transform options and installments accordingly, changing them from a list to an object
- *
- * @param {PaymentNoticeDTO} paymentNotice - The payment notice data transfer object.
- * @returns {PaymentNoticeDetailsType} The transformed payment notice object, either as single or multiple type.
- */
-const normalizePaymentNoticeDetails = (
-  paymentNotice: PaymentNoticeDetailsDTO
-): PaymentNoticeDetailsType => {
-  if (!paymentNotice?.paymentOptions?.length) {
-    throw new Error('No payment options found');
-  }
+const getPaymentOutcomes = (carts: CartItem[]) => {
+  const search = `?nav=${carts[0].nav}&org_fiscal_code=${carts[0].paTaxCode}`;
 
-  const normalized = {
-    ...paymentNotice,
-    iupd: propertyOrMissingValue(paymentNotice.iupd),
-    paTaxCode: propertyOrMissingValue(paymentNotice.paTaxCode),
-    paFullName: propertyOrMissingValue(paymentNotice.paFullName),
-    paymentOptions: paymentNotice.paymentOptions.map((paymentOption) => ({
-      nav: propertyOrMissingValue(paymentOption.nav),
-      iuv: propertyOrMissingValue(paymentOption.iuv),
-      description: propertyOrMissingValue(paymentOption.description),
-      dueDate: formatDateOrMissingValue(paymentOption.dueDate),
-      amount: toEuroOrMissingValue(paymentOption.amount),
-      amountValue: paymentOption?.amount ?? 0
-    }))
+  const OK = generatePath(ROUTES.public.COURTESY_PAGE, {
+    outcome: 'pagamento-avviso-completato'
+  });
+
+  const KO = generatePath(ROUTES.public.COURTESY_PAGE, {
+    outcome: 'pagamento-non-riuscito'
+  });
+
+  const CANCEL = generatePath(ROUTES.public.COURTESY_PAGE, {
+    outcome: 'pagamento-annullato'
+  });
+
+  return {
+    OK,
+    KO: `${KO}${search}`,
+    CANCEL: `${CANCEL}${search}`
   };
-
-  if (paymentNotice?.paymentOptions?.length === 1) {
-    return {
-      ...normalized,
-      type: PaymentNoticeEnum.SINGLE,
-      paymentOptions: {
-        ...normalized.paymentOptions[0]
-      }
-    };
-  } else {
-    return {
-      ...normalized,
-      type: PaymentNoticeEnum.MULTIPLE
-    };
-  }
 };
 
 /**
- * Prepares a list of payment notices data by transforming each notice.
- *
- * @param {PaymentNoticesListDTO | undefined} data - The list of payment notices or undefined.
- * @returns {{ paymentNotices: PaymentNoticeType[] | undefined }} The transformed list of payment notices as single or multiple.
+ * cart.allCCP = true only if ALL the items have allCCP true.
  */
-const prepareNoticesData = (
-  data: PaymentNoticesListDTO | undefined
-): { paymentNotices: PaymentNoticeType[] | undefined } => {
-  const transformed = data?.paymentNotices?.map((notice) => normalizePaymentNotice(notice));
+const aggregateAllCCP = (cartItems: CartItem[]): boolean =>
+  cartItems.length > 0 && cartItems.every((item) => item.allCCP);
 
-  return { paymentNotices: transformed };
+const cartItemsToCartsRequest = (cartItems: CartItem[]) => {
+  const ORIGIN = window.location.origin;
+  const isAnonymous = utils.storage.user.isAnonymous();
+  const COURTESY = getPaymentOutcomes(cartItems);
+
+  return {
+    paymentNotices: cartItems.map((item) => ({
+      amount: item.amount,
+      companyName: item.paFullName,
+      description: item.description,
+      fiscalCode: item.paTaxCode,
+      noticeNumber: item.nav
+    })),
+
+    returnUrls: {
+      returnOkUrl: `${ORIGIN}${isAnonymous ? COURTESY.OK : ROUTES.DASHBOARD}`,
+      returnCancelUrl: `${ORIGIN}${isAnonymous ? COURTESY.CANCEL : ROUTES.DEBT_POSITIONS}`,
+      returnErrorUrl: `${ORIGIN}${isAnonymous ? COURTESY.KO : ROUTES.DEBT_POSITIONS}`
+    },
+    allCCP: aggregateAllCCP(cartItems)
+  };
 };
-
-const cartItemsToCartsRequest = (cartItems: CartItem[]) => ({
-  paymentNotices: cartItems.map((item) => ({
-    amount: item.amount,
-    companyName: item.paFullName,
-    description: item.description,
-    fiscalCode: item.paTaxCode,
-    noticeNumber: item.nav
-  })),
-  returnUrls: {
-    returnOkUrl: window.location.origin + ArcRoutes.DASHBOARD,
-    returnCancelUrl: window.location.origin + ArcRoutes.PAYMENT_NOTICES,
-    returnErrorUrl: window.location.origin + ArcRoutes.PAYMENT_NOTICES
-  }
-});
 
 /**
  * Capitalizes the first letter of each word in a string.
@@ -293,14 +229,17 @@ export const capitalizeFirstLetter = (str: string): string => {
     .join(' ');
 };
 
+function extractFilename(header: string): string | null {
+  const filenameMatch = /filename=["']?([^"';]+)["']?/i.exec(header);
+  return filenameMatch ? filenameMatch[1].trim() : null;
+}
+
 export default {
   normalizePaymentNotice,
-  normalizePaymentNoticeDetails,
   prepareNoticeDetailData,
-  prepareNoticesData,
-  prepareRowsData,
   cartItemsToCartsRequest,
   toEuro,
   withMissingValue,
-  capitalizeFirstLetter: withMissingValue(capitalizeFirstLetter)
+  capitalizeFirstLetter: withMissingValue(capitalizeFirstLetter),
+  extractFilename
 };

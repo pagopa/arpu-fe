@@ -1,8 +1,8 @@
 import { signal } from '@preact/signals-react';
 
-enum SessionItems {
-  OPTIN = 'OPTIN',
-  CART = 'CART'
+export enum SessionItems {
+  CART = 'CART',
+  OPTIN = 'OPTIN'
 }
 
 /** set a session item and return his value. If not possible returs null */
@@ -18,8 +18,10 @@ const setSessionItem = (key: SessionItems, value: string) => {
 /** get a session item and return his value. If not possible returns null */
 const getSessionItem = (key: SessionItems) => sessionStorage.getItem(key);
 
-enum StorageItems {
-  TOKEN = 'accessToken'
+export enum StorageItems {
+  TOKEN = 'ARPU-accessToken',
+  BROKERID = 'ARPU-brokerId',
+  BROKERCODE = 'ARPU-brokerCode'
 }
 
 /** set a session item and return his value. If not possible returs null */
@@ -35,6 +37,15 @@ const setStorageItem = (key: StorageItems, value: string) => {
 /** get a session item and return his value. If not possible returns null */
 const getStorageItem = (key: StorageItems) => localStorage.getItem(key);
 
+/** remove a storage item and swallow storage access errors */
+const removeStorageItem = (key: StorageItems) => {
+  try {
+    localStorage.removeItem(key);
+  } catch {
+    return null;
+  }
+};
+
 /** clear both session and local storage */
 const clear = () => {
   window.sessionStorage.clear();
@@ -43,8 +54,27 @@ const clear = () => {
 
 const optin = signal<boolean>(Boolean(getSessionItem(SessionItems.OPTIN)));
 
+/** check if the user is anonymous */
+const isAnonymous = () => {
+  const hasToken = Boolean(getStorageItem(StorageItems.TOKEN));
+  const isOnPublicRoute = window.location.href.indexOf('/public') > 0;
+  return !hasToken && isOnPublicRoute;
+};
+
+const getBrokerCodeFromUrl = (): string | null => {
+  const segments = window.location.pathname.split('/');
+  const isAuthCallback = segments[2] === 'auth-callback';
+
+  if (isAuthCallback) {
+    return getStorageItem(StorageItems.BROKERCODE);
+  }
+
+  return segments[2]?.toLowerCase() || null;
+};
+
 export default {
   SessionItems,
+  StorageItems,
   pullPaymentsOptIn: {
     set: () => {
       if (setSessionItem(SessionItems.OPTIN, 'true')) optin.value = true;
@@ -61,8 +91,23 @@ export default {
   },
   user: {
     hasToken: () => Boolean(getStorageItem(StorageItems.TOKEN)),
+    isAnonymous,
     /** clear both session and local storage */
     logOut: clear,
     setToken: (token: string) => setStorageItem(StorageItems.TOKEN, token)
+  },
+  app: {
+    setBrokerId: (brokerId: string | number) =>
+      setStorageItem(StorageItems.BROKERID, brokerId.toString()),
+    getBrokerId: () => {
+      const stored = getStorageItem(StorageItems.BROKERID);
+      return stored ? Number(stored) : null;
+    },
+    setBrokerCode: (brokerCode: string) => setStorageItem(StorageItems.BROKERCODE, brokerCode),
+    getBrokerCode: () => getBrokerCodeFromUrl(),
+    clearBrokerInfo: () => {
+      removeStorageItem(StorageItems.BROKERID);
+      removeStorageItem(StorageItems.BROKERCODE);
+    }
   }
 };

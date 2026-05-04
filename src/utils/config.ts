@@ -1,5 +1,8 @@
 import { RootLinkType } from '@pagopa/mui-italia';
+import { CustomParamsSerializer } from 'axios';
+import queryString from 'query-string';
 import { z, ZodError } from 'zod';
+import storage from './storage';
 
 /** Useful default values  */
 /** APIHOST default value works in conjunction with the proxy server. See the .proxyrc file */
@@ -7,18 +10,17 @@ const {
   ENV = 'LOCAL',
   APIHOST = 'http://localhost:1234/api',
   API_TIMEOUT = '10000',
-  CHECKOUT_HOST = 'https://dev.checkout.pagopa.it',
-  CHECKOUT_PLATFORM_URL = 'https://api.dev.platform.pagopa.it/checkout/ec/v1',
-  DEPLOY_PATH = '/pagamenti',
+  CHECKOUT_HOST = 'https://uat.checkout.pagopa.it',
+  CHECKOUT_PLATFORM_URL = 'https://api.uat.platform.pagopa.it/checkout/ec/v1',
+  DEPLOY_PATH = '/cittadini',
   ENTITIES_LOGO_CDN,
   LOGIN_URL = 'https://api.dev.cittadini-p4pa.pagopa.it/arc/v1/login/oneidentity',
   VERSION = '',
-  SHOW_NOTICES = '1'
+  RESOURCES_URL = '/cittadini-legaldocs/{BROKER_EXTERNAL_ID}/{DOCUMENT_TYPE}/{DOC_LANGUAGE}_{DOCUMENT_TYPE}.md',
+  RECAPTCHA_SITE_KEY = ''
 } = process.env;
 
 const PARSED_API_TIMEOUT = Number.parseInt(API_TIMEOUT, 10);
-const PARSED_SHOW_NOTICES = Boolean(Number.parseInt(SHOW_NOTICES, 10));
-
 export type ENVIRONMENT = 'LOCAL' | 'DEV' | 'UAT' | 'PROD';
 
 // ENV variables validation
@@ -31,7 +33,9 @@ const DEPLOY_PATH_schema = z.string();
 const ENTITIES_LOGO_CDN_schema = z.string().url();
 const LOGIN_URL_schema = z.string().url();
 const VERSION_schema = z.string();
-const SHOW_NOTICES_schema = z.enum(['0', '1']);
+const RESOURCES_URL_schema = z.string().min(1);
+const RECAPTCHA_SITE_KEY_schema = z.string().optional();
+
 try {
   ENV_Schema.parse(process.env.ENV);
   APIHOST_schema.parse(process.env.APIHOST);
@@ -42,7 +46,8 @@ try {
   ENTITIES_LOGO_CDN_schema.parse(process.env.ENTITIES_LOGO_CDN);
   LOGIN_URL_schema.parse(process.env.LOGIN_URL);
   VERSION_schema.parse(process.env.VERSION);
-  SHOW_NOTICES_schema.parse(process.env.SHOW_NOTICES);
+  RESOURCES_URL_schema.parse(process.env.RESOURCES_URL);
+  RECAPTCHA_SITE_KEY_schema.parse(process.env.RECAPTCHA_SITE_KEY);
 } catch (e) {
   console.error('ENV variables validation failed', (e as ZodError).issues);
 }
@@ -61,7 +66,14 @@ type Config = {
   pagopaLink: RootLinkType;
   tokenHeaderExcludePaths: string[];
   version: string;
-  showNotices: boolean;
+  brokerId: number | null;
+  /** The broker's external identifier (human-readable), used in URLs */
+  brokerCode: string | null;
+  paramsSerializer: CustomParamsSerializer;
+  /** Template URL for legal resources (PP, ToS). */
+  resourcesUrl: string;
+  /** reCAPTCHA v2 invisible site key. Empty string = disabled. */
+  recaptchaSiteKey: string;
 };
 
 const assistanceLink: string = 'nomeprodotto@assistenza.pagopa.it';
@@ -103,7 +115,34 @@ const config: Config = {
   tokenHeaderExcludePaths: ['/token/oneidentity'],
   /** Running version, usually valued by pipelines */
   version: VERSION,
-  showNotices: PARSED_SHOW_NOTICES
+  brokerId: storage.app.getBrokerId(),
+  /** The broker code is extracted from the URL path, with localStorage as fallback (see storage.ts) */
+  brokerCode: storage.app.getBrokerCode(),
+  /** A global custom parameters serializer:
+   * - null value and empty string parameters are strippef off.
+   * - arrays separated by comma.
+   * - undefined parameters are always skipped.
+   *
+   * @example
+   * const params = {
+   *  a: "",
+   *  b: 'test',
+   *  c: null,
+   *  d: [1, 2],
+   *  e: undefined
+   * };
+   *
+   * console.log(paramsSerializer(params))
+   * => "b=test&d=1,2"
+   *  */
+  paramsSerializer: (params) =>
+    queryString.stringify(params, {
+      skipNull: true,
+      arrayFormat: 'comma',
+      skipEmptyString: true
+    }),
+  resourcesUrl: RESOURCES_URL,
+  recaptchaSiteKey: RECAPTCHA_SITE_KEY
 };
 
 export default config;

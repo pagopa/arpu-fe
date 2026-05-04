@@ -1,23 +1,32 @@
 import React from 'react';
-import { HeaderAccount, JwtUser, UserAction } from '@pagopa/mui-italia';
+import { HeaderAccount, JwtUser, RootLinkType, UserAction } from '@pagopa/mui-italia';
 import utils from 'utils';
 import SettingsIcon from '@mui/icons-material/Settings';
 import LogoutRoundedIcon from '@mui/icons-material/LogoutRounded';
 import { useNavigate } from 'react-router-dom';
-import { ArcRoutes } from 'routes/routes';
+import { ROUTES } from 'routes/routes';
 import { useUserInfo } from 'hooks/useUserInfo';
-import { SubHeader } from './SubHeader';
 import { useTranslation } from 'react-i18next';
+import { Box } from '@mui/system';
+import appStore from 'store/appStore';
 
 export interface HeaderProps {
   onAssistanceClick?: () => void;
 }
 
 export const Header = (props: HeaderProps) => {
-  /* istanbul ignore next */
-  const { onAssistanceClick = () => null } = props;
   const navigate = useNavigate();
   const { t } = useTranslation();
+
+  const assistanceLink = appStore.value.brokerInfo?.config?.assistanceLink;
+
+  const handleAssistanceClick = () => {
+    if (props.onAssistanceClick) {
+      props.onAssistanceClick();
+    } else if (assistanceLink) {
+      window.open(assistanceLink, '_blank');
+    }
+  };
 
   async function logoutUser() {
     try {
@@ -26,11 +35,18 @@ export const Header = (props: HeaderProps) => {
       console.warn(e);
     } finally {
       utils.storage.user.logOut();
-      navigate(ArcRoutes.LOGIN);
+      navigate(ROUTES.LOGIN);
     }
   }
 
   const { userInfo } = useUserInfo();
+
+  const rootLink: RootLinkType = {
+    label: appStore.value.brokerInfo?.brokerName || '',
+    href: appStore.value.brokerInfo?.config?.brokerLink || ROUTES.LOGIN,
+    ariaLabel: appStore.value.brokerInfo?.brokerName || '',
+    title: appStore.value.brokerInfo?.brokerName || ''
+  };
 
   const jwtUser: JwtUser | undefined = userInfo
     ? {
@@ -46,7 +62,7 @@ export const Header = (props: HeaderProps) => {
       id: 'profile',
       label: t('ui.header.profile'),
       onClick: () => {
-        navigate(ArcRoutes.USER);
+        navigate(ROUTES.USER);
       },
       icon: <SettingsIcon fontSize="small" color="inherit" />
     },
@@ -60,15 +76,17 @@ export const Header = (props: HeaderProps) => {
 
   return (
     <>
-      <HeaderAccount
-        rootLink={utils.config.pagopaLink}
-        enableDropdown
-        onAssistanceClick={onAssistanceClick}
-        loggedUser={jwtUser}
-        userActions={userActions}
-        translationsMap={{ assistance: t('ui.header.help') }}
-      />
-      <SubHeader />
+      <Box component="header">
+        <HeaderAccount
+          rootLink={rootLink}
+          enableDropdown
+          enableAssistanceButton
+          onAssistanceClick={handleAssistanceClick}
+          loggedUser={jwtUser}
+          userActions={userActions}
+          translationsMap={{ assistance: t('ui.header.help') }}
+        />
+      </Box>
     </>
   );
 };

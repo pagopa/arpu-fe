@@ -1,5 +1,5 @@
-import { Api } from '../../generated/apiClient';
 import { Carts } from '../../generated/checkout/Carts';
+import { Api } from '../../generated/apiClient';
 import * as checkoutSchema from '../../generated/checkout/zod-schema';
 import * as zodSchema from '../../generated/zod-schema';
 import config from './config';
@@ -12,13 +12,19 @@ import sidemenu from './sidemenu';
 import storage from './storage';
 import style from './style';
 import files from './files';
+import URI from './URI';
 
 export default {
-  apiClient: new Api({ baseURL: config.baseURL, timeout: config.apiTimeout }),
+  apiClient: new Api({
+    baseURL: config.baseURL,
+    timeout: config.apiTimeout,
+    paramsSerializer: config.paramsSerializer
+  }),
   cartsClient: new Carts({ baseURL: config.checkoutPlatformUrl, timeout: config.apiTimeout }),
   //** data transformers utility and formatters */
   converters,
   checkoutSchema,
+  URI,
   config,
   datetools,
   loaders,

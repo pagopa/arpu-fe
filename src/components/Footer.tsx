@@ -1,84 +1,86 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import { FooterPostLogin, FooterLegal } from '@pagopa/mui-italia';
-import { ArcRoutes } from 'routes/routes';
 import { useLanguage } from 'hooks/useLanguage';
+import { Box, Divider, Link, Stack, Typography } from '@mui/material';
+import { ROUTES } from 'routes/routes';
+import { ProductLogo } from './ProductLogo';
+import appStore from 'store/appStore';
+import { LangSwitch } from '@pagopa/mui-italia';
+import { languages } from 'translations/languages';
 
-const LINK_PERSONAL_DATA_PROTECTION =
-  'https://privacyportal-de.onetrust.com/webform/77f17844-04c3-4969-a11d-462ee77acbe1/9ab6533d-be4a-482e-929a-0d8d2ab29df8';
+const DEFAULT_LINK_A11Y = 'https://www.w3.org/WAI/standards-guidelines/wai-aria/';
 
-const openExternalLink = (url: string) => window.open(url, '_blank')?.focus();
+const FooterLink = ({ href, children }: { href: string; children: string }) => {
+  return (
+    <Box component="li" sx={{ listStyle: 'none' }}>
+      <Link
+        href={href}
+        variant="body2"
+        target="_blank"
+        rel="noopener noreferrer"
+        sx={{ textDecoration: 'none', color: 'text.primary', fontWeight: 600, fontSize: 14 }}>
+        {children}
+      </Link>
+    </Box>
+  );
+};
 
 export const Footer = () => {
   const { t } = useTranslation();
   const { language, changeLanguage } = useLanguage();
 
+  const { brokerInfo } = appStore.value;
+  const a11yLink = brokerInfo?.config?.a11yLink ?? DEFAULT_LINK_A11Y;
+
   return (
-    <>
-      <FooterPostLogin
-        companyLink={{ ariaLabel: 'PagoPA SPA' }}
-        links={[
-          {
-            label: t('ui.footer.privacy'),
-            ariaLabel: t('ui.footer.privacy'),
-            href: ArcRoutes.PRIVACY_POLICY,
-            linkType: 'external',
-            onClick: () => openExternalLink(ArcRoutes.PRIVACY_POLICY)
-          },
-          {
-            label: t('ui.footer.personalData'),
-            ariaLabel: t('ui.footer.personalData'),
-            linkType: 'external',
-            href: LINK_PERSONAL_DATA_PROTECTION,
-            onClick: () => openExternalLink(LINK_PERSONAL_DATA_PROTECTION)
-          },
-          {
-            label: t('ui.footer.termsAndConditions'),
-            ariaLabel: t('ui.footer.termsAndConditions'),
-            href: ArcRoutes.TOS,
-            linkType: 'external',
-            onClick: () => window.open(ArcRoutes.TOS, '_blank')?.focus()
-          },
-          {
-            label: t('aria.a11y'),
-            ariaLabel: t('aria.a11y'),
-            linkType: 'external',
-            onClick: () =>
-              window
-                .open(
-                  'https://form.agid.gov.it/view/cbed4100-ff1e-11ef-aef0-65558716aff1',
-                  '_blank'
-                )
-                ?.focus()
-          }
-        ]}
-        currentLangCode={language}
-        languages={{
-          it: {
-            it: 'Italiano',
-            en: 'Inglese',
-            fr: 'Francese'
-          },
-          en: {
-            it: 'Italian',
-            en: 'English',
-            fr: 'French'
-          },
-          fr: {
-            it: 'Italien',
-            en: 'Anglais',
-            fr: 'Français'
-          }
-        }}
-        onLanguageChanged={changeLanguage}
-      />
-      <FooterLegal
-        content={
-          <>
-            <b>{t('general.PagoPA')}</b> - {t('ui.footer.legalInfo')}
-          </>
-        }
-      />
-    </>
+    <Stack
+      component="footer"
+      sx={{
+        backgroundColor: 'background.paper'
+      }}>
+      <Divider />
+      <Stack
+        direction={{ xs: 'column', md: 'row' }}
+        justifyContent="space-between"
+        alignItems="center"
+        gap={{ xs: 3, md: 0 }}
+        padding={{ xs: 2, md: 3 }}
+        minHeight={50}>
+        <ProductLogo maxWidth="80px" />
+        <Stack alignItems="flex-end" component="nav">
+          <Stack
+            direction={{ xs: 'column', md: 'row' }}
+            gap={{ xs: 0, md: 2 }}
+            alignItems="center"
+            component="ul"
+            id="footer-links">
+            <FooterLink href={ROUTES.PRIVACY_POLICY}>{t('ui.footer.privacy')}</FooterLink>
+            <FooterLink href={ROUTES.TOS}>{t('ui.footer.termsAndConditions')}</FooterLink>
+            <FooterLink href={a11yLink}>{t('ui.footer.a11y')}</FooterLink>
+            <LangSwitch
+              currentLangCode={language}
+              onLanguageChanged={changeLanguage}
+              languages={languages}
+            />
+          </Stack>
+        </Stack>
+      </Stack>
+      {brokerInfo?.brokerName ? (
+        <Stack>
+          <Divider />
+          <Stack alignItems="center" direction={'row'} justifyContent="center" height={60}>
+            <Typography fontWeight={600} fontSize={14}>
+              {brokerInfo.brokerName}
+            </Typography>
+            {brokerInfo.address && (
+              <Typography fontSize={14}>
+                &nbsp;&#x2013;&nbsp;{brokerInfo.address} &middot; {brokerInfo.zipCode}{' '}
+                {brokerInfo.city}
+              </Typography>
+            )}
+          </Stack>
+        </Stack>
+      ) : null}
+    </Stack>
   );
 };

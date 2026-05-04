@@ -7,7 +7,9 @@ import {
   resetCart,
   getCartItems,
   getTotalAmout,
-  isItemInCart
+  isItemInCart,
+  setCartEmail,
+  getCartEmail
 } from './CartStore';
 import { CartItem } from 'models/Cart';
 
@@ -28,7 +30,8 @@ describe('cartStore', () => {
       paTaxCode: '77777777',
       nav: '00001',
       iuv: '00001',
-      description: 'A nice description'
+      description: 'A nice description',
+      allCCP: false
     };
     addItem(item);
 
@@ -42,7 +45,8 @@ describe('cartStore', () => {
       paTaxCode: '77777777',
       nav: '00002',
       iuv: '00002',
-      description: 'A nice description'
+      description: 'A nice description',
+      allCCP: false
     };
     addItem(anotherItem);
 
@@ -58,7 +62,8 @@ describe('cartStore', () => {
       paTaxCode: '77777777',
       nav: '00001',
       iuv: '00001',
-      description: 'A nice description'
+      description: 'A nice description',
+      allCCP: false
     };
     addItem(item);
 
@@ -80,7 +85,8 @@ describe('cartStore', () => {
       paTaxCode: '77777777',
       nav: '00001',
       iuv: '00001',
-      description: 'A nice description'
+      description: 'A nice description',
+      allCCP: false
     };
     addItem(item);
 
@@ -102,7 +108,8 @@ describe('cartStore', () => {
       paTaxCode: '77777777',
       nav: '00001',
       iuv: '00001',
-      description: 'A nice description'
+      description: 'A nice description',
+      allCCP: false
     };
     addItem(item);
     addItem({ ...item, iuv: '00002' });
@@ -122,7 +129,8 @@ describe('cartStore', () => {
       paTaxCode: '77777777',
       nav: '00001',
       iuv: '00001',
-      description: 'A nice description'
+      description: 'A nice description',
+      allCCP: false
     };
     addItem(item);
     addItem({ ...item, iuv: '00002' });
@@ -144,7 +152,8 @@ describe('cartStore', () => {
       paTaxCode: '77777777',
       nav: '00001',
       iuv: '00001',
-      description: 'A nice description'
+      description: 'A nice description',
+      allCCP: false
     };
     resetCart();
     deleteItem(item.iuv);
@@ -159,7 +168,8 @@ describe('cartStore', () => {
       paTaxCode: '77777777',
       nav: '00001',
       iuv: '00001',
-      description: 'A nice description'
+      description: 'A nice description',
+      allCCP: false
     };
     addItem(item);
     addItem({ ...item, iuv: '00002' });
@@ -172,5 +182,11 @@ describe('cartStore', () => {
 
     expect(isItemInCart('00001')).toBeFalsy();
     expect(isItemInCart('00002')).toBeFalsy();
+  });
+
+  it('set cart email correctly', () => {
+    expect(cartState.value.email).toBeUndefined();
+    setCartEmail('test@example.com');
+    expect(getCartEmail()).toBe('test@example.com');
   });
 });

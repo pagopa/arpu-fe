@@ -7,25 +7,29 @@ export default defineConfig({
     globals: true,
     setupFiles: './vitest.setup.mts',
     environment: 'jsdom',
-		clearMocks: true,
-		watch: false,
-		silent: true,
+    clearMocks: true,
+    watch: false,
+    silent: true,
+    server: {
+      deps: {
+        inline: ['@mui/x-data-grid', '@pagopa/mui-italia']
+      }
+    },
     coverage: {
       provider: 'v8',
       reporter: ['text', 'json-summary', 'json', 'html', 'lcov'],
       reportOnFailure: true,
       exclude: [
         ...configDefaults.exclude,
-				'**/*.test.ts?(x)',
-				'**/*.styles.ts?(x)',
-				'src/__tests__/',
-        'src/stories/',
+        '**/*.test.ts?(x)',
+        '**/*.styles.ts?(x)',
+        'src/__tests__/',
         'src/index.tsx',
         'src/App.tsx',
         'src/global.d.ts',
         'src/components/Layout.tsx',
         'src/utils/style.tsx',
-        'src/models/',
+        'src/models/'
       ],
       include: ['src/**/*.ts?(x)'],
       thresholds: {
@@ -40,13 +44,13 @@ export default defineConfig({
   },
   resolve: {
     alias: {
+      '@mui/icons-material/esm': path.resolve(__dirname, './node_modules/@mui/icons-material'),
       // Add all your absolute paths here
       components: path.resolve(__dirname, './src/components'),
       hooks: path.resolve(__dirname, './src/hooks'),
       models: path.resolve(__dirname, './src/models'),
       routes: path.resolve(__dirname, './src/routes'),
       store: path.resolve(__dirname, './src/store'),
-      stories: path.resolve(__dirname, './src/stories'),
       translations: path.resolve(__dirname, './src/translations'),
       utils: path.resolve(__dirname, './src/utils'),
       __tests__: path.resolve(__dirname, './src/__tests__')

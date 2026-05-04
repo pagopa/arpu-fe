@@ -1,16 +1,11 @@
-import utils from 'utils';
+import { generatePath } from 'react-router-dom';
+import { OUTCOMES, ROUTES } from 'routes/routes';
 
 /**
- * Downloads pdf for a transaction
+ * Downloads a file
  */
-const downloadReceiptPDF = async (transactionId: string) => {
-  const response = await utils.loaders.getReceiptPDF(transactionId);
-  if (!response) {
-    throw new Error('Error getting the PDF');
-  }
-
-  const { data, filename } = response;
-  const url = URL.createObjectURL(data);
+const downloadFile = (file: File, filename: string) => {
+  const url = URL.createObjectURL(file);
 
   // Create a temporary <a> tag for downloading
   const a = document.createElement('a');
@@ -29,6 +24,52 @@ const downloadReceiptPDF = async (transactionId: string) => {
   URL.revokeObjectURL(url);
 };
 
+export const downloadBlob = (blob: Blob, fileName: string): void => {
+  if (!blob || blob.size === 0) {
+    throw new Error('Empty file');
+  }
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement('a');
+  link.href = url;
+  link.download = fileName;
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+  URL.revokeObjectURL(url);
+};
+
+const generateDownloadUrl = ({
+  orgId,
+  nav,
+  isAnonymous,
+  fiscalCode
+}: {
+  orgId?: number;
+  nav?: string;
+  fiscalCode?: string;
+  isAnonymous: boolean;
+}) => {
+  try {
+    if (!nav || !orgId || !fiscalCode) throw new Error(OUTCOMES[400]);
+
+    const route = isAnonymous
+      ? ROUTES.public.PAYMENTS_ON_THE_FLY_DOWNLOAD
+      : ROUTES.PAYMENTS_ON_THE_FLY_DOWNLOAD;
+
+    return (
+      generatePath(route, {
+        orgId,
+        nav
+      }) + `#debtorFiscalCode=${fiscalCode}`
+    );
+  } catch (error) {
+    const route = isAnonymous ? ROUTES.public.COURTESY_PAGE : ROUTES.COURTESY_PAGE;
+    return generatePath(route, { outcome: error });
+  }
+};
+
 export default {
-  downloadReceiptPDF
+  downloadFile,
+  downloadBlob,
+  generateDownloadUrl
 };

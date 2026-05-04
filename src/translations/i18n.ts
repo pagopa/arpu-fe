@@ -16,6 +16,9 @@ void i18n
   .init({
     detection: DETECTION_OPTIONS,
     fallbackLng: fallbackLang,
+    interpolation: {
+      escapeValue: false
+    },
     resources: {
       ...lang
     }

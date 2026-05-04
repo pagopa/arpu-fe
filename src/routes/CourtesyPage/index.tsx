@@ -1,71 +1,117 @@
 import React from 'react';
 import { Button, Typography, Container, Box } from '@mui/material';
-import { Link, useParams } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { Helmet } from 'react-helmet';
-import { ArcErrors, ArcRoutes } from '../../routes/routes';
+import { OUTCOMES } from '../../routes/routes';
 import i18next from 'i18next';
+import { CourtesyPageActions } from './components/CourtesyPageActions';
+import { useAppRoutes } from 'hooks/useAppRoutes';
 
 interface ErrorIconComponentProps {
-  erroCode?: ArcErrors;
+  code?: OUTCOMES;
 }
 
-export const ErrorIconComponent: React.FC<ErrorIconComponentProps> = ({ erroCode }) => {
-  switch (erroCode) {
-    case ArcErrors['accesso-non-autorizzato']:
-    case ArcErrors['avviso-non-pagabile']:
-      return <img src="/pictograms/genericerror.svg" title="Error" aria-hidden="true" />;
-    case ArcErrors['sessione-scaduta']:
-      return <img src="/pictograms/expired.svg" title="Expired" aria-hidden="true" />;
-    case ArcErrors['avvio-pagamento']:
-    case ArcErrors['sconosciuto']:
-      return <img src="/pictograms/umbrella.svg" title="Something went wrong" aria-hidden="true" />;
+export const ErrorIconComponent: React.FC<ErrorIconComponentProps> = ({ code }) => {
+  switch (code) {
+    case OUTCOMES['pagamento-avviso-completato']:
+      return <img src="/cittadini/pictograms/paymentcompleted.svg" title="OK" aria-hidden="true" />;
+    case OUTCOMES['accesso-non-autorizzato']:
+    case OUTCOMES['avviso-non-pagabile']:
+      return <img src="/cittadini/pictograms/genericerror.svg" title="Error" aria-hidden="true" />;
+    case OUTCOMES['pagamento-non-riuscito']:
+    case OUTCOMES['pagamento-annullato']:
+      return <img src="/cittadini/pictograms/warning.svg" title="Error" aria-hidden="true" />;
+    case OUTCOMES['sessione-scaduta']:
+      return <img src="/cittadini/pictograms/expired.svg" title="Expired" aria-hidden="true" />;
+    case OUTCOMES['verifica-non-riuscita']:
+      return (
+        <img
+          src="/cittadini/pictograms/genericerror.svg"
+          title="Verification failed"
+          aria-hidden="true"
+        />
+      );
+    case OUTCOMES['avvio-pagamento']:
+    case OUTCOMES['sconosciuto']:
+      return (
+        <img
+          src="/cittadini/pictograms/umbrella.svg"
+          title="Something went wrong"
+          aria-hidden="true"
+        />
+      );
     default:
-      return <img src="/pictograms/umbrella.svg" title="Something went wrong" aria-hidden="true" />;
+      return (
+        <img
+          src="/cittadini/pictograms/umbrella.svg"
+          title="Something went wrong"
+          aria-hidden="true"
+        />
+      );
   }
 };
 
 export const CourtesyPage = () => {
   const { t } = useTranslation();
-  const errorDesc = useParams()?.error as keyof typeof ArcErrors;
-  const errorCode = ArcErrors[errorDesc];
+  const { routes } = useAppRoutes();
+  const params = useParams();
+  const outcome = params?.outcome as keyof typeof OUTCOMES;
+  const code = OUTCOMES[outcome];
+
+  const hasCustomActions =
+    code === OUTCOMES['pagamento-non-riuscito'] || code === OUTCOMES['pagamento-annullato'];
+
+  const getCtaHref = (code: OUTCOMES): string => {
+    if (code === OUTCOMES['verifica-non-riuscita']) {
+      return routes.public.PAYMENTS_ON_THE_FLY;
+    }
+    return routes.LOGIN;
+  };
 
   return (
-    <>
-      <Helmet>
-        <title>{`${t('pageTitles.courtesy')} - ${t('app.title')} `}</title>
-      </Helmet>
-      <Container maxWidth="sm">
-        <Box textAlign="center" mt={10}>
-          <Box my={3}>
-            <ErrorIconComponent erroCode={errorCode} />
-          </Box>
-          <Typography variant="h4" gutterBottom data-testid="courtesyPage.title">
-            {t(`courtesyPage.${errorCode}.title`, {
-              defaultValue: t('courtesyPage.default.title')
-            })}
-          </Typography>
-          <Typography variant="body1" paragraph data-testid="courtesyPage.body">
-            {t(`courtesyPage.${errorCode}.body`, {
-              defaultValue: t('courtesyPage.default.body')
-            })}
-          </Typography>
-          {/* v8 ignore next 12 */}
-          {i18next.exists(`courtesyPage.${errorCode}.cta`) && (
+    <Container
+      maxWidth="sm"
+      id="courtesyPage"
+      sx={{
+        display: 'flex',
+        alignItems: 'center',
+        minHeight: '70vh',
+        justifyContent: 'center',
+        paddingBottom: 15
+      }}>
+      <Box textAlign="center" mt={10} mb={10} maxWidth={(theme) => theme.spacing(48)}>
+        <Box my={3}>
+          <ErrorIconComponent code={code} />
+        </Box>
+        <Typography variant="h4" gutterBottom data-testid="courtesyPage.title">
+          {t(`courtesyPage.${code}.title`, {
+            defaultValue: t('courtesyPage.default.title')
+          })}
+        </Typography>
+        <Typography variant="body1" paragraph data-testid="courtesyPage.body">
+          {t(`courtesyPage.${code}.body`, {
+            defaultValue: t('courtesyPage.default.body')
+          })}
+        </Typography>
+
+        {hasCustomActions ? (
+          <CourtesyPageActions code={code} />
+        ) : (
+          i18next.exists(`courtesyPage.${code}.cta`) && (
             <Button
-              component={Link}
-              to={ArcRoutes.LOGIN}
+              component="a"
+              href={getCtaHref(code)}
               variant="contained"
               size="large"
               color="primary"
               data-testid="courtesyPage.cta">
-              {t(`courtesyPage.${errorCode}.cta`, {
+              {t(`courtesyPage.${code}.cta`, {
                 defaultValue: t('courtesyPage.default.cta')
               })}
             </Button>
-          )}
-        </Box>
-      </Container>
-    </>
+          )
+        )}
+      </Box>
+    </Container>
   );
 };
