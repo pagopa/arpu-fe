@@ -5,15 +5,45 @@ const getIconLink = () => document.querySelector('link[rel="icon"]') as HTMLLink
 
 describe('useFavicon', () => {
   beforeEach(() => {
-    // Clean up any favicon link elements between tests
+    // Remove any favicon link between tests, this also clears the cached defaultHref dataset
     document.head.querySelectorAll('link[rel="icon"]').forEach((el) => el.remove());
   });
 
   describe('when faviconUrl is undefined', () => {
-    it('does not create a link element', () => {
+    it('does not create a link element if none exists', () => {
       renderHook(() => useFavicon(undefined));
 
       expect(getIconLink()).toBeNull();
+    });
+
+    it('leaves an existing default favicon untouched', () => {
+      const existingLink = document.createElement('link');
+      existingLink.rel = 'icon';
+      existingLink.href = 'https://example.com/default-favicon.ico';
+      document.head.appendChild(existingLink);
+
+      renderHook(() => useFavicon(undefined));
+
+      expect(getIconLink().href).toBe('https://example.com/default-favicon.ico');
+    });
+
+    it('restores the default favicon when the url becomes undefined', () => {
+      type Props = { url: string | undefined };
+
+      const existingLink = document.createElement('link');
+      existingLink.rel = 'icon';
+      existingLink.href = 'https://example.com/default-favicon.ico';
+      document.head.appendChild(existingLink);
+
+      const { rerender } = renderHook(({ url }: Props) => useFavicon(url), {
+        initialProps: { url: 'https://example.com/broker-favicon.ico' } satisfies Props
+      });
+
+      expect(getIconLink().href).toBe('https://example.com/broker-favicon.ico');
+
+      rerender({ url: undefined });
+
+      expect(getIconLink().href).toBe('https://example.com/default-favicon.ico');
     });
   });
 
@@ -38,7 +68,7 @@ describe('useFavicon', () => {
     });
 
     it('updates the favicon when the url changes', () => {
-      const { rerender } = renderHook(({ url }) => useFavicon(url), {
+      const { rerender } = renderHook(({ url }: { url: string }) => useFavicon(url), {
         initialProps: { url: 'https://example.com/favicon-v1.ico' }
       });
 
@@ -64,13 +94,25 @@ describe('useFavicon', () => {
     const mockResizedDataUrl = 'data:image/png;base64,resized==';
     const mockDataUrl = 'data:image/png;base64,original==';
 
+    // Stack of all Image instances created during a test, in creation order
+    let imageInstances: Array<{ onload: () => void; src: string }>;
+
     beforeEach(() => {
+      imageInstances = [];
+
       vi.stubGlobal(
         'Image',
         class {
           onload: () => void = () => {};
-          set src(_: string) {
-            this.onload();
+          private _src = '';
+          constructor() {
+            imageInstances.push(this as unknown as (typeof imageInstances)[number]);
+          }
+          set src(value: string) {
+            this._src = value;
+          }
+          get src() {
+            return this._src;
           }
         }
       );
@@ -87,28 +129,49 @@ describe('useFavicon', () => {
       vi.restoreAllMocks();
     });
 
-    it('resizes the image and sets the favicon with the resized data URL', async () => {
-      const { rerender } = renderHook(() => useFavicon(mockDataUrl));
+    it('resizes the image and sets the favicon with the resized data URL', () => {
+      renderHook(() => useFavicon(mockDataUrl));
 
-      await new Promise((r) => setTimeout(r, 0));
-      rerender();
+      // The hook does not set the favicon until the image fires onload
+      expect(getIconLink()).toBeNull();
+
+      imageInstances[0].onload();
 
       expect(getIconLink()).not.toBeNull();
       expect(getIconLink().href).toBe(mockResizedDataUrl);
     });
 
-    it('creates a canvas with 32x32 dimensions', async () => {
+    it('creates a 2d canvas context to draw the image', () => {
       renderHook(() => useFavicon(mockDataUrl));
-      await new Promise((r) => setTimeout(r, 0));
+      imageInstances[0].onload();
 
+      expect(HTMLCanvasElement.prototype.getContext).toHaveBeenCalledWith('2d');
       expect(HTMLCanvasElement.prototype.toDataURL).toHaveBeenCalledWith('image/png');
     });
 
-    it('draws the image onto the canvas', async () => {
-      renderHook(() => useFavicon(mockDataUrl));
-      await new Promise((r) => setTimeout(r, 0));
+    it('ignores stale onload callbacks when the url changes mid-flight', () => {
+      const staleResizedUrl = 'data:image/png;base64,stale==';
+      const freshResizedUrl = 'data:image/png;base64,fresh==';
 
-      expect(HTMLCanvasElement.prototype.getContext).toHaveBeenCalledWith('2d');
+      const toDataURLSpy = vi.spyOn(HTMLCanvasElement.prototype, 'toDataURL');
+      // toDataURL is consumed in the order onload callbacks fire, not in image creation order.
+      // The fresh image fires first in this test, so its value comes first.
+      toDataURLSpy.mockReturnValueOnce(freshResizedUrl).mockReturnValueOnce(staleResizedUrl);
+
+      const { rerender } = renderHook(({ url }: { url: string }) => useFavicon(url), {
+        initialProps: { url: mockDataUrl }
+      });
+
+      // Url changes before the stale image's onload runs
+      rerender({ url: 'data:image/png;base64,fresh-original==' });
+
+      // Fresh image (created on rerender) fires first, sets the favicon to the fresh url
+      imageInstances[1].onload();
+      expect(getIconLink().href).toBe(freshResizedUrl);
+
+      // Stale image (from the initial render) fires later, should be ignored thanks to the cancelled flag
+      imageInstances[0].onload();
+      expect(getIconLink().href).toBe(freshResizedUrl);
     });
   });
 });
