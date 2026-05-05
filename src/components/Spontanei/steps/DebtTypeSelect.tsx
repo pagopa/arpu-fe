@@ -36,6 +36,8 @@ const DebtTypeSelect = () => {
   const [org] = useField<PaymentNoticeInfo['org']>('org');
   const [debtType, debtTypeMeta, debtTypeHelpers] =
     useField<PaymentNoticeInfo['debtType']>('debtType');
+  const [, , descriptionHelpers] = useField<PaymentNoticeInfo['description']>('description');
+  const [, , amountHelpers] = useField<PaymentNoticeInfo['amount']>('amount');
   const firstRadioRef = useRef<HTMLInputElement>(null);
 
   const organizationId = org.value?.organizationId || 0;
@@ -110,6 +112,12 @@ const DebtTypeSelect = () => {
 
   useEffect(() => {
     context?.setCausaleHasJoinTemplate(false);
+  }, []);
+
+  useEffect(() => {
+    // reset description and amount reset
+    descriptionHelpers.setValue('');
+    amountHelpers.setValue(0);
   }, []);
 
   const errorMessage = formik.touched.debtType ? formik.errors.debtType : '';
