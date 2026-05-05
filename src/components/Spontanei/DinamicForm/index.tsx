@@ -34,7 +34,6 @@ const CustomForm = ({ fieldBeans, amountFieldName }: CustomFormProps) => {
   useEffect(() => {
     // This means that the dinamic form will be reset only when the user goes back to the previous step
     const initialValues: CustomFormValues = BuildFormState(fieldBeans);
-    console.log('initialValues', initialValues);
     if (direction > 0) {
       setFormikState((state) => {
         return {
