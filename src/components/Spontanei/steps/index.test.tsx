@@ -54,7 +54,11 @@ describe('Steps Component', () => {
       vi.advanceTimersByTime(1000);
     });
 
-    expect(screen.getByText('spontanei.form.steps.step1.step')).toBeInTheDocument();
+    expect(
+      screen.getByText('spontanei.form.steps.step1.step', {
+        selector: '.MuiStepLabel-label'
+      })
+    ).toBeInTheDocument();
     expect(screen.getByText('spontanei.form.steps.step2.step')).toBeInTheDocument();
     expect(screen.getByText('spontanei.form.steps.step3.step')).toBeInTheDocument();
     expect(screen.getByText('spontanei.form.steps.step4.step')).toBeInTheDocument();
@@ -86,7 +90,11 @@ describe('Steps Component', () => {
     act(() => {
       vi.advanceTimersByTime(1000);
     });
-    expect(screen.getByText('spontanei.form.steps.step1.step')).toBeInTheDocument();
+    expect(
+      screen.getByText('spontanei.form.steps.step1.step', {
+        selector: '.MuiStepLabel-label'
+      })
+    ).toBeInTheDocument();
 
     rerender(
       <FormContext.Provider value={getDefaultContext({ omitFirstStep: true })}>

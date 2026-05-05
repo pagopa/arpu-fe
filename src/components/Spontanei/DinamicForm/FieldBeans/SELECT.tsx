@@ -2,7 +2,7 @@ import React from 'react';
 import { FormControl } from '@mui/material';
 import { computedPROPS } from './withDinamicValues';
 import { Autocomplete, TextField } from '@mui/material';
-import { Option } from './withDinamicValues';
+import { Option } from '../../SpontaneiSchemas';
 import { useField } from 'formik';
 import { useTranslation } from 'react-i18next';
 
@@ -32,10 +32,12 @@ const SELECT = (props: computedPROPS & { multiple?: boolean }) => {
     }
   };
 
+  const orderedOptions = [...options].sort((a, b) => a.label.localeCompare(b.label));
+
   return (
     <FormControl fullWidth error={hasError} required={required}>
       <Autocomplete
-        options={options}
+        options={orderedOptions}
         onChange={handleChange}
         onBlur={onBlur}
         noOptionsText={t('errors.empty.search')}

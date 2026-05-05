@@ -1,15 +1,15 @@
 import React, { useContext, useEffect, useState } from 'react';
-import { Form, useField, useFormikContext } from 'formik';
+import { Form, useFormikContext } from 'formik';
 import { BuildFormInputs, BuildFormState, CustomFormValues } from './config';
 import { Stack, Typography } from '@mui/material';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers';
-import 'dayjs/locale/it';
 import { PaymentNoticeInfo } from '..';
 import { useTranslation } from 'react-i18next';
 import { SpontaneousFormField } from '../../../../generated/data-contracts';
 import { ResponsiveCard } from 'components/ResponsiveCard';
 import FormContext, { FormContextType } from '../FormContext';
+import 'dayjs/locale/it';
 
 export type CustomFormProps = {
   fieldBeans: SpontaneousFormField[];
@@ -21,8 +21,6 @@ const CustomForm = ({ fieldBeans, amountFieldName }: CustomFormProps) => {
   const context = useContext<FormContextType | null>(FormContext);
   const { t } = useTranslation();
   const { setFormikState } = useFormikContext<PaymentNoticeInfo>();
-  const [, , descriptionHelpers] = useField<PaymentNoticeInfo['description']>('description');
-  const [, , amountHelpers] = useField<PaymentNoticeInfo['amount']>('amount');
 
   const fields = BuildFormInputs(fieldBeans, !amountFieldName, amountFieldName);
 
@@ -50,17 +48,6 @@ const CustomForm = ({ fieldBeans, amountFieldName }: CustomFormProps) => {
     }
     setIsFormReady(true);
   }, []);
-
-  useEffect(
-    () => () => {
-      // reset description and amount only if the user goes back to the previous step
-      if (direction < 0) {
-        descriptionHelpers.setValue('');
-        amountHelpers.setValue(0);
-      }
-    },
-    []
-  );
 
   return (
     <>
