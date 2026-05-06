@@ -151,7 +151,6 @@ const customTheme = createTheme({
             fontWeight: '500',
             '& .MuiRadio-root': {
               padding: 0,
-              width: 20,
               height: 20,
               marginLeft: theme.spacing(1)
             },
