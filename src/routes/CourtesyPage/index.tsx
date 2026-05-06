@@ -70,7 +70,8 @@ export const CourtesyPage = () => {
 
   return (
     <Container
-      maxWidth="sm"
+      fixed
+      disableGutters
       id="courtesyPage"
       sx={{
         display: 'flex',

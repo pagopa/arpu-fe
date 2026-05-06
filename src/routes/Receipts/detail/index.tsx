@@ -1,5 +1,5 @@
 import React from 'react';
-import { generatePath, Location, useLocation, useNavigate, useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import config from 'utils/config';
 import { Stack, Card, Button, Divider, Theme, Typography, useMediaQuery } from '@mui/material';
 import { useTranslation } from 'react-i18next';
@@ -14,7 +14,6 @@ import loaders from 'utils/loaders';
 import utils from 'utils';
 import { ArrowBack, Download } from '@mui/icons-material';
 import { DateFormat } from 'utils/datetools';
-import { ROUTES } from 'routes/routes';
 import { usePageTitle } from 'hooks/usePageTitle';
 
 export const ReceiptDetail = () => {
@@ -27,25 +26,25 @@ export const ReceiptDetail = () => {
   const isAnonymous = utils.storage.user.isAnonymous();
 
   const params = useParams<{ receiptId: string; organizationId: string }>();
-  const location = useLocation() as Location<{ fiscalCode: string }>;
-  const fiscalCode = location?.state?.fiscalCode;
   const receiptId = Number(params?.receiptId);
   const organizationId = Number(params?.organizationId);
 
-  const request = { brokerId, organizationId, receiptId, fiscalCode };
+  const request = { brokerId, organizationId, receiptId };
+
   const { data } = isAnonymous
     ? loaders.public.usePublicReceiptDetail(request)
     : loaders.useReceiptDetail(request);
 
-  const onDownload = () => {
-    const path = isAnonymous ? ROUTES.public.DEBT_POSITION_DOWNLOAD : ROUTES.DEBT_POSITION_DOWNLOAD;
+  const receiptPdf = isAnonymous
+    ? loaders.public.usePublicDownloadReceipt({ brokerId })
+    : loaders.useDownloadReceipt({ brokerId });
 
-    if (!data?.nav) return;
-
-    navigate(
-      `${generatePath(path, { nav: data.nav, organizationId })}#debtorFiscalCode=${fiscalCode}`
-    );
-  };
+  const onDownload = () =>
+    utils.files.downloadReceipt(receiptPdf.mutateAsync, {
+      organizationId,
+      receiptId,
+      fiscalCode: data?.debtor.fiscalCode
+    });
 
   const onBack = () => {
     navigate(-1);

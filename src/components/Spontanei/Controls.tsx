@@ -47,6 +47,8 @@ const Controls = (props: ControlsProps) => {
     }
   };
 
+  const showConfirmButton = step.current === 3;
+
   return (
     <Stack
       my={4}
@@ -69,7 +71,7 @@ const Controls = (props: ControlsProps) => {
           variant="contained"
           onClick={onContinue}
           data-testid="spontanei-controls-continue-button">
-          {step.current === 4 ? t('spontanei.form.confirm') : t('spontanei.form.continue')}
+          {showConfirmButton ? t('spontanei.form.confirm') : t('spontanei.form.continue')}
         </Button>
       )}
     </Stack>

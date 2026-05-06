@@ -48,8 +48,28 @@ const customTheme = createTheme({
       }
     }
   },
+  ...theme?.components,
   components: {
-    ...theme?.components,
+    MuiContainer: {
+      styleOverrides: {
+        root: {
+          paddingLeft: theme.spacing(3),
+          paddingRight: theme.spacing(3)
+        },
+        disableGutters: {
+          paddingLeft: 0,
+          paddingRight: 0
+        },
+        maxWidthLg: {
+          [theme.breakpoints.up('lg')]: {
+            maxWidth: 760 + 48
+          },
+          [theme.breakpoints.up('xl')]: {
+            maxWidth: 984 + 48
+          }
+        }
+      }
+    },
     MuiFormLabel: {
       styleOverrides: {
         root: {

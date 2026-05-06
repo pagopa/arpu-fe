@@ -61,7 +61,10 @@ const StandardForm = ({
                 <Typography variant="body2" fontWeight={600} component="h2">
                   {t('spontanei.form.steps.step3.paymentData.title')}
                 </Typography>
-                <Stack direction={{ xs: 'column', sm: 'row' }} justifyContent={'space-between'}>
+                <Stack
+                  direction={{ xs: 'column', sm: 'row' }}
+                  justifyContent={'space-between'}
+                  gap={1}>
                   <TextField
                     label={t('spontanei.form.steps.step3.paymentData.amount')}
                     variant="outlined"
