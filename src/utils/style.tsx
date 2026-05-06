@@ -148,11 +148,11 @@ const customTheme = createTheme({
             alignItems: 'center',
             paddingTop: theme.spacing(2),
             paddingBottom: theme.spacing(2),
+            margin: 0,
             fontWeight: '500',
             '& .MuiRadio-root': {
               padding: 0,
               height: 20,
-              marginLeft: theme.spacing(1)
             },
             '& .MuiTypography-root': {
               alignItems: 'center',
