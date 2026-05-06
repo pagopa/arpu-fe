@@ -102,7 +102,7 @@ export function Layout(props: { anonymous?: boolean }) {
           {t('ui.header.skipToContent')}
         </Button>
 
-        <Box component="header" sx={{ marginX: '-18px' }}>
+        <Box component="header">
           {props.anonymous ? (
             <HeaderAccount
               rootLink={rootLink}
