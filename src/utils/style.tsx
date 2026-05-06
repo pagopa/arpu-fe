@@ -152,7 +152,7 @@ const customTheme = createTheme({
             fontWeight: '500',
             '& .MuiRadio-root': {
               padding: 0,
-              height: 20,
+              height: 20
             },
             '& .MuiTypography-root': {
               alignItems: 'center',
