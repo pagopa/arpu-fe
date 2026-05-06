@@ -56,7 +56,7 @@ export const Actions = ({ installment }: ActionsProps) => {
 
       navigate(`${path}#debtorFiscalCode=${installment.debtor.fiscalCode}`);
     } else {
-      notify.emit(t('errors.toast.default'));
+      utils.notify.emit(t('errors.toast.default'));
     }
   };
 

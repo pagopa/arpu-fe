@@ -39,7 +39,6 @@ export const Footer = () => {
         backgroundColor: 'background.paper'
       }}>
       <Divider />
-
       <Stack
         direction={{ xs: 'column', md: 'row' }}
         justifyContent="space-between"
@@ -52,7 +51,7 @@ export const Footer = () => {
           <Stack
             sx={{ padding: 0 }}
             direction={{ xs: 'column', md: 'row' }}
-            gap={{ xs: 0, md: 2 }}
+            gap={2}
             alignItems="center"
             component="ul"
             id="footer-links">
