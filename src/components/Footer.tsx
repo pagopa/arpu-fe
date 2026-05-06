@@ -1,7 +1,7 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { useLanguage } from 'hooks/useLanguage';
-import { Box, Divider, Link, Stack, Typography } from '@mui/material';
+import { Divider, Link, Stack, Typography } from '@mui/material';
 import { ROUTES } from 'routes/routes';
 import { ProductLogo } from './ProductLogo';
 import appStore from 'store/appStore';
@@ -12,7 +12,7 @@ const DEFAULT_LINK_A11Y = 'https://www.w3.org/WAI/standards-guidelines/wai-aria/
 
 const FooterLink = ({ href, children }: { href: string; children: string }) => {
   return (
-    <Box component="li" sx={{ listStyle: 'none' }}>
+    <Stack component="li" sx={{ listStyle: 'none' }}>
       <Link
         href={href}
         variant="body2"
@@ -21,7 +21,7 @@ const FooterLink = ({ href, children }: { href: string; children: string }) => {
         sx={{ textDecoration: 'none', color: 'text.primary', fontWeight: 600, fontSize: 14 }}>
         {children}
       </Link>
-    </Box>
+    </Stack>
   );
 };
 
@@ -57,11 +57,13 @@ export const Footer = () => {
             <FooterLink href={ROUTES.PRIVACY_POLICY}>{t('ui.footer.privacy')}</FooterLink>
             <FooterLink href={ROUTES.TOS}>{t('ui.footer.termsAndConditions')}</FooterLink>
             <FooterLink href={a11yLink}>{t('ui.footer.a11y')}</FooterLink>
-            <LangSwitch
-              currentLangCode={language}
-              onLanguageChanged={changeLanguage}
-              languages={languages}
-            />
+            <Stack component={'li'} sx={{ listStyle: 'none' }} id="lang-switch">
+              <LangSwitch
+                currentLangCode={language}
+                onLanguageChanged={changeLanguage}
+                languages={languages}
+              />
+            </Stack>
           </Stack>
         </Stack>
       </Stack>
