@@ -61,6 +61,9 @@ const customTheme = createTheme({
           paddingRight: 0
         },
         maxWidthLg: {
+          [theme.breakpoints.up('sm')]: {
+            maxWidth: 636 + 48
+          },
           [theme.breakpoints.up('lg')]: {
             maxWidth: 760 + 48
           },
