@@ -355,7 +355,7 @@ const router = createBrowserRouter([
 
 export const App = () => {
   const isReady = appStore.value.isReady;
-  const favicon = appStore.value.brokerInfo?.brokerLogo;
+  const favicon = appStore.value.brokerInfo?.favicon;
   useFavicon(favicon);
 
   return (
