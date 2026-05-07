@@ -323,7 +323,7 @@ const Summary = () => {
     <>
       <Card variant="elevation" sx={{ padding: 2 }} data-testid="spontanei-step3-summary">
         <Stack gap={{ xs: 3, sm: 2 }}>
-          <Stack gap={{ xs: 0, sm: 1 }}>
+          <Stack gap={1}>
             <Typography variant="h5" component="h2">
               {t('spontanei.form.steps.step4.title')}
             </Typography>
