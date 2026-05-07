@@ -1,5 +1,10 @@
 import { generatePath } from 'react-router-dom';
 import { OUTCOMES, ROUTES } from 'routes/routes';
+import { InstallmentDebtorExtendedDTO } from '../../generated/data-contracts';
+import { UseMutateAsyncFunction } from '@tanstack/react-query';
+import { ReceiptDetailArgs } from './loaders';
+import utils from 'utils';
+import i18n from 'translations/i18n';
 
 /**
  * Downloads a file
@@ -38,6 +43,37 @@ export const downloadBlob = (blob: Blob, fileName: string): void => {
   URL.revokeObjectURL(url);
 };
 
+/**
+ * Downloads a receipt
+ */
+export const downloadReceipt = async (
+  mutateAsync: UseMutateAsyncFunction<
+    {
+      blob: File;
+      filename: string | null;
+    },
+    Error,
+    Pick<ReceiptDetailArgs, 'organizationId' | 'receiptId' | 'fiscalCode'>,
+    unknown
+  >,
+  args: Pick<InstallmentDebtorExtendedDTO, 'organizationId' | 'receiptId'> & { fiscalCode?: string }
+) => {
+  try {
+    if (args?.receiptId && args?.organizationId && args?.fiscalCode) {
+      const { blob, filename } = await mutateAsync({
+        organizationId: args.organizationId,
+        receiptId: args.receiptId,
+        fiscalCode: args.fiscalCode
+      });
+      downloadBlob(blob, filename || `${args?.receiptId}.pdf`);
+    } else {
+      throw new Error('Missing required parameters');
+    }
+  } catch {
+    utils.notify.emit(i18n.t('app.receiptDetail.downloadError'));
+  }
+};
+
 const generateDownloadUrl = ({
   orgId,
   nav,
@@ -71,5 +107,6 @@ const generateDownloadUrl = ({
 export default {
   downloadFile,
   downloadBlob,
-  generateDownloadUrl
+  generateDownloadUrl,
+  downloadReceipt
 };

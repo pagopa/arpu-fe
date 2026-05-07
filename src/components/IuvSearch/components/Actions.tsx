@@ -7,17 +7,13 @@ import React from 'react';
 import ShoppingCart from '@mui/icons-material/ShoppingCart';
 import Stack from '@mui/material/Stack';
 import { useTranslation } from 'react-i18next';
-
 import { addItem } from 'store/CartStore';
-import files from 'utils/files';
 import {
   InstallmentDebtorExtendedDTO,
   InstallmentStatus
 } from '../../../../generated/data-contracts';
-import loaders from 'utils/loaders';
-import notify from 'utils/notify';
-import storage from 'utils/storage';
 import { usePostCarts } from 'hooks/usePostCarts';
+import utils from 'utils';
 
 type ActionsProps = {
   installment: InstallmentDebtorExtendedDTO;
@@ -26,9 +22,9 @@ type ActionsProps = {
 export const Actions = ({ installment }: ActionsProps) => {
   const navigate = useNavigate();
   const { t } = useTranslation();
-  const brokerId = storage.app.getBrokerId();
+  const brokerId = utils.storage.app.getBrokerId();
 
-  const isAnonymous = storage.user.isAnonymous();
+  const isAnonymous = utils.storage.user.isAnonymous();
 
   if (!brokerId) {
     throw new Error('Missing required parameters');
@@ -42,8 +38,8 @@ export const Actions = ({ installment }: ActionsProps) => {
   });
 
   const receiptPdf = isAnonymous
-    ? loaders.public.usePublicDownloadReceipt({ brokerId })
-    : loaders.useDownloadReceipt({ brokerId });
+    ? utils.loaders.public.usePublicDownloadReceipt({ brokerId })
+    : utils.loaders.useDownloadReceipt({ brokerId });
 
   const downloadRoute = isAnonymous
     ? ROUTES.public.DEBT_POSITION_DOWNLOAD
@@ -60,30 +56,16 @@ export const Actions = ({ installment }: ActionsProps) => {
 
       navigate(`${path}#debtorFiscalCode=${installment.debtor.fiscalCode}`);
     } else {
-      notify.emit(t('errors.toast.default'));
+      utils.notify.emit(t('errors.toast.default'));
     }
   };
 
-  const onDownloadReceipt = async () => {
-    try {
-      if (
-        installment?.receiptId &&
-        installment?.organizationId &&
-        installment?.debtor?.fiscalCode
-      ) {
-        const { blob, filename } = await receiptPdf.mutateAsync({
-          organizationId: installment.organizationId,
-          receiptId: installment.receiptId,
-          fiscalCode: installment.debtor.fiscalCode
-        });
-        files.downloadBlob(blob, filename || `${installment?.receiptId}.pdf`);
-      } else {
-        throw new Error('Missing required parameters');
-      }
-    } catch {
-      notify.emit(t('app.receiptDetail.downloadError'));
-    }
-  };
+  const onDownloadReceipt = () =>
+    utils.files.downloadReceipt(receiptPdf.mutateAsync, {
+      organizationId: installment.organizationId,
+      receiptId: installment.receiptId,
+      fiscalCode: installment.debtor?.fiscalCode
+    });
 
   const navigateToDetail = () => {
     if (
@@ -98,7 +80,7 @@ export const Actions = ({ installment }: ActionsProps) => {
       });
       navigate(path, { state: { fiscalCode: installment.debtor.fiscalCode } });
     } else {
-      notify.emit(t('errors.toast.default'));
+      utils.notify.emit(t('errors.toast.default'));
     }
   };
 
@@ -110,7 +92,7 @@ export const Actions = ({ installment }: ActionsProps) => {
       !installment?.orgName ||
       !installment?.orgFiscalCode
     ) {
-      notify.emit(t('errors.toast.drawer'));
+      utils.notify.emit(t('errors.toast.drawer'));
     } else {
       addItem({
         installmentId: installment.installmentId,
@@ -134,7 +116,7 @@ export const Actions = ({ installment }: ActionsProps) => {
         !installment?.orgName ||
         !installment?.orgFiscalCode
       ) {
-        notify.emit(t('errors.toast.payment'));
+        utils.notify.emit(t('errors.toast.payment'));
       } else {
         const cartItem = {
           installmentId: installment.installmentId,
@@ -149,7 +131,7 @@ export const Actions = ({ installment }: ActionsProps) => {
         carts.mutate({ notices: [cartItem], email: installment?.debtor?.email });
       }
     } catch (e) {
-      notify.emit(t('errors.toast.payment'));
+      utils.notify.emit(t('errors.toast.payment'));
     }
   };
 

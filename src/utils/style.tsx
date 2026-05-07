@@ -48,8 +48,31 @@ const customTheme = createTheme({
       }
     }
   },
+  ...theme?.components,
   components: {
-    ...theme?.components,
+    MuiContainer: {
+      styleOverrides: {
+        root: {
+          paddingLeft: theme.spacing(3),
+          paddingRight: theme.spacing(3)
+        },
+        disableGutters: {
+          paddingLeft: 0,
+          paddingRight: 0
+        },
+        maxWidthLg: {
+          [theme.breakpoints.up('sm')]: {
+            maxWidth: 636 + 48
+          },
+          [theme.breakpoints.up('lg')]: {
+            maxWidth: 760 + 48
+          },
+          [theme.breakpoints.up('xl')]: {
+            maxWidth: 984 + 48
+          }
+        }
+      }
+    },
     MuiFormLabel: {
       styleOverrides: {
         root: {
@@ -128,12 +151,11 @@ const customTheme = createTheme({
             alignItems: 'center',
             paddingTop: theme.spacing(2),
             paddingBottom: theme.spacing(2),
+            margin: 0,
             fontWeight: '500',
             '& .MuiRadio-root': {
               padding: 0,
-              width: 20,
-              height: 20,
-              marginLeft: theme.spacing(1)
+              height: 20
             },
             '& .MuiTypography-root': {
               alignItems: 'center',

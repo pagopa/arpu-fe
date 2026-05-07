@@ -18,3 +18,17 @@
 .grecaptcha-badge {
     visibility: hidden;
 }
+
+header .MuiButton-root:first-child {
+    padding-left: 0;
+}
+
+header {
+    .MuiIconButton-root:last-child {
+        padding-right: 0;
+    }
+
+    .MuiStack-root .MuiButton-root {
+        padding-right: 0;
+    }
+}

@@ -1,7 +1,7 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { useLanguage } from 'hooks/useLanguage';
-import { Box, Divider, Link, Stack, Typography } from '@mui/material';
+import { Divider, Link, Stack, Typography } from '@mui/material';
 import { ROUTES } from 'routes/routes';
 import { ProductLogo } from './ProductLogo';
 import appStore from 'store/appStore';
@@ -12,7 +12,7 @@ const DEFAULT_LINK_A11Y = 'https://www.w3.org/WAI/standards-guidelines/wai-aria/
 
 const FooterLink = ({ href, children }: { href: string; children: string }) => {
   return (
-    <Box component="li" sx={{ listStyle: 'none' }}>
+    <Stack component="li" sx={{ listStyle: 'none' }}>
       <Link
         href={href}
         variant="body2"
@@ -21,7 +21,7 @@ const FooterLink = ({ href, children }: { href: string; children: string }) => {
         sx={{ textDecoration: 'none', color: 'text.primary', fontWeight: 600, fontSize: 14 }}>
         {children}
       </Link>
-    </Box>
+    </Stack>
   );
 };
 
@@ -44,42 +44,43 @@ export const Footer = () => {
         justifyContent="space-between"
         alignItems="center"
         gap={{ xs: 3, md: 0 }}
-        padding={{ xs: 2, md: 3 }}
+        padding={3}
         minHeight={50}>
         <ProductLogo maxWidth="80px" />
         <Stack alignItems="flex-end" component="nav">
           <Stack
+            sx={{ padding: 0 }}
             direction={{ xs: 'column', md: 'row' }}
-            gap={{ xs: 0, md: 2 }}
+            gap={2}
             alignItems="center"
             component="ul"
             id="footer-links">
             <FooterLink href={ROUTES.PRIVACY_POLICY}>{t('ui.footer.privacy')}</FooterLink>
             <FooterLink href={ROUTES.TOS}>{t('ui.footer.termsAndConditions')}</FooterLink>
             <FooterLink href={a11yLink}>{t('ui.footer.a11y')}</FooterLink>
-            <LangSwitch
-              currentLangCode={language}
-              onLanguageChanged={changeLanguage}
-              languages={languages}
-            />
+            <Stack component={'li'} sx={{ listStyle: 'none' }} id="lang-switch">
+              <LangSwitch
+                currentLangCode={language}
+                onLanguageChanged={changeLanguage}
+                languages={languages}
+              />
+            </Stack>
           </Stack>
         </Stack>
       </Stack>
       {brokerInfo?.brokerName ? (
-        <Stack>
+        <>
           <Divider />
-          <Stack alignItems="center" direction={'row'} justifyContent="center" height={60}>
-            <Typography fontWeight={600} fontSize={14}>
-              {brokerInfo.brokerName}
-            </Typography>
-            {brokerInfo.address && (
-              <Typography fontSize={14}>
-                &nbsp;&#x2013;&nbsp;{brokerInfo.address} &middot; {brokerInfo.zipCode}{' '}
-                {brokerInfo.city}
+          <Stack px={3}>
+            <Stack alignItems="center" direction={'row'} justifyContent="center" height={60}>
+              <Typography fontSize={14} textAlign="center">
+                <span style={{ fontWeight: 600 }}>{brokerInfo.brokerName}</span>
+                {brokerInfo.address &&
+                  ` – ${brokerInfo.address} · ${brokerInfo.zipCode} ${brokerInfo.city}`}
               </Typography>
-            )}
+            </Stack>
           </Stack>
-        </Stack>
+        </>
       ) : null}
     </Stack>
   );

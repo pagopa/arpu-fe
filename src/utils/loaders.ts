@@ -288,7 +288,7 @@ export const getPublicPaymentNotice = (
     throwOnError: true
   });
 
-type ReceiptDetailArgs = {
+export type ReceiptDetailArgs = {
   brokerId: number;
   organizationId: number;
   receiptId: number;

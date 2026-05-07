@@ -7,7 +7,6 @@ import { useNavigate } from 'react-router-dom';
 import { ROUTES } from 'routes/routes';
 import { useUserInfo } from 'hooks/useUserInfo';
 import { useTranslation } from 'react-i18next';
-import { Box } from '@mui/system';
 import appStore from 'store/appStore';
 
 export interface HeaderProps {
@@ -76,17 +75,15 @@ export const Header = (props: HeaderProps) => {
 
   return (
     <>
-      <Box component="header">
-        <HeaderAccount
-          rootLink={rootLink}
-          enableDropdown
-          enableAssistanceButton
-          onAssistanceClick={handleAssistanceClick}
-          loggedUser={jwtUser}
-          userActions={userActions}
-          translationsMap={{ assistance: t('ui.header.help') }}
-        />
-      </Box>
+      <HeaderAccount
+        rootLink={rootLink}
+        enableDropdown
+        enableAssistanceButton
+        onAssistanceClick={handleAssistanceClick}
+        loggedUser={jwtUser}
+        userActions={userActions}
+        translationsMap={{ assistance: t('ui.header.help') }}
+      />
     </>
   );
 };

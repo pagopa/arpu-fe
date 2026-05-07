@@ -91,7 +91,8 @@ export function Layout(props: { anonymous?: boolean }) {
         </Alert>
       </Snackbar>
       <ModalSystem />
-      <Container maxWidth={false} disableGutters>
+
+      <Container maxWidth={false} disableGutters sx={{ overflow: 'hidden' }}>
         <Button
           id="skip-to-content"
           color="primary"
@@ -100,17 +101,22 @@ export function Layout(props: { anonymous?: boolean }) {
           size="large">
           {t('ui.header.skipToContent')}
         </Button>
-        {!props.anonymous ? (
-          <Header />
-        ) : (
-          <HeaderAccount
-            rootLink={rootLink}
-            onAssistanceClick={onAssistanceClick}
-            enableLogin={false}
-            translationsMap={{ assistance: t('ui.header.help') }}
-          />
-        )}
+
+        <Box component="header">
+          {props.anonymous ? (
+            <HeaderAccount
+              rootLink={rootLink}
+              onAssistanceClick={onAssistanceClick}
+              enableLogin={false}
+              translationsMap={{ assistance: t('ui.header.help') }}
+            />
+          ) : (
+            <Header />
+          )}
+        </Box>
+
         {subHeader && <SubHeader product={<ProductLogo maxWidth="160px" />} />}
+
         <Stack direction={lg ? 'row' : 'column'} bgcolor={grey['100']}>
           {sidebar ? <Sidebar /> : null}
           <Box width={'100%'} component="main" id="main-content" tabIndex={-1}>
@@ -123,7 +129,7 @@ export function Layout(props: { anonymous?: boolean }) {
               </Container>
             ) : null}
             {gutters ? (
-              <Container sx={{ my: 3 }} maxWidth={sidebar ? false : 'lg'}>
+              <Container sx={{ my: 3, px: 3 }} maxWidth={sidebar ? false : 'lg'}>
                 <Outlet />
               </Container>
             ) : (

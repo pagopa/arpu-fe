@@ -18,7 +18,7 @@ const Cart = () => {
   return (
     <Button
       variant="naked"
-      sx={{ gap: 1 }}
+      sx={{ gap: 1, pr: 0 }}
       onClick={toggleCartDrawer}
       aria-label={t('ui.a11y.cart')}
       name="CartButton">
@@ -54,7 +54,6 @@ export const SubHeader = ({ product }: { product: ReactNode }) => {
         alignItems="center"
         justifyContent="space-between"
         p={3}
-        pl={5}
         pb={1.25}
         pt={1.25}
         width="100%">

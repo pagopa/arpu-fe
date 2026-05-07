@@ -15,7 +15,8 @@ const {
   mockReceiptPdf,
   mockPublicReceiptPdf,
   mockDownloadBlob,
-  mockCartsMutate
+  mockCartsMutate,
+  mockGetBrokerCode
 } = vi.hoisted(() => ({
   mockNavigate: vi.fn(),
   mockNotifyEmit: vi.fn(),
@@ -25,7 +26,8 @@ const {
   mockReceiptPdf: vi.fn(),
   mockPublicReceiptPdf: vi.fn(),
   mockDownloadBlob: vi.fn(),
-  mockCartsMutate: vi.fn()
+  mockCartsMutate: vi.fn(),
+  mockGetBrokerCode: vi.fn()
 }));
 
 vi.mock('utils/storage', async (importOriginal) => ({
@@ -35,7 +37,8 @@ vi.mock('utils/storage', async (importOriginal) => ({
       isAnonymous: () => mockIsAnonymous()
     },
     app: {
-      getBrokerId: () => mockGetBrokerId()
+      getBrokerId: () => mockGetBrokerId(),
+      getBrokerCode: () => mockGetBrokerCode()
     }
   }
 }));
@@ -55,9 +58,27 @@ vi.mock('utils/notify', () => ({
   }
 }));
 
-vi.mock('utils/files', () => ({
+vi.mock('utils/files', async (importOriginal) => ({
+  ...((await importOriginal()) as any),
   default: {
-    downloadBlob: (blob: Blob, filename: string) => mockDownloadBlob(blob, filename)
+    ...((await importOriginal()) as any).default,
+    downloadBlob: (blob: Blob, filename: string) => mockDownloadBlob(blob, filename),
+    downloadReceipt: async (mutateAsync: any, args: any) => {
+      try {
+        if (args?.receiptId && args?.organizationId && args?.fiscalCode) {
+          const { blob, filename } = await mutateAsync({
+            organizationId: args.organizationId,
+            receiptId: args.receiptId,
+            fiscalCode: args.fiscalCode
+          });
+          mockDownloadBlob(blob, filename || `${args?.receiptId}.pdf`);
+        } else {
+          throw new Error();
+        }
+      } catch {
+        mockNotifyEmit('app.receiptDetail.downloadError');
+      }
+    }
   }
 }));
 
