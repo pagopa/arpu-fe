@@ -3,6 +3,7 @@ import React from 'react';
 import { render, screen, fireEvent } from '../../../__tests__/renderers';
 import { ReceiptDetail } from '.';
 import * as ReactRouterDom from 'react-router-dom';
+import utils from 'utils';
 
 const mockReceiptData = {
   receiptId: 123,
@@ -32,33 +33,52 @@ const mockNavigate = vi.fn();
 const mockIsAnonymous = vi.fn();
 const mockUseReceiptDetail = vi.fn();
 const mockUsePublicReceiptDetail = vi.fn();
+const mockUseDownloadReceipt = vi.fn();
+const mockUsePublicDownloadReceipt = vi.fn();
 
-vi.mock('utils', () => ({
-  default: {
-    config: {
-      missingValue: '-'
-    },
-    storage: {
-      user: {
-        isAnonymous: () => mockIsAnonymous()
-      }
-    },
-    style: {
-      theme: {
-        spacing: vi.fn((value: number) => `${value * 8}px`)
+vi.mock('utils', async (importOriginal) => {
+  const actual = await importOriginal<any>();
+  return {
+    ...actual,
+    default: {
+      ...actual.default,
+      storage: {
+        ...actual.default.storage,
+        user: {
+          ...actual.default.storage.user,
+          isAnonymous: () => mockIsAnonymous()
+        }
+      },
+      style: {
+        ...actual.default.style,
+        theme: {
+          ...actual.default.style.theme,
+          spacing: vi.fn((value: number) => `${value * 8}px`)
+        }
+      },
+      loaders: {
+        ...actual.default.loaders,
+        useReceiptDetail: (params?: any) => mockUseReceiptDetail(params),
+        useDownloadReceipt: () => mockUseDownloadReceipt(),
+        public: {
+          ...actual.default.loaders.public,
+          usePublicReceiptDetail: (params?: any) => mockUsePublicReceiptDetail(params),
+          usePublicDownloadReceipt: () => mockUsePublicDownloadReceipt()
+        }
+      },
+      files: {
+        ...actual.default.files,
+        downloadReceipt: vi.fn()
+      },
+      converters: {
+        ...actual.default.converters,
+        toEuroOrMissingValue: vi.fn((val) => val),
+        propertyOrMissingValue: vi.fn((val) => val),
+        formatDateOrMissingValue: vi.fn((val) => val)
       }
     }
-  }
-}));
-
-vi.mock('utils/loaders', () => ({
-  default: {
-    useReceiptDetail: (params?: any) => mockUseReceiptDetail(params),
-    public: {
-      usePublicReceiptDetail: (params?: any) => mockUsePublicReceiptDetail(params)
-    }
-  }
-}));
+  };
+});
 
 vi.mock('utils/config', () => ({
   default: {
@@ -129,6 +149,14 @@ describe('ReceiptDetail', () => {
       isLoading: false,
       isError: false
     });
+
+    mockUseDownloadReceipt.mockReturnValue({
+      mutateAsync: vi.fn()
+    });
+
+    mockUsePublicDownloadReceipt.mockReturnValue({
+      mutateAsync: vi.fn()
+    });
   });
 
   describe('Authenticated User', () => {
@@ -173,15 +201,17 @@ describe('ReceiptDetail', () => {
       });
     });
 
-    it('navigates to download route when download button is clicked', () => {
+    it('calls download function when download button is clicked', () => {
       render(<ReceiptDetail />);
 
       const downloadButton = screen.getByRole('button', { name: 'app.receiptDetail.download' });
       fireEvent.click(downloadButton);
 
-      expect(mockNavigate).toHaveBeenCalledWith(
-        '/receipt/456/30123456789012345678/download#debtorFiscalCode=RSSMRA80A01H501U'
-      );
+      expect(utils.files.downloadReceipt).toHaveBeenCalledWith(expect.any(Function), {
+        organizationId: 456,
+        receiptId: 123,
+        fiscalCode: 'RSSMRA80A01H501U'
+      });
     });
 
     it('does not render bottom action buttons for authenticated user', () => {
@@ -218,15 +248,17 @@ describe('ReceiptDetail', () => {
       expect(downloadButtons).toHaveLength(1);
     });
 
-    it('navigates to public download route for anonymous user', () => {
+    it('calls download function for anonymous user', async () => {
       render(<ReceiptDetail />);
 
       const downloadButton = screen.getByRole('button', { name: 'app.receiptDetail.download' });
       fireEvent.click(downloadButton);
 
-      expect(mockNavigate).toHaveBeenCalledWith(
-        '/public/receipt/456/30123456789012345678/download#debtorFiscalCode=RSSMRA80A01H501U'
-      );
+      expect(utils.files.downloadReceipt).toHaveBeenCalledWith(expect.any(Function), {
+        organizationId: 456,
+        receiptId: 123,
+        fiscalCode: 'RSSMRA80A01H501U'
+      });
     });
 
     it('navigates back when back button is clicked', () => {
@@ -327,15 +359,17 @@ describe('ReceiptDetail', () => {
       });
     });
 
-    it('passes fiscalCode in state when navigating to download', () => {
+    it('passes correct parameters when downloading', () => {
       render(<ReceiptDetail />);
 
       const downloadButton = screen.getByRole('button', { name: 'app.receiptDetail.download' });
       fireEvent.click(downloadButton);
 
-      expect(mockNavigate).toHaveBeenCalledWith(
-        expect.stringContaining('#debtorFiscalCode=RSSMRA80A01H501U')
-      );
+      expect(utils.files.downloadReceipt).toHaveBeenCalledWith(expect.any(Function), {
+        organizationId: 456,
+        receiptId: 123,
+        fiscalCode: 'RSSMRA80A01H501U'
+      });
     });
 
     it('renders payment amount correctly', () => {
@@ -388,7 +422,7 @@ describe('ReceiptDetail', () => {
   });
 
   describe('onDownload edge cases', () => {
-    it('does not navigate when data.nav is undefined', () => {
+    it('calls download function even if data.nav is undefined', () => {
       mockUseReceiptDetail.mockReturnValue({
         data: { ...mockReceiptData, nav: undefined },
         isLoading: false,
@@ -400,10 +434,10 @@ describe('ReceiptDetail', () => {
       const downloadButton = screen.getByRole('button', { name: 'app.receiptDetail.download' });
       fireEvent.click(downloadButton);
 
-      expect(mockNavigate).not.toHaveBeenCalled();
+      expect(utils.files.downloadReceipt).toHaveBeenCalled();
     });
 
-    it('does not navigate when data.nav is null', () => {
+    it('calls download function even if data.nav is null', () => {
       mockUseReceiptDetail.mockReturnValue({
         data: { ...mockReceiptData, nav: null },
         isLoading: false,
@@ -415,10 +449,10 @@ describe('ReceiptDetail', () => {
       const downloadButton = screen.getByRole('button', { name: 'app.receiptDetail.download' });
       fireEvent.click(downloadButton);
 
-      expect(mockNavigate).not.toHaveBeenCalled();
+      expect(utils.files.downloadReceipt).toHaveBeenCalled();
     });
 
-    it('does not navigate when data is undefined', () => {
+    it('calls download function even if data is undefined', () => {
       mockUseReceiptDetail.mockReturnValue({
         data: undefined,
         isLoading: false,
@@ -430,7 +464,7 @@ describe('ReceiptDetail', () => {
       const downloadButton = screen.getByRole('button', { name: 'app.receiptDetail.download' });
       fireEvent.click(downloadButton);
 
-      expect(mockNavigate).not.toHaveBeenCalled();
+      expect(utils.files.downloadReceipt).toHaveBeenCalled();
     });
   });
 

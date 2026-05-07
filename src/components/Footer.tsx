@@ -44,13 +44,14 @@ export const Footer = () => {
         justifyContent="space-between"
         alignItems="center"
         gap={{ xs: 3, md: 0 }}
-        padding={{ xs: 2, md: 3 }}
+        padding={3}
         minHeight={50}>
         <ProductLogo maxWidth="80px" />
         <Stack alignItems="flex-end" component="nav">
           <Stack
+            sx={{ padding: 0 }}
             direction={{ xs: 'column', md: 'row' }}
-            gap={{ xs: 0, md: 2 }}
+            gap={2}
             alignItems="center"
             component="ul"
             id="footer-links">
@@ -68,20 +69,18 @@ export const Footer = () => {
         </Stack>
       </Stack>
       {brokerInfo?.brokerName ? (
-        <Stack>
+        <>
           <Divider />
-          <Stack alignItems="center" direction={'row'} justifyContent="center" height={60}>
-            <Typography fontWeight={600} fontSize={14}>
-              {brokerInfo.brokerName}
-            </Typography>
-            {brokerInfo.address && (
-              <Typography fontSize={14}>
-                &nbsp;&#x2013;&nbsp;{brokerInfo.address} &middot; {brokerInfo.zipCode}{' '}
-                {brokerInfo.city}
+          <Stack px={3}>
+            <Stack alignItems="center" direction={'row'} justifyContent="center" height={60}>
+              <Typography fontSize={14} textAlign="center">
+                <span style={{ fontWeight: 600 }}>{brokerInfo.brokerName}</span>
+                {brokerInfo.address &&
+                  ` – ${brokerInfo.address} · ${brokerInfo.zipCode} ${brokerInfo.city}`}
               </Typography>
-            )}
+            </Stack>
           </Stack>
-        </Stack>
+        </>
       ) : null}
     </Stack>
   );

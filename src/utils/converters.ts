@@ -239,6 +239,9 @@ export default {
   prepareNoticeDetailData,
   cartItemsToCartsRequest,
   toEuro,
+  toEuroOrMissingValue,
+  formatDateOrMissingValue,
+  propertyOrMissingValue,
   withMissingValue,
   capitalizeFirstLetter: withMissingValue(capitalizeFirstLetter),
   extractFilename
