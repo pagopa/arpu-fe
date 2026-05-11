@@ -59,7 +59,9 @@ export const CourtesyPage = () => {
   const code = OUTCOMES[outcome];
 
   const hasCustomActions =
-    code === OUTCOMES['pagamento-non-riuscito'] || code === OUTCOMES['pagamento-annullato'];
+    code === OUTCOMES['pagamento-non-riuscito'] ||
+    code === OUTCOMES['pagamento-annullato'] ||
+    code === OUTCOMES['pagamento-avviso-completato'];
 
   const getCtaHref = (code: OUTCOMES): string => {
     if (code === OUTCOMES['verifica-non-riuscita']) {

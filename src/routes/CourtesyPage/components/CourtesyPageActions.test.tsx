@@ -75,6 +75,7 @@ vi.mock('utils/storage', async (importOriginal) => {
 vi.mock('utils/files', () => ({
   default: {
     downloadBlob: vi.fn(),
+    downloadReceipt: vi.fn(),
     generateDownloadUrl: vi.fn(({ orgId, nav, isAnonymous, fiscalCode }) => {
       const prefix = isAnonymous ? '/public/spontanei' : '/spontanei';
       const url = `${prefix}/download/${orgId ?? -1}/${nav ?? 'NAV'}`;
@@ -95,8 +96,9 @@ vi.mock('utils/loaders', () => ({
       usePublicInstallmentsByIuvOrNav: vi.fn(() => ({
         mutateAsync: mockInstallmentsMutateAsync
       })),
-      getPublicPaymentNotice: vi.fn(() => ({
-        mutateAsync: mockDownloadMutateAsync
+      usePublicDownloadReceipt: vi.fn(() => ({
+        mutateAsync: mockDownloadMutateAsync,
+        isPending: false
       }))
     }
   }
@@ -104,6 +106,7 @@ vi.mock('utils/loaders', () => ({
 
 const CODE_424 = OUTCOMES['pagamento-non-riuscito'];
 const CODE_425 = OUTCOMES['pagamento-annullato'];
+const CODE_420 = OUTCOMES['pagamento-avviso-completato'];
 
 i18nTestSetup({
   courtesyPage: {
@@ -114,6 +117,10 @@ i18nTestSetup({
     [CODE_425]: {
       cta: 'Back to home',
       downloadCta: 'Download notice'
+    },
+    [CODE_420]: {
+      cta: 'Download receipt',
+      secondaryCta: 'Back to home'
     }
   },
   errors: {
@@ -137,6 +144,7 @@ const INSTALLMENT_MATCH = {
   orgFiscalCode: 'ORG-FC-001',
   orgName: 'Test Org',
   organizationId: 99,
+  receiptId: 555,
   debtor: { fiscalCode: 'DEBTOR-FC-001' }
 };
 
@@ -149,6 +157,7 @@ const INSTALLMENT_OTHER = {
   orgFiscalCode: 'ORG-FC-OTHER',
   orgName: 'Other Org',
   organizationId: 50,
+  receiptId: 777,
   debtor: { fiscalCode: 'DEBTOR-FC-OTHER' }
 };
 
@@ -223,23 +232,6 @@ describe('CourtesyPageActions – pagamento-non-riuscito (424)', () => {
     });
   });
 
-  it('navigates to error page when retry is clicked after fetch failure', async () => {
-    mockInstallmentsMutateAsync.mockRejectedValue(new Error('Network error'));
-    setupSearchParams({ nav: 'NAV-001', org_fiscal_code: 'ORG-FC-001', installment_id: '42' });
-    render(<CourtesyPageActions code={CODE_424} />);
-
-    await waitFor(() => {
-      expect(mockInstallmentsMutateAsync).toHaveBeenCalled();
-    });
-
-    fireEvent.click(screen.getByTestId('courtesyPage.cta'));
-
-    expect(mockPostCartsMutate).not.toHaveBeenCalled();
-    expect(mockNavigate).toHaveBeenCalledWith(
-      ROUTES.public.COURTESY_PAGE.replace(':outcome', String(OUTCOMES['sconosciuto']))
-    );
-  });
-
   it('renders correct download link with correct attributes', async () => {
     mockInstallmentsMutateAsync.mockResolvedValue([INSTALLMENT_MATCH]);
     setupSearchParams({ nav: 'NAV-001', org_fiscal_code: 'ORG-FC-001', installment_id: '42' });
@@ -255,19 +247,6 @@ describe('CourtesyPageActions – pagamento-non-riuscito (424)', () => {
       'href',
       expect.stringContaining('/spontanei/download/99/NAV-001')
     );
-  });
-
-  it('renders download link using defaults when installment fetch fails', async () => {
-    mockInstallmentsMutateAsync.mockRejectedValue(new Error('fail'));
-    setupSearchParams({ nav: 'NAV-001', org_fiscal_code: 'ORG-FC-001', installment_id: '42' });
-    render(<CourtesyPageActions code={CODE_424} />);
-
-    await waitFor(() => {
-      expect(mockInstallmentsMutateAsync).toHaveBeenCalled();
-    });
-
-    const downloadLink = screen.getByTestId('courtesyPage.downloadCta');
-    expect(downloadLink).toHaveAttribute('href', expect.stringContaining('/download/-1'));
   });
 
   it('selects the only installment when installment_id is absent', async () => {
@@ -468,17 +447,113 @@ describe('CourtesyPageActions – pagamento-annullato (425)', () => {
       )
     );
   });
+});
+describe('CourtesyPageActions – pagamento-avviso-completato (420)', () => {
+  afterEach(() => vi.clearAllMocks());
 
-  it('renders download link using defaults when fetch fails for cancelled payment', async () => {
-    mockInstallmentsMutateAsync.mockRejectedValue(new Error('fail'));
+  it('renders the download-receipt CTA and the back-to-home secondary CTA', async () => {
+    mockInstallmentsMutateAsync.mockResolvedValue([INSTALLMENT_MATCH]);
     setupSearchParams({ nav: 'NAV-001', org_fiscal_code: 'ORG-FC-001', installment_id: '42' });
-    render(<CourtesyPageActions code={CODE_425} />);
+    render(<CourtesyPageActions code={CODE_420} />);
 
     await waitFor(() => {
       expect(mockInstallmentsMutateAsync).toHaveBeenCalled();
     });
 
-    const downloadLink = screen.getByTestId('courtesyPage.downloadCta');
-    expect(downloadLink).toHaveAttribute('href', expect.stringContaining('/download/-1'));
+    expect(screen.getByTestId('courtesyPage.cta')).toHaveTextContent('Download receipt');
+    expect(screen.getByTestId('courtesyPage.secondaryCta')).toHaveTextContent('Back to home');
+  });
+
+  it('does NOT render the notice-download link (downloadCta) on the 420 outcome', async () => {
+    mockInstallmentsMutateAsync.mockResolvedValue([INSTALLMENT_MATCH]);
+    setupSearchParams({ nav: 'NAV-001', org_fiscal_code: 'ORG-FC-001', installment_id: '42' });
+    render(<CourtesyPageActions code={CODE_420} />);
+
+    await waitFor(() => {
+      expect(mockInstallmentsMutateAsync).toHaveBeenCalled();
+    });
+
+    expect(screen.queryByTestId('courtesyPage.downloadCta')).not.toBeInTheDocument();
+  });
+
+  it('secondary CTA points to the LOGIN route', async () => {
+    mockInstallmentsMutateAsync.mockResolvedValue([INSTALLMENT_MATCH]);
+    setupSearchParams({ nav: 'NAV-001', org_fiscal_code: 'ORG-FC-001', installment_id: '42' });
+    render(<CourtesyPageActions code={CODE_420} />);
+
+    await waitFor(() => {
+      expect(mockInstallmentsMutateAsync).toHaveBeenCalled();
+    });
+
+    expect(screen.getByTestId('courtesyPage.secondaryCta')).toHaveAttribute('href', ROUTES.LOGIN);
+  });
+
+  it('disables the download-receipt CTA until the installment is loaded', () => {
+    mockInstallmentsMutateAsync.mockReturnValue(new Promise(() => {}));
+    setupSearchParams({ nav: 'NAV-001', org_fiscal_code: 'ORG-FC-001', installment_id: '42' });
+    render(<CourtesyPageActions code={CODE_420} />);
+
+    expect(screen.getByTestId('courtesyPage.cta')).toBeDisabled();
+  });
+
+  it('enables the download-receipt CTA after the installment is loaded', async () => {
+    mockInstallmentsMutateAsync.mockResolvedValue([INSTALLMENT_MATCH]);
+    setupSearchParams({ nav: 'NAV-001', org_fiscal_code: 'ORG-FC-001', installment_id: '42' });
+    render(<CourtesyPageActions code={CODE_420} />);
+
+    await waitFor(() => {
+      expect(screen.getByTestId('courtesyPage.cta')).not.toBeDisabled();
+    });
+  });
+
+  it('calls downloadReceipt with installment data when the CTA is clicked', async () => {
+    mockInstallmentsMutateAsync.mockResolvedValue([INSTALLMENT_MATCH]);
+    setupSearchParams({ nav: 'NAV-001', org_fiscal_code: 'ORG-FC-001', installment_id: '42' });
+    render(<CourtesyPageActions code={CODE_420} />);
+
+    await waitFor(() => {
+      expect(screen.getByTestId('courtesyPage.cta')).not.toBeDisabled();
+    });
+
+    fireEvent.click(screen.getByTestId('courtesyPage.cta'));
+
+    expect(utils.files.downloadReceipt).toHaveBeenCalledWith(mockDownloadMutateAsync, {
+      organizationId: 99,
+      receiptId: 555,
+      fiscalCode: 'DEBTOR-FC-001'
+    });
+  });
+
+  it('finds the correct installment by installment_id among multiple results', async () => {
+    mockInstallmentsMutateAsync.mockResolvedValue([INSTALLMENT_OTHER, INSTALLMENT_MATCH]);
+    setupSearchParams({ nav: 'NAV-001', org_fiscal_code: 'ORG-FC-001', installment_id: '42' });
+    render(<CourtesyPageActions code={CODE_420} />);
+
+    await waitFor(() => {
+      expect(screen.getByTestId('courtesyPage.cta')).not.toBeDisabled();
+    });
+
+    fireEvent.click(screen.getByTestId('courtesyPage.cta'));
+
+    expect(utils.files.downloadReceipt).toHaveBeenCalledWith(
+      mockDownloadMutateAsync,
+      expect.objectContaining({ receiptId: 555, organizationId: 99 })
+    );
+  });
+
+  it('throws when nav is missing', () => {
+    setupSearchParams({ org_fiscal_code: 'ORG-FC-001', installment_id: '42' });
+
+    expect(() => render(<CourtesyPageActions code={CODE_420} />)).toThrow(
+      'Missing required query params: nav, org_fiscal_code or brokerId'
+    );
+  });
+
+  it('throws when org_fiscal_code is missing', () => {
+    setupSearchParams({ nav: 'NAV-001', installment_id: '42' });
+
+    expect(() => render(<CourtesyPageActions code={CODE_420} />)).toThrow(
+      'Missing required query params: nav, org_fiscal_code or brokerId'
+    );
   });
 });

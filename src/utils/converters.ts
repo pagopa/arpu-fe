@@ -181,7 +181,7 @@ const getPaymentOutcomes = (carts: CartItem[]) => {
   });
 
   return {
-    OK,
+    OK: `${OK}${search}`,
     KO: `${KO}${search}`,
     CANCEL: `${CANCEL}${search}`
   };
