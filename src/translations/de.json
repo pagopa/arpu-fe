@@ -189,7 +189,7 @@
       },
       "download": {
         "title": "Der Download der Bekanntmachung ist im Gange",
-        "subtitle": "Wenn es nicht automatisch startet, <link>laden Sie die Warnung manuell herunter<\/link>.",
+        "help": "Wenn es nicht automatisch startet, <CustomLink>laden Sie die Warnung manuell herunter</CustomLink>.",
         "link": "Aktivierte Kanäle entdecken"
       }
     },
@@ -366,7 +366,8 @@
     "download": "Herunterladen",
     "close": "Schließen Sie",
     "payNow": "Jetzt bezahlen",
-    "addItemToCart": "Zum Einkaufswagen hinzufügen"
+    "addItemToCart": "Zum Einkaufswagen hinzufügen",
+    "backToHome": "Zurück nach Hause"
   },
   "fields": {
     "iuv": "Hinweis\/IUV-Code",
@@ -643,10 +644,6 @@
         "org": "Die Auswahl der Einrichtung ist obligatorisch",
         "debtType": "Wählen Sie einen Dienst aus der obersten oder meistgenutzten Liste"
       }
-    },
-    "download": {
-      "title": "Der Download der Bekanntmachung ist im Gange",
-      "help": "Wenn es nicht automatisch startet, <link1>laden Sie die Warnung manuell herunter<\/link1>."
     }
   }
 }

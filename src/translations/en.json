@@ -189,7 +189,7 @@
       },
       "download": {
         "title": "Download in progress",
-        "subtitle": "If it does not start automatically, <link>download the alert manually<\/link>.",
+        "help": "If it does not start automatically, <CustomLink>download the alert manually</CustomLink>.",
         "link": "Find authorized payment channels"
       }
     },
@@ -366,7 +366,8 @@
     "download": "Download",
     "close": "Close",
     "payNow": "Pay now",
-    "addItemToCart": "Add to Cart"
+    "addItemToCart": "Add to Cart",
+    "backToHome": "Back to home"
   },
   "fields": {
     "iuv": "Notice\/IUV Code",
@@ -643,10 +644,6 @@
         "org": "Selection of the Institution is mandatory",
         "debtType": "Select a service from the list above or from the list of most frequently used services"
       }
-    },
-    "download": {
-      "title": "The notice is currently being downloaded",
-      "help": "If it does not start automatically, <link1>download the alert manually<\/link1>."
     }
   }
 }

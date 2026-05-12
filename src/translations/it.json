@@ -189,10 +189,8 @@
       },
       "download": {
         "title": "Il download dell’avviso è in corso",
-        "subtitle": "Se non parte in automatico, <link>scarica l’avviso manualmente</link>",
-        "link": "Scopri i canali abilitati",
-        "help": "Se non parte automaticamente, <CustomLink>clicca qui</CustomLink>.",
-        "info": ""
+        "help": "Se non parte in automatico <CustomLink>scarica l’avviso manualmente</CustomLink>",
+        "link": "Scopri i canali abilitati"
       }
     },
     "debtPositionDetail": {
@@ -666,10 +664,6 @@
         "org": "La selezione dell'ente è obbligatoria",
         "debtType": "*Seleziona un servizio nella lista superiore o nell'elenco dei più utilizzati"
       }
-    },
-    "download": {
-      "title": "Il download dell’avviso è in corso",
-      "help": "Se non parte in automatico, <link1>scarica l’avviso manualmente</link1>"
     }
   }
 }
