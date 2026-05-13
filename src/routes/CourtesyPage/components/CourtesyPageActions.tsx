@@ -10,21 +10,45 @@ import storage from 'utils/storage';
 import loaders from 'utils/loaders';
 import notify from 'utils/notify';
 import { useAppRoutes } from 'hooks/useAppRoutes';
+import { useStore } from 'store/GlobalStore';
+import { resetCart } from 'store/CartStore';
 import utils from 'utils';
 
+interface CourtesyPageActionsProps {
+  code: OUTCOMES;
+}
+
 /**
- * Expected query params on the courtesy-page URL:
+ * Dispatcher: routes to the anonymous or authenticated implementation
+ * depending on the user's session state.
+ *
+ * - Anonymous: query-param based, rebuilds the CartItem from the public
+ *   installments endpoint. Shows the "download PDF" CTA.
+ * - Authenticated: reads cart.items from sessionStorage (already populated
+ *   by CartDrawer / Payment before the checkout redirect). No download CTA.
+ */
+export const CourtesyPageActions: React.FC<CourtesyPageActionsProps> = ({ code }) => {
+  const isAnonymous = utils.storage.user.isAnonymous();
+
+  return isAnonymous ? (
+    <AnonymousCourtesyActions code={code} />
+  ) : (
+    <AuthenticatedCourtesyActions code={code} />
+  );
+};
+
+/**
+ * Expected query params on the public courtesy-page URL:
  *
  *   ?nav=<noticeNumber>&org_fiscal_code=<orgFiscalCode>&installment_id=<id>
  *
- * The component uses `nav` + `org_fiscal_code` to fetch the installment list via the
+ * Uses `nav` + `org_fiscal_code` to fetch the installment list via the
  * public endpoint, then picks the one matching `installment_id`.
  * With the resolved installment it can:
  *   1. Rebuild the CARTS request and retry the checkout payment (pagamento-non-riuscito)
  *   2. Navigate back to home (pagamento-annullato)
  *   3. Download the payment notice PDF (both cases)
  */
-
 interface InstallmentInfo {
   installmentId: number;
   iuv?: string;
@@ -40,11 +64,7 @@ interface InstallmentInfo {
   };
 }
 
-interface CourtesyPageActionsProps {
-  code: OUTCOMES;
-}
-
-export const CourtesyPageActions: React.FC<CourtesyPageActionsProps> = ({ code }) => {
+const AnonymousCourtesyActions: React.FC<CourtesyPageActionsProps> = ({ code }) => {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const { routes } = useAppRoutes();
@@ -55,8 +75,6 @@ export const CourtesyPageActions: React.FC<CourtesyPageActionsProps> = ({ code }
   const installmentId = searchParams.get('installment_id');
 
   const brokerId = storage.app.getBrokerId();
-
-  const isAnonymous = utils.storage.user.isAnonymous();
 
   const [installment, setInstallment] = useState<InstallmentInfo | null>(null);
 
@@ -124,7 +142,7 @@ export const CourtesyPageActions: React.FC<CourtesyPageActionsProps> = ({ code }
   const downloadUrl = utils.files.generateDownloadUrl({
     orgId: installment?.organizationId,
     nav: installment?.nav,
-    isAnonymous,
+    isAnonymous: true,
     fiscalCode: installment?.debtor?.fiscalCode
   });
 
@@ -159,6 +177,103 @@ export const CourtesyPageActions: React.FC<CourtesyPageActionsProps> = ({ code }
         startIcon={<Download />}
         data-testid="courtesyPage.downloadCta">
         {t(`courtesyPage.${code}.downloadCta`)}
+      </Button>
+    </Stack>
+  );
+};
+
+/**
+ * Authenticated flow:
+ *
+ * The cart is already in sessionStorage (populated by CartDrawer or Payment.tsx
+ * before the checkout redirect). We don't need any query params - we re-submit
+ * `cart.items` directly.
+ *
+ * The cart is kept intact across multiple retries; we don't clear it here.
+ * It survives until: a successful payment closes the session, or the user
+ * manually empties it.
+ *
+ * Edge case: if the user lands here with an empty cart (new tab, expired session,
+ * direct URL access), there's nothing to retry - we redirect to the generic
+ * 'sconosciuto' outcome.
+ *
+ * Supports both single-notice and multi-notice carts transparently, since
+ * postCarts already handles `cart.items` as an array.
+ */
+const AuthenticatedCourtesyActions: React.FC<CourtesyPageActionsProps> = ({ code }) => {
+  const { t } = useTranslation();
+  const navigate = useNavigate();
+  const { routes } = useAppRoutes();
+  const {
+    state: { cart }
+  } = useStore();
+
+  const isKo = code === OUTCOMES['pagamento-non-riuscito'];
+  const isOk = code === OUTCOMES['pagamento-avviso-completato'];
+
+  // On OK outcome the payment is done: the cart items must not survive into
+  // the next session, so we clear the cart. Guarded with `length > 0` to
+  // avoid pointless sessionStorage writes when the user lands here with an
+  // already-empty cart.
+  useEffect(() => {
+    if (isOk && cart.items.length > 0) {
+      resetCart();
+    }
+  }, [isOk, cart.items.length]);
+
+  // Empty-cart guard: KO/CANCEL outcomes that arrive without a cart in session
+  // (e.g. new tab, expired session, direct navigation) can't do anything useful.
+  // Redirect to the generic error outcome.
+  const isRetryableOutcome =
+    code === OUTCOMES['pagamento-non-riuscito'] || code === OUTCOMES['pagamento-annullato'];
+
+  useEffect(() => {
+    if (isRetryableOutcome && cart.items.length === 0) {
+      navigate(routes.COURTESY_PAGE.replace(':outcome', String(OUTCOMES['sconosciuto'])));
+    }
+  }, [isRetryableOutcome, cart.items.length]);
+
+  const postCarts = usePostCarts({
+    onSuccess: (checkoutUrl: string) => {
+      window.location.assign(checkoutUrl);
+    },
+    onError: () => {
+      notify.emit(t('errors.toast.payment'));
+    }
+  });
+
+  const handleRetry = useCallback(() => {
+    if (cart.items.length === 0) return;
+    postCarts.mutate({
+      notices: cart.items,
+      email: cart.email || undefined
+    });
+  }, [cart.items, cart.email, postCarts]);
+
+  return (
+    <Stack gap={2} alignItems="center">
+      {isKo && (
+        <Button
+          variant="contained"
+          size="large"
+          color="primary"
+          onClick={handleRetry}
+          disabled={postCarts.isPending}
+          data-testid="courtesyPage.cta">
+          {t(`courtesyPage.${code}.cta`)}
+        </Button>
+      )}
+
+      <Button
+        component="a"
+        href={routes.DASHBOARD}
+        variant={isKo ? 'text' : 'contained'}
+        size="large"
+        color="primary"
+        data-testid="courtesyPage.homeCta">
+        {t(isOk ? `courtesyPage.${code}.auth.homeCta` : `courtesyPage.${code}.homeCta`, {
+          defaultValue: t('courtesyPage.default.homeCta')
+        })}
       </Button>
     </Stack>
   );

@@ -456,7 +456,8 @@
   "courtesyPage": {
     "default": {
       "title": "Qualcosa non ha funzionato",
-      "body": "Stiamo lavorando per risolvere il prima possibile. Riprova più tardi."
+      "body": "Stiamo lavorando per risolvere il prima possibile. Riprova più tardi.",
+      "homeCta": "Torna alla home"
     },
     "400": {
       "title": "Qualcosa non ha funzionato",
@@ -486,7 +487,12 @@
     "420": {
       "title": "Pagamento completato",
       "body": "Il tuo pagamento è stato ricevuto con successo.",
-      "cta": "Torna alla home"
+      "cta": "Torna alla home",
+      "auth": {
+        "title": "Grazie!",
+        "body": "Ti abbiamo inviato un'email con la ricevuta.",
+        "homeCta": "Torna alla home"
+      }
     },
     "422": {
       "title": "Non possiamo procedere con il pagamento",
@@ -497,13 +503,15 @@
       "title": "Il pagamento non è andato a buon fine",
       "body": "Puoi riprovare oppure scaricare l'avviso pagoPA e pagare presso tutti i canali abilitati.",
       "cta": "Riprova",
-      "downloadCta": "Scarica l'avviso"
+      "downloadCta": "Scarica l'avviso",
+      "homeCta": "Torna alla home"
     },
     "425": {
       "title": "Hai annullato il pagamento",
       "body": "Se lo desideri, puoi scaricare l'avviso pagoPA e pagare presso tutti i canali abilitati.",
       "cta": "Torna alla home",
-      "downloadCta": "Scarica l'avviso"
+      "downloadCta": "Scarica l'avviso",
+      "homeCta": "Torna alla home"
     },
     "423": {
       "title": "Non siamo riusciti ad avviare il pagamento",

@@ -165,21 +165,37 @@ const normalizePaymentNotice = (paymentNotice: PaymentNoticeDTO): PaymentNoticeT
   }
 };
 
-const getPaymentOutcomes = (carts: CartItem[]) => {
-  const search = `?nav=${carts[0].nav}&org_fiscal_code=${carts[0].paTaxCode}`;
+/**
+ * Builds the checkout return URLs (OK / KO / CANCEL).
+ *
+ * - Anonymous flow: points to the PUBLIC courtesy page and appends `nav` +
+ *   `org_fiscal_code` as query params, since the public courtesy page rebuilds
+ *   the CartItem from scratch via the public installments endpoint.
+ * - Authenticated flow: points to the AUTHENTICATED courtesy page with NO query
+ *   params, since the cart is already persisted in sessionStorage and the page
+ *   reads `cart.items` directly to retry the payment.
+ */
+const getPaymentOutcomes = (carts: CartItem[], isAnonymous: boolean) => {
+  const outcomes = isAnonymous ? ROUTES.public : ROUTES;
 
-  const OK = generatePath(ROUTES.public.COURTESY_PAGE, {
+  const OK = generatePath(outcomes.COURTESY_PAGE, {
     outcome: 'pagamento-avviso-completato'
   });
 
-  const KO = generatePath(ROUTES.public.COURTESY_PAGE, {
+  const KO = generatePath(outcomes.COURTESY_PAGE, {
     outcome: 'pagamento-non-riuscito'
   });
 
-  const CANCEL = generatePath(ROUTES.public.COURTESY_PAGE, {
+  const CANCEL = generatePath(outcomes.COURTESY_PAGE, {
     outcome: 'pagamento-annullato'
   });
 
+  if (!isAnonymous) {
+    return { OK, KO, CANCEL };
+  }
+
+  // Anonymous: append the params needed to rebuild the CartItem on the courtesy page.
+  const search = `?nav=${carts[0].nav}&org_fiscal_code=${carts[0].paTaxCode}`;
   return {
     OK,
     KO: `${KO}${search}`,
@@ -196,7 +212,7 @@ const aggregateAllCCP = (cartItems: CartItem[]): boolean =>
 const cartItemsToCartsRequest = (cartItems: CartItem[]) => {
   const ORIGIN = window.location.origin;
   const isAnonymous = utils.storage.user.isAnonymous();
-  const COURTESY = getPaymentOutcomes(cartItems);
+  const COURTESY = getPaymentOutcomes(cartItems, isAnonymous);
 
   return {
     paymentNotices: cartItems.map((item) => ({
@@ -208,9 +224,9 @@ const cartItemsToCartsRequest = (cartItems: CartItem[]) => {
     })),
 
     returnUrls: {
-      returnOkUrl: `${ORIGIN}${isAnonymous ? COURTESY.OK : ROUTES.DASHBOARD}`,
-      returnCancelUrl: `${ORIGIN}${isAnonymous ? COURTESY.CANCEL : ROUTES.DEBT_POSITIONS}`,
-      returnErrorUrl: `${ORIGIN}${isAnonymous ? COURTESY.KO : ROUTES.DEBT_POSITIONS}`
+      returnOkUrl: `${ORIGIN}${COURTESY.OK}`,
+      returnCancelUrl: `${ORIGIN}${COURTESY.CANCEL}`,
+      returnErrorUrl: `${ORIGIN}${COURTESY.KO}`
     },
     allCCP: aggregateAllCCP(cartItems)
   };

@@ -40,28 +40,39 @@ import { RouteGuardByAvailableRoutes as Guard } from 'components/RouteGuard';
 import { useFavicon } from 'hooks/useFavicon';
 
 /**
- * Validates that the required query params (nav, org_fiscal_code, installment_id)
- * are present for outcomes that need them (pagamento-non-riuscito, pagamento-annullato).
- * If missing, throws an error caught by the errorElement (ErrorFallback).
+ * Loader factory for the courtesy page.
+ *
+ * The PUBLIC (anonymous) flow requires `nav` + `org_fiscal_code` query params
+ * on KO/CANCEL outcomes, because the public courtesy page rebuilds the CartItem
+ * from scratch via the public installments endpoint if Cart is not enabled.
+ *
+ * The AUTHENTICATED flow doesn't need any query params: the cart is already in
+ * sessionStorage and the courtesy page reads `cart.items` directly.
  */
-const courtesyPageLoader = ({ params, request }: LoaderFunctionArgs) => {
-  const url = new URL(request.url);
-  const outcome = params.outcome as keyof typeof OUTCOMES;
-  const code = OUTCOMES[outcome];
+const makeCourtesyPageLoader =
+  (isPublic: boolean) =>
+  ({ params, request }: LoaderFunctionArgs) => {
+    const url = new URL(request.url);
+    const outcome = params.outcome as keyof typeof OUTCOMES;
+    const code = OUTCOMES[outcome];
 
-  const needsParams =
-    code === OUTCOMES['pagamento-non-riuscito'] || code === OUTCOMES['pagamento-annullato'];
+    const needsParams =
+      isPublic &&
+      (code === OUTCOMES['pagamento-non-riuscito'] || code === OUTCOMES['pagamento-annullato']);
 
-  if (needsParams) {
-    const nav = url.searchParams.get('nav');
-    const orgFiscalCode = url.searchParams.get('org_fiscal_code');
-    if (!nav || !orgFiscalCode) {
-      throw new Error('Missing required query params');
+    if (needsParams) {
+      const nav = url.searchParams.get('nav');
+      const orgFiscalCode = url.searchParams.get('org_fiscal_code');
+      if (!nav || !orgFiscalCode) {
+        throw new Error('Missing required query params');
+      }
     }
-  }
 
-  return params.outcome ?? null;
-};
+    return params.outcome ?? null;
+  };
+
+const courtesyPagePublicLoader = makeCourtesyPageLoader(true);
+const courtesyPageAuthLoader = makeCourtesyPageLoader(false);
 
 const router = createBrowserRouter([
   {
@@ -198,7 +209,7 @@ const router = createBrowserRouter([
           },
           {
             path: ROUTES.public.COURTESY_PAGE,
-            loader: courtesyPageLoader,
+            loader: courtesyPagePublicLoader,
             element: <CourtesyPage />,
             handle: {
               titleKey: 'pageTitles.courtesy'
@@ -338,9 +349,9 @@ const router = createBrowserRouter([
           {
             path: ROUTES.COURTESY_PAGE,
             element: <CourtesyPage />,
-            loader: courtesyPageLoader,
+            loader: courtesyPageAuthLoader,
             handle: {
-              titleKey: 'pageTitles.courtesyPage',
+              titleKey: 'pageTitles.courtesy',
               backButton: false,
               subHeader: true,
               sidebar: false,
