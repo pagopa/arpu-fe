@@ -127,9 +127,17 @@ describe('utils.converters.cartItemsToCartsRequest - shape', () => {
     expect(request.returnUrls.returnOkUrl).toContain('/public/esito/pagamento-avviso-completato');
     expect(request.returnUrls.returnCancelUrl).toContain('/public/esito/pagamento-annullato');
     expect(request.returnUrls.returnErrorUrl).toContain('/public/esito/pagamento-non-riuscito');
-    expect(request.returnUrls.returnErrorUrl).toContain(
-      `?nav=${items[0].nav}&org_fiscal_code=${items[0].paTaxCode}`
-    );
+  });
+
+  it('appends the same query params (nav + org_fiscal_code) to all anonymous courtesy URLs', () => {
+    vi.spyOn(utils.storage.user, 'isAnonymous').mockReturnValue(true);
+    const request = utils.converters.cartItemsToCartsRequest(items);
+
+    const expectedSearch = `?nav=${items[0].nav}&org_fiscal_code=${items[0].paTaxCode}`;
+
+    expect(request.returnUrls.returnOkUrl).toContain(expectedSearch);
+    expect(request.returnUrls.returnCancelUrl).toContain(expectedSearch);
+    expect(request.returnUrls.returnErrorUrl).toContain(expectedSearch);
   });
 });
 

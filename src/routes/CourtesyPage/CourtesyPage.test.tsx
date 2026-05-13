@@ -23,6 +23,7 @@ vi.mock('./components/CourtesyPageActions', () => ({
 const SESSION_EXPIRED_CODE = OUTCOMES['sessione-scaduta'];
 const CHECKOUT_KO_CODE = OUTCOMES['pagamento-non-riuscito'];
 const CANCELLED_CODE = OUTCOMES['pagamento-annullato'];
+const COMPLETED_CODE = OUTCOMES['pagamento-avviso-completato'];
 const RECAPTCHA_FAILED_CODE = OUTCOMES['verifica-non-riuscita'];
 
 i18nTestSetup({
@@ -47,6 +48,12 @@ i18nTestSetup({
       body: 'You cancelled the payment. You can download the notice.',
       cta: 'Back to home',
       downloadCta: 'Download notice'
+    },
+    [COMPLETED_CODE]: {
+      title: 'Thank you!',
+      body: 'We sent you an email with the receipt.',
+      cta: 'Download receipt',
+      secondaryCta: 'Back to home'
     },
     [RECAPTCHA_FAILED_CODE]: {
       title: 'Verification failed',
@@ -240,6 +247,31 @@ describe('CourtesyPage – pagamento-annullato (425)', () => {
     const actions = screen.getByTestId('courtesyPageActions');
     expect(actions).toBeInTheDocument();
     expect(actions).toHaveAttribute('data-code', String(OUTCOMES['pagamento-annullato']));
+    expect(screen.queryByTestId('courtesyPage.cta')).not.toBeInTheDocument();
+  });
+});
+
+describe('CourtesyPage – pagamento-avviso-completato (420)', () => {
+  afterEach(() => vi.clearAllMocks());
+
+  it('renders the OK icon for pagamento-avviso-completato', () => {
+    renderCourtesyPage({ outcome: 'pagamento-avviso-completato' });
+    expect(screen.getByTitle('OK')).toBeInTheDocument();
+  });
+
+  it('shows translated title and body for pagamento-avviso-completato', () => {
+    renderCourtesyPage({ outcome: 'pagamento-avviso-completato' });
+    expect(screen.getByTestId('courtesyPage.title')).toHaveTextContent('Thank you!');
+    expect(screen.getByTestId('courtesyPage.body')).toHaveTextContent(
+      'We sent you an email with the receipt.'
+    );
+  });
+
+  it('renders CourtesyPageActions with code 420 instead of the default CTA', () => {
+    renderCourtesyPage({ outcome: 'pagamento-avviso-completato' });
+    const actions = screen.getByTestId('courtesyPageActions');
+    expect(actions).toBeInTheDocument();
+    expect(actions).toHaveAttribute('data-code', String(OUTCOMES['pagamento-avviso-completato']));
     expect(screen.queryByTestId('courtesyPage.cta')).not.toBeInTheDocument();
   });
 });

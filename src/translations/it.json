@@ -484,9 +484,10 @@
       "cta": "Riprova"
     },
     "420": {
-      "title": "Pagamento completato",
-      "body": "Il tuo pagamento è stato ricevuto con successo.",
-      "cta": "Torna alla home"
+      "title": "Grazie!",
+      "body": "Ti abbiamo inviato un'email con la ricevuta. Contiene anche le istruzioni sui prossimi passi per ottenere la tua Carta di Identità Elettronica.",
+      "cta": "Scarica la ricevuta",
+      "secondaryCta": "Torna alla home"
     },
     "422": {
       "title": "Non possiamo procedere con il pagamento",

@@ -50,7 +50,9 @@ const courtesyPageLoader = ({ params, request }: LoaderFunctionArgs) => {
   const code = OUTCOMES[outcome];
 
   const needsParams =
-    code === OUTCOMES['pagamento-non-riuscito'] || code === OUTCOMES['pagamento-annullato'];
+    code === OUTCOMES['pagamento-non-riuscito'] ||
+    code === OUTCOMES['pagamento-annullato'] ||
+    code === OUTCOMES['pagamento-avviso-completato'];
 
   if (needsParams) {
     const nav = url.searchParams.get('nav');
