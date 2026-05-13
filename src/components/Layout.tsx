@@ -55,8 +55,16 @@ export function Layout(props: { anonymous?: boolean }) {
     .map((match) => match.handle || defaultRouteHandle)
     .reduce((prev, match) => ({ ...prev, ...match }), {});
 
-  const { crumbs, sidebar, backButton, backButtonText, backButtonFunction, subHeader, gutters } =
-    mergeHandles as RouteHandleObject;
+  const {
+    crumbs,
+    sidebar,
+    backButton,
+    backButtonText,
+    backButtonIcon,
+    backButtonFunction,
+    subHeader,
+    gutters
+  } = mergeHandles as RouteHandleObject;
 
   const rootLink: RootLinkType = {
     label: appStore.value.brokerInfo?.brokerName || '',
@@ -122,7 +130,13 @@ export function Layout(props: { anonymous?: boolean }) {
           <Box width={'100%'} component="main" id="main-content" tabIndex={-1}>
             {backButton || crumbs ? (
               <Container sx={{ mt: 3 }}>
-                {backButton && <BackButton onClick={backButtonFunction} text={backButtonText} />}
+                {backButton && (
+                  <BackButton
+                    onClick={backButtonFunction}
+                    text={backButtonText}
+                    icon={backButtonIcon}
+                  />
+                )}
                 {crumbs && (
                   <Breadcrumbs crumbs={crumbs} separator={<NavigateNext fontSize="small" />} />
                 )}

@@ -1,4 +1,4 @@
-import { ArrowBack } from '@mui/icons-material';
+import { ArrowBack, Close } from '@mui/icons-material';
 import Button from '@mui/material/Button';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
@@ -7,6 +7,7 @@ import { useNavigate } from 'react-router-dom';
 export interface BackButtonProps {
   text?: string;
   onClick?: () => void;
+  icon?: 'back' | 'exit';
 }
 
 export const BackButton = (props: BackButtonProps) => {
@@ -19,7 +20,7 @@ export const BackButton = (props: BackButtonProps) => {
       role="button"
       aria-label={t(`app.routes.${text}`)}
       size="medium"
-      startIcon={<ArrowBack />}
+      startIcon={props.icon === 'exit' ? <Close /> : <ArrowBack />}
       variant="text"
       onClick={onClick}
       sx={{ pl: 0 }}>
