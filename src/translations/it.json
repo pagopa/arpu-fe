@@ -485,9 +485,10 @@
       "cta": "Riprova"
     },
     "420": {
-      "title": "Pagamento completato",
-      "body": "Il tuo pagamento è stato ricevuto con successo.",
-      "cta": "Torna alla home",
+      "title": "Grazie!",
+      "body": "Ti abbiamo inviato un'email con la ricevuta.",
+      "cta": "Scarica la ricevuta",
+      "secondaryCta": "Torna alla home",
       "auth": {
         "title": "Grazie!",
         "body": "Ti abbiamo inviato un'email con la ricevuta.",

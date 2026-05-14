@@ -62,18 +62,17 @@ export const CourtesyPage = () => {
 
   // Custom actions (via CourtesyPageActions) are used when:
   //   - KO / CANCEL outcomes (both flows: retry / download / home)
-  //   - OK outcome in the AUTHENTICATED flow (shows "Torna alla home" -> DASHBOARD)
-  //
-  // The anonymous OK case keeps the legacy single-button rendering below
-  // (driven by the i18n `cta` key).
+  //   - OK outcome in BOTH flows:
+  //       * authenticated -> "Torna alla home" -> DASHBOARD
+  //       * anonymous     -> "Scarica ricevuta" + link al login
   const hasCustomActions =
     code === OUTCOMES['pagamento-non-riuscito'] ||
     code === OUTCOMES['pagamento-annullato'] ||
-    (code === OUTCOMES['pagamento-avviso-completato'] && !isAnonymous);
+    code === OUTCOMES['pagamento-avviso-completato'];
 
   // The OK outcome (420) has distinct title/body for the authenticated flow:
-  // it lives under `420.auth.*`.
-  // For all other cases we use the flat `courtesyPage.{code}.*` keys.
+  // it lives under `420.auth.*`. The anonymous OK flow keeps the flat keys
+  // (`courtesyPage.420.title`, `.body`, `.cta`, `.secondaryCta`, `.downloadCta`).
   const i18nPrefix =
     code === OUTCOMES['pagamento-avviso-completato'] && !isAnonymous
       ? `courtesyPage.${code}.auth`
