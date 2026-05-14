@@ -36,6 +36,7 @@ vi.mock('react-router-dom', async (importOriginal) => {
 const mockPostCartsMutate = vi.fn();
 const mockInstallmentsMutateAsync = vi.fn();
 const mockDownloadMutateAsync = vi.fn();
+const mockDownloadReceiptMutateAsync = vi.fn();
 const mockExecuteRecaptcha = vi.fn();
 const mockResetCart = vi.fn();
 
@@ -98,6 +99,10 @@ vi.mock('utils/loaders', () => ({
       })),
       getPublicPaymentNotice: vi.fn(() => ({
         mutateAsync: mockDownloadMutateAsync
+      })),
+      usePublicDownloadReceipt: vi.fn(() => ({
+        mutateAsync: mockDownloadReceiptMutateAsync,
+        isPending: false
       }))
     }
   }

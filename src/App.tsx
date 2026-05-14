@@ -58,7 +58,9 @@ const makeCourtesyPageLoader =
 
     const needsParams =
       isPublic &&
-      (code === OUTCOMES['pagamento-non-riuscito'] || code === OUTCOMES['pagamento-annullato']);
+      (code === OUTCOMES['pagamento-non-riuscito'] ||
+        code === OUTCOMES['pagamento-annullato'] ||
+        code === OUTCOMES['pagamento-avviso-completato']);
 
     if (needsParams) {
       const nav = url.searchParams.get('nav');

@@ -42,12 +42,15 @@ export const CourtesyPageActions: React.FC<CourtesyPageActionsProps> = ({ code }
  *
  *   ?nav=<noticeNumber>&org_fiscal_code=<orgFiscalCode>&installment_id=<id>
  *
- * Uses `nav` + `org_fiscal_code` to fetch the installment list via the
- * public endpoint, then picks the one matching `installment_id`.
+ * The component uses `nav` + `org_fiscal_code` to fetch the installment list via the
+ * public endpoint, then picks the one matching `installment_id`. From the resolved
+ * installment we get `organizationId`, `receiptId` and the debtor's `fiscalCode`.
+ *
  * With the resolved installment it can:
  *   1. Rebuild the CARTS request and retry the checkout payment (pagamento-non-riuscito)
  *   2. Navigate back to home (pagamento-annullato)
- *   3. Download the payment notice PDF (both cases)
+ *   3. Download the payment receipt PDF (pagamento-avviso-completato)
+ *   4. Download the payment notice PDF (pagamento-non-riuscito, pagamento-annullato)
  */
 interface InstallmentInfo {
   installmentId: number;
@@ -59,6 +62,7 @@ interface InstallmentInfo {
   orgName?: string;
   organizationId?: number;
   allCCP?: boolean;
+  receiptId?: number;
   debtor?: {
     fiscalCode?: string;
   };
@@ -84,7 +88,11 @@ const AnonymousCourtesyActions: React.FC<CourtesyPageActionsProps> = ({ code }) 
     throw new Error('Missing required query params: nav, org_fiscal_code or brokerId');
   }
 
+  const isCompleted = code === OUTCOMES['pagamento-avviso-completato'];
+  const isCancelled = code === OUTCOMES['pagamento-annullato'];
+
   const installmentsMutation = loaders.public.usePublicInstallmentsByIuvOrNav(brokerId!);
+  const downloadReceiptMutation = loaders.public.usePublicDownloadReceipt({ brokerId: brokerId! });
 
   useEffect(() => {
     const fetchInstallment = async () => {
@@ -102,6 +110,9 @@ const AnonymousCourtesyActions: React.FC<CourtesyPageActionsProps> = ({ code }) 
 
         setInstallment(match ?? null);
       } catch {
+        // On fetch failure we keep `installment` as null: the retry CTA will
+        // navigate to the 'sconosciuto' outcome, and the notice-download URL
+        // will fall back to the default '-1' org id (see generateDownloadUrl).
         setInstallment(null);
       }
     };
@@ -137,14 +148,44 @@ const AnonymousCourtesyActions: React.FC<CourtesyPageActionsProps> = ({ code }) 
     postCarts.mutate({ notices: [cartItem] });
   }, [installment, postCarts]);
 
-  const isCancelled = code === OUTCOMES['pagamento-annullato'];
+  const handleDownloadReceipt = useCallback(() => {
+    utils.files.downloadReceipt(downloadReceiptMutation.mutateAsync, {
+      organizationId: installment?.organizationId,
+      receiptId: installment?.receiptId,
+      fiscalCode: installment?.debtor?.fiscalCode
+    });
+  }, [installment, downloadReceiptMutation]);
 
-  const downloadUrl = utils.files.generateDownloadUrl({
+  const noticeDownloadUrl = utils.files.generateDownloadUrl({
     orgId: installment?.organizationId,
     nav: installment?.nav,
     isAnonymous: true,
     fiscalCode: installment?.debtor?.fiscalCode
   });
+
+  if (isCompleted) {
+    return (
+      <Stack gap={2} alignItems="center">
+        <Button
+          variant="contained"
+          size="large"
+          color="primary"
+          onClick={handleDownloadReceipt}
+          disabled={!installment || downloadReceiptMutation.isPending}
+          data-testid="courtesyPage.cta">
+          {t(`courtesyPage.${code}.cta`)}
+        </Button>
+
+        <Button
+          component="a"
+          href={routes.LOGIN}
+          variant="text"
+          data-testid="courtesyPage.secondaryCta">
+          {t(`courtesyPage.${code}.secondaryCta`)}
+        </Button>
+      </Stack>
+    );
+  }
 
   return (
     <Stack gap={2} alignItems="center">
@@ -171,7 +212,7 @@ const AnonymousCourtesyActions: React.FC<CourtesyPageActionsProps> = ({ code }) 
 
       <Button
         component={Link}
-        to={downloadUrl}
+        to={noticeDownloadUrl}
         target="_blank"
         variant="text"
         startIcon={<Download />}

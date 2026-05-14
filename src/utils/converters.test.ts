@@ -133,18 +133,30 @@ describe('utils.converters.cartItemsToCartsRequest - shape', () => {
     expect(request.returnUrls.returnOkUrl).toContain('/public/esito/pagamento-avviso-completato');
     expect(request.returnUrls.returnCancelUrl).toContain('/public/esito/pagamento-annullato');
     expect(request.returnUrls.returnErrorUrl).toContain('/public/esito/pagamento-non-riuscito');
-    expect(request.returnUrls.returnErrorUrl).toContain(
-      `?nav=${items[0].nav}&org_fiscal_code=${items[0].paTaxCode}`
-    );
   });
 
-  it('appends nav and org_fiscal_code only on KO and CANCEL urls for anonymous (not on OK)', () => {
+  it('appends the same query params (nav + org_fiscal_code) to all anonymous courtesy URLs', () => {
     vi.spyOn(utils.storage.user, 'isAnonymous').mockReturnValue(true);
     const request = utils.converters.cartItemsToCartsRequest(items);
 
-    expect(request.returnUrls.returnOkUrl).not.toContain('?nav=');
+    const expectedSearch = `?nav=${items[0].nav}&org_fiscal_code=${items[0].paTaxCode}`;
+
+    expect(request.returnUrls.returnOkUrl).toContain(expectedSearch);
+    expect(request.returnUrls.returnCancelUrl).toContain(expectedSearch);
+    expect(request.returnUrls.returnErrorUrl).toContain(expectedSearch);
+  });
+
+  it('appends nav and org_fiscal_code on all anonymous courtesy URLs (OK, KO, CANCEL)', () => {
+    vi.spyOn(utils.storage.user, 'isAnonymous').mockReturnValue(true);
+    const request = utils.converters.cartItemsToCartsRequest(items);
+
+    expect(request.returnUrls.returnOkUrl).toContain('?nav=');
     expect(request.returnUrls.returnCancelUrl).toContain('?nav=');
     expect(request.returnUrls.returnErrorUrl).toContain('?nav=');
+
+    expect(request.returnUrls.returnOkUrl).toContain('&org_fiscal_code=');
+    expect(request.returnUrls.returnCancelUrl).toContain('&org_fiscal_code=');
+    expect(request.returnUrls.returnErrorUrl).toContain('&org_fiscal_code=');
   });
 });
 

@@ -197,7 +197,7 @@ const getPaymentOutcomes = (carts: CartItem[], isAnonymous: boolean) => {
   // Anonymous: append the params needed to rebuild the CartItem on the courtesy page.
   const search = `?nav=${carts[0].nav}&org_fiscal_code=${carts[0].paTaxCode}`;
   return {
-    OK,
+    OK: `${OK}${search}`,
     KO: `${KO}${search}`,
     CANCEL: `${CANCEL}${search}`
   };
