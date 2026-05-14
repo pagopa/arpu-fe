@@ -132,6 +132,11 @@ const router = createBrowserRouter([
                 ),
                 handle: {
                   backButton: true,
+                  backButtonIcon: 'exit',
+                  backButtonFunction: () => {
+                    const href = appStore.value.brokerInfo?.config?.homeLink || ROUTES.HOME;
+                    window.location.href = href;
+                  },
                   titleKey: 'pageTitles.spontanei'
                 } as RouteHandleObject
               },

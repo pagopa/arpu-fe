@@ -7,6 +7,8 @@ export const ExternalRoutes = {
 };
 
 export const ROUTES = {
+  /* A placeholder for home page because id the user is already logged will be redirected to dashboard */
+  HOME: `${rootPrefix}/accesso`,
   LOGIN: `${rootPrefix}/accesso`,
   AUTH_CALLBACK: `${config.deployPath}/auth-callback`,
   DASHBOARD: rootPrefix,
