@@ -37,6 +37,7 @@ const mockPostCartsMutate = vi.fn();
 const mockInstallmentsMutateAsync = vi.fn();
 const mockDownloadMutateAsync = vi.fn();
 const mockExecuteRecaptcha = vi.fn();
+const mockResetCart = vi.fn();
 
 vi.mock('hooks/usePostCarts', () => ({
   usePostCarts: (opts: { onSuccess: (url: string) => void; onError: () => void }) => ({
@@ -66,7 +67,7 @@ vi.mock('utils/storage', async (importOriginal) => {
         getBrokerCode: vi.fn(() => 'BROKER-CODE-123')
       },
       user: {
-        isAnonymous: vi.fn(() => false)
+        isAnonymous: vi.fn(() => true)
       }
     }
   };
@@ -104,23 +105,57 @@ vi.mock('utils/loaders', () => ({
   }
 }));
 
+const mockCartState = {
+  cart: {
+    items: [] as Array<{
+      paFullName: string;
+      description: string;
+      amount: number;
+      iuv: string;
+      nav: string;
+      paTaxCode: string;
+      allCCP: boolean;
+    }>,
+    email: undefined as string | undefined,
+    amount: 0,
+    isOpen: false
+  }
+};
+
+vi.mock('store/GlobalStore', () => ({
+  StoreProvider: ({ children }: { children: React.ReactNode }) => <>{children}</>,
+  useStore: () => ({ state: mockCartState, setState: vi.fn() })
+}));
+
+vi.mock('store/CartStore', () => ({
+  resetCart: (...args: unknown[]) => mockResetCart(...args)
+}));
+
+const CODE_420 = OUTCOMES['pagamento-avviso-completato'];
 const CODE_424 = OUTCOMES['pagamento-non-riuscito'];
 const CODE_425 = OUTCOMES['pagamento-annullato'];
-const CODE_420 = OUTCOMES['pagamento-avviso-completato'];
 
 i18nTestSetup({
   courtesyPage: {
+    [CODE_420]: {
+      cta: 'Download receipt',
+      secondaryCta: 'Back to home',
+      auth: {
+        homeCta: 'Back to home'
+      }
+    },
     [CODE_424]: {
       cta: 'Retry',
-      downloadCta: 'Download notice'
+      downloadCta: 'Download notice',
+      homeCta: 'Back to home'
     },
     [CODE_425]: {
       cta: 'Back to home',
-      downloadCta: 'Download notice'
+      downloadCta: 'Download notice',
+      homeCta: 'Back to home'
     },
-    [CODE_420]: {
-      cta: 'Download receipt',
-      secondaryCta: 'Back to home'
+    default: {
+      homeCta: 'Back to home'
     }
   },
   errors: {
@@ -166,12 +201,67 @@ const setupSearchParams = (params: Record<string, string> = {}) => {
   vi.mocked(useSearchParams).mockReturnValue([searchParams, vi.fn()]);
 };
 
-describe('CourtesyPageActions – pagamento-non-riuscito (424)', () => {
-  afterEach(() => vi.clearAllMocks());
+const setAnonymous = (value: boolean) => {
+  (utils.storage.user.isAnonymous as Mock).mockReturnValue(value);
+};
+
+const setCartItems = (items: typeof mockCartState.cart.items, email?: string) => {
+  mockCartState.cart.items = items;
+  mockCartState.cart.email = email;
+  mockCartState.cart.amount = items.reduce((sum, i) => sum + i.amount, 0);
+};
+
+const CART_ITEM_1 = {
+  paFullName: 'ACI',
+  description: 'Bollo',
+  amount: 12345,
+  iuv: 'IUV-CART-1',
+  nav: 'NAV-CART-1',
+  paTaxCode: 'TAX-1',
+  allCCP: true
+};
+
+const CART_ITEM_2 = {
+  paFullName: 'Comune',
+  description: 'TARI',
+  amount: 6789,
+  iuv: 'IUV-CART-2',
+  nav: 'NAV-CART-2',
+  paTaxCode: 'TAX-2',
+  allCCP: false
+};
+
+beforeEach(() => {
+  setCartItems([]);
+  setupSearchParams({ nav: 'NAV-001', org_fiscal_code: 'ORG-FC-001', installment_id: '42' });
+});
+
+afterEach(() => vi.clearAllMocks());
+
+describe('CourtesyPageActions – dispatcher', () => {
+  it('renders the anonymous branch when isAnonymous is true', () => {
+    setAnonymous(true);
+    mockInstallmentsMutateAsync.mockResolvedValue([INSTALLMENT_MATCH]);
+    render(<CourtesyPageActions code={CODE_424} />);
+
+    expect(screen.getByTestId('courtesyPage.downloadCta')).toBeInTheDocument();
+    expect(screen.queryByTestId('courtesyPage.homeCta')).not.toBeInTheDocument();
+  });
+
+  it('renders the authenticated branch when isAnonymous is false', () => {
+    setAnonymous(false);
+    setCartItems([CART_ITEM_1]);
+    render(<CourtesyPageActions code={CODE_424} />);
+    expect(screen.getByTestId('courtesyPage.homeCta')).toBeInTheDocument();
+    expect(screen.queryByTestId('courtesyPage.downloadCta')).not.toBeInTheDocument();
+  });
+});
+
+describe('CourtesyPageActions – pagamento-non-riuscito (424), anonymous', () => {
+  beforeEach(() => setAnonymous(true));
 
   it('renders the retry and download buttons', () => {
     mockInstallmentsMutateAsync.mockResolvedValue([INSTALLMENT_MATCH]);
-    setupSearchParams({ nav: 'NAV-001', org_fiscal_code: 'ORG-FC-001', installment_id: '42' });
     render(<CourtesyPageActions code={CODE_424} />);
 
     expect(screen.getByTestId('courtesyPage.cta')).toHaveTextContent('Retry');
@@ -180,7 +270,6 @@ describe('CourtesyPageActions – pagamento-non-riuscito (424)', () => {
 
   it('fetches installments on mount when required params are present', async () => {
     mockInstallmentsMutateAsync.mockResolvedValue([INSTALLMENT_MATCH]);
-    setupSearchParams({ nav: 'NAV-001', org_fiscal_code: 'ORG-FC-001', installment_id: '42' });
     render(<CourtesyPageActions code={CODE_424} />);
 
     await waitFor(() => {
@@ -209,7 +298,6 @@ describe('CourtesyPageActions – pagamento-non-riuscito (424)', () => {
 
   it('finds the correct installment by installment_id', async () => {
     mockInstallmentsMutateAsync.mockResolvedValue([INSTALLMENT_OTHER, INSTALLMENT_MATCH]);
-    setupSearchParams({ nav: 'NAV-001', org_fiscal_code: 'ORG-FC-001', installment_id: '42' });
     render(<CourtesyPageActions code={CODE_424} />);
 
     await waitFor(() => {
@@ -232,9 +320,24 @@ describe('CourtesyPageActions – pagamento-non-riuscito (424)', () => {
     });
   });
 
-  it('renders correct download link with correct attributes', async () => {
+  it('navigates to error page when retry is clicked after fetch failure', async () => {
+    mockInstallmentsMutateAsync.mockRejectedValue(new Error('Network error'));
+    render(<CourtesyPageActions code={CODE_424} />);
+
+    await waitFor(() => {
+      expect(mockInstallmentsMutateAsync).toHaveBeenCalled();
+    });
+
+    fireEvent.click(screen.getByTestId('courtesyPage.cta'));
+
+    expect(mockPostCartsMutate).not.toHaveBeenCalled();
+    expect(mockNavigate).toHaveBeenCalledWith(
+      ROUTES.public.COURTESY_PAGE.replace(':outcome', String(OUTCOMES['sconosciuto']))
+    );
+  });
+
+  it('renders correct download link as anonymous', async () => {
     mockInstallmentsMutateAsync.mockResolvedValue([INSTALLMENT_MATCH]);
-    setupSearchParams({ nav: 'NAV-001', org_fiscal_code: 'ORG-FC-001', installment_id: '42' });
     render(<CourtesyPageActions code={CODE_424} />);
 
     await waitFor(() => {
@@ -245,8 +348,20 @@ describe('CourtesyPageActions – pagamento-non-riuscito (424)', () => {
     expect(downloadLink).toHaveAttribute('target', '_blank');
     expect(downloadLink).toHaveAttribute(
       'href',
-      expect.stringContaining('/spontanei/download/99/NAV-001')
+      expect.stringContaining('/public/spontanei/download/99/NAV-001')
     );
+  });
+
+  it('renders download link using defaults when installment fetch fails', async () => {
+    mockInstallmentsMutateAsync.mockRejectedValue(new Error('fail'));
+    render(<CourtesyPageActions code={CODE_424} />);
+
+    await waitFor(() => {
+      expect(mockInstallmentsMutateAsync).toHaveBeenCalled();
+    });
+
+    const downloadLink = screen.getByTestId('courtesyPage.downloadCta');
+    expect(downloadLink).toHaveAttribute('href', expect.stringContaining('/download/-1'));
   });
 
   it('selects the only installment when installment_id is absent', async () => {
@@ -313,27 +428,8 @@ describe('CourtesyPageActions – pagamento-non-riuscito (424)', () => {
     );
   });
 
-  it('generates correct filename in the link when server returns no filename', async () => {
-    mockInstallmentsMutateAsync.mockResolvedValue([INSTALLMENT_MATCH]);
-    setupSearchParams({ nav: 'NAV-001', org_fiscal_code: 'ORG-FC-001', installment_id: '42' });
-    render(<CourtesyPageActions code={CODE_424} />);
-
-    await waitFor(() => {
-      expect(mockInstallmentsMutateAsync).toHaveBeenCalled();
-    });
-
-    const downloadLink = screen.getByTestId('courtesyPage.downloadCta');
-    expect(downloadLink).toHaveAttribute('href', expect.stringContaining('NAV-001'));
-  });
-
   it('navigates to sconosciuto when retry is clicked before installment is resolved', () => {
     mockInstallmentsMutateAsync.mockReturnValue(new Promise(() => {}));
-    setupSearchParams({
-      nav: 'NAV-001',
-      org_fiscal_code: 'ORG-FC-001',
-      installment_id: '42'
-    });
-
     render(<CourtesyPageActions code={CODE_424} />);
 
     fireEvent.click(screen.getByTestId('courtesyPage.cta'));
@@ -343,36 +439,13 @@ describe('CourtesyPageActions – pagamento-non-riuscito (424)', () => {
       ROUTES.public.COURTESY_PAGE.replace(':outcome', String(OUTCOMES['sconosciuto']))
     );
   });
-
-  it('renders the download link as anonymous on the 424 outcome', async () => {
-    (utils.storage.user.isAnonymous as Mock).mockReturnValue(true);
-    mockInstallmentsMutateAsync.mockResolvedValue([INSTALLMENT_MATCH]);
-    setupSearchParams({
-      nav: 'NAV-001',
-      org_fiscal_code: 'ORG-FC-001',
-      installment_id: '42'
-    });
-
-    render(<CourtesyPageActions code={CODE_424} />);
-
-    await waitFor(() => {
-      expect(mockInstallmentsMutateAsync).toHaveBeenCalled();
-    });
-
-    const downloadLink = screen.getByTestId('courtesyPage.downloadCta');
-    expect(downloadLink).toHaveAttribute(
-      'href',
-      expect.stringContaining('/public/spontanei/download/99/NAV-001')
-    );
-  });
 });
 
-describe('CourtesyPageActions – pagamento-annullato (425)', () => {
-  afterEach(() => vi.clearAllMocks());
+describe('CourtesyPageActions – pagamento-annullato (425), anonymous', () => {
+  beforeEach(() => setAnonymous(true));
 
   it('renders "Back to home" CTA as a link to login', () => {
     mockInstallmentsMutateAsync.mockResolvedValue([INSTALLMENT_MATCH]);
-    setupSearchParams({ nav: 'NAV-001', org_fiscal_code: 'ORG-FC-001', installment_id: '42' });
     render(<CourtesyPageActions code={CODE_425} />);
 
     const cta = screen.getByTestId('courtesyPage.cta');
@@ -382,15 +455,13 @@ describe('CourtesyPageActions – pagamento-annullato (425)', () => {
 
   it('renders the download button', () => {
     mockInstallmentsMutateAsync.mockResolvedValue([INSTALLMENT_MATCH]);
-    setupSearchParams({ nav: 'NAV-001', org_fiscal_code: 'ORG-FC-001', installment_id: '42' });
     render(<CourtesyPageActions code={CODE_425} />);
 
     expect(screen.getByTestId('courtesyPage.downloadCta')).toHaveTextContent('Download notice');
   });
 
-  it('does NOT render a retry button (no postCarts call on CTA click)', () => {
+  it('does NOT trigger a retry on CTA click (no postCarts call)', () => {
     mockInstallmentsMutateAsync.mockResolvedValue([INSTALLMENT_MATCH]);
-    setupSearchParams({ nav: 'NAV-001', org_fiscal_code: 'ORG-FC-001', installment_id: '42' });
     render(<CourtesyPageActions code={CODE_425} />);
 
     fireEvent.click(screen.getByTestId('courtesyPage.cta'));
@@ -398,40 +469,8 @@ describe('CourtesyPageActions – pagamento-annullato (425)', () => {
     expect(mockPostCartsMutate).not.toHaveBeenCalled();
   });
 
-  it('fetches installments on mount and resolves the correct one', async () => {
-    mockInstallmentsMutateAsync.mockResolvedValue([INSTALLMENT_OTHER, INSTALLMENT_MATCH]);
-    setupSearchParams({ nav: 'NAV-001', org_fiscal_code: 'ORG-FC-001', installment_id: '42' });
-    render(<CourtesyPageActions code={CODE_425} />);
-
-    await waitFor(() => {
-      expect(mockInstallmentsMutateAsync).toHaveBeenCalledWith({
-        iuvOrNav: 'NAV-001',
-        orgFiscalCode: 'ORG-FC-001'
-      });
-    });
-  });
-
   it('renders correct download link for cancelled payment', async () => {
     mockInstallmentsMutateAsync.mockResolvedValue([INSTALLMENT_MATCH]);
-    setupSearchParams({ nav: 'NAV-001', org_fiscal_code: 'ORG-FC-001', installment_id: '42' });
-    render(<CourtesyPageActions code={CODE_425} />);
-
-    await waitFor(() => {
-      expect(mockInstallmentsMutateAsync).toHaveBeenCalled();
-    });
-
-    const downloadLink = screen.getByTestId('courtesyPage.downloadCta');
-    expect(downloadLink).toHaveAttribute('target', '_blank');
-    expect(downloadLink).toHaveAttribute(
-      'href',
-      expect.stringContaining('/spontanei/download/99/NAV-001')
-    );
-  });
-
-  it('renders correct download link for cancelled payment when the user is not logged in', async () => {
-    (utils.storage.user.isAnonymous as Mock).mockReturnValue(true);
-    mockInstallmentsMutateAsync.mockResolvedValue([INSTALLMENT_MATCH]);
-    setupSearchParams({ nav: 'NAV-001', org_fiscal_code: 'ORG-FC-001', installment_id: '42' });
     render(<CourtesyPageActions code={CODE_425} />);
 
     await waitFor(() => {
@@ -449,10 +488,11 @@ describe('CourtesyPageActions – pagamento-annullato (425)', () => {
   });
 });
 describe('CourtesyPageActions – pagamento-avviso-completato (420)', () => {
+  beforeEach(() => setAnonymous(true));
   afterEach(() => vi.clearAllMocks());
 
-  it('renders the download-receipt CTA and the back-to-home secondary CTA', async () => {
-    mockInstallmentsMutateAsync.mockResolvedValue([INSTALLMENT_MATCH]);
+  it('renders download receipt CTA and Back to home secondary CTA on the 420 outcome', async () => {
+    mockInstallmentsMutateAsync.mockRejectedValue(new Error('fail'));
     setupSearchParams({ nav: 'NAV-001', org_fiscal_code: 'ORG-FC-001', installment_id: '42' });
     render(<CourtesyPageActions code={CODE_420} />);
 
@@ -555,5 +595,164 @@ describe('CourtesyPageActions – pagamento-avviso-completato (420)', () => {
     expect(() => render(<CourtesyPageActions code={CODE_420} />)).toThrow(
       'Missing required query params: nav, org_fiscal_code or brokerId'
     );
+  });
+});
+
+describe('CourtesyPageActions – pagamento-non-riuscito (424), authenticated', () => {
+  beforeEach(() => setAnonymous(false));
+
+  it('renders both Retry and Back to home buttons', () => {
+    setCartItems([CART_ITEM_1]);
+    render(<CourtesyPageActions code={CODE_424} />);
+
+    expect(screen.getByTestId('courtesyPage.cta')).toHaveTextContent('Retry');
+    expect(screen.getByTestId('courtesyPage.homeCta')).toHaveTextContent('Back to home');
+    expect(screen.queryByTestId('courtesyPage.downloadCta')).not.toBeInTheDocument();
+  });
+
+  it('does NOT call the public installments endpoint', () => {
+    setCartItems([CART_ITEM_1]);
+    render(<CourtesyPageActions code={CODE_424} />);
+
+    expect(mockInstallmentsMutateAsync).not.toHaveBeenCalled();
+  });
+
+  it('clicking Retry submits the current cart items as-is', () => {
+    setCartItems([CART_ITEM_1, CART_ITEM_2], 'me@example.com');
+    render(<CourtesyPageActions code={CODE_424} />);
+
+    fireEvent.click(screen.getByTestId('courtesyPage.cta'));
+
+    expect(mockPostCartsMutate).toHaveBeenCalledWith({
+      notices: [CART_ITEM_1, CART_ITEM_2],
+      email: 'me@example.com'
+    });
+  });
+
+  it('passes email=undefined when the cart has no email', () => {
+    setCartItems([CART_ITEM_1]);
+    render(<CourtesyPageActions code={CODE_424} />);
+
+    fireEvent.click(screen.getByTestId('courtesyPage.cta'));
+
+    expect(mockPostCartsMutate).toHaveBeenCalledWith({
+      notices: [CART_ITEM_1],
+      email: undefined
+    });
+  });
+
+  it('redirects to sconosciuto when the cart is empty', async () => {
+    setCartItems([]);
+    render(<CourtesyPageActions code={CODE_424} />);
+
+    await waitFor(() => {
+      expect(mockNavigate).toHaveBeenCalledWith(
+        ROUTES.COURTESY_PAGE.replace(':outcome', String(OUTCOMES['sconosciuto']))
+      );
+    });
+  });
+
+  it('the Back to home button points to the DASHBOARD route', () => {
+    setCartItems([CART_ITEM_1]);
+    render(<CourtesyPageActions code={CODE_424} />);
+
+    expect(screen.getByTestId('courtesyPage.homeCta')).toHaveAttribute('href', ROUTES.DASHBOARD);
+  });
+
+  it('does NOT reset the cart on KO (allows multiple retries)', () => {
+    setCartItems([CART_ITEM_1]);
+    render(<CourtesyPageActions code={CODE_424} />);
+
+    fireEvent.click(screen.getByTestId('courtesyPage.cta'));
+
+    expect(mockResetCart).not.toHaveBeenCalled();
+  });
+});
+
+describe('CourtesyPageActions – pagamento-annullato (425), authenticated', () => {
+  beforeEach(() => setAnonymous(false));
+
+  it('renders only the Back to home button (no Retry, no download)', () => {
+    setCartItems([CART_ITEM_1]);
+    render(<CourtesyPageActions code={CODE_425} />);
+
+    expect(screen.queryByTestId('courtesyPage.cta')).not.toBeInTheDocument();
+    expect(screen.queryByTestId('courtesyPage.downloadCta')).not.toBeInTheDocument();
+    const homeCta = screen.getByTestId('courtesyPage.homeCta');
+    expect(homeCta).toHaveTextContent('Back to home');
+    expect(homeCta).toHaveAttribute('href', ROUTES.DASHBOARD);
+  });
+
+  it('does NOT call postCarts on any click', () => {
+    setCartItems([CART_ITEM_1]);
+    render(<CourtesyPageActions code={CODE_425} />);
+
+    fireEvent.click(screen.getByTestId('courtesyPage.homeCta'));
+
+    expect(mockPostCartsMutate).not.toHaveBeenCalled();
+  });
+
+  it('redirects to sconosciuto when the cart is empty', async () => {
+    setCartItems([]);
+    render(<CourtesyPageActions code={CODE_425} />);
+
+    await waitFor(() => {
+      expect(mockNavigate).toHaveBeenCalledWith(
+        ROUTES.COURTESY_PAGE.replace(':outcome', String(OUTCOMES['sconosciuto']))
+      );
+    });
+  });
+
+  it('does NOT reset the cart on CANCEL (user may still go back and pay)', () => {
+    setCartItems([CART_ITEM_1]);
+    render(<CourtesyPageActions code={CODE_425} />);
+
+    expect(mockResetCart).not.toHaveBeenCalled();
+  });
+});
+
+describe('CourtesyPageActions – pagamento-avviso-completato (420), authenticated', () => {
+  beforeEach(() => setAnonymous(false));
+
+  it('renders only the Back to home button (no Retry, no download)', () => {
+    setCartItems([CART_ITEM_1]);
+    render(<CourtesyPageActions code={CODE_420} />);
+
+    expect(screen.queryByTestId('courtesyPage.cta')).not.toBeInTheDocument();
+    expect(screen.queryByTestId('courtesyPage.downloadCta')).not.toBeInTheDocument();
+    const homeCta = screen.getByTestId('courtesyPage.homeCta');
+    expect(homeCta).toHaveTextContent('Back to home');
+    expect(homeCta).toHaveAttribute('href', ROUTES.DASHBOARD);
+  });
+
+  it('resets the cart on mount when the cart was not empty', async () => {
+    setCartItems([CART_ITEM_1, CART_ITEM_2]);
+    render(<CourtesyPageActions code={CODE_420} />);
+
+    await waitFor(() => {
+      expect(mockResetCart).toHaveBeenCalledTimes(1);
+    });
+  });
+
+  it('does NOT call resetCart when the cart is already empty', async () => {
+    setCartItems([]);
+    render(<CourtesyPageActions code={CODE_420} />);
+
+    await waitFor(() => {
+      expect(screen.getByTestId('courtesyPage.homeCta')).toBeInTheDocument();
+    });
+
+    expect(mockResetCart).not.toHaveBeenCalled();
+  });
+
+  it('does NOT redirect to sconosciuto when the cart is empty (OK is not a retryable outcome)', async () => {
+    setCartItems([]);
+    render(<CourtesyPageActions code={CODE_420} />);
+
+    await waitFor(() => {
+      expect(screen.getByTestId('courtesyPage.homeCta')).toBeInTheDocument();
+    });
+
+    expect(mockNavigate).not.toHaveBeenCalled();
   });
 });

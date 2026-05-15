@@ -189,10 +189,8 @@
       },
       "download": {
         "title": "Il download dell’avviso è in corso",
-        "subtitle": "Se non parte in automatico, <link>scarica l’avviso manualmente</link>",
-        "link": "Scopri i canali abilitati",
-        "help": "Se non parte automaticamente, <CustomLink>clicca qui</CustomLink>.",
-        "info": ""
+        "help": "Se non parte in automatico <CustomLink>scarica l’avviso manualmente</CustomLink>",
+        "link": "Scopri i canali abilitati"
       }
     },
     "debtPositionDetail": {
@@ -456,7 +454,8 @@
   "courtesyPage": {
     "default": {
       "title": "Qualcosa non ha funzionato",
-      "body": "Stiamo lavorando per risolvere il prima possibile. Riprova più tardi."
+      "body": "Stiamo lavorando per risolvere il prima possibile. Riprova più tardi.",
+      "homeCta": "Torna alla home"
     },
     "400": {
       "title": "Qualcosa non ha funzionato",
@@ -485,9 +484,14 @@
     },
     "420": {
       "title": "Grazie!",
-      "body": "Ti abbiamo inviato un'email con la ricevuta. Contiene anche le istruzioni sui prossimi passi per ottenere la tua Carta di Identità Elettronica.",
+      "body": "Ti abbiamo inviato un'email con la ricevuta.",
       "cta": "Scarica la ricevuta",
-      "secondaryCta": "Torna alla home"
+      "secondaryCta": "Torna alla home",
+      "auth": {
+        "title": "Grazie!",
+        "body": "Ti abbiamo inviato un'email con la ricevuta.",
+        "homeCta": "Torna alla home"
+      }
     },
     "422": {
       "title": "Non possiamo procedere con il pagamento",
@@ -498,13 +502,15 @@
       "title": "Il pagamento non è andato a buon fine",
       "body": "Puoi riprovare oppure scaricare l'avviso pagoPA e pagare presso tutti i canali abilitati.",
       "cta": "Riprova",
-      "downloadCta": "Scarica l'avviso"
+      "downloadCta": "Scarica l'avviso",
+      "homeCta": "Torna alla home"
     },
     "425": {
       "title": "Hai annullato il pagamento",
       "body": "Se lo desideri, puoi scaricare l'avviso pagoPA e pagare presso tutti i canali abilitati.",
       "cta": "Torna alla home",
-      "downloadCta": "Scarica l'avviso"
+      "downloadCta": "Scarica l'avviso",
+      "homeCta": "Torna alla home"
     },
     "423": {
       "title": "Non siamo riusciti ad avviare il pagamento",
@@ -667,10 +673,6 @@
         "org": "La selezione dell'ente è obbligatoria",
         "debtType": "*Seleziona un servizio nella lista superiore o nell'elenco dei più utilizzati"
       }
-    },
-    "download": {
-      "title": "Il download dell’avviso è in corso",
-      "help": "Se non parte in automatico, <link1>scarica l’avviso manualmente</link1>"
     }
   }
 }
