@@ -140,7 +140,7 @@ const Spontanei = () => {
                   {t('spontanei.form.description')}
                 </Typography>
               </Stack>
-              <Stack spacing={{ xs: 3, sm: 4 }} mt={4}>
+              <Stack spacing={3}>
                 <Steps activeStep={step.current} />
 
                 {/* Dynamically announce step change and shift focus to the content */}
