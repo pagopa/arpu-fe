@@ -109,15 +109,21 @@ describe('utils.converters.cartItemsToCartsRequest - shape', () => {
     ]);
   });
 
-  it('builds authenticated returnUrls when user is not anonymous', () => {
+  it('builds authenticated returnUrls pointing to the AUTH courtesy page (no /public, no query params)', () => {
     vi.spyOn(utils.storage.user, 'isAnonymous').mockReturnValue(false);
     const request = utils.converters.cartItemsToCartsRequest(items);
 
-    expect(request.returnUrls.returnCancelUrl).toContain('/posizioni-debitorie');
-    expect(request.returnUrls.returnErrorUrl).toContain('/posizioni-debitorie');
+    expect(request.returnUrls.returnOkUrl).toContain('/esito/pagamento-avviso-completato');
+    expect(request.returnUrls.returnCancelUrl).toContain('/esito/pagamento-annullato');
+    expect(request.returnUrls.returnErrorUrl).toContain('/esito/pagamento-non-riuscito');
+
     expect(request.returnUrls.returnOkUrl).not.toContain('/public/esito');
     expect(request.returnUrls.returnCancelUrl).not.toContain('/public/esito');
     expect(request.returnUrls.returnErrorUrl).not.toContain('/public/esito');
+
+    expect(request.returnUrls.returnOkUrl).not.toContain('?');
+    expect(request.returnUrls.returnCancelUrl).not.toContain('?');
+    expect(request.returnUrls.returnErrorUrl).not.toContain('?');
   });
 
   it('builds public courtesy returnUrls when user is anonymous', () => {
@@ -138,6 +144,19 @@ describe('utils.converters.cartItemsToCartsRequest - shape', () => {
     expect(request.returnUrls.returnOkUrl).toContain(expectedSearch);
     expect(request.returnUrls.returnCancelUrl).toContain(expectedSearch);
     expect(request.returnUrls.returnErrorUrl).toContain(expectedSearch);
+  });
+
+  it('appends nav and org_fiscal_code on all anonymous courtesy URLs (OK, KO, CANCEL)', () => {
+    vi.spyOn(utils.storage.user, 'isAnonymous').mockReturnValue(true);
+    const request = utils.converters.cartItemsToCartsRequest(items);
+
+    expect(request.returnUrls.returnOkUrl).toContain('?nav=');
+    expect(request.returnUrls.returnCancelUrl).toContain('?nav=');
+    expect(request.returnUrls.returnErrorUrl).toContain('?nav=');
+
+    expect(request.returnUrls.returnOkUrl).toContain('&org_fiscal_code=');
+    expect(request.returnUrls.returnCancelUrl).toContain('&org_fiscal_code=');
+    expect(request.returnUrls.returnErrorUrl).toContain('&org_fiscal_code=');
   });
 });
 

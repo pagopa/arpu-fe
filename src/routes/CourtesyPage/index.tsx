@@ -6,6 +6,7 @@ import { OUTCOMES } from '../../routes/routes';
 import i18next from 'i18next';
 import { CourtesyPageActions } from './components/CourtesyPageActions';
 import { useAppRoutes } from 'hooks/useAppRoutes';
+import utils from 'utils';
 
 interface ErrorIconComponentProps {
   code?: OUTCOMES;
@@ -57,11 +58,25 @@ export const CourtesyPage = () => {
   const params = useParams();
   const outcome = params?.outcome as keyof typeof OUTCOMES;
   const code = OUTCOMES[outcome];
+  const isAnonymous = utils.storage.user.isAnonymous();
 
+  // Custom actions (via CourtesyPageActions) are used when:
+  //   - KO / CANCEL outcomes (both flows: retry / download / home)
+  //   - OK outcome in BOTH flows:
+  //       * authenticated -> "Torna alla home" -> DASHBOARD
+  //       * anonymous     -> "Scarica ricevuta" + link al login
   const hasCustomActions =
     code === OUTCOMES['pagamento-non-riuscito'] ||
     code === OUTCOMES['pagamento-annullato'] ||
     code === OUTCOMES['pagamento-avviso-completato'];
+
+  // The OK outcome (420) has distinct title/body for the authenticated flow:
+  // it lives under `420.auth.*`. The anonymous OK flow keeps the flat keys
+  // (`courtesyPage.420.title`, `.body`, `.cta`, `.secondaryCta`, `.downloadCta`).
+  const i18nPrefix =
+    code === OUTCOMES['pagamento-avviso-completato'] && !isAnonymous
+      ? `courtesyPage.${code}.auth`
+      : `courtesyPage.${code}`;
 
   const getCtaHref = (code: OUTCOMES): string => {
     if (code === OUTCOMES['verifica-non-riuscita']) {
@@ -87,12 +102,12 @@ export const CourtesyPage = () => {
           <ErrorIconComponent code={code} />
         </Box>
         <Typography variant="h4" gutterBottom data-testid="courtesyPage.title">
-          {t(`courtesyPage.${code}.title`, {
+          {t(`${i18nPrefix}.title`, {
             defaultValue: t('courtesyPage.default.title')
           })}
         </Typography>
         <Typography variant="body1" paragraph data-testid="courtesyPage.body">
-          {t(`courtesyPage.${code}.body`, {
+          {t(`${i18nPrefix}.body`, {
             defaultValue: t('courtesyPage.default.body')
           })}
         </Typography>
