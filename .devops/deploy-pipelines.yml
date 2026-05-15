@@ -52,7 +52,7 @@ variables:
     checkout_platform_url: '$(PROD_CHECKOUT_PLATFORM_URL)'
     resources_url: '$(PROD_LEGALDOCS_TEMPLATE_URL)'
     recaptcha_site_key: '$(PROD_RECAPTCHA_SITE_KEY)'
-    openapi_url: '$(UAT_OPENAPI_URL)'
+    openapi_url: '$(PROD_OPENAPI_URL)'
 
   # every branch different from past will be considered as DEV
   ${{ else }}:
@@ -70,7 +70,7 @@ variables:
     checkout_platform_url: '$(DEV_CHECKOUT_PLATFORM_URL)'
     resources_url: '$(DEV_LEGALDOCS_TEMPLATE_URL)'
     recaptcha_site_key: '$(DEV_RECAPTCHA_SITE_KEY)'
-    openapi_url: '$(UAT_OPENAPI_URL)'
+    openapi_url: '$(DEV_OPENAPI_URL)'
 
 resources:
   repositories:
