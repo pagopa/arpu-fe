@@ -16,6 +16,8 @@ jobs:
         run: yarn
       - name: Generate api client
         run: yarn generate
+        env:
+          OPENAPI_URL: ${{ vars.OPENAPI_URL }}
       - name: Test and coverage
         run: yarn coverage
       - uses: davelosert/vitest-coverage-report-action@7727b0282e61c3cffa400550cf2ae57c2b16167d # v2
