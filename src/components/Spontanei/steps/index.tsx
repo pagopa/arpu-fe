@@ -46,7 +46,7 @@ const Steps = (props: { activeStep: number }) => {
         <Skeleton variant="rectangular" height={'64px'} sx={{ p: 4 }} animation={'wave'}></Skeleton>
       ) : (
         <>
-          <Typography variant="body2" fontWeight="600" display={{ sm: 'none' }}>
+          <Typography variant="body2" fontWeight="600" display={{ sm: 'none' }} pt={3}>
             {t(steps[props.activeStep - stepBaseNumber])}
           </Typography>
           <Stepper

@@ -189,7 +189,7 @@
       },
       "download": {
         "title": "Le téléchargement de l'avis est en cours",
-        "subtitle": "S'il ne démarre pas automatiquement, <link>téléchargez l'avertissement manuellement<\/link>.",
+        "help": "S'il ne démarre pas automatiquement, <CustomLink>téléchargez l'avis manuellement</CustomLink>.",
         "link": "Découvrir les canaux activés"
       }
     },
@@ -366,7 +366,8 @@
     "download": "Télécharger",
     "close": "Fermer",
     "payNow": "Payer maintenant",
-    "addItemToCart": "Ajouter au panier"
+    "addItemToCart": "Ajouter au panier",
+    "backToHome": "Retour à l'accueil"
   },
   "fields": {
     "iuv": "Avis\/code UV",
@@ -643,10 +644,6 @@
         "org": "La sélection de l’organisme est obligatoire",
         "debtType": "Sélectionner un service dans la liste ci-dessus ou dans la liste des services les plus utilisés"
       }
-    },
-    "download": {
-      "title": "Le téléchargement de l'avis est en cours",
-      "help": "S'il ne démarre pas automatiquement, <link1>téléchargez l'avis manuellement<\/link1>."
     }
   }
 }
