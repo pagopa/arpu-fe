@@ -168,12 +168,33 @@ const normalizePaymentNotice = (paymentNotice: PaymentNoticeDTO): PaymentNoticeT
 /**
  * Builds the checkout return URLs (OK / KO / CANCEL).
  *
- * - Anonymous flow: points to the PUBLIC courtesy page and appends `nav` +
- *   `org_fiscal_code` as query params, since the public courtesy page rebuilds
- *   the CartItem from scratch via the public installments endpoint.
- * - Authenticated flow: points to the AUTHENTICATED courtesy page with NO query
- *   params, since the cart is already persisted in sessionStorage and the page
- *   reads `cart.items` directly to retry the payment.
+ * Terminology:
+ *   - "mono"  = the carts request carries exactly 1 notice (carts.length === 1).
+ *               Always true for the anonymous "Paga subito" flow that bypasses
+ *               the cart drawer, and also true when the user added a single
+ *               item to the cart before paying.
+ *   - "pluri" = the carts request carries 2+ notices (carts.length > 1). Only
+ *               reachable when the user added multiple items to the cart drawer
+ *               before paying.
+ *
+ * - Authenticated flow (mono or pluri): points to the AUTHENTICATED courtesy
+ *   page with NO query params. The cart is already in sessionStorage and the
+ *   courtesy page reads `cart.items` directly to retry / show the home link.
+ *
+ * - Anonymous MONO (carts.length === 1): points to the PUBLIC courtesy page
+ *   and appends `nav` + `org_fiscal_code` as query params. These are needed
+ *   regardless of whether the item is in sessionStorage or not, because:
+ *     1. If the user paid via "Paga subito" the cart is empty, so the public
+ *        courtesy page must rebuild the CartItem from the public installments
+ *        endpoint using `nav` + `org_fiscal_code`.
+ *     2. The "download avviso" PDF URL on KO/CANCEL is built from these params.
+ *
+ * - Anonymous PLURI (carts.length > 1): points to the PUBLIC courtesy page
+ *   with NO query params. Per-notice reconstruction from a single nav is not
+ *   feasible, so we rely entirely on `cart.items` from sessionStorage, which
+ *   is guaranteed to be populated (the only way to reach pluri is via the
+ *   cart drawer). If the session cart is empty on landing (new tab, expired
+ *   session, manual URL), the courtesy page falls back to 'sconosciuto'.
  */
 const getPaymentOutcomes = (carts: CartItem[], isAnonymous: boolean) => {
   const outcomes = isAnonymous ? ROUTES.public : ROUTES;
@@ -190,11 +211,15 @@ const getPaymentOutcomes = (carts: CartItem[], isAnonymous: boolean) => {
     outcome: 'pagamento-annullato'
   });
 
-  if (!isAnonymous) {
+  // Auth (mono or pluri) and anonymous pluri: no query params, the cart in
+  // sessionStorage carries all the info needed by the courtesy page.
+  const skipQueryParams = !isAnonymous || carts.length > 1;
+  if (skipQueryParams) {
     return { OK, KO, CANCEL };
   }
 
-  // Anonymous: append the params needed to rebuild the CartItem on the courtesy page.
+  // Anonymous mono: append the params needed to rebuild the CartItem and to
+  // build the download-avviso PDF URL on the courtesy page.
   const search = `?nav=${carts[0].nav}&org_fiscal_code=${carts[0].paTaxCode}`;
   return {
     OK: `${OK}${search}`,

@@ -40,41 +40,30 @@ import { RouteGuardByAvailableRoutes as Guard } from 'components/RouteGuard';
 import { useFavicon } from 'hooks/useFavicon';
 
 /**
- * Loader factory for the courtesy page.
+ * Loader for the courtesy page (public and authenticated).
  *
- * The PUBLIC (anonymous) flow requires `nav` + `org_fiscal_code` query params
- * on KO/CANCEL outcomes, because the public courtesy page rebuilds the CartItem
- * from scratch via the public installments endpoint if Cart is not enabled.
+ * No query-param validation happens here: each variant of the courtesy page
+ * has its own data source, and the component decides which to use.
  *
- * The AUTHENTICATED flow doesn't need any query params: the cart is already in
- * sessionStorage and the courtesy page reads `cart.items` directly.
+ *   - Anonymous MONO  (postCarts request with 1 notice, regardless of whether
+ *                     the user paid via "Paga subito" or from the cart drawer
+ *                     with 1 item):
+ *                     uses `nav` + `org_fiscal_code` query params to rebuild
+ *                     the CartItem via the public installments endpoint.
+ *
+ *   - Anonymous PLURI (postCarts request with 2+ notices, only reachable via
+ *                     the cart drawer with multiple items):
+ *                     uses `cart.items` from sessionStorage directly, the
+ *                     query params are NOT present in the return URL.
+ *
+ *   - Authenticated   (any cart size):
+ *                     uses `cart.items` from sessionStorage directly.
+ *
+ * The component (CourtesyPageActions) routes between these variants based on
+ * `isAnonymous` and `cart.items.length`, and falls back to the generic
+ * `sconosciuto` outcome if no valid source is available.
  */
-const makeCourtesyPageLoader =
-  (isPublic: boolean) =>
-  ({ params, request }: LoaderFunctionArgs) => {
-    const url = new URL(request.url);
-    const outcome = params.outcome as keyof typeof OUTCOMES;
-    const code = OUTCOMES[outcome];
-
-    const needsParams =
-      isPublic &&
-      (code === OUTCOMES['pagamento-non-riuscito'] ||
-        code === OUTCOMES['pagamento-annullato'] ||
-        code === OUTCOMES['pagamento-avviso-completato']);
-
-    if (needsParams) {
-      const nav = url.searchParams.get('nav');
-      const orgFiscalCode = url.searchParams.get('org_fiscal_code');
-      if (!nav || !orgFiscalCode) {
-        throw new Error('Missing required query params');
-      }
-    }
-
-    return params.outcome ?? null;
-  };
-
-const courtesyPagePublicLoader = makeCourtesyPageLoader(true);
-const courtesyPageAuthLoader = makeCourtesyPageLoader(false);
+const courtesyPageLoader = ({ params }: LoaderFunctionArgs) => params.outcome ?? null;
 
 const router = createBrowserRouter([
   {
@@ -216,7 +205,7 @@ const router = createBrowserRouter([
           },
           {
             path: ROUTES.public.COURTESY_PAGE,
-            loader: courtesyPagePublicLoader,
+            loader: courtesyPageLoader,
             element: <CourtesyPage />,
             handle: {
               titleKey: 'pageTitles.courtesy'
@@ -356,7 +345,7 @@ const router = createBrowserRouter([
           {
             path: ROUTES.COURTESY_PAGE,
             element: <CourtesyPage />,
-            loader: courtesyPageAuthLoader,
+            loader: courtesyPageLoader,
             handle: {
               titleKey: 'pageTitles.courtesy',
               backButton: false,
