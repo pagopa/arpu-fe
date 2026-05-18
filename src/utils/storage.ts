@@ -1,4 +1,5 @@
 import { signal } from '@preact/signals-react';
+import appStore from 'store/appStore';
 
 export enum SessionItems {
   CART = 'CART',
@@ -99,10 +100,7 @@ export default {
   app: {
     setBrokerId: (brokerId: string | number) =>
       setStorageItem(StorageItems.BROKERID, brokerId.toString()),
-    getBrokerId: () => {
-      const stored = getStorageItem(StorageItems.BROKERID);
-      return stored ? Number(stored) : null;
-    },
+    getBrokerId: () => appStore.value.brokerInfo?.brokerId ?? null,
     setBrokerCode: (brokerCode: string) => setStorageItem(StorageItems.BROKERCODE, brokerCode),
     getBrokerCode: () => getBrokerCodeFromUrl(),
     clearBrokerInfo: () => {

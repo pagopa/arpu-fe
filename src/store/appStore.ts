@@ -1,6 +1,6 @@
 import { signal } from '@preact/signals-react';
 import { BrokerInfoDTO } from '../../generated/data-contracts';
-import storage from 'utils/storage';
+//import storage from 'utils/storage';
 import { BrokerConfig, defaultBrokerConfig } from 'utils/brokerconfig';
 
 interface ParsedConfig extends Omit<BrokerInfoDTO, 'config'> {
@@ -24,8 +24,8 @@ const appStore = signal(defaultAppStore);
  */
 export function setBrokerInfo(parsedConfig: ParsedConfig, brokerCode: string) {
   // Persist to localStorage
-  storage.app.setBrokerId(String(parsedConfig.brokerId));
-  storage.app.setBrokerCode(brokerCode);
+  //storage.app.setBrokerId(String(parsedConfig.brokerId));
+  //storage.app.setBrokerCode(brokerCode);
 
   appStore.value = {
     ...appStore.value,
