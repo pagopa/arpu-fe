@@ -5,8 +5,8 @@
   "license": "MIT",
   "source": "src/index.html",
   "scripts": {
-    "generate-arpu-be-api-client": "swagger-typescript-api -p https://raw.githubusercontent.com/pagopa/arpu-be/refs/heads/develop/openapi/generated.openapi.json -o ./generated -n apiClient --axios",
-    "generate-arpu-be-data-contracts": "swagger-typescript-api  --modular --no-client -p https://raw.githubusercontent.com/pagopa/arpu-be/refs/heads/develop/openapi/generated.openapi.json -o ./generated",
+    "generate-arpu-be-api-client": "node scripts/generate-api.js api client",
+    "generate-arpu-be-data-contracts": "node scripts/generate-api.js api contracts",
     "generate-checkout-api": "swagger-typescript-api -p https://raw.githubusercontent.com/pagopa/pagopa-api/master/openapi/checkout.json -o ./generated/checkout --axios --modular",
     "generate-zod-schema": "yarn ts-to-zod --all",
     "generate": "yarn generate-arpu-be-api-client && yarn generate-arpu-be-data-contracts && yarn generate-checkout-api && yarn generate-zod-schema",
