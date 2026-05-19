@@ -513,6 +513,18 @@ const useResourceContent = (type: ResourceType, lang: string = 'it') =>
     staleTime: Infinity
   });
 
+const getPublicOrganizationLogo = (brokerId: number, orgFiscalCode: string) =>
+  useQuery({
+    queryKey: ['getPublicOrganizationLogo', brokerId, orgFiscalCode],
+    queryFn: async () => {
+      const { data } = await utils.apiClient.public.getPublicOrganizationLogo(
+        brokerId,
+        orgFiscalCode
+      );
+      return data;
+    }
+  });
+
 export default {
   createSpontaneousDebtPosition,
   getDebtPositionTypeOrgsWithSpontaneous,
@@ -539,6 +551,7 @@ export default {
     usePublicInstallmentsByIuvOrNav,
     usePublicDownloadReceipt,
     usePublicReceiptDetail,
-    getPublicMostUsedSpontaneousDebtPositionTypeOrgsForCurrentYear
+    getPublicMostUsedSpontaneousDebtPositionTypeOrgsForCurrentYear,
+    getPublicOrganizationLogo
   }
 };

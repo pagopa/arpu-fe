@@ -1,7 +1,7 @@
 import React from 'react';
 import { DebtorUnpaidDebtPositionDTO } from '../../../../generated/data-contracts';
 import { generatePath } from 'react-router-dom';
-import { fromTaxCodeToSrcImage, toEuroOrMissingValue } from 'utils/converters';
+import { toEuroOrMissingValue } from 'utils/converters';
 import { useTranslation } from 'react-i18next';
 import { ROUTES } from 'routes/routes';
 import { ListItem } from 'components/ListItem';
@@ -34,7 +34,7 @@ export const DebtPositionItem = ({
 
   const detailPath = generatePath(ROUTES.DEBT_POSITION, { debtPositionId, organizationId });
 
-  const Icon = () => <PayeeIcon src={fromTaxCodeToSrcImage(orgFiscalCode)} alt={orgName} visible />;
+  const Icon = () => <PayeeIcon orgFiscalCode={orgFiscalCode} alt={orgName} visible />;
 
   return (
     <ListItem
