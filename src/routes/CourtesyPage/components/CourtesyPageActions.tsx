@@ -3,17 +3,20 @@ import { Button, Stack } from '@mui/material';
 import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { Download } from '@mui/icons-material';
 import { useTranslation } from 'react-i18next';
-import { usePostCarts } from 'hooks/usePostCarts';
 import { CartItem } from 'models/Cart';
 import { OUTCOMES } from '../../../routes/routes';
 import storage from 'utils/storage';
 import loaders from 'utils/loaders';
-import notify from 'utils/notify';
 import { useAppRoutes } from 'hooks/useAppRoutes';
 import { useStore } from 'store/GlobalStore';
-import { resetCart } from 'store/CartStore';
 import appStore from 'store/appStore';
 import utils from 'utils';
+import {
+  useCheckoutRetry,
+  useClearCartOnSuccess,
+  useEmptyCartGuard,
+  useOutcomeFlags
+} from '../hooks/useCourtesyPageActions';
 
 interface CourtesyPageActionsProps {
   code: OUTCOMES;
@@ -131,8 +134,7 @@ const AnonymousSingleCourtesyActions: React.FC<CourtesyPageActionsProps> = ({ co
     throw new Error('Missing required query params: nav, org_fiscal_code or brokerId');
   }
 
-  const isCompleted = code === OUTCOMES['pagamento-avviso-completato'];
-  const isCancelled = code === OUTCOMES['pagamento-annullato'];
+  const { isOk: isCompleted, isCancelled } = useOutcomeFlags(code);
 
   const installmentsMutation = loaders.public.usePublicInstallmentsByIuvOrNav(brokerId!);
   const downloadReceiptMutation = loaders.public.usePublicDownloadReceipt({ brokerId: brokerId! });
@@ -163,14 +165,7 @@ const AnonymousSingleCourtesyActions: React.FC<CourtesyPageActionsProps> = ({ co
     fetchInstallment();
   }, []);
 
-  const postCarts = usePostCarts({
-    onSuccess: (checkoutUrl: string) => {
-      window.location.assign(checkoutUrl);
-    },
-    onError: () => {
-      notify.emit(t('errors.toast.payment'));
-    }
-  });
+  const { retry } = useCheckoutRetry();
 
   const handleRetry = useCallback(() => {
     if (!installment) {
@@ -188,8 +183,8 @@ const AnonymousSingleCourtesyActions: React.FC<CourtesyPageActionsProps> = ({ co
       allCCP: installment.allCCP ?? false
     };
 
-    postCarts.mutate({ notices: [cartItem] });
-  }, [installment, postCarts]);
+    retry([cartItem]);
+  }, [installment, retry]);
 
   const handleDownloadReceipt = useCallback(() => {
     utils.files.downloadReceipt(downloadReceiptMutation.mutateAsync, {
@@ -293,7 +288,6 @@ const AnonymousSingleCourtesyActions: React.FC<CourtesyPageActionsProps> = ({ co
  */
 const AnonymousMultiCourtesyActions: React.FC<CourtesyPageActionsProps> = ({ code }) => {
   const { t } = useTranslation();
-  const navigate = useNavigate();
   const { routes } = useAppRoutes();
   const {
     state: { cart }
@@ -301,42 +295,17 @@ const AnonymousMultiCourtesyActions: React.FC<CourtesyPageActionsProps> = ({ cod
 
   const homeHref = appStore.value.brokerInfo?.config?.homeLink || routes.LOGIN;
 
-  const isOk = code === OUTCOMES['pagamento-avviso-completato'];
-  const isKo = code === OUTCOMES['pagamento-non-riuscito'];
-  const isCancelled = code === OUTCOMES['pagamento-annullato'];
-  const isRetryableOutcome = isKo || isCancelled;
+  const { isOk, isRetryableOutcome } = useOutcomeFlags(code);
 
-  // On OK the payment is done: clear the cart so it doesn't survive into a
-  // new spontanei flow. Guarded with `length > 0` to avoid pointless writes.
-  useEffect(() => {
-    if (isOk && cart.items.length > 0) {
-      resetCart();
-    }
-  }, [isOk, cart.items.length]);
+  useClearCartOnSuccess(isOk);
+  useEmptyCartGuard(isRetryableOutcome, routes.public.COURTESY_PAGE);
 
-  // Empty-cart guard on retryable outcomes: redirect to the generic error.
-  useEffect(() => {
-    if (isRetryableOutcome && cart.items.length === 0) {
-      navigate(routes.public.COURTESY_PAGE.replace(':outcome', String(OUTCOMES['sconosciuto'])));
-    }
-  }, [isRetryableOutcome, cart.items.length]);
-
-  const postCarts = usePostCarts({
-    onSuccess: (checkoutUrl: string) => {
-      window.location.assign(checkoutUrl);
-    },
-    onError: () => {
-      notify.emit(t('errors.toast.payment'));
-    }
-  });
+  const { postCarts, retry } = useCheckoutRetry();
 
   const handleRetry = useCallback(() => {
     if (cart.items.length === 0) return;
-    postCarts.mutate({
-      notices: cart.items,
-      email: cart.email || undefined
-    });
-  }, [cart.items, cart.email, postCarts]);
+    retry(cart.items, cart.email);
+  }, [cart.items, cart.email, retry]);
 
   return (
     <Stack gap={2} alignItems="center">
@@ -388,53 +357,22 @@ const AnonymousMultiCourtesyActions: React.FC<CourtesyPageActionsProps> = ({ cod
  */
 const AuthenticatedCourtesyActions: React.FC<CourtesyPageActionsProps> = ({ code }) => {
   const { t } = useTranslation();
-  const navigate = useNavigate();
   const { routes } = useAppRoutes();
   const {
     state: { cart }
   } = useStore();
 
-  const isKo = code === OUTCOMES['pagamento-non-riuscito'];
-  const isOk = code === OUTCOMES['pagamento-avviso-completato'];
+  const { isOk, isKo, isRetryableOutcome } = useOutcomeFlags(code);
 
-  // On OK outcome the payment is done: the cart items must not survive into
-  // the next session, so we clear the cart. Guarded with `length > 0` to
-  // avoid pointless sessionStorage writes when the user lands here with an
-  // already-empty cart.
-  useEffect(() => {
-    if (isOk && cart.items.length > 0) {
-      resetCart();
-    }
-  }, [isOk, cart.items.length]);
+  useClearCartOnSuccess(isOk);
+  useEmptyCartGuard(isRetryableOutcome, routes.COURTESY_PAGE);
 
-  // Empty-cart guard: KO/CANCEL outcomes that arrive without a cart in session
-  // (e.g. new tab, expired session, direct navigation) can't do anything useful.
-  // Redirect to the generic error outcome.
-  const isRetryableOutcome =
-    code === OUTCOMES['pagamento-non-riuscito'] || code === OUTCOMES['pagamento-annullato'];
-
-  useEffect(() => {
-    if (isRetryableOutcome && cart.items.length === 0) {
-      navigate(routes.COURTESY_PAGE.replace(':outcome', String(OUTCOMES['sconosciuto'])));
-    }
-  }, [isRetryableOutcome, cart.items.length]);
-
-  const postCarts = usePostCarts({
-    onSuccess: (checkoutUrl: string) => {
-      window.location.assign(checkoutUrl);
-    },
-    onError: () => {
-      notify.emit(t('errors.toast.payment'));
-    }
-  });
+  const { postCarts, retry } = useCheckoutRetry();
 
   const handleRetry = useCallback(() => {
     if (cart.items.length === 0) return;
-    postCarts.mutate({
-      notices: cart.items,
-      email: cart.email || undefined
-    });
-  }, [cart.items, cart.email, postCarts]);
+    retry(cart.items, cart.email);
+  }, [cart.items, cart.email, retry]);
 
   return (
     <Stack gap={2} alignItems="center">
