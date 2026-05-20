@@ -525,7 +525,7 @@ const getPublicOrganizationLogo = (brokerId: number, orgFiscalCode: string) =>
     },
     staleTime: Infinity,
     refetchOnWindowFocus: false,
-    refetchOnMount: false,
+    refetchOnMount: false
   });
 
 export default {
