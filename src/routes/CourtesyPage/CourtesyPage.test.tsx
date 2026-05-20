@@ -348,16 +348,16 @@ describe('CourtesyPageActions – pagamento-non-riuscito (424), anonymous', () =
     mockInstallmentsMutateAsync.mockResolvedValue([INSTALLMENT_MATCH]);
     render(<CourtesyPageActions code={CODE_424} />);
 
-    await waitFor(() => {
-      expect(mockInstallmentsMutateAsync).toHaveBeenCalled();
-    });
-
     const downloadLink = screen.getByTestId('courtesyPage.downloadCta');
     expect(downloadLink).toHaveAttribute('target', '_blank');
-    expect(downloadLink).toHaveAttribute(
-      'href',
-      expect.stringContaining('/public/spontanei/download/99/NAV-001')
-    );
+
+    // Wait for setInstallment to propagate to the rendered href.
+    await waitFor(() => {
+      expect(screen.getByTestId('courtesyPage.downloadCta')).toHaveAttribute(
+        'href',
+        expect.stringContaining('/public/spontanei/download/99/NAV-001')
+      );
+    });
   });
 
   it('renders download link using defaults when installment fetch fails', async () => {
@@ -481,18 +481,20 @@ describe('CourtesyPageActions – pagamento-annullato (425), anonymous', () => {
     mockInstallmentsMutateAsync.mockResolvedValue([INSTALLMENT_MATCH]);
     render(<CourtesyPageActions code={CODE_425} />);
 
-    await waitFor(() => {
-      expect(mockInstallmentsMutateAsync).toHaveBeenCalled();
-    });
-
     const downloadLink = screen.getByTestId('courtesyPage.downloadCta');
     expect(downloadLink).toHaveAttribute('target', '_blank');
-    expect(downloadLink).toHaveAttribute(
-      'href',
-      expect.stringContaining(
-        '/public/spontanei/download/99/NAV-001#debtorFiscalCode=DEBTOR-FC-001'
-      )
-    );
+
+    // Wait for setInstallment to propagate to the rendered href. The initial
+    // render shows the fallback `/-1/NAV` URL because the installment is
+    // still null - we need the next render.
+    await waitFor(() => {
+      expect(screen.getByTestId('courtesyPage.downloadCta')).toHaveAttribute(
+        'href',
+        expect.stringContaining(
+          '/public/spontanei/download/99/NAV-001#debtorFiscalCode=DEBTOR-FC-001'
+        )
+      );
+    });
   });
 
   it('renders download link using defaults when fetch fails', async () => {
