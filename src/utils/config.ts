@@ -13,7 +13,6 @@ const {
   CHECKOUT_HOST = 'https://uat.checkout.pagopa.it',
   CHECKOUT_PLATFORM_URL = 'https://api.uat.platform.pagopa.it/checkout/ec/v1',
   DEPLOY_PATH = '/cittadini',
-  ENTITIES_LOGO_CDN,
   LOGIN_URL = 'https://api.dev.cittadini-p4pa.pagopa.it/arc/v1/login/oneidentity',
   VERSION = '',
   RESOURCES_URL = '/cittadini-legaldocs/{BROKER_EXTERNAL_ID}/{DOCUMENT_TYPE}/{DOC_LANGUAGE}_{DOCUMENT_TYPE}.md',
@@ -30,7 +29,6 @@ const API_TIMEOUT_schema = z.number();
 const CHECKOUT_HOST_schema = z.string().url();
 const CHECKOUT_PLATFORM_URL_schema = z.string().url();
 const DEPLOY_PATH_schema = z.string();
-const ENTITIES_LOGO_CDN_schema = z.string().url();
 const LOGIN_URL_schema = z.string().url();
 const VERSION_schema = z.string();
 const RESOURCES_URL_schema = z.string().min(1);
@@ -43,7 +41,6 @@ try {
   CHECKOUT_HOST_schema.parse(process.env.CHECKOUT_HOST);
   CHECKOUT_PLATFORM_URL_schema.parse(process.env.CHECKOUT_PLATFORM_URL);
   DEPLOY_PATH_schema.parse(process.env.DEPLOY_PATH);
-  ENTITIES_LOGO_CDN_schema.parse(process.env.ENTITIES_LOGO_CDN);
   LOGIN_URL_schema.parse(process.env.LOGIN_URL);
   VERSION_schema.parse(process.env.VERSION);
   RESOURCES_URL_schema.parse(process.env.RESOURCES_URL);
@@ -102,7 +99,6 @@ const config: Config = {
   checkoutHost: CHECKOUT_HOST,
   checkoutPlatformUrl: CHECKOUT_PLATFORM_URL,
   deployPath: DEPLOY_PATH,
-  entitiesLogoCdn: ENTITIES_LOGO_CDN,
   loginUrl: LOGIN_URL,
   /** a global character to be shown when
    * a info is missing

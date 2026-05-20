@@ -29,7 +29,6 @@ The table below describes all the Environment variables needed by the applicatio
 | ------------------ | ------------------------------------------------------------- | --------------------------- | ---------------------- |
 | APIHOST            | API service host                                              | url                         |                        |
 | API_TIMEOUT        | after this time API requests will be cancelled                | number                      |                        |
-| ENTITIES_LOGO_CDN  | cdn link for logos                                            | url                         |                        |
 | LOGIN_URL          | Link for login button                                         | url                         |                        |
 | DEPLOY_PATH        | deploy subpath (default "/cittadini")                         | string                      |                        |
 | ENV                | env target (used in conditional evaluations)                  | string                      | 'DEV' | 'UAT' | 'PROD' |
