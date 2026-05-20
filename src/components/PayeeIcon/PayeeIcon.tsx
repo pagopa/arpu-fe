@@ -1,18 +1,23 @@
 import Box from '@mui/material/Box';
 import React, { SyntheticEvent } from 'react';
-import AccountBalanceIcon from '@mui/icons-material/AccountBalance';
 import style from 'utils/style';
+import storage from 'utils/storage';
+import loaders from 'utils/loaders';
 
 export interface payeeIconProps {
-  src?: string;
   alt?: string;
   visible?: boolean;
+  orgFiscalCode: string;
 }
 
 export const PayeeIcon = (props: payeeIconProps) => {
   function onErrorImage(e: SyntheticEvent) {
     (e.target as HTMLImageElement).src = '/cittadini/images/fallback-ec.png';
   }
+
+  const brokerId = storage.app.getBrokerId() || -1;
+
+  const { data: logo } = loaders.public.getPublicOrganizationLogo(brokerId, props.orgFiscalCode);
 
   return (
     <Box
@@ -23,20 +28,16 @@ export const PayeeIcon = (props: payeeIconProps) => {
       alignItems="center"
       display={props.visible ? 'flex' : 'none'}
       justifyContent="center">
-      {props.src ? (
-        <img
-          src={props.src}
-          alt={props?.alt ? props.alt : 'Logo Ente'}
-          aria-hidden="true"
-          data-testid="payeelogoimg"
-          style={{ width: '55%' }}
-          onError={(e) => {
-            onErrorImage(e);
-          }}
-        />
-      ) : (
-        <AccountBalanceIcon sx={{ color: style.theme.palette.grey[400] }} />
-      )}
+      <img
+        src={logo?.orgLogo}
+        alt={props?.alt ? props.alt : 'Logo Ente'}
+        aria-hidden="true"
+        data-testid="payeelogoimg"
+        style={{ width: '55%' }}
+        onError={(e) => {
+          onErrorImage(e);
+        }}
+      />
     </Box>
   );
 };

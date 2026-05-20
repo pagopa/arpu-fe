@@ -3,11 +3,9 @@ import { CartItem } from 'models/Cart';
 import {
   capitalizeFirstLetter,
   formatDateOrMissingValue,
-  fromTaxCodeToSrcImage,
   propertyOrMissingValue,
   toEuroOrMissingValue
 } from './converters';
-import { PaymentNoticeEnum } from 'models/PaymentNotice';
 import { DateFormat } from './datetools';
 
 const MISSING = utils.config.missingValue;
@@ -237,18 +235,6 @@ describe('utils.converters.formatDateOrMissingValue', () => {
   });
 });
 
-describe('utils.converters.fromTaxCodeToSrcImage', () => {
-  it('strips leading zeros from tax code and builds CDN url', () => {
-    const url = fromTaxCodeToSrcImage('00012345678');
-    expect(url).toBe(`${utils.config.entitiesLogoCdn}/12345678.png`);
-  });
-
-  it('keeps tax code unchanged when no leading zero', () => {
-    const url = fromTaxCodeToSrcImage('12345678');
-    expect(url).toBe(`${utils.config.entitiesLogoCdn}/12345678.png`);
-  });
-});
-
 describe('utils.converters.capitalizeFirstLetter', () => {
   it('capitalizes first letter of every word', () => {
     expect(capitalizeFirstLetter('mario rossi')).toBe('Mario Rossi');
@@ -303,134 +289,5 @@ describe('utils.converters.withMissingValue', () => {
   it('returns a custom missing value when provided', () => {
     const sum = utils.converters.withMissingValue((a: number, b: number) => a + b, 'N/A');
     expect(sum(undefined, 3)).toBe('N/A');
-  });
-});
-
-describe('utils.converters.normalizePaymentNotice', () => {
-  const baseOption = {
-    amount: 12345,
-    dueDate: '2024-06-01T00:00:00Z',
-    description: 'Option desc',
-    installments: [
-      {
-        amount: 12345,
-        dueDate: '2024-06-01T00:00:00Z'
-      }
-    ]
-  };
-
-  it('normalizes a SINGLE payment notice (one option)', () => {
-    const notice = {
-      paTaxCode: '00012345678',
-      paFullName: 'ACI',
-      paymentOptions: [baseOption]
-    };
-
-    const result = utils.converters.normalizePaymentNotice(notice as never);
-
-    expect(result.type).toBe(PaymentNoticeEnum.SINGLE);
-    expect(result.image.src).toContain('/12345678.png');
-    expect(result.image.alt).toBe('ACI');
-    expect(
-      Array.isArray((result.paymentOptions as never as { installments: unknown }).installments)
-    ).toBe(false);
-  });
-
-  it('normalizes a MULTIPLE payment notice (multiple options)', () => {
-    const notice = {
-      paTaxCode: '00012345678',
-      paFullName: 'ACI',
-      paymentOptions: [baseOption, baseOption]
-    };
-
-    const result = utils.converters.normalizePaymentNotice(notice as never);
-
-    expect(result.type).toBe(PaymentNoticeEnum.MULTIPLE);
-    expect(Array.isArray(result.paymentOptions)).toBe(true);
-    expect((result.paymentOptions as unknown[]).length).toBe(2);
-  });
-});
-
-describe('utils.converters.prepareNoticeDetailData', () => {
-  const baseInfoNotice = {
-    payer: { name: 'Mario Rossi', taxCode: 'RSSMRA80A01H501U' },
-    walletInfo: {
-      accountHolder: 'Mario Rossi',
-      blurredNumber: '**** 1234',
-      brand: 'VISA',
-      maskedEmail: 'm***@example.com'
-    },
-    paymentMethod: 'CP',
-    authCode: 'AUTH123',
-    eventId: 'EVT1',
-    rrn: 'PRN1',
-    pspName: 'PSPName',
-    noticeDate: '2024-06-01T10:30:00Z',
-    amount: 10000,
-    fee: 100,
-    totalAmount: 10100,
-    origin: 'CHECKOUT'
-  };
-
-  const baseCart = {
-    subject: 'Bollo auto',
-    debtor: { name: 'Mario Rossi', taxCode: 'RSSMRA80A01H501U' },
-    payee: { name: 'ACI', taxCode: '00012345678' },
-    refNumberValue: 'NAV-123'
-  };
-
-  it('returns undefined when infoNotice is missing', () => {
-    const result = utils.converters.prepareNoticeDetailData({ infoNotice: undefined } as never);
-    expect(result).toBeUndefined();
-  });
-
-  it('maps all the fields when full data is provided', () => {
-    const result = utils.converters.prepareNoticeDetailData({
-      infoNotice: baseInfoNotice,
-      carts: [baseCart]
-    } as never);
-
-    expect(result).toBeDefined();
-    expect(result?.payer).toStrictEqual({
-      name: 'Mario Rossi',
-      taxCode: 'RSSMRA80A01H501U'
-    });
-    expect(result?.walletInfo).toStrictEqual({
-      accountHolder: 'Mario Rossi',
-      brand: 'VISA',
-      blurredNumber: '**** 1234',
-      maskedEmail: 'm***@example.com'
-    });
-    expect(result?.authCode).toBe('AUTH123');
-    expect(result?.PRN).toBe('PRN1');
-    expect(result?.PSP).toBe('PSPName');
-    expect(result?.subject).toBe('Bollo auto');
-    expect(result?.debtor).toBe('Mario Rossi');
-    expect(result?.creditorEntity).toBe('ACI');
-    expect(result?.noticeCode).toBe('NAV-123');
-    expect(result?.status).toBe('SUCCESS');
-  });
-
-  it('falls back to missing values when fields are absent', () => {
-    const result = utils.converters.prepareNoticeDetailData({
-      infoNotice: {
-        ...baseInfoNotice,
-        payer: undefined,
-        walletInfo: undefined,
-        authCode: undefined,
-        rrn: undefined,
-        pspName: undefined
-      },
-      carts: undefined
-    } as never);
-
-    expect(result?.payer).toBeUndefined();
-    expect(result?.walletInfo).toBeUndefined();
-    expect(result?.authCode).toBe(MISSING);
-    expect(result?.PRN).toBe(MISSING);
-    expect(result?.PSP).toBe(MISSING);
-    expect(result?.debtor).toBe(MISSING);
-    expect(result?.creditorEntity).toBe(MISSING);
-    expect(result?.noticeCode).toBe(MISSING);
   });
 });

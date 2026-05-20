@@ -1,11 +1,30 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { render, screen } from '__tests__/renderers';
 import React from 'react';
 import DebtPositionDetail from './';
 import utils from 'utils';
 import { debtPosition } from './components/__test__/mocks';
-import { UseQueryResult } from '@tanstack/react-query';
-import { DebtorUnpaidDebtPositionOverviewDTO } from '../../../generated/data-contracts';
+import { Mock } from 'vitest';
+
+vi.mock('utils', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('utils')>();
+  return {
+    ...actual,
+    default: {
+      ...actual.default,
+      storage: {
+        ...actual.default.storage,
+        app: {
+          ...actual.default.storage.app,
+          getBrokerId: vi.fn()
+        }
+      },
+      loaders: {
+        ...actual.default.loaders,
+        getDebtPositionDetail: vi.fn()
+      }
+    }
+  };
+});
 
 vi.mock('react-router-dom', () => ({
   useParams: () => ({
@@ -17,18 +36,19 @@ vi.mock('react-router-dom', () => ({
 
 describe('DebtPositionDetail', async () => {
   it('renders as expected without crashing', () => {
-    vi.spyOn(utils.storage.app, 'getBrokerId').mockReturnValue(3);
+    (utils.storage.app.getBrokerId as Mock).mockReturnValue(3);
 
-    const spyGetDebtPositionDetail = vi
-      .spyOn(utils.loaders, 'getDebtPositionDetail')
-      .mockReturnValue({ data: debtPosition, isSuccess: true, isLoading: false } as UseQueryResult<
-        DebtorUnpaidDebtPositionOverviewDTO,
-        Error
-      >);
+    const mockGetDebtPositionDetail = (utils.loaders.getDebtPositionDetail as Mock).mockReturnValue(
+      {
+        data: debtPosition,
+        isSuccess: true,
+        isLoading: false
+      }
+    );
 
     render(<DebtPositionDetail />);
 
-    expect(spyGetDebtPositionDetail).toBeCalledWith(3, 1, 2);
+    expect(mockGetDebtPositionDetail).toBeCalledWith(3, 1, 2);
 
     const title = screen.getByTestId('debt-position-detail-title').innerHTML;
     expect(title).toContain('debtPositionTypeOrgDescription test description');
