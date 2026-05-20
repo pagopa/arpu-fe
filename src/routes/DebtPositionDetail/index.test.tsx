@@ -38,11 +38,13 @@ describe('DebtPositionDetail', async () => {
   it('renders as expected without crashing', () => {
     (utils.storage.app.getBrokerId as Mock).mockReturnValue(3);
 
-    const mockGetDebtPositionDetail = (utils.loaders.getDebtPositionDetail as Mock).mockReturnValue({
-      data: debtPosition,
-      isSuccess: true,
-      isLoading: false
-    });
+    const mockGetDebtPositionDetail = (utils.loaders.getDebtPositionDetail as Mock).mockReturnValue(
+      {
+        data: debtPosition,
+        isSuccess: true,
+        isLoading: false
+      }
+    );
 
     render(<DebtPositionDetail />);
 

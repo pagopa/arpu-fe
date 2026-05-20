@@ -34,7 +34,9 @@ describe('Payeeicon component', () => {
 
   it('should render with an EC image', () => {
     const LOGO_URL = 'https://assets.cdn.io.italia.it/logos/organizations/80078750587.png';
-    const payeeComponent = render(<PayeeIcon alt="Logo INPS" orgFiscalCode="123456789" visible={true} />);
+    const payeeComponent = render(
+      <PayeeIcon alt="Logo INPS" orgFiscalCode="123456789" visible={true} />
+    );
     const payeeComponentImg = payeeComponent.getByTestId('payeelogoimg');
     fireEvent.load(payeeComponentImg);
 

@@ -17,7 +17,6 @@ variables:
   npm_config_cache: $(Pipeline.Workspace)/.npm
   vmImageNameDefault: 'ubuntu-latest'
   blob_container_path: 'cittadini'
-  cdn_logos: 'https://assets.cdn.io.italia.it/logos/organizations'
   assistance_link: 'https://pagopa.gov.it'
 
   ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/uat') }}:
@@ -98,7 +97,6 @@ stages:
               api_host: '$(api_host)'
               api_timeout: '$(api_timeout)'
               env: '$(environment)'
-              cdn_logos: '$(cdn_logos)'
               assistance_link: '$(assistance_link)'
               checkout_host: '$(checkout_host)'
               login_url: '$(login_url)'

@@ -5,7 +5,7 @@ import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
 import utils from 'utils';
-import { fromTaxCodeToSrcImage, propertyOrMissingValue } from 'utils/converters';
+import { propertyOrMissingValue } from 'utils/converters';
 import PaymentOptionWrapper from './components/PaymentOptions';
 import {
   DebtorPaymentOptionOverviewDTO,
