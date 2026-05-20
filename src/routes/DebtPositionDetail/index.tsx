@@ -77,7 +77,7 @@ const DebtPositionDetail = () => {
             {t('app.debtPositionDetail.paymentData')}
           </Typography>
           <Stack direction="row" gap={2} data-testid="debt-position-detail-org-name">
-            <PayeeIcon src={fromTaxCodeToSrcImage(data.orgFiscalCode)} alt={data.orgName} visible />
+            <PayeeIcon orgFiscalCode={data.orgFiscalCode} alt={data.orgName} visible />
             <CopiableRow
               label={t('app.debtPositionDetail.org')}
               value={propertyOrMissingValue(data.orgName)}
