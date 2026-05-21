@@ -1,21 +1,5 @@
-import {
-  PaymentNoticeDTO,
-  PaymentOptionDTO,
-  NoticeDetailsDTO,
-  InfoNoticeDTO
-} from '../../generated/apiClient';
-import { NoticeDetail } from 'models/NoticeDetail';
-import { DateFormat, datetools } from './datetools';
+import { datetools } from './datetools';
 import utils from 'utils';
-import {
-  NoticeImage,
-  PaymentInstallmentType,
-  PaymentNoticeEnum,
-  PaymentNoticeType,
-  PaymentOptionMultiple,
-  PaymentOptionSingle,
-  PaymentOptionType
-} from 'models/PaymentNotice';
 import { CartItem } from 'models/Cart';
 import { ROUTES } from 'routes/routes';
 import { generatePath } from 'react-router-dom';
@@ -30,9 +14,6 @@ const withMissingValue =
       : missingValue || utils.config.missingValue;
   };
 
-export const fromTaxCodeToSrcImage = (payeeTaxCode: string) =>
-  `${utils.config.entitiesLogoCdn}/${payeeTaxCode.replace(/^0+/, '')}.png`;
-
 const toEuro = (amount: number, decimalDigits: number = 2, fractionDigits: number = 2): string =>
   new Intl.NumberFormat('it-IT', {
     style: 'currency',
@@ -45,143 +26,64 @@ export const toEuroOrMissingValue = withMissingValue(toEuro);
 export const formatDateOrMissingValue = withMissingValue(datetools.formatDate);
 export const propertyOrMissingValue = withMissingValue((property: string) => property);
 
-const prepareNoticeDetailData = (noticeDetail: NoticeDetailsDTO): NoticeDetail | undefined => {
-  const { infoNotice, carts } = noticeDetail;
-  return (
-    infoNotice && {
-      ...(infoNotice.payer &&
-        infoNotice.payer.name && {
-          payer: {
-            name: infoNotice.payer.name,
-            taxCode: propertyOrMissingValue(infoNotice.payer.taxCode)
-          }
-        }),
-      ...(infoNotice.walletInfo &&
-        infoNotice.walletInfo.accountHolder &&
-        infoNotice.walletInfo.blurredNumber &&
-        infoNotice.walletInfo.brand && {
-          walletInfo: {
-            accountHolder: infoNotice.walletInfo.accountHolder,
-            brand: infoNotice.walletInfo.brand,
-            blurredNumber: infoNotice.walletInfo.blurredNumber,
-            maskedEmail: infoNotice.walletInfo.maskedEmail
-          }
-        }),
-      paymentMethod: propertyOrMissingValue(
-        infoNotice.paymentMethod
-      ) as InfoNoticeDTO['paymentMethod'],
-      authCode: propertyOrMissingValue(infoNotice.authCode),
-      eventId: propertyOrMissingValue(infoNotice.eventId),
-      PRN: propertyOrMissingValue(infoNotice.rrn),
-      PSP: propertyOrMissingValue(infoNotice.pspName),
-      dateTime: formatDateOrMissingValue(infoNotice.noticeDate, {
-        format: DateFormat.LONG,
-        withTime: true,
-        second: '2-digit'
-      }),
-      subject: propertyOrMissingValue(carts?.[0].subject),
-      debtor: propertyOrMissingValue(carts?.[0].debtor?.name),
-      debtorFiscalCode: propertyOrMissingValue(carts?.[0].debtor?.taxCode),
-      creditorEntity: propertyOrMissingValue(carts?.[0].payee?.name),
-      creditorFiscalCode: propertyOrMissingValue(carts?.[0].payee?.taxCode),
-      noticeCode: propertyOrMissingValue(carts?.[0].refNumberValue),
-      partialAmount: toEuroOrMissingValue(infoNotice.amount, 2),
-      fee: toEuroOrMissingValue(infoNotice.fee, 2),
-      total: toEuroOrMissingValue(infoNotice.totalAmount),
-      status: 'SUCCESS',
-      origin: infoNotice.origin
-    }
-  );
-};
-
 /**
- * Transforms a PaymentOptionDTO into a PaymentOptionType.
+ * Builds the checkout return URLs (OK / KO / CANCEL).
  *
- * installments is transformed in an object if the
- * payment notice is of type SINGLE
+ * Terminology:
+ *   - "mono"  = the carts request carries exactly 1 notice (carts.length === 1).
+ *               Always true for the anonymous "Paga subito" flow that bypasses
+ *               the cart drawer, and also true when the user added a single
+ *               item to the cart before paying.
+ *   - "pluri" = the carts request carries 2+ notices (carts.length > 1). Only
+ *               reachable when the user added multiple items to the cart drawer
+ *               before paying.
  *
- * @param {PaymentOptionDTO} option - The payment option data transfer object.
- * @param {PaymentNoticeEnum} type - The type of the payment notice (SINGLE or MULTIPLE).
- * @returns {PaymentOptionType} The transformed payment option object.
+ * - Authenticated flow (mono or pluri): points to the AUTHENTICATED courtesy
+ *   page with NO query params. The cart is already in sessionStorage and the
+ *   courtesy page reads `cart.items` directly to retry / show the home link.
+ *
+ * - Anonymous MONO (carts.length === 1): points to the PUBLIC courtesy page
+ *   and appends `nav` + `org_fiscal_code` as query params. These are needed
+ *   regardless of whether the item is in sessionStorage or not, because:
+ *     1. If the user paid via "Paga subito" the cart is empty, so the public
+ *        courtesy page must rebuild the CartItem from the public installments
+ *        endpoint using `nav` + `org_fiscal_code`.
+ *     2. The "download avviso" PDF URL on KO/CANCEL is built from these params.
+ *
+ * - Anonymous PLURI (carts.length > 1): points to the PUBLIC courtesy page
+ *   with NO query params. Per-notice reconstruction from a single nav is not
+ *   feasible, so we rely entirely on `cart.items` from sessionStorage, which
+ *   is guaranteed to be populated (the only way to reach pluri is via the
+ *   cart drawer). If the session cart is empty on landing (new tab, expired
+ *   session, manual URL), the courtesy page falls back to 'sconosciuto'.
  */
-const transformPaymentOption = (
-  option: PaymentOptionDTO,
-  type: PaymentNoticeEnum
-): PaymentOptionType => {
-  const normalizedInstallments = option.installments.map<PaymentInstallmentType>(
-    (installments) => ({
-      ...installments,
-      dueDate: formatDateOrMissingValue(installments.dueDate),
-      amount: toEuroOrMissingValue(installments.amount)
-    })
-  );
+const getPaymentOutcomes = (carts: CartItem[], isAnonymous: boolean) => {
+  const outcomes = isAnonymous ? ROUTES.public : ROUTES;
 
-  const out = {
-    ...option,
-    amount: toEuroOrMissingValue(option.amount),
-    // TODO handle missing amount
-    amountValue: option?.amount || 0,
-    dueDate: formatDateOrMissingValue(option.dueDate),
-    description: propertyOrMissingValue(option.description),
-    installments:
-      type == PaymentNoticeEnum.SINGLE ? normalizedInstallments[0] : normalizedInstallments
-  };
-  return out;
-};
-
-/**
- * Transforms a PaymentNoticeDTO into a PaymentNoticeType.
- *
- * Determines whether it's a single or multiple payment notice based on paymentOptions.length
- * and transform options and installments accordingly, changing them from a list to an object
- *
- * @param {PaymentNoticeDTO} paymentNotice - The payment notice data transfer object.
- * @returns {PaymentNoticeType} The transformed payment notice object, either as single or multiple type.
- */
-const normalizePaymentNotice = (paymentNotice: PaymentNoticeDTO): PaymentNoticeType => {
-  const image: NoticeImage = {
-    src: fromTaxCodeToSrcImage(paymentNotice.paTaxCode),
-    alt: paymentNotice.paFullName
-  };
-  if (paymentNotice.paymentOptions.length === 1) {
-    return {
-      ...paymentNotice,
-      image,
-      type: PaymentNoticeEnum.SINGLE,
-      paymentOptions: transformPaymentOption(
-        paymentNotice.paymentOptions[0],
-        PaymentNoticeEnum.SINGLE
-      ) as PaymentOptionSingle
-    };
-  } else {
-    return {
-      ...paymentNotice,
-      image,
-      type: PaymentNoticeEnum.MULTIPLE,
-      paymentOptions: paymentNotice.paymentOptions.map((paymentOption) =>
-        transformPaymentOption(paymentOption, PaymentNoticeEnum.MULTIPLE)
-      ) as PaymentOptionMultiple[]
-    };
-  }
-};
-
-const getPaymentOutcomes = (carts: CartItem[]) => {
-  const search = `?nav=${carts[0].nav}&org_fiscal_code=${carts[0].paTaxCode}`;
-
-  const OK = generatePath(ROUTES.public.COURTESY_PAGE, {
+  const OK = generatePath(outcomes.COURTESY_PAGE, {
     outcome: 'pagamento-avviso-completato'
   });
 
-  const KO = generatePath(ROUTES.public.COURTESY_PAGE, {
+  const KO = generatePath(outcomes.COURTESY_PAGE, {
     outcome: 'pagamento-non-riuscito'
   });
 
-  const CANCEL = generatePath(ROUTES.public.COURTESY_PAGE, {
+  const CANCEL = generatePath(outcomes.COURTESY_PAGE, {
     outcome: 'pagamento-annullato'
   });
 
+  // Auth (mono or pluri) and anonymous pluri: no query params, the cart in
+  // sessionStorage carries all the info needed by the courtesy page.
+  const skipQueryParams = !isAnonymous || carts.length > 1;
+  if (skipQueryParams) {
+    return { OK, KO, CANCEL };
+  }
+
+  // Anonymous mono: append the params needed to rebuild the CartItem and to
+  // build the download-avviso PDF URL on the courtesy page.
+  const search = `?nav=${carts[0].nav}&org_fiscal_code=${carts[0].paTaxCode}`;
   return {
-    OK,
+    OK: `${OK}${search}`,
     KO: `${KO}${search}`,
     CANCEL: `${CANCEL}${search}`
   };
@@ -196,7 +98,7 @@ const aggregateAllCCP = (cartItems: CartItem[]): boolean =>
 const cartItemsToCartsRequest = (cartItems: CartItem[]) => {
   const ORIGIN = window.location.origin;
   const isAnonymous = utils.storage.user.isAnonymous();
-  const COURTESY = getPaymentOutcomes(cartItems);
+  const COURTESY = getPaymentOutcomes(cartItems, isAnonymous);
 
   return {
     paymentNotices: cartItems.map((item) => ({
@@ -208,9 +110,9 @@ const cartItemsToCartsRequest = (cartItems: CartItem[]) => {
     })),
 
     returnUrls: {
-      returnOkUrl: `${ORIGIN}${isAnonymous ? COURTESY.OK : ROUTES.DASHBOARD}`,
-      returnCancelUrl: `${ORIGIN}${isAnonymous ? COURTESY.CANCEL : ROUTES.DEBT_POSITIONS}`,
-      returnErrorUrl: `${ORIGIN}${isAnonymous ? COURTESY.KO : ROUTES.DEBT_POSITIONS}`
+      returnOkUrl: `${ORIGIN}${COURTESY.OK}`,
+      returnCancelUrl: `${ORIGIN}${COURTESY.CANCEL}`,
+      returnErrorUrl: `${ORIGIN}${COURTESY.KO}`
     },
     allCCP: aggregateAllCCP(cartItems)
   };
@@ -235,8 +137,6 @@ function extractFilename(header: string): string | null {
 }
 
 export default {
-  normalizePaymentNotice,
-  prepareNoticeDetailData,
   cartItemsToCartsRequest,
   toEuro,
   toEuroOrMissingValue,

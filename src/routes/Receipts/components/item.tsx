@@ -4,11 +4,7 @@ import { generatePath } from 'react-router-dom';
 import { theme } from '@pagopa/mui-italia';
 import { ROUTES } from 'routes/routes';
 import { PayeeIcon } from 'components/PayeeIcon';
-import {
-  formatDateOrMissingValue,
-  fromTaxCodeToSrcImage,
-  toEuroOrMissingValue
-} from 'utils/converters';
+import { formatDateOrMissingValue, toEuroOrMissingValue } from 'utils/converters';
 import { DebtorReceiptDTO } from '../../../../generated/data-contracts';
 import { useTranslation } from 'react-i18next';
 import { ListItem } from 'components/ListItem';
@@ -37,7 +33,7 @@ export const ReceiptItem = ({
     <ListItem
       title={orgName}
       subtitle={debtPositionTypeOrgDescription}
-      icon={<PayeeIcon src={fromTaxCodeToSrcImage(orgFiscalCode)} alt={orgName} visible={smUp} />}
+      icon={<PayeeIcon orgFiscalCode={orgFiscalCode} visible={smUp} alt={orgName} />}
       detailPath={detailPath}
       detailAriaLabel={t('commons.detail')}
       detailTestId="receipt-details-button"

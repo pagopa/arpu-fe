@@ -7,6 +7,7 @@ import React, { ReactNode } from 'react';
 import { AxiosResponse } from 'axios';
 import { ROUTES } from 'routes/routes';
 import { CartItem } from 'models/Cart';
+import { generatePath } from 'react-router-dom';
 
 const mockCartItems: CartItem[] = [
   {
@@ -55,6 +56,10 @@ describe('usePostCarts', () => {
 
     const ORIGIN = window.location.origin;
 
+    const okPath = generatePath(ROUTES.COURTESY_PAGE, { outcome: 'pagamento-avviso-completato' });
+    const koPath = generatePath(ROUTES.COURTESY_PAGE, { outcome: 'pagamento-non-riuscito' });
+    const cancelPath = generatePath(ROUTES.COURTESY_PAGE, { outcome: 'pagamento-annullato' });
+
     expect(utils.cartsClient.postCarts).toHaveBeenCalledWith({
       emailNotice: 'test@test.it',
       paymentNotices: [
@@ -67,9 +72,9 @@ describe('usePostCarts', () => {
         }
       ],
       returnUrls: {
-        returnOkUrl: `${ORIGIN}${ROUTES.DASHBOARD}`,
-        returnCancelUrl: `${ORIGIN}${ROUTES.DEBT_POSITIONS}`,
-        returnErrorUrl: `${ORIGIN}${ROUTES.DEBT_POSITIONS}`
+        returnOkUrl: `${ORIGIN}${okPath}`,
+        returnCancelUrl: `${ORIGIN}${cancelPath}`,
+        returnErrorUrl: `${ORIGIN}${koPath}`
       },
       allCCP: false
     });

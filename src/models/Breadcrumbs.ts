@@ -15,6 +15,7 @@ export interface RouteHandleObject {
   sidebar?: boolean;
   subHeader?: boolean;
   backButton?: boolean;
+  backButtonIcon?: 'exit' | 'back';
   backButtonText?: string;
   backButtonFunction?: () => void;
   titleKey?: string;
