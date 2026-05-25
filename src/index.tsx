@@ -7,7 +7,13 @@ import { StoreProvider } from 'store/GlobalStore';
 
 const container = document.getElementById('root');
 const root = createRoot(container!);
-const queryClient = new QueryClient();
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      refetchOnWindowFocus: false
+    }
+  }
+});
 
 root.render(
   <React.StrictMode>
