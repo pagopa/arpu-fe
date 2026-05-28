@@ -545,7 +545,6 @@ const getPublicOrganizationLogo = (brokerId: number | null, orgFiscalCode: strin
     },
     enabled: brokerId !== null,
     staleTime: Infinity,
-    refetchOnWindowFocus: false,
     refetchOnMount: false
   });
 

@@ -6,6 +6,9 @@ export const ResponsiveCard = (props: CardProps) => {
     <Card
       {...props}
       sx={{
+        display: 'flex',
+        flexDirection: 'column',
+        gap: { xs: 0, sm: 3 },
         padding: { xs: 0, sm: 3 },
         borderWidth: { xs: 0, sm: '1px' },
         borderRadius: { xs: 0, sm: '5px' },
