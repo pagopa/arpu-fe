@@ -36,6 +36,7 @@ describe('SubHeader', () => {
   setBrokerInfo(
     {
       brokerId: 1,
+      externalId: 'test',
       brokerName: 'TestBrokerName',
       brokerFiscalCode: 'TestBrokerTaxCode',
       config: {

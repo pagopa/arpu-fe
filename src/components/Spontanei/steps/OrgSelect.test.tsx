@@ -48,10 +48,16 @@ const getDefaultContext = (overrides: Partial<FormContextType> = {}): FormContex
   setSubmitFields: vi.fn(),
   causaleHasJoinTemplate: false,
   setCausaleHasJoinTemplate: vi.fn(),
+  dictionary: {},
+  setDictionary: vi.fn(),
+  amountFieldName: '',
+  setAmountFieldName: vi.fn(),
+  formType: null,
+  setFormType: vi.fn(),
   ...overrides
 });
 
-const initialValues = {
+const initialValues: PaymentNoticeInfo = {
   fullName: '',
   entityType: PersonEntityType.F,
   email: '',

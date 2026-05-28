@@ -4,7 +4,7 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen } from '__tests__/renderers';
 import { DebtorUnpaidDebtPositionDTO } from '../../../../generated/data-contracts';
 import { generatePath } from 'react-router-dom';
-import { toEuroOrMissingValue, fromTaxCodeToSrcImage } from 'utils/converters';
+import { toEuroOrMissingValue } from 'utils/converters';
 import { useDueDateField } from '../hooks/useDueDateField';
 import { DebtPositionItem } from './item';
 
@@ -18,8 +18,7 @@ vi.mock('react-router-dom', async (importActual) => {
 
 vi.mock('utils/converters', () => ({
   toEuroOrMissingValue: vi.fn(),
-  formatDateOrMissingValue: vi.fn(),
-  fromTaxCodeToSrcImage: vi.fn()
+  formatDateOrMissingValue: vi.fn()
 }));
 
 vi.mock('components/PayeeIcon', () => ({
@@ -44,7 +43,6 @@ describe('DebtPositionItem', () => {
     vi.clearAllMocks();
     vi.mocked(generatePath).mockReturnValue('/debt-positions/debt-123/org-456');
     vi.mocked(toEuroOrMissingValue).mockReturnValue('€50.00');
-    vi.mocked(fromTaxCodeToSrcImage).mockReturnValue('icon-src');
     vi.mocked(useDueDateField).mockReturnValue({
       label: 'app.debtPositions.debtPositionItem.dueDate',
       value: '31/01/2025'

@@ -15,7 +15,7 @@ const ExternalUrlForm = (props: { link: string }) => {
           </Button>
         </Stack>
       </Card>
-      <Controls shouldContinue={() => false} />
+      <Controls shouldContinue={async () => false} />
     </>
   );
 };

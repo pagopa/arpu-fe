@@ -69,19 +69,14 @@ vi.mock('components/DataGrid/CustomPagination', () => ({
   default: ({ totalPages }: any) => <div data-testid="pagination">Pages: {totalPages}</div>
 }));
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-let dateCallbacks: any = {};
 vi.mock('components/DateRange', () => ({
-  DateRange: ({ from, to }: any) => {
-    dateCallbacks = { setFrom: from?.onChange, setTo: to?.onChange };
-    return (
-      <div data-testid="date-range">
-        <button onClick={() => from?.onChange?.(dayjs('2024-01-01'))}>Set From</button>
-        <button onClick={() => to?.onChange?.(dayjs('2024-12-31'))}>Set To</button>
-        <button onClick={() => from?.onChange?.(null)}>Clear From</button>
-      </div>
-    );
-  }
+  DateRange: ({ from, to }: any) => (
+    <div data-testid="date-range">
+      <button onClick={() => from?.onChange?.(dayjs('2024-01-01'))}>Set From</button>
+      <button onClick={() => to?.onChange?.(dayjs('2024-12-31'))}>Set To</button>
+      <button onClick={() => from?.onChange?.(null)}>Clear From</button>
+    </div>
+  )
 }));
 
 // Test helpers
@@ -107,7 +102,6 @@ const setupSearch = (overrides = {}) => {
 describe('ReceiptsList', () => {
   beforeEach(() => {
     vi.clearAllMocks();
-    dateCallbacks = {};
     (utils.loaders.getPagedDebtorReceipts as Mock).mockReturnValue({ mutate: vi.fn() });
     setupSearch();
   });
