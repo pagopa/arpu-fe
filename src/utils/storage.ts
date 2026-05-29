@@ -41,6 +41,7 @@ const getStorageItem = (key: StorageItems) => localStorage.getItem(key);
 const removeStorageItem = (key: StorageItems) => {
   try {
     localStorage.removeItem(key);
+    return null;
   } catch {
     return null;
   }
@@ -53,6 +54,7 @@ const clear = () => {
 };
 
 const optin = signal<boolean>(Boolean(getSessionItem(SessionItems.OPTIN)));
+const brokerId = signal<number | null>(null);
 
 /** check if the user is anonymous */
 const isAnonymous = () => {
@@ -97,16 +99,19 @@ export default {
     setToken: (token: string) => setStorageItem(StorageItems.TOKEN, token)
   },
   app: {
-    setBrokerId: (brokerId: string | number) =>
-      setStorageItem(StorageItems.BROKERID, brokerId.toString()),
+    setBrokerId: (value: string | number) => {
+      const parsedBrokerId = typeof value === 'number' ? value : Number(value);
+      brokerId.value = Number.isFinite(parsedBrokerId) ? parsedBrokerId : null;
+      return brokerId.value;
+    },
     getBrokerId: () => {
-      const stored = getStorageItem(StorageItems.BROKERID);
-      return stored ? Number(stored) : null;
+      brokerId.value;
+      return brokerId.value;
     },
     setBrokerCode: (brokerCode: string) => setStorageItem(StorageItems.BROKERCODE, brokerCode),
     getBrokerCode: () => getBrokerCodeFromUrl(),
     clearBrokerInfo: () => {
-      removeStorageItem(StorageItems.BROKERID);
+      brokerId.value = null;
       removeStorageItem(StorageItems.BROKERCODE);
     }
   }

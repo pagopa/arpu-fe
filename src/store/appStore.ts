@@ -19,11 +19,9 @@ const defaultAppStore: AppStore = { isReady: false, brokerInfo: null, brokerCode
 const appStore = signal(defaultAppStore);
 
 /**
- * Stores the broker info and the broker code (externalId) in both
- * the reactive store and localStorage for persistence across sessions.
+ * Stores the broker info and the broker code (externalId) in the reactive store.
  */
 export function setBrokerInfo(parsedConfig: ParsedConfig, brokerCode: string) {
-  // Persist to localStorage
   storage.app.setBrokerId(String(parsedConfig.brokerId));
   storage.app.setBrokerCode(brokerCode);
 
