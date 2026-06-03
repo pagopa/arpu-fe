@@ -74,9 +74,10 @@ export const flattenObject = (
 ): Record<string, string | number> =>
   Object.keys(obj).reduce<Record<string, string | number>>((acc, k) => {
     const pre = prefix.length ? `${prefix}${delimiter}` : '';
-    if (typeof obj[k] === 'object' && obj[k] !== null && Object.keys(obj[k]).length > 0)
-      Object.assign(acc, flattenObject(obj[k] as CustomFormValues, delimiter, pre + k));
-    else acc[pre + k] = obj[k] as string | number;
+    const value = obj[k];
+    if (typeof value === 'object' && value !== null && Object.keys(value).length > 0)
+      Object.assign(acc, flattenObject(value as CustomFormValues, delimiter, pre + k));
+    else acc[pre + k] = value as string | number;
     return acc;
   }, {});
 

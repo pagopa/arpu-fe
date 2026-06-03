@@ -77,7 +77,13 @@ const formContext: FormContextType = {
   summaryFields: [],
   setSummaryFields: vi.fn(),
   submitFields: [],
-  setSubmitFields: vi.fn()
+  setSubmitFields: vi.fn(),
+  dictionary: {},
+  setDictionary: vi.fn(),
+  amountFieldName: '',
+  setAmountFieldName: vi.fn(),
+  formType: null,
+  setFormType: vi.fn()
 };
 
 describe('DinamicForm', () => {

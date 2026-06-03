@@ -15,7 +15,7 @@ export const PayeeIcon = (props: payeeIconProps) => {
     (e.target as HTMLImageElement).src = '/cittadini/images/fallback-ec.png';
   }
 
-  const brokerId = storage.app.getBrokerId() || -1;
+  const brokerId = storage.app.getBrokerId();
 
   const { data: logo } = loaders.public.getPublicOrganizationLogo(brokerId, props.orgFiscalCode);
 

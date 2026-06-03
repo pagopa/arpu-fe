@@ -6,7 +6,16 @@ import { setBrokerInfo } from 'store/appStore';
 
 describe('ProductLogo', () => {
   it('renders without problems', () => {
-    setBrokerInfo({ brokerName: 'test', brokerFiscalCode: 'test', brokerLogo: 'test' });
+    setBrokerInfo(
+      {
+        brokerId: 1,
+        externalId: 'test',
+        brokerName: 'test',
+        brokerFiscalCode: 'test',
+        brokerLogo: 'test'
+      },
+      'test'
+    );
     render(<ProductLogo />);
     expect(screen.getByTestId('header-product-logo')).toBeInTheDocument();
   });
