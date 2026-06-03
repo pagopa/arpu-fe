@@ -35,7 +35,7 @@ export const ReceiptItem = ({
       subtitle={debtPositionTypeOrgDescription}
       icon={<PayeeIcon orgFiscalCode={orgFiscalCode} visible={smUp} alt={orgName} />}
       detailPath={detailPath}
-      detailAriaLabel={t('commons.detail')}
+      detailAriaLabel={t('actions.goToDetail')}
       detailTestId="receipt-details-button"
       fields={[
         {
