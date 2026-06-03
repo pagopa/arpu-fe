@@ -78,20 +78,14 @@ describe('storage', () => {
     Object.defineProperty(window, 'location', { value: originalLocation });
   });
 
-  it('app.setBrokerId and getBrokerId should read from localStorage', () => {
-    const setItemSpy = vi.spyOn(Storage.prototype, 'setItem');
-    const getItemSpy = vi.spyOn(Storage.prototype, 'getItem');
-
+  it('app.setBrokerId and getBrokerId should use signal state', () => {
     storage.app.setBrokerId(12345);
-    expect(setItemSpy).toHaveBeenCalledWith(storage.StorageItems.BROKERID, '12345');
-
-    getItemSpy.mockImplementation((key) => {
-      if (key === storage.StorageItems.BROKERID) return '12345';
-      return null;
-    });
     expect(storage.app.getBrokerId()).toBe(12345);
 
-    getItemSpy.mockReturnValue(null);
+    storage.app.setBrokerId('6789');
+    expect(storage.app.getBrokerId()).toBe(6789);
+
+    storage.app.clearBrokerInfo();
     expect(storage.app.getBrokerId()).toBeNull();
   });
 
@@ -140,12 +134,11 @@ describe('storage', () => {
     expect(setItemSpy).toHaveBeenCalledWith(storage.StorageItems.BROKERCODE, 'cie');
   });
 
-  it('app.clearBrokerInfo should remove brokerId and brokerCode from localStorage', () => {
+  it('app.clearBrokerInfo should remove only brokerCode from localStorage', () => {
     const removeItemSpy = vi.spyOn(Storage.prototype, 'removeItem');
 
     storage.app.clearBrokerInfo();
 
-    expect(removeItemSpy).toHaveBeenCalledWith(storage.StorageItems.BROKERID);
     expect(removeItemSpy).toHaveBeenCalledWith(storage.StorageItems.BROKERCODE);
   });
 

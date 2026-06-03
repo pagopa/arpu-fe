@@ -68,7 +68,7 @@ describe('appStore', () => {
   });
 
   describe('setBrokerInfo', () => {
-    it('should persist brokerId and brokerCode to localStorage', () => {
+    it('should sync brokerId and brokerCode through storage helpers', () => {
       setBrokerInfo({ ...baseParsedConfig, brokerId: 42 }, 'my-broker');
 
       expect(storage.app.setBrokerId).toHaveBeenCalledWith('42');
