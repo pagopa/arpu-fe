@@ -77,7 +77,6 @@ export const Sidebar: React.FC = () => {
                   data-testid="collapseClose"
                   aria-label={t(!collapsed ? 'sidebar.collapse' : 'sidebar.expand')}
                   aria-hidden="true"
-                  tabIndex={-1}
                   onClick={() => changeMenuState()}
                   size="large">
                   <CloseIcon />
@@ -110,7 +109,6 @@ export const Sidebar: React.FC = () => {
                   data-testid="hamburgerButton"
                   aria-label={t(!collapsed ? 'sidebar.collapse' : 'sidebar.expand')}
                   aria-hidden="true"
-                  tabIndex={-1}
                   onClick={() => changeMenuState()}
                   size="large">
                   <MenuIcon color="action" />
