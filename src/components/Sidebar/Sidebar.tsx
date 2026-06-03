@@ -76,6 +76,7 @@ export const Sidebar: React.FC = () => {
                 <IconButton
                   data-testid="collapseClose"
                   aria-label={t(!collapsed ? 'sidebar.collapse' : 'sidebar.expand')}
+                  aria-hidden="true"
                   onClick={() => changeMenuState()}
                   size="large">
                   <CloseIcon />
@@ -107,6 +108,7 @@ export const Sidebar: React.FC = () => {
                   sx={{ padding: { xs: 1, lg: 0 } }}
                   data-testid="hamburgerButton"
                   aria-label={t(!collapsed ? 'sidebar.collapse' : 'sidebar.expand')}
+                  aria-hidden="true"
                   onClick={() => changeMenuState()}
                   size="large">
                   <MenuIcon color="action" />
