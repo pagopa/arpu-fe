@@ -364,7 +364,7 @@ describe('Payment Notices API', () => {
       }
     );
 
-    await mutation.result.current.mutateAsync();
+    await mutation.result.current.mutateAsync(undefined);
 
     await waitFor(() => {
       expect(apiMock).toHaveBeenCalledWith(

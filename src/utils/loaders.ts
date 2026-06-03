@@ -43,10 +43,11 @@ const getUserInfoOnce = () => {
   });
 };
 
-const getPagedDebtorReceipts = (brokerId: number) =>
+const getPagedDebtorReceipts = (brokerId: number | null) =>
   useMutation({
     mutationKey: ['pagedDebtorReceipts', brokerId],
     mutationFn: async (args: FilteredRequest) => {
+      if (brokerId === null) throw new Error('brokerId required');
       const query = {
         sort: args.sort,
         ...args.pagination,
@@ -106,13 +107,14 @@ export const createPublicSpontaneousDebtPosition = (
     enabled: recaptchaToken !== null
   });
 
-export const getOrganizationsWithSpontaneous = (brokerId: number) =>
+export const getOrganizationsWithSpontaneous = (brokerId: number | null) =>
   useQuery({
     queryKey: ['getOrganizationsWithSpontaneous', brokerId],
     queryFn: async () => {
-      const { data } = await utils.apiClient.brokers.getOrganizationsWithSpontaneous(brokerId);
+      const { data } = await utils.apiClient.brokers.getOrganizationsWithSpontaneous(brokerId!);
       return data;
-    }
+    },
+    enabled: brokerId !== null
   });
 
 /**
@@ -120,13 +122,16 @@ export const getOrganizationsWithSpontaneous = (brokerId: number) =>
  * @param brokerId
  * @returns The organizations with spontaneous debt positions for the given broker.
  */
-export const getPublicOrganizationsWithSpontaneous = (brokerId: number) =>
+export const getPublicOrganizationsWithSpontaneous = (brokerId: number | null) =>
   useQuery({
     queryKey: ['getPublicOrganizationsWithSpontaneous', brokerId],
     queryFn: async () => {
-      const { data } = await utils.apiClient.public.getPublicOrganizationsWithSpontaneous(brokerId);
+      const { data } = await utils.apiClient.public.getPublicOrganizationsWithSpontaneous(
+        brokerId!
+      );
       return data;
-    }
+    },
+    enabled: brokerId !== null
   });
 
 /**
@@ -135,17 +140,20 @@ export const getPublicOrganizationsWithSpontaneous = (brokerId: number) =>
  * @param organizationId
  * @returns The debt position type organizations with spontaneous debt positions for the given broker and organization.
  */
-export const getDebtPositionTypeOrgsWithSpontaneous = (brokerId: number, organizationId: number) =>
+export const getDebtPositionTypeOrgsWithSpontaneous = (
+  brokerId: number | null,
+  organizationId: number
+) =>
   useQuery({
     queryKey: ['getDebtPositionTypeOrgsWithSpontaneous', brokerId, organizationId],
     queryFn: async () => {
       const { data } = await utils.apiClient.brokers.getDebtPositionTypeOrgsWithSpontaneous(
-        brokerId,
+        brokerId!,
         organizationId
       );
       return data;
     },
-    enabled: brokerId != null && organizationId != null,
+    enabled: brokerId !== null && organizationId != null,
     staleTime: Infinity
   });
 
@@ -156,19 +164,19 @@ export const getDebtPositionTypeOrgsWithSpontaneous = (brokerId: number, organiz
  * @returns The debt position type organizations with spontaneous debt positions for the given broker and organization.
  */
 export const getPublicDebtPositionTypeOrgsWithSpontaneous = (
-  brokerId: number,
+  brokerId: number | null,
   organizationId: number
 ) =>
   useQuery({
     queryKey: ['getPublicDebtPositionTypeOrgsWithSpontaneous', brokerId, organizationId],
     queryFn: async () => {
       const { data } = await utils.apiClient.public.getPublicDebtPositionTypeOrgsWithSpontaneous(
-        brokerId,
+        brokerId!,
         organizationId
       );
       return data;
     },
-    enabled: brokerId != null && organizationId != null,
+    enabled: brokerId !== null && organizationId != null,
     staleTime: Infinity
   });
 
@@ -289,7 +297,7 @@ export const getPublicPaymentNotice = (
   });
 
 export type ReceiptDetailArgs = {
-  brokerId: number;
+  brokerId: number | null;
   organizationId: number;
   receiptId: number;
   fiscalCode?: string;
@@ -300,13 +308,14 @@ const useReceiptDetail = ({ brokerId, organizationId, receiptId, fiscalCode }: R
     queryKey: ['receiptDetail', brokerId, organizationId, receiptId],
     queryFn: async () => {
       const { data } = await utils.apiClient.brokers.getReceiptDetail(
-        brokerId,
+        brokerId!,
         organizationId,
         receiptId,
         { headers: { 'X-fiscal-code': fiscalCode } }
       );
       return data;
     },
+    enabled: brokerId !== null,
     throwOnError: true
   });
 
@@ -320,13 +329,14 @@ const usePublicReceiptDetail = ({
     queryKey: ['publicReceiptDetail', brokerId, organizationId, receiptId],
     queryFn: async () => {
       const { data } = await utils.apiClient.public.getPublicReceiptDetail(
-        brokerId,
+        brokerId!,
         organizationId,
         receiptId,
         { headers: { 'X-fiscal-code': fiscalCode } }
       );
       return data;
     },
+    enabled: brokerId !== null,
     throwOnError: true
   });
 
@@ -338,6 +348,7 @@ const useDownloadReceipt = ({ brokerId }: Pick<ReceiptDetailArgs, 'brokerId'>) =
       receiptId,
       fiscalCode
     }: Pick<ReceiptDetailArgs, 'organizationId' | 'receiptId' | 'fiscalCode'>) => {
+      if (brokerId === null) throw new Error('brokerId required');
       const response = await utils.apiClient.brokers.getReceiptPdf(
         brokerId,
         organizationId,
@@ -358,6 +369,7 @@ const usePublicDownloadReceipt = ({ brokerId }: Pick<ReceiptDetailArgs, 'brokerI
       receiptId,
       fiscalCode
     }: Pick<ReceiptDetailArgs, 'organizationId' | 'receiptId' | 'fiscalCode'>) => {
+      if (brokerId === null) throw new Error('brokerId required');
       const response = await utils.apiClient.public.getPublicReceiptPdf(
         brokerId,
         organizationId,
@@ -370,10 +382,11 @@ const usePublicDownloadReceipt = ({ brokerId }: Pick<ReceiptDetailArgs, 'brokerI
     }
   });
 
-const usePagedUnpaidDebtPositions = (brokerId: number) =>
+const usePagedUnpaidDebtPositions = (brokerId: number | null) =>
   useMutation({
     mutationKey: ['pagedUnpaidDebtPositions', brokerId],
     mutationFn: async (args: FilteredRequest) => {
+      if (brokerId === null) throw new Error('brokerId required');
       const query = {
         sort: args.sort,
         ...args.pagination,
@@ -396,10 +409,11 @@ export enum InstallmentType {
   ALL = 'all'
 }
 
-const usePublicInstallmentsByIuvOrNav = (brokerId: number) =>
+const usePublicInstallmentsByIuvOrNav = (brokerId: number | null) =>
   useMutation({
     mutationKey: ['publicInstallmentsByIuvOrNav', brokerId],
     mutationFn: async (args: InstallmentsByIuvOrNavArgs) => {
+      if (brokerId === null) throw new Error('brokerId required');
       const { data } = await utils.apiClient.public.getPublicInstallmentsByIuvOrNav(
         brokerId,
         { iuvOrNav: args.iuvOrNav, orgFiscalCode: args.orgFiscalCode, statuses: args.statuses },
@@ -409,22 +423,27 @@ const usePublicInstallmentsByIuvOrNav = (brokerId: number) =>
     }
   });
 
-const getDebtPositionDetail = (brokerId: number, debtPositionId: number, organizationId: number) =>
+const getDebtPositionDetail = (
+  brokerId: number | null,
+  debtPositionId: number,
+  organizationId: number
+) =>
   useQuery({
     queryKey: ['getDebtPositionDetail', brokerId, debtPositionId],
     queryFn: async () => {
       const { data } = await utils.apiClient.brokers.getDebtorUnpaidDebtPositionOverview(
-        brokerId,
+        brokerId!,
         debtPositionId,
         { organizationId }
       );
       parseAndLog(zodSchema.debtorUnpaidDebtPositionOverviewDTOSchema, data, false);
       return data;
-    }
+    },
+    enabled: brokerId !== null
   });
 
 const getDebtorReceipts = (
-  brokerId: number,
+  brokerId: number | null,
   organizationId: number,
   debtPositionId: number,
   paymentOptionId: number
@@ -433,17 +452,18 @@ const getDebtorReceipts = (
     queryKey: ['getDebtorReceipts', brokerId, organizationId, debtPositionId, paymentOptionId],
     queryFn: async () => {
       const { data } = await utils.apiClient.brokers.getDebtorReceipts(
-        brokerId,
+        brokerId!,
         organizationId,
         debtPositionId,
         paymentOptionId
       );
       return data;
-    }
+    },
+    enabled: brokerId !== null
   });
 
 const getMostUsedSpontaneousDebtPositionTypeOrgsForCurrentYear = (
-  brokerId: number,
+  brokerId: number | null,
   organizationId: number,
   shouldShowMostUsedDebtTypes?: boolean
 ) =>
@@ -456,17 +476,17 @@ const getMostUsedSpontaneousDebtPositionTypeOrgsForCurrentYear = (
     queryFn: async () => {
       const { data } =
         await utils.apiClient.brokers.getMostUsedSpontaneousDebtPositionTypeOrgsForCurrentYear(
-          brokerId,
+          brokerId!,
           organizationId
         );
       return data;
     },
-    enabled: shouldShowMostUsedDebtTypes && brokerId != null && organizationId != null,
+    enabled: shouldShowMostUsedDebtTypes && brokerId !== null && organizationId != null,
     staleTime: Infinity
   });
 
 const getPublicMostUsedSpontaneousDebtPositionTypeOrgsForCurrentYear = (
-  brokerId: number,
+  brokerId: number | null,
   organizationId: number,
   shouldShowMostUsedDebtTypes?: boolean
 ) =>
@@ -479,12 +499,12 @@ const getPublicMostUsedSpontaneousDebtPositionTypeOrgsForCurrentYear = (
     queryFn: async () => {
       const { data } =
         await utils.apiClient.public.getPublicMostUsedSpontaneousDebtPositionTypeOrgsForCurrentYear(
-          brokerId,
+          brokerId!,
           organizationId
         );
       return data;
     },
-    enabled: shouldShowMostUsedDebtTypes && brokerId != null && organizationId != null,
+    enabled: shouldShowMostUsedDebtTypes && brokerId !== null && organizationId != null,
     staleTime: Infinity
   });
 
@@ -513,16 +533,17 @@ const useResourceContent = (type: ResourceType, lang: string = 'it') =>
     staleTime: Infinity
   });
 
-const getPublicOrganizationLogo = (brokerId: number, orgFiscalCode: string) =>
+const getPublicOrganizationLogo = (brokerId: number | null, orgFiscalCode: string) =>
   useQuery({
     queryKey: ['getPublicOrganizationLogo', brokerId, orgFiscalCode],
     queryFn: async () => {
       const { data } = await utils.apiClient.public.getPublicOrganizationLogo(
-        brokerId,
+        brokerId!,
         orgFiscalCode
       );
       return data;
     },
+    enabled: brokerId !== null,
     staleTime: Infinity,
     refetchOnMount: false
   });

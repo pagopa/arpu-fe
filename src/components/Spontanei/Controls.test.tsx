@@ -25,6 +25,12 @@ const renderWithContext = (props: ControlsProps, contextValue: Partial<FormConte
     setSubmitFields: vi.fn(),
     causaleHasJoinTemplate: false,
     setCausaleHasJoinTemplate: vi.fn(),
+    dictionary: {},
+    setDictionary: vi.fn(),
+    amountFieldName: '',
+    setAmountFieldName: vi.fn(),
+    formType: null,
+    setFormType: vi.fn(),
     ...contextValue
   };
 

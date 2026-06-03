@@ -72,7 +72,7 @@ const mockDebtTypes: DebtPositionTypeOrgsWithSpontaneousDTO[] = [
 ];
 
 const getDefaultContext = (overrides: Partial<FormContextType> = {}): FormContextType => ({
-  step: 1,
+  step: { current: 1, previous: 0 },
   setStep: vi.fn(),
   omitFirstStep: false,
   setOmitFirstStep: vi.fn(),
@@ -80,6 +80,14 @@ const getDefaultContext = (overrides: Partial<FormContextType> = {}): FormContex
   setCausaleHasJoinTemplate: vi.fn(),
   summaryFields: [],
   setSummaryFields: vi.fn(),
+  submitFields: [],
+  setSubmitFields: vi.fn(),
+  dictionary: {},
+  setDictionary: vi.fn(),
+  amountFieldName: '',
+  setAmountFieldName: vi.fn(),
+  formType: null,
+  setFormType: vi.fn(),
   ...overrides
 });
 

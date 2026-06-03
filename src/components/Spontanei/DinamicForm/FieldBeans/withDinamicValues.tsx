@@ -31,7 +31,11 @@ export interface computedPROPS extends SpontaneousFormField, FieldInputProps<Cus
 const withComputedValues =
   (FieldBean: (props: computedPROPS) => React.JSX.Element) =>
   (
-    props: SpontaneousFormField & { allFields?: SpontaneousFormField[]; amountFieldName?: string }
+    props: SpontaneousFormField & {
+      allFields?: SpontaneousFormField[];
+      amountFieldName?: string;
+      direction?: 'row' | 'column';
+    }
   ) => {
     const {
       hiddenDependsOn,
@@ -86,8 +90,8 @@ const withComputedValues =
 
     useEffect(() => {
       if (hasValuDependsOn && valueDependsOn) {
-        const newValue = computeValue(valueDependsOn, values);
-        const convertedValue = !isNaN(newValue) ? Number(newValue) : value;
+        const newValue = computeValue<number>(valueDependsOn, values);
+        const convertedValue = !isNaN(newValue as number) ? Number(newValue) : value;
         helpers.setValue(convertedValue, false);
       }
     }, [values]);
