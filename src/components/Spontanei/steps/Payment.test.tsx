@@ -162,6 +162,12 @@ const getDefaultContext = (overrides: Partial<FormContextType> = {}): FormContex
   setSummaryFields: vi.fn(),
   submitFields: [],
   setSubmitFields: vi.fn(),
+  dictionary: {},
+  setDictionary: vi.fn(),
+  amountFieldName: '',
+  setAmountFieldName: vi.fn(),
+  formType: null,
+  setFormType: vi.fn(),
   causaleHasJoinTemplate: false,
   setCausaleHasJoinTemplate: vi.fn(),
   ...overrides

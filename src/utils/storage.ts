@@ -42,7 +42,8 @@ const removeStorageItem = (key: StorageItems) => {
   try {
     localStorage.removeItem(key);
     return null;
-  } catch {
+  } catch (e) {
+    console.warn('storage remove failed', key, e);
     return null;
   }
 };

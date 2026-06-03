@@ -56,7 +56,9 @@ export const downloadReceipt = async (
     Pick<ReceiptDetailArgs, 'organizationId' | 'receiptId' | 'fiscalCode'>,
     unknown
   >,
-  args: Pick<InstallmentDebtorExtendedDTO, 'organizationId' | 'receiptId'> & { fiscalCode?: string }
+  args: Partial<Pick<InstallmentDebtorExtendedDTO, 'organizationId' | 'receiptId'>> & {
+    fiscalCode?: string;
+  }
 ) => {
   try {
     if (args?.receiptId && args?.organizationId && args?.fiscalCode) {

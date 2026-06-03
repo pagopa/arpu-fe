@@ -12,7 +12,7 @@ const DATEPICKER = (props: computedPROPS) => {
     <DatePicker
       sx={{ width: '-webkit-fill-available' }}
       format={dateFormat}
-      value={value ? dayjs(value) : undefined}
+      value={value ? dayjs(value as string) : undefined}
       onChange={(value) => {
         setValue(value?.format(dateFormat) || '');
       }}

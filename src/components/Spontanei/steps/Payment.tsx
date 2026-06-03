@@ -49,11 +49,11 @@ const Payment = () => {
 
   const fieldValues: DebtPositionRequestDTO['fieldValues'] = useMemo(
     () =>
-      submitFields?.reduce((acc, field) => {
+      submitFields?.reduce<Record<string, object>>((acc, field) => {
         if (!field.key || !field.name || !flattenedValues[field.key]) return acc;
         return {
           ...acc,
-          [field.name]: flattenedValues[field.key]
+          [field.name]: flattenedValues[field.key] as unknown as object
         };
       }, {}),
     [flattenedValues, submitFields]

@@ -36,7 +36,7 @@ describe('useFavicon', () => {
       document.head.appendChild(existingLink);
 
       const { rerender } = renderHook(({ url }: Props) => useFavicon(url), {
-        initialProps: { url: 'https://example.com/broker-favicon.ico' } satisfies Props
+        initialProps: { url: 'https://example.com/broker-favicon.ico' } as Props
       });
 
       expect(getIconLink().href).toBe('https://example.com/broker-favicon.ico');
