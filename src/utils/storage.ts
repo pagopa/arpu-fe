@@ -74,6 +74,11 @@ const getBrokerCodeFromUrl = (): string | null => {
   return segments[2]?.toLowerCase() || null;
 };
 
+const clearBrokerInfo = () => {
+  brokerId.value = null;
+  removeStorageItem(StorageItems.BROKERCODE);
+};
+
 export default {
   SessionItems,
   StorageItems,
@@ -104,15 +109,9 @@ export default {
       brokerId.value = Number.isFinite(parsedBrokerId) ? parsedBrokerId : null;
       return brokerId.value;
     },
-    getBrokerId: () => {
-      brokerId.value;
-      return brokerId.value;
-    },
+    getBrokerId: () => brokerId.value,
     setBrokerCode: (brokerCode: string) => setStorageItem(StorageItems.BROKERCODE, brokerCode),
     getBrokerCode: () => getBrokerCodeFromUrl(),
-    clearBrokerInfo: () => {
-      brokerId.value = null;
-      removeStorageItem(StorageItems.BROKERCODE);
-    }
+    clearBrokerInfo
   }
 };
