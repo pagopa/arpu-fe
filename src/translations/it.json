@@ -367,7 +367,8 @@
     "close": "Chiudi",
     "payNow": "Paga ora",
     "addItemToCart": "Aggiungi al carrello",
-    "backToHome": "Torna alla home"
+    "backToHome": "Torna alla home",
+    "goToDetail": "Vai al dettaglio"
   },
   "fields": {
     "iuv": "Codice Avviso/IUV",
