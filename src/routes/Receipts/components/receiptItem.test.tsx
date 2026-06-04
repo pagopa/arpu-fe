@@ -109,7 +109,7 @@ describe('ReceiptItem', () => {
   it('uses translated aria label for detail button', () => {
     render(<ReceiptItem receipt={receiptMock} />);
 
-    const detailButton = screen.getByLabelText('commons.detail');
+    const detailButton = screen.getByLabelText('actions.goToDetail');
     expect(detailButton).toBeInTheDocument();
   });
 });
