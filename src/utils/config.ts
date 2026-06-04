@@ -111,7 +111,9 @@ const config: Config = {
   tokenHeaderExcludePaths: ['/token/oneidentity'],
   /** Running version, usually valued by pipelines */
   version: VERSION,
-  brokerId: storage.app.getBrokerId(),
+  get brokerId() {
+    return storage.app.getBrokerId();
+  },
   /** The broker code is extracted from the URL path, with localStorage as fallback (see storage.ts) */
   brokerCode: storage.app.getBrokerCode(),
   /** A global custom parameters serializer:

@@ -56,6 +56,26 @@ const SELECT = (props: computedPROPS & { multiple?: boolean }) => {
             helperText={hasError && errorMessage}
           />
         )}
+        slotProps={{
+          popper: {
+            sx: {
+              '& .MuiPaper-root': {
+                border: '1px solid',
+                borderColor: 'grey.300',
+                boxShadow: '0px 4px 10px rgba(0, 0, 0, 0.2)'
+              }
+            }
+          },
+          paper: {
+            sx: {
+              border: '1px solid',
+              borderColor: 'grey.300',
+              '& .MuiAutocomplete-listbox': {
+                maxHeight: 'calc(42px * 4)'
+              }
+            }
+          }
+        }}
       />
     </FormControl>
   );

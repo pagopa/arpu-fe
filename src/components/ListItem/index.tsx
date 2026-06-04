@@ -1,6 +1,15 @@
 import React from 'react';
 import { ChevronRight } from '@mui/icons-material';
-import { Stack, Typography, IconButton, Card, Theme, useMediaQuery, Divider } from '@mui/material';
+import {
+  Stack,
+  Typography,
+  IconButton,
+  Card,
+  Theme,
+  useMediaQuery,
+  Divider,
+  Box
+} from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import { theme } from '@pagopa/mui-italia';
 
@@ -47,10 +56,15 @@ export const ListItem = ({
           justifyContent={'space-between'}
           alignItems="center">
           <Stack direction="row" spacing={{ xs: 0, sm: 2 }} alignItems="center">
-            {smUp ? icon : null}
+            {smUp ? (
+              <Box aria-hidden="true" sx={{ display: 'flex' }}>
+                {icon}
+              </Box>
+            ) : null}
             <Stack>
               <Typography
                 variant="body2"
+                component="h3"
                 fontWeight={600}
                 sx={{
                   whiteSpace: 'nowrap',
@@ -63,6 +77,7 @@ export const ListItem = ({
               {subtitle && (
                 <Typography
                   variant="body2"
+                  component="h4"
                   sx={{
                     whiteSpace: 'nowrap',
                     overflow: 'hidden',
@@ -83,17 +98,23 @@ export const ListItem = ({
             width={{ xs: '50%', sm: '30%', md: '25%', xl: '20%' }}>
             <Stack gap={2} alignItems="center" direction="row">
               <Divider orientation="vertical" flexItem sx={{ height: theme.spacing(13) }} />
-              <Stack gap={1}>
+              <Stack component="dl" gap={1} sx={{ m: 0 }}>
                 {fields.map((field, index) => (
-                  <Stack key={index}>
-                    <Typography variant="caption" color="text.secondary" fontSize={16}>
+                  <Box key={index}>
+                    <Typography
+                      component="dt"
+                      variant="caption"
+                      color="text.secondary"
+                      fontSize={16}>
                       {field.label}
                     </Typography>
                     <Typography
+                      component="dd"
                       variant={field.variant || 'body2'}
                       fontWeight={field.fontWeight || 600}
                       fontSize={18}
                       sx={{
+                        m: 0,
                         whiteSpace: 'nowrap',
                         overflow: 'hidden',
                         textOverflow: 'ellipsis',
@@ -101,7 +122,7 @@ export const ListItem = ({
                       }}>
                       {field.value}
                     </Typography>
-                  </Stack>
+                  </Box>
                 ))}
               </Stack>
             </Stack>

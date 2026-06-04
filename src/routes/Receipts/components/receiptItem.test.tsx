@@ -32,8 +32,7 @@ vi.mock('react-i18next', () => ({
 // mock converters
 vi.mock('utils/converters', () => ({
   toEuroOrMissingValue: vi.fn(),
-  formatDateOrMissingValue: vi.fn(),
-  fromTaxCodeToSrcImage: vi.fn()
+  formatDateOrMissingValue: vi.fn()
 }));
 
 // mock PayeeIcon
@@ -46,11 +45,7 @@ vi.mock('components/PayeeIcon', () => ({
  * ------------------------------------------------------------------ */
 import { useMediaQuery } from '@mui/material';
 import { generatePath } from 'react-router-dom';
-import {
-  toEuroOrMissingValue,
-  formatDateOrMissingValue,
-  fromTaxCodeToSrcImage
-} from 'utils/converters';
+import { toEuroOrMissingValue, formatDateOrMissingValue } from 'utils/converters';
 import { ReceiptItem } from './item';
 
 const receiptMock: DebtorReceiptDTO = {
@@ -72,7 +67,6 @@ describe('ReceiptItem', () => {
 
     vi.mocked(toEuroOrMissingValue).mockReturnValue('€150.00');
     vi.mocked(formatDateOrMissingValue).mockReturnValue('31/12/2024');
-    vi.mocked(fromTaxCodeToSrcImage).mockReturnValue('icon-src');
   });
 
   it('renders organization name and debt description', () => {
@@ -115,7 +109,7 @@ describe('ReceiptItem', () => {
   it('uses translated aria label for detail button', () => {
     render(<ReceiptItem receipt={receiptMock} />);
 
-    const detailButton = screen.getByLabelText('commons.detail');
+    const detailButton = screen.getByLabelText('actions.goToDetail');
     expect(detailButton).toBeInTheDocument();
   });
 });
