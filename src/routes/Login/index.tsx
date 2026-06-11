@@ -1,16 +1,7 @@
 import { useEffect } from 'react';
 import utils from 'utils';
 import { ROUTES } from 'routes/routes';
-import {
-  Button,
-  Card,
-  CardContent,
-  Container,
-  Grid,
-  Stack,
-  Typography,
-  useTheme
-} from '@mui/material';
+import { Button, Card, Stack, Typography, useTheme } from '@mui/material';
 import React from 'react';
 import PermIdentityOutlinedIcon from '@mui/icons-material/PermIdentityOutlined';
 import { useTranslation } from 'react-i18next';
@@ -33,64 +24,63 @@ const Login = () => {
   const handleCTA3 = () => navigate(ROUTES.public.DEBT_POSITION_SEARCH);
 
   return (
-    <>
-      <Grid container minHeight={'78vh'}>
-        <Grid size={{ xs: 12, md: 8 }} bgcolor={theme.palette.background.default} pt={16} pb={16}>
-          <Container>
-            <Stack alignItems="center">
-              <Stack width={394} alignItems={'center'} gap={1}>
-                <Typography variant="h3" textAlign="center">
-                  {t('app.login.auth.title')}
-                </Typography>
-                <Typography variant="body1" textAlign="center" mb={4}>
-                  {t('app.login.auth.description')}
-                </Typography>
-                <Card elevation={16}>
-                  <CardContent>
-                    <Button
-                      data-testid="logInButton"
-                      variant="contained"
-                      size="large"
-                      startIcon={<PermIdentityOutlinedIcon />}
-                      onClick={logIn}>
-                      {t('app.login.auth.CTA')}
-                    </Button>
-                  </CardContent>
-                </Card>
-              </Stack>
-            </Stack>
-          </Container>
-        </Grid>
+    <Stack direction={{ xs: 'column', lg: 'row' }}>
+      <Stack
+        alignItems="center"
+        bgcolor={theme.palette.background.default}
+        py={{ xs: 11, md: 16 }}
+        px={3}
+        width={{ xs: '100%', lg: '60%' }}>
+        <Stack gap={4} alignItems="center" width={{ xs: '100%', md: 394 }}>
+          <Stack gap={1}>
+            <Typography variant="h3" textAlign="center">
+              {t('app.login.auth.title')}
+            </Typography>
+            <Typography variant="body1" textAlign="center">
+              {t('app.login.auth.description')}
+            </Typography>
+          </Stack>
+          <Card elevation={16} sx={{ borderRadius: 2, alignItems: 'center', p: 3, width: '272px' }}>
+            <Button
+              fullWidth
+              data-testid="logInButton"
+              variant="contained"
+              size="large"
+              startIcon={<PermIdentityOutlinedIcon />}
+              onClick={logIn}>
+              {t('app.login.auth.CTA')}
+            </Button>
+          </Card>
+        </Stack>
+      </Stack>
 
-        <Grid size={{ xs: 12, md: 4 }} bgcolor={theme.palette.primary.main} pt={16} pb={16}>
-          <Container>
-            <Stack alignItems="center">
-              <Stack width={336} gap={4}>
-                <Stack gap={2}>
-                  <Typography variant="h3" color={theme.palette.primary.contrastText}>
-                    {t('app.login.noAuth.title')}
-                  </Typography>
-                  <Typography variant="body1" color={theme.palette.primary.contrastText}>
-                    {t('app.login.noAuth.description')}
-                  </Typography>
-                </Stack>
-                <Stack gap={2} width={'75%'}>
-                  <Button variant="contrast" size="large" onClick={handleCTA1}>
-                    {t('app.login.noAuth.CTA1')}
-                  </Button>
-                  <Button variant="contrast" size="large" onClick={handleCTA2}>
-                    {t('app.login.noAuth.CTA2')}
-                  </Button>
-                  <Button variant="contrast" size="large" onClick={handleCTA3}>
-                    {t('app.login.noAuth.CTA3')}
-                  </Button>
-                </Stack>
-              </Stack>
-            </Stack>
-          </Container>
-        </Grid>
-      </Grid>
-    </>
+      <Stack
+        bgcolor={theme.palette.primary.main}
+        gap={4}
+        py={{ xs: 11, md: 16 }}
+        px={{ xs: 4, md: 8 }}
+        width={{ xs: '100%', lg: '40%' }}>
+        <Stack gap={2}>
+          <Typography variant="h3" color={theme.palette.primary.contrastText}>
+            {t('app.login.noAuth.title')}
+          </Typography>
+          <Typography variant="body1" color={theme.palette.primary.contrastText}>
+            {t('app.login.noAuth.description')}
+          </Typography>
+        </Stack>
+        <Stack gap={2.5} width={{ xs: '100%', sm: '40%', lg: '85%', xl: '60%' }}>
+          <Button variant="contrast" size="large" onClick={handleCTA1}>
+            {t('app.login.noAuth.CTA1')}
+          </Button>
+          <Button variant="contrast" size="large" onClick={handleCTA2}>
+            {t('app.login.noAuth.CTA2')}
+          </Button>
+          <Button variant="contrast" size="large" onClick={handleCTA3}>
+            {t('app.login.noAuth.CTA3')}
+          </Button>
+        </Stack>
+      </Stack>
+    </Stack>
   );
 };
 
