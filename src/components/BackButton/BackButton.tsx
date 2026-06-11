@@ -18,7 +18,6 @@ export const BackButton = (props: BackButtonProps) => {
   return (
     <Button
       role="button"
-      aria-label={t(`app.routes.${text}`)}
       size="medium"
       startIcon={props.icon === 'exit' ? <Close /> : <ArrowBack />}
       variant="text"
