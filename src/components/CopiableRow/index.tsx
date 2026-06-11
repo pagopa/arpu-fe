@@ -13,24 +13,29 @@ export const CopiableRow = ({
   copiable?: boolean;
 }) => (
   <Stack direction="row" justifyContent="space-between" alignItems="center">
-    <Stack>
-      <Typography variant="body2" color="text.secondary" sx={{ minWidth: 180 }}>
+    <Stack sx={{ minWidth: 0 }}>
+      <Typography variant="body2" color="text.secondary">
         {label}
       </Typography>
       <Typography
         variant="body2"
         sx={{
-          wordBreak: 'break-word',
-          flex: 1,
           color: copiable ? 'primary.main' : 'text.primary',
-          fontWeight: 600
+          fontWeight: 600,
+          overflow: 'hidden',
+          textOverflow: 'ellipsis',
+          whiteSpace: 'nowrap'
         }}>
         {value}
       </Typography>
     </Stack>
     {copiable && (
       <Tooltip title="Copia">
-        <IconButton size="small" onClick={() => navigator.clipboard.writeText(value)}>
+        <IconButton
+          color="primary"
+          size="small"
+          sx={{ flexShrink: 0, ml: 1 }}
+          onClick={() => navigator.clipboard.writeText(value)}>
           <ContentCopyIcon fontSize="small" />
         </IconButton>
       </Tooltip>

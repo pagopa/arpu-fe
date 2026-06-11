@@ -273,7 +273,9 @@ const router = createBrowserRouter([
               </Guard>
             ),
             handle: {
-              titleKey: 'pageTitles.receiptDetail'
+              titleKey: 'pageTitles.receiptDetail',
+              backButtonText: 'app.receiptDetail.backButton',
+              backButton: true
             } as RouteHandleObject
           },
           {

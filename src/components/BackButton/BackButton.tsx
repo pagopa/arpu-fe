@@ -13,7 +13,7 @@ export interface BackButtonProps {
 export const BackButton = (props: BackButtonProps) => {
   const navigate = useNavigate();
   const { t } = useTranslation();
-  const { text = 'back', onClick = () => navigate(-1) } = props;
+  const { text = 'app.routes.back', onClick = () => navigate(-1) } = props;
 
   return (
     <Button
@@ -24,7 +24,7 @@ export const BackButton = (props: BackButtonProps) => {
       variant="text"
       onClick={onClick}
       sx={{ pl: 0 }}>
-      {t(`app.routes.${text}`)}
+      {t(text)}
     </Button>
   );
 };
