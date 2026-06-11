@@ -1,17 +1,17 @@
-import { Typography } from '@mui/material';
+import { Grid, Typography } from '@mui/material';
 import React from 'react';
 
 export const DataRow = ({ label, value }: { label: string; value: string }) => (
-  <tr>
-    <td>
-      <Typography variant="body2" color={'action.active'}>
+  <Grid container sx={{ py: 1 }}>
+    <Grid size={{ xs: 12, md: 3, xl: 2 }}>
+      <Typography variant="body2" color="action.active" sx={{ whiteSpace: 'nowrap' }}>
         {label}
       </Typography>
-    </td>
-    <td>
-      <Typography fontSize={16} variant={'caption-semibold'} sx={{ wordBreak: 'break-word' }}>
+    </Grid>
+    <Grid size={{ xs: 12, md: 3 }}>
+      <Typography fontSize={16} variant="caption-semibold">
         {value}
       </Typography>
-    </td>
-  </tr>
+    </Grid>
+  </Grid>
 );

@@ -33,7 +33,7 @@ describe('BackButton Component', () => {
 
   it('renders correctly with custom translated text', () => {
     render(<BackButton text="home" />);
-    expect(screen.getByRole('button', { name: 'app.routes.home' })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'home' })).toBeInTheDocument();
   });
 
   it('calls navigate with -1 when clicked by default', () => {
@@ -62,11 +62,5 @@ describe('BackButton Component', () => {
     render(<BackButton icon="back" />);
     expect(screen.getByTestId('ArrowBackIcon')).toBeInTheDocument();
     expect(screen.queryByTestId('CloseIcon')).not.toBeInTheDocument();
-  });
-
-  it('has the correct aria-label', () => {
-    render(<BackButton text="exit" />);
-    const button = screen.getByRole('button', { name: 'app.routes.exit' });
-    expect(button).toHaveAttribute('aria-label', 'app.routes.exit');
   });
 });

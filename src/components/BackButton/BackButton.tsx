@@ -13,18 +13,17 @@ export interface BackButtonProps {
 export const BackButton = (props: BackButtonProps) => {
   const navigate = useNavigate();
   const { t } = useTranslation();
-  const { text = 'back', onClick = () => navigate(-1) } = props;
+  const { text = 'app.routes.back', onClick = () => navigate(-1) } = props;
 
   return (
     <Button
       role="button"
-      aria-label={t(`app.routes.${text}`)}
       size="medium"
       startIcon={props.icon === 'exit' ? <Close /> : <ArrowBack />}
       variant="text"
       onClick={onClick}
       sx={{ pl: 0 }}>
-      {t(`app.routes.${text}`)}
+      {t(text)}
     </Button>
   );
 };
