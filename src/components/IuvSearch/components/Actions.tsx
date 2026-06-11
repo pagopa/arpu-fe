@@ -140,7 +140,7 @@ export const Actions = ({ installment }: ActionsProps) => {
       <IconButton aria-label={t('actions.download')} onClick={onDownloadReceipt}>
         <Download />
       </IconButton>
-      <Button size="large" variant="contained" onClick={navigateToDetail}>
+      <Button fullWidth size="large" variant="contained" onClick={navigateToDetail}>
         {t('actions.detail')}
       </Button>
     </Stack>
@@ -164,15 +164,14 @@ export const Actions = ({ installment }: ActionsProps) => {
       alignItems="center"
       direction="row"
       gap={0.5}
-      justifyContent="space-between"
-      width="30%">
+      justifyContent="space-between">
       <IconButton aria-label={t('actions.download')} onClick={onDownloadPaymentNotice}>
         <Download />
       </IconButton>
       <IconButton aria-label={t('actions.addToCart')} onClick={addToCart}>
         <ShoppingCart />
       </IconButton>
-      <Button size="large" variant="contained" onClick={goToPayment}>
+      <Button fullWidth size="large" variant="contained" onClick={goToPayment}>
         {t('actions.payNow')}
       </Button>
     </Stack>

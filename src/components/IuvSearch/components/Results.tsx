@@ -33,14 +33,17 @@ export const Results = ({ installments, installmentType }: ResultsProps) => {
           key={installment.installmentId}
           sx={{
             display: 'flex',
-            flexDirection: 'row',
-            alignItems: 'center',
+            flexDirection: { xs: 'column', lg: 'row' },
             justifyContent: 'space-between',
             p: 3,
             borderRadius: 1,
             gap: 3
           }}>
-          <Stack direction="row" justifyContent="space-between" width="100%">
+          <Stack
+            direction={{ xs: 'column', md: 'row' }}
+            gap={3}
+            justifyContent="space-between"
+            width="100%">
             <Item label={t('fields.noticeCode')} value={propertyOrMissingValue(installment.iuv)} />
             <Item label={t('fields.orgName')} value={propertyOrMissingValue(installment.orgName)} />
             <Item
@@ -54,7 +57,12 @@ export const Results = ({ installments, installmentType }: ResultsProps) => {
               />
             )}
           </Stack>
-          <Actions installment={installment} />
+          <Stack
+            mt={0.5}
+            width={{ xs: '100%', lg: 'auto' }}
+            alignItems={{ xs: 'flex-end', lg: 'flex-start' }}>
+            <Actions installment={installment} />
+          </Stack>
         </Card>
       ))}
     </Stack>

@@ -172,7 +172,7 @@ export const IuvSearch = ({
                       : ''}
                 </Typography>
               )}
-              <Stack direction="row" gap={3}>
+              <Stack direction={{ xs: 'column', sm: 'row' }} gap={{ xs: 2, sm: 1 }}>
                 <TextField
                   fullWidth
                   label={t('fields.iuv')}
@@ -213,7 +213,11 @@ export const IuvSearch = ({
                 </Box>
               )}
               <Stack alignItems="flex-end">
-                <Button size="large" variant="contained" type="submit">
+                <Button
+                  sx={{ width: { xs: '100%', sm: 'auto' } }}
+                  size="large"
+                  variant="contained"
+                  type="submit">
                   {t('actions.search')}
                 </Button>
               </Stack>
