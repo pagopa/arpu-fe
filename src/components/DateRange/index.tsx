@@ -5,25 +5,31 @@ import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Dayjs } from 'dayjs';
 import { styled } from '@mui/material/styles';
-import { Box } from '@mui/material';
 
 export type DateRangeValue = Dayjs | null;
-
 export type DateRange = {
   label?: string;
   errorMessage?: string;
   onChange: (date: DateRangeValue) => void;
   value: DateRangeValue;
 };
-
 export type DateRangeProps = {
   from: DateRange;
   to: DateRange;
 };
 
 const StyledDatePicker = styled(DatePicker)({
+  '& .MuiPickersSectionList-root': {
+    padding: 8
+  },
+  '& .MuiButtonBase-root ': {
+    padding: 0
+  },
   '& .MuiInputBase-root': {
     backgroundColor: 'transparent'
+  },
+  '& .MuiInputLabel-root': {
+    overflow: 'visible'
   },
   '& .MuiFormHelperText-root': {
     position: 'absolute',
@@ -31,13 +37,17 @@ const StyledDatePicker = styled(DatePicker)({
     left: 0,
     margin: 0
   }
-}) as typeof DatePicker;
-
-const DateRangeContainer = styled(Box)({
-  display: 'flex',
-  gap: '16px',
-  alignItems: 'flex-start'
 });
+
+const commonSlotProps = {
+  textField: {
+    size: 'small' as const,
+    variant: 'outlined' as const
+  },
+  openPickerIcon: {
+    color: 'action' as const
+  }
+};
 
 export const DateRange = ({ from, to }: DateRangeProps) => {
   const [startDateError, setStartDateError] = useState<DateValidationError | null>(null);
@@ -60,7 +70,6 @@ export const DateRange = ({ from, to }: DateRangeProps) => {
       to.onChange(null);
       return;
     }
-
     if (!from.value?.isValid() || toDate.isSame(from.value) || toDate.isAfter(from.value)) {
       to.onChange(toDate.endOf('day'));
     }
@@ -69,18 +78,8 @@ export const DateRange = ({ from, to }: DateRangeProps) => {
   const fromError = startDateError ? from.errorMessage || t('dates.validation') : '';
   const toError = endDateError ? to.errorMessage || t('dates.validation') : '';
 
-  const commonSlotProps = {
-    textField: {
-      size: 'small' as const,
-      variant: 'outlined' as const
-    },
-    openPickerIcon: {
-      color: 'action' as const
-    }
-  };
-
   return (
-    <DateRangeContainer>
+    <>
       <StyledDatePicker
         label={t('dates.from')}
         value={from.value}
@@ -118,6 +117,6 @@ export const DateRange = ({ from, to }: DateRangeProps) => {
           }
         }}
       />
-    </DateRangeContainer>
+    </>
   );
 };
