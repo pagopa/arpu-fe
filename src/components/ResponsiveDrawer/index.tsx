@@ -48,7 +48,7 @@ export const ResponsiveDrawer: React.FC<ResponsiveDrawerProps> = ({
   const isMd = useMediaQuery(theme.breakpoints.up('md'));
 
   const headingId = useId();
-  const drawerTitle = label ?? t('actions.filters', 'Filters');
+  const drawerTitle = label ?? t('actions.filters');
 
   // lg+: no drawer
   if (isLg) {
@@ -63,6 +63,7 @@ export const ResponsiveDrawer: React.FC<ResponsiveDrawerProps> = ({
       ? {
           '& .MuiDrawer-paper': {
             width: { md: '70%' },
+            gap: 3,
             p: 3,
             boxSizing: 'border-box'
           }
@@ -72,6 +73,7 @@ export const ResponsiveDrawer: React.FC<ResponsiveDrawerProps> = ({
             borderTopLeftRadius: 12,
             borderTopRightRadius: 12,
             p: 3,
+            gap: 3,
             maxHeight: '80%',
             minHeight: '50%',
             boxSizing: 'border-box'
@@ -113,36 +115,32 @@ export const ResponsiveDrawer: React.FC<ResponsiveDrawerProps> = ({
             }
           }
         }}>
-        <Stack gap={3} role="dialog" aria-modal="true" aria-labelledby={headingId}>
-          <Stack direction="row" justifyContent="space-between" alignItems="center">
-            <Typography
-              id={headingId}
-              component="h2"
-              fontSize="14px"
-              fontWeight={700}
-              sx={{ textTransform: 'uppercase' }}>
-              {drawerTitle}
-            </Typography>
-            <IconButton
-              onClick={onClose}
-              aria-label={t('actions.close', 'Close')}
-              size="small"
-              sx={{
-                '&:focus-visible': {
-                  outline: `3px solid ${theme.palette.primary.main}`,
-                  outlineOffset: 2
-                }
-              }}>
-              <Close fontSize="small" />
-            </IconButton>
-          </Stack>
-
-          {/* content */}
-          <Stack gap={2}>{children}</Stack>
+        <Stack direction="row" justifyContent="space-between" alignItems="center">
+          <Typography
+            id={headingId}
+            component="h2"
+            fontSize="14px"
+            fontWeight={700}
+            sx={{ textTransform: 'uppercase' }}>
+            {drawerTitle}
+          </Typography>
+          <IconButton
+            onClick={onClose}
+            aria-label={t('actions.close', 'Close')}
+            size="small"
+            sx={{
+              '&:focus-visible': {
+                outline: `3px solid ${theme.palette.primary.main}`,
+                outlineOffset: 2
+              }
+            }}>
+            <Close fontSize="small" />
+          </IconButton>
         </Stack>
+
+        {/* content */}
+        <Stack gap={2}>{children}</Stack>
       </Drawer>
     </>
   );
 };
-
-export default ResponsiveDrawer;

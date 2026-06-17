@@ -113,7 +113,8 @@ export const ReceiptsList = () => {
       <Button
         variant="outlined"
         size="medium"
-        sx={{ minHeight: '42px', height: '100%' }}
+        sx={{ maxHeight: '42px' }}
+        data-testid="apply-filters"
         onClick={handleApplyFilters}>
         {t('actions.filter')}
       </Button>
