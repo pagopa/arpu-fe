@@ -103,7 +103,7 @@ const router = createBrowserRouter([
           sidebar: false,
           backButton: false,
           subHeader: true,
-          backButtonText: 'exit',
+          backButtonText: 'app.routes.exit',
           gutters: true
         } as RouteHandleObject,
         children: [
