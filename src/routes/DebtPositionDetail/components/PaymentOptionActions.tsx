@@ -131,7 +131,11 @@ const PaymentOptionsActions = (props: paymentOptionsActionProps) => {
   const removeItemFromCart = () => deleteItem(singleInstallmentItemId);
 
   return (
-    <Stack direction="row" spacing={2} marginTop={2} justifyContent="flex-end">
+    <Stack
+      direction={{ xs: 'column', sm: 'row' }}
+      spacing={2}
+      marginTop={2}
+      justifyContent="flex-end">
       {appStore.value.brokerInfo?.config?.useCart &&
         selectPaymentOptionType === PaymentOptionType.SINGLE_INSTALLMENT &&
         !isItemInCart(singleInstallmentItemId) && (
@@ -139,6 +143,7 @@ const PaymentOptionsActions = (props: paymentOptionsActionProps) => {
             startIcon={<ShoppingCartIcon />}
             variant="outlined"
             size="large"
+            sx={{ whiteSpace: 'nowrap' }}
             data-testid="payment-option-action-add"
             onClick={addItemToCart}>
             {t('app.debtPositionDetail.addItemToCart')}
@@ -150,6 +155,7 @@ const PaymentOptionsActions = (props: paymentOptionsActionProps) => {
             color="error"
             variant="outlined"
             size="large"
+            sx={{ whiteSpace: 'nowrap' }}
             data-testid="payment-option-action-remove"
             onClick={removeItemFromCart}>
             {t('app.debtPositionDetail.removeItemFromCart')}
@@ -158,6 +164,7 @@ const PaymentOptionsActions = (props: paymentOptionsActionProps) => {
       <Button
         variant="contained"
         size="large"
+        sx={{ whiteSpace: 'nowrap' }}
         data-testid="payment-option-action-pay"
         onClick={onPayButtonClick}>
         {selectPaymentOptionType === PaymentOptionType.SINGLE_INSTALLMENT

@@ -18,8 +18,11 @@ import { InstallmentChip } from 'components/StatusChips/InstallmentChip';
 
 export const Accent = (props: { children: string }) => (
   <Box
-    sx={{ display: 'inline-block', backgroundColor: '#e1f5fe', borderRadius: '4px', paddingX: 1 }}>
-    <Typography color="#215C76" textTransform="capitalize" fontWeight={600} fontSize={14}>
+    sx={{
+      display: 'inline-block',
+      textTransform: 'capitalize'
+    }}>
+    <Typography fontSize={18} whiteSpace="nowrap">
       {props.children}
     </Typography>
   </Box>
@@ -39,7 +42,7 @@ const ExtraInfo = (props: { installments: DebtorPaymentOptionOverviewDTO['instal
           },
           mb: 0,
           padding: 0,
-          paddingLeft: 4
+          paddingLeft: { xs: 0, sm: 4 }
         }}>
         {props.installments.map((installment, index) => (
           <TimelineItem key={installment.installmentId} data-testId={`installment-item`}>
@@ -47,12 +50,13 @@ const ExtraInfo = (props: { installments: DebtorPaymentOptionOverviewDTO['instal
               <TimelineDot />
               {index < props.installments.length - 1 && <TimelineConnector />}
             </TimelineSeparator>
-            <TimelineContent>
-              <Grid container>
-                <Grid size={6}>
+            <TimelineContent sx={{ px: { xs: 1, sm: 2 } }}>
+              <Grid container rowGap={1}>
+                <Grid size={{ xs: 12, sm: 6 }}>
                   <Stack
                     direction="row"
                     spacing={2}
+                    alignItems="center"
                     data-testid={`payment-option-type-installments-installment-${index + 1}`}>
                     <Accent>{`${t('app.debtPositionDetail.installment')} ${index + 1}`}</Accent>
                     <Typography
@@ -65,14 +69,18 @@ const ExtraInfo = (props: { installments: DebtorPaymentOptionOverviewDTO['instal
                   </Stack>
                 </Grid>
 
-                <Grid size={6} gap={2}>
-                  <Stack direction="row" spacing={2} alignItems="center">
+                <Grid size={{ xs: 12, sm: 6 }}>
+                  <Stack
+                    direction={{ xs: 'column', md: 'row' }}
+                    spacing={{ xs: 1, md: 2 }}
+                    alignItems={{ xs: 'flex-start', md: 'center' }}>
                     <InstallmentChip installment={installment} />
                     {installment.dueDate && (
                       <Typography
                         fontSize={16}
                         fontStyle="semibold"
                         color="text.secondary"
+                        whiteSpace="nowrap"
                         data-testid={`payment-option-type-installments-installment-${index + 1}-due-date`}>
                         <Trans
                           i18nKey={`app.debtPositionDetail.dueDate.${installment.status}`}
@@ -151,8 +159,8 @@ const PaymentOption = (props: PaymentOptionProps) => {
         color: isSelected ? 'primary.main' : 'divider',
         padding: 3
       }}>
-      <Grid container>
-        <Grid size={6}>
+      <Grid container alignItems="center" rowGap={1}>
+        <Grid size={{ xs: 12, sm: 6 }}>
           <FormControlLabel
             disabled={props.selectionStatus === 'disabled'}
             data-testid="payment-option-item-type"
@@ -162,7 +170,7 @@ const PaymentOption = (props: PaymentOptionProps) => {
             label={label}
           />
         </Grid>
-        <Grid size={6} pl={2}>
+        <Grid size={{ xs: 12, sm: 6 }} pl={{ xs: '31px', sm: 2 }}>
           <Typography
             data-testid="payment-option-item-total-amount"
             fontWeight={600}

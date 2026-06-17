@@ -20,27 +20,28 @@ const InstallmentItem = ({ item, totalItems, type, action }: InstallmentItemProp
   return (
     <Stack
       direction="row"
+      alignItems="center"
       data-testid={`installments-drawer-installment-item-${item.installmentId}`}>
-      <IconButton aria-label="add">
+      <IconButton
+        aria-label={type === 'added' ? 'remove' : 'add'}
+        onClick={() => action(item)}
+        data-testid={type === 'added' ? 'remove-installment-button' : 'add-installment-button'}>
         {type === 'added' ? (
-          <RemoveCircleOutlineIcon
-            data-testid="remove-installment-button"
-            onClick={() => action(item)}
-            color="error"
-          />
+          <RemoveCircleOutlineIcon color="error" />
         ) : (
-          <AddCircleIcon data-testid="add-installment-button" onClick={() => action(item)} />
+          <AddCircleIcon color="primary" />
         )}
       </IconButton>
       <Box
         sx={{
-          py: 1,
+          py: 2,
           px: 2,
           borderRadius: 2,
           borderColor: 'divider',
           borderWidth: '1px',
           borderStyle: 'solid',
-          flexGrow: 1
+          flexGrow: 1,
+          minWidth: 0
         }}>
         <Stack direction="row" justifyContent="space-between" alignItems="center">
           <Stack spacing={1}>

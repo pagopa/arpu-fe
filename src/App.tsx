@@ -297,8 +297,10 @@ const router = createBrowserRouter([
               </Guard>
             ),
             handle: {
-              titleKey: 'pageTitles.debtPositionDetail'
-            }
+              titleKey: 'pageTitles.debtPositionDetail',
+              backButton: true,
+              backButtonText: 'app.debtPositionDetail.backButton'
+            } as RouteHandleObject
           },
           {
             path: ROUTES.DEBT_POSITION_DOWNLOAD,
