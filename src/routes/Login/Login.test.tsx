@@ -13,7 +13,8 @@ describe('LoginRoute', () => {
   const replaceSpy = vi.fn();
 
   Object.defineProperty(window, 'location', {
-    value: { replace: replaceSpy }
+    value: { replace: replaceSpy, pathname: '/cittadini/cie/accesso' },
+    writable: true
   });
 
   vi.mock('react-router-dom', () => ({
@@ -37,6 +38,15 @@ describe('LoginRoute', () => {
     const logInButton = screen.getByTestId('logInButton');
     fireEvent.click(logInButton);
     expect(replaceSpy).toBeCalledWith(utils.config.loginUrl);
+  });
+
+  it('pins the brokerCode from the URL before redirecting to OI', async () => {
+    const setBrokerCodeSpy = vi.spyOn(utils.storage.app, 'setBrokerCode');
+    render(<Login />);
+    fireEvent.click(screen.getByTestId('logInButton'));
+    expect(setBrokerCodeSpy).toHaveBeenCalledWith('cie');
+    expect(replaceSpy).toBeCalledWith(utils.config.loginUrl);
+    setBrokerCodeSpy.mockRestore();
   });
 
   it('redirects to the Dashboard', async () => {

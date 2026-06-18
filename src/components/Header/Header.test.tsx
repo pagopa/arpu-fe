@@ -125,28 +125,20 @@ describe('Header component', () => {
   });
 
   it('should clear session and local storage and navigate to login when "Esci" is clicked', async () => {
-    // Mock localStorage and sessionStorage
-    const mockStorage = vi.spyOn(Storage.prototype, 'clear');
+    const clearSpy = vi.spyOn(Storage.prototype, 'clear');
 
-    // Render the WrappedHeader component
     render(<WrappedHeader />);
 
-    // Click on the user dropdown to show the "Esci" (logout) button
     fireEvent.click(screen.getByText('John Doe'));
-    // Click on the "Esci" button
     const logoutButton = screen.getByText('ui.header.logout');
     fireEvent.click(logoutButton);
 
     await waitFor(() => {
-      // Ensure session and local storage are cleared
-      expect(localStorage.clear).toHaveBeenCalled();
-      expect(sessionStorage.clear).toHaveBeenCalled();
-
-      // Ensure it navigates to the login route
+      expect(clearSpy).toHaveBeenCalled();
       expect(mockNavigate).toHaveBeenCalledWith(ROUTES.LOGIN);
     });
 
-    mockStorage.mockClear();
+    clearSpy.mockRestore();
   });
 
   describe('rootLink brokerLink', () => {

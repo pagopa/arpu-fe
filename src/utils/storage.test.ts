@@ -5,14 +5,17 @@ describe('storage', () => {
     vi.clearAllMocks();
   });
 
-  it('user.logot should clear sessionStorage and localStorage', () => {
-    // Mock the sessionStorage and localStorage
-    const storageSpy = vi.spyOn(Storage.prototype, 'clear');
+  it('user.logOut should clear both sessionStorage and localStorage', () => {
+    const clearSpy = vi.spyOn(Storage.prototype, 'clear');
+
+    storage.user.setToken('test-token');
+    storage.app.setBrokerCode('cie');
 
     storage.user.logOut();
 
-    // Assert that the clear methods were called
-    expect(storageSpy).toHaveBeenCalled();
+    expect(clearSpy).toHaveBeenCalled();
+    expect(localStorage.getItem(storage.StorageItems.TOKEN)).toBeNull();
+    expect(localStorage.getItem(storage.StorageItems.BROKERCODE)).toBeNull();
   });
 
   it('user.setToken and user.getToken and should set and get the accessToken item', () => {
