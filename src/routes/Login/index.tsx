@@ -13,7 +13,15 @@ const Login = () => {
 
   const navigate = useNavigate();
 
-  const logIn = () => window.location.replace(utils.config.loginUrl);
+  const logIn = () => {
+    // Pin the broker (read from the URL) into localStorage before leaving for
+    // OneIdentity. The IdP redirects back to /auth-callback, a URL with no
+    // broker segment, where the broker can only be resolved from localStorage.
+    // The URL is the source of truth, overriding any stale stored value.
+    const brokerCode = utils.storage.app.getBrokerCode();
+    if (brokerCode) utils.storage.app.setBrokerCode(brokerCode);
+    window.location.replace(utils.config.loginUrl);
+  };
 
   useEffect(() => {
     if (utils.storage.user.hasToken()) navigate(ROUTES.DASHBOARD);
