@@ -1,4 +1,5 @@
-import { Box, Select, MenuItem, Pagination, SelectChangeEvent } from '@mui/material';
+import { Box, Select, MenuItem, Pagination, SelectChangeEvent, useMediaQuery } from '@mui/material';
+import { theme } from '@pagopa/mui-italia';
 import { useHashParamsListener } from 'hooks/useHashParamsListener';
 import React, { useCallback } from 'react';
 import utils from 'utils';
@@ -21,6 +22,8 @@ const CustomPagination = ({
     size: hashSize,
     ...hashParams
   } = useHashParamsListener<Record<string, unknown>>();
+
+  const isLg = useMediaQuery(theme.breakpoints.up('lg'));
 
   const getPageFromHash = () => {
     const page = hashPage ? Number(hashPage) : initialPage;
@@ -83,7 +86,7 @@ const CustomPagination = ({
       <Pagination
         variant="text"
         page={page}
-        siblingCount={1}
+        siblingCount={isLg ? 1 : 0}
         boundaryCount={0}
         count={totalPages}
         hidePrevButton={hidePreviousButton}

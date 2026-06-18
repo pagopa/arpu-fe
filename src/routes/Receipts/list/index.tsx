@@ -13,6 +13,7 @@ import { ReceiptItem } from '../components/item';
 import { DateRange } from 'components/DateRange';
 import { Search } from '@mui/icons-material';
 import dayjs, { Dayjs } from 'dayjs';
+import { ResponsiveDrawer } from 'components/ResponsiveDrawer';
 
 type Filters = {
   noticeNumberOrIuv?: string;
@@ -42,6 +43,9 @@ export const ReceiptsList = () => {
     paymentDateTimeTo: initialTo?.format()
   });
 
+  // Drawer state — lifted here so Apply/Reset can close it
+  const [drawerOpen, setDrawerOpen] = useState(false);
+
   const {
     query: { isError, isSuccess, data },
     applyFilters
@@ -57,17 +61,16 @@ export const ReceiptsList = () => {
     if (searchCode.trim()) {
       newFilters.noticeNumberOrIuv = searchCode.trim();
     }
-
     if (startDate) {
       newFilters.paymentDateTimeFrom = startDate.format();
     }
-
     if (endDate) {
       newFilters.paymentDateTimeTo = endDate.format();
     }
 
     setAppliedFilters(newFilters);
     applyFilters(newFilters);
+    setDrawerOpen(false);
   };
 
   const handleResetFilters = () => {
@@ -76,11 +79,56 @@ export const ReceiptsList = () => {
     setEndDate(null);
     setAppliedFilters({});
     applyFilters({});
+    setDrawerOpen(false);
   };
+
+  const filters = (
+    <Stack
+      direction={{ xs: 'column', lg: 'row' }}
+      alignItems={{ xs: 'stretch', lg: 'center' }}
+      gap={3}
+      width="100%">
+      <TextField
+        label={t('fields.noticeCode')}
+        size="small"
+        value={searchCode}
+        onChange={(e) => setSearchCode(e.target.value)}
+        sx={{ flex: { xs: 1, lg: 2 } }}
+        slotProps={{
+          input: {
+            startAdornment: (
+              <InputAdornment position="end">
+                <Search />
+              </InputAdornment>
+            )
+          }
+        }}
+      />
+
+      <DateRange
+        from={{ onChange: setStartDate, value: startDate }}
+        to={{ onChange: setEndDate, value: endDate }}
+      />
+
+      <Button
+        variant="outlined"
+        size="medium"
+        sx={{ maxHeight: '42px' }}
+        data-testid="apply-filters"
+        onClick={handleApplyFilters}>
+        {t('actions.filter')}
+      </Button>
+
+      <Button variant="text" sx={{ whiteSpace: 'nowrap', padding: 0 }} onClick={handleResetFilters}>
+        {t('actions.resetFilters')}
+      </Button>
+    </Stack>
+  );
 
   return (
     <>
       <Stack gap={3}>
+        {/* Page heading */}
         <Stack gap={1}>
           <Typography variant="h3" component="h1">
             {t('menu.receipts.pageTitle')}
@@ -90,51 +138,16 @@ export const ReceiptsList = () => {
             <Link to={ROUTES.public.RECEIPTS_SEARCH}>{t('app.receipts.subtitleLink')}</Link>
           </Typography>
         </Stack>
+        {/* Filters */}
+        <ResponsiveDrawer
+          label={t('actions.filter')}
+          open={drawerOpen}
+          onOpen={() => setDrawerOpen(true)}
+          onClose={() => setDrawerOpen(false)}>
+          {filters}
+        </ResponsiveDrawer>
 
-        <Stack
-          direction={{ xs: 'column', md: 'row' }}
-          alignItems={{ xs: 'stretch', md: 'center' }}
-          justifyContent="space-between"
-          gap={3}
-          minHeight="62px"
-          width="100%">
-          <TextField
-            label="Codice Avviso"
-            value={searchCode}
-            onChange={(e) => setSearchCode(e.target.value)}
-            InputProps={{
-              endAdornment: (
-                <InputAdornment position="end">
-                  <Search />
-                </InputAdornment>
-              )
-            }}
-            sx={{ flex: { xs: 1, lg: 2 } }}
-          />
-
-          <Stack direction="row" gap={3} alignItems="center" flex={2}>
-            <DateRange
-              from={{
-                onChange: setStartDate,
-                value: startDate
-              }}
-              to={{ onChange: setEndDate, value: endDate }}
-            />
-
-            <Button
-              variant="outlined"
-              size="medium"
-              sx={{ minHeight: '42px', height: '100%' }}
-              onClick={handleApplyFilters}>
-              {t('actions.filter')}
-            </Button>
-
-            <Button variant="text" sx={{ whiteSpace: 'nowrap' }} onClick={handleResetFilters}>
-              {t('actions.resetFilters')}
-            </Button>
-          </Stack>
-        </Stack>
-
+        {/* Results list */}
         <Content
           showRetry={isError}
           noData={isSuccess && !data?.content?.length}
