@@ -5,7 +5,7 @@ import {
   PaymentOptionType
 } from '../../../../generated/data-contracts';
 import React from 'react';
-import { Box, Divider, FormControlLabel, Grid, Radio, Stack, Typography } from '@mui/material';
+import { Box, Divider, Grid, Radio, Stack, Typography } from '@mui/material';
 import Timeline from '@mui/lab/Timeline';
 import TimelineItem, { timelineItemClasses } from '@mui/lab/TimelineItem';
 import TimelineSeparator from '@mui/lab/TimelineSeparator';
@@ -18,8 +18,11 @@ import { InstallmentChip } from 'components/StatusChips/InstallmentChip';
 
 export const Accent = (props: { children: string }) => (
   <Box
-    sx={{ display: 'inline-block', backgroundColor: '#e1f5fe', borderRadius: '4px', paddingX: 1 }}>
-    <Typography color="#215C76" textTransform="capitalize" fontWeight={600} fontSize={14}>
+    sx={{
+      display: 'inline-block',
+      textTransform: 'capitalize'
+    }}>
+    <Typography fontSize={18} whiteSpace="nowrap">
       {props.children}
     </Typography>
   </Box>
@@ -39,20 +42,31 @@ const ExtraInfo = (props: { installments: DebtorPaymentOptionOverviewDTO['instal
           },
           mb: 0,
           padding: 0,
-          paddingLeft: 4
+          paddingLeft: { xs: 0, sm: 4 }
         }}>
         {props.installments.map((installment, index) => (
-          <TimelineItem key={installment.installmentId} data-testId={`installment-item`}>
+          <TimelineItem
+            key={installment.installmentId}
+            data-testId={`installment-item`}
+            sx={{ minHeight: 'auto' }}>
             <TimelineSeparator>
-              <TimelineDot />
-              {index < props.installments.length - 1 && <TimelineConnector />}
+              <TimelineDot variant="outlined" sx={{ borderColor: 'grey.400', m: '4px 0' }} />
+              {index < props.installments.length - 1 && (
+                <TimelineConnector sx={{ bgcolor: 'grey.300' }} />
+              )}
             </TimelineSeparator>
-            <TimelineContent>
-              <Grid container>
-                <Grid size={6}>
+            <TimelineContent
+              sx={{
+                px: { xs: 1, sm: 2 },
+                pt: 0,
+                pb: index < props.installments.length - 1 ? 4 : 0
+              }}>
+              <Grid container rowGap={1}>
+                <Grid size={{ xs: 12, sm: 6 }}>
                   <Stack
                     direction="row"
                     spacing={2}
+                    alignItems="center"
                     data-testid={`payment-option-type-installments-installment-${index + 1}`}>
                     <Accent>{`${t('app.debtPositionDetail.installment')} ${index + 1}`}</Accent>
                     <Typography
@@ -65,14 +79,18 @@ const ExtraInfo = (props: { installments: DebtorPaymentOptionOverviewDTO['instal
                   </Stack>
                 </Grid>
 
-                <Grid size={6} gap={2}>
-                  <Stack direction="row" spacing={2} alignItems="center">
+                <Grid size={{ xs: 12, sm: 6 }}>
+                  <Stack
+                    direction={{ xs: 'column', md: 'row' }}
+                    spacing={{ xs: 1, md: 2 }}
+                    alignItems={{ xs: 'flex-start', md: 'center' }}>
                     <InstallmentChip installment={installment} />
                     {installment.dueDate && (
                       <Typography
                         fontSize={16}
                         fontStyle="semibold"
                         color="text.secondary"
+                        whiteSpace="nowrap"
                         data-testid={`payment-option-type-installments-installment-${index + 1}-due-date`}>
                         <Trans
                           i18nKey={`app.debtPositionDetail.dueDate.${installment.status}`}
@@ -103,6 +121,7 @@ const PaymentOption = (props: PaymentOptionProps) => {
   const isSelected = props.selectionStatus === 'selected';
   const isDisabled = props.selectionStatus === 'disabled';
   const paymentOptionType = props.paymentOptionType;
+  const radioId = `payment-option-radio-${props.paymentOptionId}`;
 
   const isSingleInstallment =
     paymentOptionType === PaymentOptionType.SINGLE_INSTALLMENT ||
@@ -151,36 +170,42 @@ const PaymentOption = (props: PaymentOptionProps) => {
         color: isSelected ? 'primary.main' : 'divider',
         padding: 3
       }}>
-      <Grid container>
-        <Grid size={6}>
-          <FormControlLabel
-            disabled={props.selectionStatus === 'disabled'}
+      <Stack direction="row" alignItems="center" spacing={1}>
+        <Radio
+          id={radioId}
+          disabled={isDisabled}
+          value={props.paymentOptionId}
+          checked={isSelected}
+        />
+        <Grid container alignItems="center" rowGap={1} sx={{ flex: 1 }}>
+          <Grid
+            size={{ xs: 12, sm: 6 }}
+            component="label"
+            htmlFor={radioId}
             data-testid="payment-option-item-type"
-            value={props.paymentOptionId}
-            checked={isSelected}
-            control={<Radio />}
-            label={label}
-          />
-        </Grid>
-        <Grid size={6} pl={2}>
-          <Typography
-            data-testid="payment-option-item-total-amount"
-            fontWeight={600}
-            color={isDisabled ? 'text.disabled' : 'text.primary'}
-            fontStyle="semibold">
-            {utils.converters.toEuro(props.totalAmountCents || 0)}
-          </Typography>
-          {nextInstallmentToBePaid.installment && (
+            sx={{ cursor: isDisabled ? 'default' : 'pointer' }}>
+            {label}
+          </Grid>
+          <Grid size={{ xs: 12, sm: 6 }} pl={{ xs: 0, sm: 2 }}>
             <Typography
-              data-testid="payment-option-item-next-pay-date"
-              fontSize={16}
-              fontStyle="semibold"
-              color={isDisabled ? 'text.disabled' : 'text.secondary'}>
-              {nextInstallmentToBePaidLabel}
+              data-testid="payment-option-item-total-amount"
+              fontWeight={600}
+              color={isDisabled ? 'text.disabled' : 'text.primary'}
+              fontStyle="semibold">
+              {utils.converters.toEuro(props.totalAmountCents || 0)}
             </Typography>
-          )}
+            {nextInstallmentToBePaid.installment && (
+              <Typography
+                data-testid="payment-option-item-next-pay-date"
+                fontSize={16}
+                fontStyle="semibold"
+                color={isDisabled ? 'text.disabled' : 'text.secondary'}>
+                {nextInstallmentToBePaidLabel}
+              </Typography>
+            )}
+          </Grid>
         </Grid>
-      </Grid>
+      </Stack>
       {paymentOptionType === PaymentOptionType.INSTALLMENTS && isSelected ? (
         <ExtraInfo installments={props.installments} />
       ) : null}

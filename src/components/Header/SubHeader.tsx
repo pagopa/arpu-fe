@@ -18,7 +18,8 @@ const Cart = () => {
   return (
     <Button
       variant="naked"
-      sx={{ gap: 1, pr: 0 }}
+      color="primary"
+      sx={{ gap: 1, pr: 0, color: 'primary.main' }}
       onClick={toggleCartDrawer}
       aria-label={t('ui.a11y.cart')}
       name="CartButton">

@@ -57,10 +57,11 @@ export const PaidOptionReceipt = ({ paymentOption }: PaidOptionReceiptProps) => 
   return data?.map((receipt) => (
     <Stack
       key={receipt.receiptId}
-      direction="row"
-      alignItems="center"
-      justifyContent="space-between">
-      <Typography key={receipt.receiptId} variant="body1">
+      direction={{ xs: 'column', sm: 'row' }}
+      alignItems={{ xs: 'flex-start', sm: 'center' }}
+      justifyContent="space-between"
+      gap={2}>
+      <Typography variant="body1">
         <Trans
           i18nKey="app.debtPositionDetail.paidOptionReceipt"
           values={{
@@ -73,6 +74,7 @@ export const PaidOptionReceipt = ({ paymentOption }: PaidOptionReceiptProps) => 
         startIcon={<Download />}
         variant="outlined"
         size="large"
+        sx={{ whiteSpace: 'nowrap', flexShrink: 0 }}
         onClick={() => onDownload(receipt)}>
         {t('app.debtPositionDetail.downloadReceipt')}
       </Button>

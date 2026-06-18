@@ -103,7 +103,7 @@ const router = createBrowserRouter([
           sidebar: false,
           backButton: false,
           subHeader: true,
-          backButtonText: 'exit',
+          backButtonText: 'app.routes.exit',
           gutters: true
         } as RouteHandleObject,
         children: [
@@ -273,7 +273,9 @@ const router = createBrowserRouter([
               </Guard>
             ),
             handle: {
-              titleKey: 'pageTitles.receiptDetail'
+              titleKey: 'pageTitles.receiptDetail',
+              backButtonText: 'app.receiptDetail.backButton',
+              backButton: true
             } as RouteHandleObject
           },
           {
@@ -295,8 +297,10 @@ const router = createBrowserRouter([
               </Guard>
             ),
             handle: {
-              titleKey: 'pageTitles.debtPositionDetail'
-            }
+              titleKey: 'pageTitles.debtPositionDetail',
+              backButton: true,
+              backButtonText: 'app.debtPositionDetail.backButton'
+            } as RouteHandleObject
           },
           {
             path: ROUTES.DEBT_POSITION_DOWNLOAD,

@@ -1,7 +1,7 @@
 import React from 'react';
 import { useNavigate, useParams, useLocation } from 'react-router-dom';
 import config from 'utils/config';
-import { Stack, Card, Button, Divider, Theme, Typography, useMediaQuery } from '@mui/material';
+import { Stack, Card, Button, Divider, Theme, Typography, useMediaQuery, Box } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import { DataRow } from 'components/DataRow';
 import { CopiableRow } from 'components/CopiableRow';
@@ -15,8 +15,7 @@ export const ReceiptDetail = () => {
   const brokerId = Number(config.brokerId);
   const { t } = useTranslation();
   const navigate = useNavigate();
-  const mdUp = useMediaQuery((theme: Theme) => theme.breakpoints.up('md'));
-  const { spacing } = utils.style.theme;
+  const smUp = useMediaQuery((theme: Theme) => theme.breakpoints.up('sm'));
   const isAnonymous = utils.storage.user.isAnonymous();
 
   const params = useParams<{ receiptId: string; organizationId: string }>();
@@ -54,7 +53,11 @@ export const ReceiptDetail = () => {
   return (
     <>
       <Stack gap={3}>
-        <Stack justifyContent="space-between" alignItems="center" direction="row">
+        <Stack
+          justifyContent="space-between"
+          alignItems={{ xs: 'flex-start', md: 'center' }}
+          gap={3}
+          direction={{ xs: 'column', md: 'row' }}>
           <Stack gap={2}>
             <Typography variant="h4" fontWeight={700}>
               {t('app.receiptDetail.title')}
@@ -62,47 +65,52 @@ export const ReceiptDetail = () => {
             {isAnonymous ? <Typography>{t('app.receiptDetail.subtitle')}</Typography> : null}
           </Stack>
           {isAnonymous ? null : (
-            <Button variant="contained" size="large" onClick={onDownload} startIcon={<Download />}>
-              {t('app.receiptDetail.download')}
-            </Button>
+            <Stack width={{ xs: '100%', sm: 'auto' }}>
+              <Button
+                fullWidth
+                variant="contained"
+                size={smUp ? 'medium' : 'small'}
+                onClick={onDownload}
+                startIcon={<Download />}>
+                {t('app.receiptDetail.download')}
+              </Button>
+            </Stack>
           )}
         </Stack>
         <Card sx={{ padding: 3, gap: 3, display: 'flex', flexDirection: 'column' }}>
           <Typography variant="h6" fontWeight={700}>
             {data?.debtPositionTypeOrgDescription}
           </Typography>
-          <table style={{ width: mdUp ? '50%' : '100%', borderSpacing: spacing(2) }}>
-            <tbody>
-              <DataRow
-                label={t('app.receiptDetail.amount')}
-                value={utils.converters.toEuroOrMissingValue(data?.paymentAmountCents)}
-              />
-              <DataRow
-                label={t('app.receiptDetail.remittanceInformation')}
-                value={utils.converters.propertyOrMissingValue(data?.remittanceInformation)}
-              />
-              <DataRow
-                label={t('app.receiptDetail.noticeCode')}
-                value={utils.converters.propertyOrMissingValue(data?.nav)}
-              />
-              <DataRow
-                label={t('app.receiptDetail.beneficiary')}
-                value={utils.converters.propertyOrMissingValue(data?.orgName)}
-              />
-              <DataRow
-                label={t('app.receiptDetail.beneficiaryFiscalCode')}
-                value={utils.converters.propertyOrMissingValue(data?.orgFiscalCode)}
-              />
-              <DataRow
-                label={t('app.receiptDetail.debtor')}
-                value={utils.converters.propertyOrMissingValue(data?.debtor.fullName)}
-              />
-              <DataRow
-                label={t('app.receiptDetail.debtorFiscalCode')}
-                value={utils.converters.propertyOrMissingValue(data?.debtor.fiscalCode)}
-              />
-            </tbody>
-          </table>
+          <Box>
+            <DataRow
+              label={t('app.receiptDetail.amount')}
+              value={utils.converters.toEuroOrMissingValue(data?.paymentAmountCents)}
+            />
+            <DataRow
+              label={t('app.receiptDetail.remittanceInformation')}
+              value={utils.converters.propertyOrMissingValue(data?.remittanceInformation)}
+            />
+            <DataRow
+              label={t('app.receiptDetail.noticeCode')}
+              value={utils.converters.propertyOrMissingValue(data?.nav)}
+            />
+            <DataRow
+              label={t('app.receiptDetail.beneficiary')}
+              value={utils.converters.propertyOrMissingValue(data?.orgName)}
+            />
+            <DataRow
+              label={t('app.receiptDetail.beneficiaryFiscalCode')}
+              value={utils.converters.propertyOrMissingValue(data?.orgFiscalCode)}
+            />
+            <DataRow
+              label={t('app.receiptDetail.debtor')}
+              value={utils.converters.propertyOrMissingValue(data?.debtor.fullName)}
+            />
+            <DataRow
+              label={t('app.receiptDetail.debtorFiscalCode')}
+              value={utils.converters.propertyOrMissingValue(data?.debtor.fiscalCode)}
+            />
+          </Box>
         </Card>
         <Card sx={{ padding: 3, gap: 3, display: 'flex', flexDirection: 'column' }}>
           <Typography variant="subtitle2" fontWeight={700}>

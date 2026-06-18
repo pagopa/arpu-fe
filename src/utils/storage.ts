@@ -48,8 +48,8 @@ const removeStorageItem = (key: StorageItems) => {
   }
 };
 
-/** clear both session and local storage */
-const clear = () => {
+/** Clear the entire session (local + session storage) on logout. */
+const logOut = () => {
   window.sessionStorage.clear();
   window.localStorage.clear();
 };
@@ -100,8 +100,7 @@ export default {
   user: {
     hasToken: () => Boolean(getStorageItem(StorageItems.TOKEN)),
     isAnonymous,
-    /** clear both session and local storage */
-    logOut: clear,
+    logOut,
     setToken: (token: string) => setStorageItem(StorageItems.TOKEN, token)
   },
   app: {

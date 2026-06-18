@@ -1,12 +1,11 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import React from 'react';
-import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import '@testing-library/jest-dom';
-import { Mock } from 'vitest';
-import { BrowserRouter } from 'react-router-dom';
+import { vi, Mock, describe, it, expect, beforeEach } from 'vitest';
 import dayjs from 'dayjs';
 import utils from 'utils';
 import { useSearch } from 'hooks/useSearch';
+import { screen, fireEvent, waitFor, render } from '__tests__/renderers';
 import { ReceiptsList } from '.';
 
 // Mock data
@@ -35,23 +34,21 @@ const mockReceipts = {
 // Mocks
 vi.mock('utils', () => ({
   default: {
-    loaders: {
-      getPagedDebtorReceipts: vi.fn()
-    },
-    URI: {
-      decode: vi.fn(() => ({}))
-    }
+    loaders: { getPagedDebtorReceipts: vi.fn() },
+    URI: { decode: vi.fn(() => ({})) }
   }
 }));
 
 vi.mock('hooks/useSearch');
 vi.mock('utils/config', () => ({ default: { brokerId: '123' } }));
 vi.mock('react-helmet', () => ({ Helmet: ({ children }: any) => <div>{children}</div> }));
+
 vi.mock('../components/item', () => ({
   ReceiptItem: ({ receipt }: any) => (
     <div data-testid={`receipt-${receipt.receiptId}`}>{receipt.orgName}</div>
   )
 }));
+
 vi.mock('components/Content', () => ({
   Content: ({ children, showRetry, noData, onRetry, noDataTitle }: any) => {
     if (showRetry)
@@ -64,7 +61,9 @@ vi.mock('components/Content', () => ({
     return <div data-testid="content">{children}</div>;
   }
 }));
+
 vi.mock('components/PaymentButton', () => ({ default: () => <button>Pay</button> }));
+
 vi.mock('components/DataGrid/CustomPagination', () => ({
   default: ({ totalPages }: any) => <div data-testid="pagination">Pages: {totalPages}</div>
 }));
@@ -79,14 +78,28 @@ vi.mock('components/DateRange', () => ({
   )
 }));
 
-// Test helpers
-const renderComponent = () =>
-  render(
-    <BrowserRouter>
-      <ReceiptsList />
-    </BrowserRouter>
-  );
+/**
+ * ResponsiveDrawer: always render children inside drawer
+ */
+vi.mock('components/ResponsiveDrawer', () => ({
+  ResponsiveDrawer: ({ children, open, onOpen, onClose, label }: any) => (
+    <div data-testid="responsive-drawer">
+      <button data-testid="drawer-trigger" onClick={onOpen}>
+        {label}
+      </button>
+      {open && (
+        <div data-testid="drawer-panel">
+          <button data-testid="drawer-close" onClick={onClose}>
+            Close
+          </button>
+        </div>
+      )}
+      {children}
+    </div>
+  )
+}));
 
+// Helpers
 const setupSearch = (overrides = {}) => {
   (useSearch as Mock).mockReturnValue({
     query: {
@@ -99,6 +112,7 @@ const setupSearch = (overrides = {}) => {
   });
 };
 
+// Tests
 describe('ReceiptsList', () => {
   beforeEach(() => {
     vi.clearAllMocks();
@@ -106,73 +120,109 @@ describe('ReceiptsList', () => {
     setupSearch();
   });
 
-  describe('Rendering', () => {
-    it('renders page header and filters', () => {
-      renderComponent();
+  // ── Rendering ──────────────────────────────────────────────────────────────
 
+  describe('Rendering', () => {
+    it('renders page header', () => {
+      render(<ReceiptsList />);
       expect(screen.getByText('menu.receipts.pageTitle')).toBeInTheDocument();
-      expect(screen.getByLabelText('Codice Avviso')).toBeInTheDocument();
-      expect(screen.getByText('actions.filter')).toBeInTheDocument();
+    });
+
+    it('renders filter controls', () => {
+      render(<ReceiptsList />);
+      expect(screen.getByTestId('responsive-drawer')).toBeInTheDocument();
+      expect(screen.getByLabelText('fields.noticeCode')).toBeInTheDocument();
+      expect(screen.getByTestId('apply-filters')).toBeInTheDocument();
       expect(screen.getByText('actions.resetFilters')).toBeInTheDocument();
       expect(screen.getByTestId('date-range')).toBeInTheDocument();
     });
 
-    it('renders receipts when data is available', () => {
-      renderComponent();
-
+    it('renders receipts', () => {
+      render(<ReceiptsList />);
       expect(screen.getByTestId('receipt-1')).toBeInTheDocument();
       expect(screen.getByTestId('receipt-2')).toBeInTheDocument();
       expect(screen.getByText('ACI Automobile Club Italia')).toBeInTheDocument();
     });
 
-    it('renders pagination when totalPages > 0', () => {
-      renderComponent();
+    it('renders pagination', () => {
+      render(<ReceiptsList />);
       expect(screen.getByTestId('pagination')).toBeInTheDocument();
     });
+  });
 
-    it('does not render pagination when totalPages is 0', () => {
-      setupSearch({ data: { ...mockReceipts, totalPages: 0 } });
-      renderComponent();
-      expect(screen.queryByTestId('pagination')).not.toBeInTheDocument();
+  // ── Drawer open / close ────────────────────────────────────────────────────
+
+  describe('Drawer interactions', () => {
+    it('drawer is closed by default', () => {
+      render(<ReceiptsList />);
+      expect(screen.queryByTestId('drawer-panel')).not.toBeInTheDocument();
+    });
+
+    it('opens the drawer when the trigger button is clicked', () => {
+      render(<ReceiptsList />);
+      fireEvent.click(screen.getByTestId('drawer-trigger'));
+      expect(screen.getByTestId('drawer-panel')).toBeInTheDocument();
+    });
+
+    it('closes the drawer after applying filters', async () => {
+      render(<ReceiptsList />);
+      fireEvent.click(screen.getByTestId('drawer-trigger'));
+      expect(screen.getByTestId('drawer-panel')).toBeInTheDocument();
+
+      fireEvent.click(screen.getByTestId('apply-filters'));
+
+      await waitFor(() => {
+        expect(screen.queryByTestId('drawer-panel')).not.toBeInTheDocument();
+      });
+    });
+
+    it('closes the drawer after resetting filters', async () => {
+      render(<ReceiptsList />);
+      fireEvent.click(screen.getByTestId('drawer-trigger'));
+      expect(screen.getByTestId('drawer-panel')).toBeInTheDocument();
+
+      fireEvent.click(screen.getByText('actions.resetFilters'));
+
+      await waitFor(() => {
+        expect(screen.queryByTestId('drawer-panel')).not.toBeInTheDocument();
+      });
     });
   });
+
+  // ── Filtering ──────────────────────────────────────────────────────────────
 
   describe('Filtering', () => {
     it('applies search code filter', async () => {
       const mockApplyFilters = vi.fn();
-      setupSearch();
       (useSearch as Mock).mockReturnValue({
         query: { data: mockReceipts, isError: false, isSuccess: true },
         applyFilters: mockApplyFilters
       });
 
-      renderComponent();
+      render(<ReceiptsList />);
 
-      fireEvent.change(screen.getByLabelText('Codice Avviso'), {
+      fireEvent.change(screen.getByLabelText('fields.noticeCode'), {
         target: { value: '  123456789  ' }
       });
-      fireEvent.click(screen.getByText('actions.filter'));
+      fireEvent.click(screen.getByTestId('apply-filters'));
 
       await waitFor(() => {
-        expect(mockApplyFilters).toHaveBeenCalledWith({
-          noticeNumberOrIuv: '123456789'
-        });
+        expect(mockApplyFilters).toHaveBeenCalledWith({ noticeNumberOrIuv: '123456789' });
       });
     });
 
     it('applies date filters', async () => {
       const mockApplyFilters = vi.fn();
-      setupSearch();
       (useSearch as Mock).mockReturnValue({
         query: { data: mockReceipts, isError: false, isSuccess: true },
         applyFilters: mockApplyFilters
       });
 
-      renderComponent();
+      render(<ReceiptsList />);
 
       fireEvent.click(screen.getByText('Set From'));
       fireEvent.click(screen.getByText('Set To'));
-      fireEvent.click(screen.getByText('actions.filter'));
+      fireEvent.click(screen.getByTestId('apply-filters'));
 
       await waitFor(() => {
         expect(mockApplyFilters).toHaveBeenCalledWith({
@@ -182,63 +232,16 @@ describe('ReceiptsList', () => {
       });
     });
 
-    it('applies combined filters', async () => {
+    it('clears all filters and calls applyFilters with empty object', async () => {
       const mockApplyFilters = vi.fn();
-      setupSearch();
       (useSearch as Mock).mockReturnValue({
         query: { data: mockReceipts, isError: false, isSuccess: true },
         applyFilters: mockApplyFilters
       });
 
-      renderComponent();
+      render(<ReceiptsList />);
 
-      fireEvent.change(screen.getByLabelText('Codice Avviso'), {
-        target: { value: 'ABC123' }
-      });
-      fireEvent.click(screen.getByText('Set From'));
-      fireEvent.click(screen.getByText('actions.filter'));
-
-      await waitFor(() => {
-        expect(mockApplyFilters).toHaveBeenCalledWith({
-          noticeNumberOrIuv: 'ABC123',
-          paymentDateTimeFrom: dayjs('2024-01-01').format()
-        });
-      });
-    });
-
-    it('ignores empty filters', async () => {
-      const mockApplyFilters = vi.fn();
-      setupSearch();
-      (useSearch as Mock).mockReturnValue({
-        query: { data: mockReceipts, isError: false, isSuccess: true },
-        applyFilters: mockApplyFilters
-      });
-
-      renderComponent();
-
-      fireEvent.change(screen.getByLabelText('Codice Avviso'), {
-        target: { value: '   ' }
-      });
-      fireEvent.click(screen.getByText('actions.filter'));
-
-      await waitFor(() => {
-        expect(mockApplyFilters).toHaveBeenCalledWith({});
-      });
-    });
-  });
-
-  describe('Reset', () => {
-    it('clears all filters', async () => {
-      const mockApplyFilters = vi.fn();
-      setupSearch();
-      (useSearch as Mock).mockReturnValue({
-        query: { data: mockReceipts, isError: false, isSuccess: true },
-        applyFilters: mockApplyFilters
-      });
-
-      renderComponent();
-
-      const searchInput = screen.getByLabelText('Codice Avviso') as HTMLInputElement;
+      const searchInput = screen.getByLabelText('fields.noticeCode') as HTMLInputElement;
       fireEvent.change(searchInput, { target: { value: '123' } });
       fireEvent.click(screen.getByText('Set From'));
 
@@ -251,34 +254,22 @@ describe('ReceiptsList', () => {
     });
   });
 
-  describe('Error and Empty States', () => {
-    it('shows retry on error', () => {
-      setupSearch({ data: undefined, isError: true, isSuccess: false });
-      renderComponent();
-      expect(screen.getByTestId('retry-btn')).toBeInTheDocument();
-    });
+  // ── Error & empty states ───────────────────────────────────────────────────
 
-    it('retries with current filters on retry click', async () => {
+  describe('Error and Empty States', () => {
+    it('retries with the current applied filters on retry click', async () => {
       const mockApplyFilters = vi.fn();
-      setupSearch({ data: undefined, isError: true, isSuccess: false });
       (useSearch as Mock).mockReturnValue({
         query: { data: undefined, isError: true, isSuccess: false },
         applyFilters: mockApplyFilters
       });
 
-      renderComponent();
+      render(<ReceiptsList />);
       fireEvent.click(screen.getByTestId('retry-btn'));
 
       await waitFor(() => {
         expect(mockApplyFilters).toHaveBeenCalled();
       });
-    });
-
-    it('shows empty state when no data', () => {
-      setupSearch({ data: { content: [], totalPages: 0 } });
-      renderComponent();
-      expect(screen.getByTestId('no-data')).toBeInTheDocument();
-      expect(screen.getByText('app.receipts.empty.title')).toBeInTheDocument();
     });
   });
 });

@@ -129,7 +129,7 @@ export function Layout(props: { anonymous?: boolean }) {
           {sidebar ? <Sidebar /> : null}
           <Box width={'100%'} component="main" id="main-content" tabIndex={-1}>
             {backButton || crumbs ? (
-              <Container sx={{ mt: 3 }}>
+              <Container maxWidth={sidebar ? false : 'lg'} sx={{ mt: 3 }}>
                 {backButton && (
                   <BackButton
                     onClick={backButtonFunction}
