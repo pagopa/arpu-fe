@@ -77,11 +77,13 @@ const DebtPositionDetail = () => {
             {t('app.debtPositionDetail.paymentData')}
           </Typography>
           <Stack direction="row" gap={2} data-testid="debt-position-detail-org-name">
-            <PayeeIcon orgFiscalCode={data.orgFiscalCode} alt={data.orgName} visible />
-            <CopiableRow
-              label={t('app.debtPositionDetail.org')}
-              value={propertyOrMissingValue(data.orgName)}
-            />
+            <PayeeIcon orgFiscalCode={data.orgFiscalCode} alt={data.orgName} visible size={36} />
+            <Box minWidth={0} flex={1}>
+              <CopiableRow
+                label={t('app.debtPositionDetail.org')}
+                value={propertyOrMissingValue(data.orgName)}
+              />
+            </Box>
           </Stack>
           <Divider />
           <Box data-testid="debt-position-detail-org-code">

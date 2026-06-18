@@ -6,10 +6,10 @@ export const installmentsDrawerStyles = (theme: Theme): Record<string, SxProps> 
     position: 'fixed',
     right: 0,
     top: 0,
-    width: { lg: '30%', md: '40%', sm: '50%', xs: '100%' },
-    maxWidth: '417px',
+    width: { xs: '100%', sm: '360px' },
     backgroundColor: theme.palette.background.paper,
     height: '100%',
+    overflowY: 'auto',
     padding: theme.spacing(3)
   },
   overlay: {
