@@ -6,7 +6,7 @@ import { CartItem } from 'models/Cart';
 import { OUTCOMES } from '../../../routes/routes';
 import notify from 'utils/notify';
 import { useStore } from 'store/GlobalStore';
-import { resetCart } from 'store/CartStore';
+import { clearCheckoutNotices, resetCart } from 'store/CartStore';
 
 /**
  * Derived boolean flags from a courtesy-page outcome code.
@@ -77,29 +77,42 @@ export const useClearCartOnSuccess = (isOk: boolean) => {
   } = useStore();
 
   useEffect(() => {
-    if (isOk && cart.items.length > 0) {
+    if (!isOk) return;
+    if (cart.items.length > 0) {
       resetCart();
     }
+    // Also drop the persisted checkout notices on success so a later visit to a
+    // stale courtesy URL can't retry an already-paid notice.
+    clearCheckoutNotices();
   }, [isOk, cart.items.length]);
 };
 
 /**
  * Redirects to the generic 'sconosciuto' outcome when a retryable outcome
- * (KO/CANCEL) is reached with an empty cart. Covers new-tab, expired-session
- * and direct-URL access cases where there's nothing to retry.
+ * (KO/CANCEL) is reached with nothing to retry. Covers new-tab,
+ * expired-session and direct-URL access cases.
+ *
+ * `isEmpty` must reflect the EFFECTIVE retry source for the caller (the
+ * authenticated flow falls back to the persisted checkout notices when the
+ * visible cart is empty), not just `cart.items`.
  *
  * `courtesyPageRoute` must be the `:outcome`-templated route — public or
  * authenticated — appropriate for the caller.
  */
-export const useEmptyCartGuard = (isRetryableOutcome: boolean, courtesyPageRoute: string) => {
+export const useEmptyCartGuard = (
+  isRetryableOutcome: boolean,
+  courtesyPageRoute: string,
+  isEmpty: boolean
+) => {
   const navigate = useNavigate();
-  const {
-    state: { cart }
-  } = useStore();
 
   useEffect(() => {
-    if (isRetryableOutcome && cart.items.length === 0) {
-      navigate(courtesyPageRoute.replace(':outcome', String(OUTCOMES['sconosciuto'])));
+    if (isRetryableOutcome && isEmpty) {
+      // Use the OUTCOME NAME ('sconosciuto'), not its numeric code: the route
+      // param is the name and the i18n keys map the name back to the code.
+      // Navigating with the number (e.g. '400') lands on /esito/400, where the
+      // outcome can't be resolved and the page falls back to default content.
+      navigate(courtesyPageRoute.replace(':outcome', 'sconosciuto'));
     }
-  }, [isRetryableOutcome, cart.items.length]);
+  }, [isRetryableOutcome, isEmpty]);
 };
