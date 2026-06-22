@@ -30,11 +30,13 @@ vi.mock('store/GlobalStore', async () => {
 });
 
 const mockResetCart = vi.fn();
+const mockClearCheckoutNotices = vi.fn();
 vi.mock('store/CartStore', async (importOriginal) => {
   const actual = await importOriginal<typeof import('store/CartStore')>();
   return {
     ...actual,
-    resetCart: () => mockResetCart()
+    resetCart: () => mockResetCart(),
+    clearCheckoutNotices: () => mockClearCheckoutNotices()
   };
 });
 
@@ -157,35 +159,45 @@ describe('useClearCartOnSuccess', () => {
     rerender({ isOk: true });
     expect(mockResetCart).toHaveBeenCalledTimes(1);
   });
+
+  it('clears persisted checkout notices on success (even with an empty cart)', () => {
+    setCart([]);
+    renderHook(() => useClearCartOnSuccess(true));
+    expect(mockClearCheckoutNotices).toHaveBeenCalledTimes(1);
+  });
+
+  it('does NOT clear checkout notices when isOk=false', () => {
+    setCart([{ iuv: 'abc' }]);
+    renderHook(() => useClearCartOnSuccess(false));
+    expect(mockClearCheckoutNotices).not.toHaveBeenCalled();
+  });
 });
 
 describe('useEmptyCartGuard', () => {
   const ROUTE = '/public/courtesy/:outcome';
-  const EXPECTED_REDIRECT = `/public/courtesy/${OUTCOMES['sconosciuto']}`;
+  // Redirect must use the outcome NAME, not its numeric code (regression guard:
+  // String(OUTCOMES['sconosciuto']) used to produce '/esito/400').
+  const EXPECTED_REDIRECT = '/public/courtesy/sconosciuto';
 
-  it('redirects to sconosciuto when retryable and cart is empty', () => {
-    setCart([]);
-    renderHook(() => useEmptyCartGuard(true, ROUTE));
+  it('redirects to sconosciuto (by name) when retryable and empty', () => {
+    renderHook(() => useEmptyCartGuard(true, ROUTE, true));
     expect(mockNavigate).toHaveBeenCalledTimes(1);
     expect(mockNavigate).toHaveBeenCalledWith(EXPECTED_REDIRECT);
   });
 
-  it('does NOT redirect when retryable but cart has items', () => {
-    setCart([{ iuv: 'abc' }]);
-    renderHook(() => useEmptyCartGuard(true, ROUTE));
+  it('does NOT redirect when retryable but there are notices to retry', () => {
+    renderHook(() => useEmptyCartGuard(true, ROUTE, false));
     expect(mockNavigate).not.toHaveBeenCalled();
   });
 
-  it('does NOT redirect when not retryable even if cart is empty', () => {
-    setCart([]);
-    renderHook(() => useEmptyCartGuard(false, ROUTE));
+  it('does NOT redirect when not retryable even if empty', () => {
+    renderHook(() => useEmptyCartGuard(false, ROUTE, true));
     expect(mockNavigate).not.toHaveBeenCalled();
   });
 
   it('uses the route passed in (works for both public and authenticated)', () => {
-    setCart([]);
-    renderHook(() => useEmptyCartGuard(true, '/private/courtesy/:outcome'));
-    expect(mockNavigate).toHaveBeenCalledWith(`/private/courtesy/${OUTCOMES['sconosciuto']}`);
+    renderHook(() => useEmptyCartGuard(true, '/private/courtesy/:outcome', true));
+    expect(mockNavigate).toHaveBeenCalledWith('/private/courtesy/sconosciuto');
   });
 });
 

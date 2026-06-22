@@ -3,6 +3,7 @@ import utils from 'utils';
 import { CartItem } from 'models/Cart';
 import { AxiosError } from 'axios';
 import { OUTCOMES } from 'routes/routes';
+import { setCheckoutNotices } from 'store/CartStore';
 
 const getRedirect = (data: string) => {
   const re = /URL=([^"]+)/;
@@ -25,6 +26,13 @@ export const usePostCarts = ({
     mutationFn: async ({ notices, email }: { notices: CartItem[]; email?: string }) => {
       const request = utils.converters.cartItemsToCartsRequest(notices);
       const { data } = await utils.cartsClient.postCarts({ ...request, emailNotice: email });
+      // Persist the notices sent to checkout so the AUTHENTICATED courtesy page
+      // can display the KO/CANCEL outcome and retry even when the visible cart
+      // is empty (direct "Paga subito" / installment flows bypass the cart).
+      // Anonymous flows rebuild from query params, so they don't need this.
+      if (!utils.storage.user.isAnonymous()) {
+        setCheckoutNotices(notices, email);
+      }
       return data;
     },
     onSuccess: (data: string) => onSuccess(getRedirect(data)),

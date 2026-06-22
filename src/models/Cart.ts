@@ -20,3 +20,13 @@ export type CartState = {
   items: ExtendedCartItem[];
   email?: string;
 };
+
+/**
+ * Notices last sent to checkout, persisted so the AUTHENTICATED courtesy page
+ * can show the KO/CANCEL outcome and retry even when the visible cart is empty
+ * (direct "Paga subito" / installment flows bypass the cart drawer).
+ */
+export type CheckoutNotices = {
+  notices: CartItem[];
+  email?: string;
+};

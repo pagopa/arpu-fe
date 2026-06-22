@@ -34,6 +34,7 @@ import { Overlay } from 'components/Overlay';
 import { DebtPositionDownload } from 'routes/DebtPositions/download';
 import { appSetup } from 'utils/setup';
 import appStore from 'store/appStore';
+import { cartState } from 'store/CartStore';
 import ResourcePage from 'routes/ResourcePage/ResourcePage';
 import { RecaptchaProvider } from 'components/RecaptchaProvider/RecaptchaProvider';
 import { RouteGuardByAvailableRoutes as Guard } from 'components/RouteGuard';
@@ -42,9 +43,13 @@ import { useFavicon } from 'hooks/useFavicon';
 /**
  * Loader factory for the courtesy page.
  *
- * The PUBLIC (anonymous) flow requires `nav` + `org_fiscal_code` query params
- * on KO/CANCEL outcomes, because the public courtesy page rebuilds the CartItem
- * from scratch via the public installments endpoint if Cart is not enabled.
+ * The PUBLIC (anonymous) SINGLE / "Paga subito" flow (cart has <= 1 notice)
+ * requires `nav` + `org_fiscal_code` query params on KO/CANCEL/OK outcomes,
+ * because the public courtesy page rebuilds the CartItem from scratch via the
+ * public installments endpoint.
+ *
+ * The PUBLIC PLURI flow (2+ notices) carries NO query params: it relies on the
+ * cart in sessionStorage, so the params are not required there.
  *
  * The AUTHENTICATED flow doesn't need any query params: the cart is already in
  * sessionStorage and the courtesy page reads `cart.items` directly.
@@ -56,8 +61,12 @@ const makeCourtesyPageLoader =
     const outcome = params.outcome as keyof typeof OUTCOMES;
     const code = OUTCOMES[outcome];
 
+    // Anonymous PLURI (2+ notices) carries no query params — it relies on the
+    // cart in sessionStorage — so don't require nav/org_fiscal_code there.
+    const isPluriCart = cartState.value.items.length > 1;
     const needsParams =
       isPublic &&
+      !isPluriCart &&
       (code === OUTCOMES['pagamento-non-riuscito'] ||
         code === OUTCOMES['pagamento-annullato'] ||
         code === OUTCOMES['pagamento-avviso-completato']);

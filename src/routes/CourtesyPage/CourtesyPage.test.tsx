@@ -340,7 +340,7 @@ describe('CourtesyPageActions – pagamento-non-riuscito (424), anonymous', () =
 
     expect(mockPostCartsMutate).not.toHaveBeenCalled();
     expect(mockNavigate).toHaveBeenCalledWith(
-      ROUTES.public.COURTESY_PAGE.replace(':outcome', String(OUTCOMES['sconosciuto']))
+      ROUTES.public.COURTESY_PAGE.replace(':outcome', 'sconosciuto')
     );
   });
 
@@ -432,7 +432,7 @@ describe('CourtesyPageActions – pagamento-non-riuscito (424), anonymous', () =
 
     expect(mockPostCartsMutate).not.toHaveBeenCalled();
     expect(mockNavigate).toHaveBeenCalledWith(
-      ROUTES.public.COURTESY_PAGE.replace(':outcome', String(OUTCOMES['sconosciuto']))
+      ROUTES.public.COURTESY_PAGE.replace(':outcome', 'sconosciuto')
     );
   });
 
@@ -444,7 +444,7 @@ describe('CourtesyPageActions – pagamento-non-riuscito (424), anonymous', () =
 
     expect(mockPostCartsMutate).not.toHaveBeenCalled();
     expect(mockNavigate).toHaveBeenCalledWith(
-      ROUTES.public.COURTESY_PAGE.replace(':outcome', String(OUTCOMES['sconosciuto']))
+      ROUTES.public.COURTESY_PAGE.replace(':outcome', 'sconosciuto')
     );
   });
 });
@@ -559,7 +559,7 @@ describe('CourtesyPageActions – pagamento-non-riuscito (424), authenticated', 
 
     await waitFor(() => {
       expect(mockNavigate).toHaveBeenCalledWith(
-        ROUTES.COURTESY_PAGE.replace(':outcome', String(OUTCOMES['sconosciuto']))
+        ROUTES.COURTESY_PAGE.replace(':outcome', 'sconosciuto')
       );
     });
   });
@@ -610,7 +610,7 @@ describe('CourtesyPageActions – pagamento-annullato (425), authenticated', () 
 
     await waitFor(() => {
       expect(mockNavigate).toHaveBeenCalledWith(
-        ROUTES.COURTESY_PAGE.replace(':outcome', String(OUTCOMES['sconosciuto']))
+        ROUTES.COURTESY_PAGE.replace(':outcome', 'sconosciuto')
       );
     });
   });

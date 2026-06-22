@@ -1,4 +1,4 @@
-import { ExtendedCartItem, CartState } from 'models/Cart';
+import { CartItem, ExtendedCartItem, CartState, CheckoutNotices } from 'models/Cart';
 import { usePersistentSignal } from 'hooks/usePersistentSignal';
 import { SessionItems } from 'utils/storage';
 
@@ -81,4 +81,31 @@ export function setCartEmail(email?: string) {
 
 export function getCartEmail() {
   return cartState.value.email;
+}
+
+const defaultCheckoutNotices: CheckoutNotices = { notices: [], email: undefined };
+
+/**
+ * Notices last sent to checkout. Separate from the visible cart so the direct
+ * "Paga subito" / installment flows (which never populate the cart) survive the
+ * checkout round-trip and let the authenticated courtesy page retry on KO/CANCEL.
+ */
+export const { state: checkoutNoticesState } = usePersistentSignal<CheckoutNotices>(
+  SessionItems.CHECKOUT_NOTICES,
+  {
+    storage: sessionStorage,
+    initialValue: defaultCheckoutNotices
+  }
+);
+
+export function setCheckoutNotices(notices: CartItem[], email?: string) {
+  checkoutNoticesState.value = { notices, email };
+}
+
+export function getCheckoutNotices(): CheckoutNotices {
+  return checkoutNoticesState.value;
+}
+
+export function clearCheckoutNotices() {
+  checkoutNoticesState.value = defaultCheckoutNotices;
 }
