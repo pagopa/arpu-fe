@@ -148,7 +148,7 @@ export const IuvSearch = ({
         <Stack sx={{ gap: 2 }}>
           <Stack gap={1}>
             <Typography variant="h4" component="h1" fontWeight={700}>
-              {t(titleKey)}ccc
+              {t(titleKey)}
             </Typography>
             <Typography variant="body1">{t(descriptionKey)}</Typography>
           </Stack>
