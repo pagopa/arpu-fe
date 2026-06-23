@@ -31,6 +31,7 @@ export const Results = ({ installments, installmentType }: ResultsProps) => {
       {installments.map((installment) => (
         <Card
           key={installment.installmentId}
+          className={`installment-list-item status__${installment.status}`}
           sx={{
             display: 'flex',
             flexDirection: { xs: 'column', lg: 'row' },
