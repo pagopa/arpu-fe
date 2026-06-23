@@ -2,7 +2,8 @@ import { signal } from '@preact/signals-react';
 
 export enum SessionItems {
   CART = 'CART',
-  OPTIN = 'OPTIN'
+  OPTIN = 'OPTIN',
+  CHECKOUT_NOTICES = 'CHECKOUT_NOTICES'
 }
 
 /** set a session item and return his value. If not possible returs null */

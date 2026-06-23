@@ -38,6 +38,10 @@ const mockInstallmentsMutateAsync = vi.fn();
 const mockDownloadMutateAsync = vi.fn();
 const mockExecuteRecaptcha = vi.fn();
 const mockResetCart = vi.fn();
+const mockClearCheckoutNotices = vi.fn();
+const mockCheckoutNotices: { value: { notices: any[]; email: string | undefined } } = {
+  value: { notices: [], email: undefined }
+};
 
 vi.mock('hooks/usePostCarts', () => ({
   usePostCarts: (opts: { onSuccess: (url: string) => void; onError: () => void }) => ({
@@ -128,7 +132,9 @@ vi.mock('store/GlobalStore', () => ({
 }));
 
 vi.mock('store/CartStore', () => ({
-  resetCart: (...args: unknown[]) => mockResetCart(...args)
+  resetCart: (...args: unknown[]) => mockResetCart(...args),
+  clearCheckoutNotices: () => mockClearCheckoutNotices(),
+  getCheckoutNotices: () => mockCheckoutNotices.value
 }));
 
 const mockBrokerHomeLink = { value: undefined as string | undefined };
@@ -247,6 +253,7 @@ const CART_ITEM_2 = {
 
 beforeEach(() => {
   setCartItems([]);
+  mockCheckoutNotices.value = { notices: [], email: undefined };
   setupSearchParams({ nav: 'NAV-001', org_fiscal_code: 'ORG-FC-001', installment_id: '42' });
 });
 
@@ -361,7 +368,7 @@ describe('CourtesyPageActions – pagamento-non-riuscito (424), anonymous', () =
 
     expect(mockPostCartsMutate).not.toHaveBeenCalled();
     expect(mockNavigate).toHaveBeenCalledWith(
-      ROUTES.public.COURTESY_PAGE.replace(':outcome', String(OUTCOMES['sconosciuto']))
+      ROUTES.public.COURTESY_PAGE.replace(':outcome', 'sconosciuto')
     );
   });
 
@@ -454,7 +461,7 @@ describe('CourtesyPageActions – pagamento-non-riuscito (424), anonymous', () =
 
     expect(mockPostCartsMutate).not.toHaveBeenCalled();
     expect(mockNavigate).toHaveBeenCalledWith(
-      ROUTES.public.COURTESY_PAGE.replace(':outcome', String(OUTCOMES['sconosciuto']))
+      ROUTES.public.COURTESY_PAGE.replace(':outcome', 'sconosciuto')
     );
   });
 
@@ -466,7 +473,7 @@ describe('CourtesyPageActions – pagamento-non-riuscito (424), anonymous', () =
 
     expect(mockPostCartsMutate).not.toHaveBeenCalled();
     expect(mockNavigate).toHaveBeenCalledWith(
-      ROUTES.public.COURTESY_PAGE.replace(':outcome', String(OUTCOMES['sconosciuto']))
+      ROUTES.public.COURTESY_PAGE.replace(':outcome', 'sconosciuto')
     );
   });
 });
@@ -548,6 +555,30 @@ describe('CourtesyPageActions – pagamento-avviso-completato (420)', () => {
     });
 
     expect(screen.queryByTestId('courtesyPage.downloadCta')).not.toBeInTheDocument();
+  });
+
+  it('empties the cart on a completed payment (anonymous single)', async () => {
+    mockInstallmentsMutateAsync.mockResolvedValue([INSTALLMENT_MATCH]);
+    setupSearchParams({ nav: 'NAV-001', org_fiscal_code: 'ORG-FC-001', installment_id: '42' });
+    setCartItems([CART_ITEM_1]);
+    render(<CourtesyPageActions code={CODE_420} />);
+
+    await waitFor(() => {
+      expect(mockResetCart).toHaveBeenCalledTimes(1);
+    });
+  });
+
+  it('does NOT reset the cart on 420 when it is already empty', async () => {
+    mockInstallmentsMutateAsync.mockResolvedValue([INSTALLMENT_MATCH]);
+    setupSearchParams({ nav: 'NAV-001', org_fiscal_code: 'ORG-FC-001', installment_id: '42' });
+    setCartItems([]);
+    render(<CourtesyPageActions code={CODE_420} />);
+
+    await waitFor(() => {
+      expect(mockInstallmentsMutateAsync).toHaveBeenCalled();
+    });
+
+    expect(mockResetCart).not.toHaveBeenCalled();
   });
 
   it('secondary CTA points to the LOGIN route', async () => {
@@ -681,8 +712,24 @@ describe('CourtesyPageActions – pagamento-non-riuscito (424), authenticated', 
 
     await waitFor(() => {
       expect(mockNavigate).toHaveBeenCalledWith(
-        ROUTES.COURTESY_PAGE.replace(':outcome', String(OUTCOMES['sconosciuto']))
+        ROUTES.COURTESY_PAGE.replace(':outcome', 'sconosciuto')
       );
+    });
+  });
+
+  it('falls back to persisted checkout notices when the cart is empty (direct "Paga subito")', () => {
+    // Direct-pay flows don't populate the visible cart; the notices persisted at
+    // payment time keep KO displayable and retryable instead of bouncing to sconosciuto.
+    setCartItems([]);
+    mockCheckoutNotices.value = { notices: [CART_ITEM_1], email: 'me@example.com' };
+    render(<CourtesyPageActions code={CODE_424} />);
+
+    expect(mockNavigate).not.toHaveBeenCalled();
+
+    fireEvent.click(screen.getByTestId('courtesyPage.cta'));
+    expect(mockPostCartsMutate).toHaveBeenCalledWith({
+      notices: [CART_ITEM_1],
+      email: 'me@example.com'
     });
   });
 
@@ -732,9 +779,19 @@ describe('CourtesyPageActions – pagamento-annullato (425), authenticated', () 
 
     await waitFor(() => {
       expect(mockNavigate).toHaveBeenCalledWith(
-        ROUTES.COURTESY_PAGE.replace(':outcome', String(OUTCOMES['sconosciuto']))
+        ROUTES.COURTESY_PAGE.replace(':outcome', 'sconosciuto')
       );
     });
+  });
+
+  it('displays the cancel page (no redirect) when the cart is empty but notices were persisted', async () => {
+    setCartItems([]);
+    mockCheckoutNotices.value = { notices: [CART_ITEM_1], email: undefined };
+    render(<CourtesyPageActions code={CODE_425} />);
+
+    const homeCta = await screen.findByTestId('courtesyPage.homeCta');
+    expect(homeCta).toHaveAttribute('href', ROUTES.DASHBOARD);
+    expect(mockNavigate).not.toHaveBeenCalled();
   });
 
   it('does NOT reset the cart on CANCEL (user may still go back and pay)', () => {
@@ -926,6 +983,20 @@ describe('CourtesyPageActions – pagamento-avviso-completato (420), anonymous P
     await waitFor(() => {
       expect(mockResetCart).toHaveBeenCalledTimes(1);
     });
+  });
+
+  it('stays on the PLURI branch after the OK clear empties the cart (no re-route to single)', () => {
+    // Pluri carries no query params; the OK flow clears the cart. The dispatch
+    // decision is frozen at mount, so the now-empty cart must NOT route to the
+    // SINGLE branch (which throws "Missing required query params").
+    setupSearchParams({});
+    const { rerender } = render(<CourtesyPageActions code={CODE_420} />);
+
+    // Simulate resetCart() emptying the cart, then a re-render.
+    setCartItems([]);
+    rerender(<CourtesyPageActions code={CODE_420} />);
+
+    expect(screen.getByTestId('courtesyPage.homeCta')).toBeInTheDocument();
   });
 });
 

@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { Button, Stack } from '@mui/material';
 import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { Download } from '@mui/icons-material';
@@ -9,6 +9,7 @@ import storage from 'utils/storage';
 import loaders from 'utils/loaders';
 import { useAppRoutes } from 'hooks/useAppRoutes';
 import { useStore } from 'store/GlobalStore';
+import { getCheckoutNotices } from 'store/CartStore';
 import appStore from 'store/appStore';
 import utils from 'utils';
 import {
@@ -56,11 +57,17 @@ export const CourtesyPageActions: React.FC<CourtesyPageActionsProps> = ({ code }
     state: { cart }
   } = useStore();
 
+  // Freeze the multi-vs-single decision at mount. The OK flow clears the cart,
+  // and without freezing this would flip an anonymous PLURI page over to the
+  // SINGLE branch mid-life — which requires the `nav`/`org_fiscal_code` params
+  // the pluri flow never carries, throwing "Missing required query params".
+  const isPluri = useRef(cart.items.length > 1).current;
+
   if (!isAnonymous) {
     return <AuthenticatedCourtesyActions code={code} />;
   }
 
-  if (cart.items.length > 1) {
+  if (isPluri) {
     return <AnonymousMultiCourtesyActions code={code} />;
   }
 
@@ -136,6 +143,11 @@ const AnonymousSingleCourtesyActions: React.FC<CourtesyPageActionsProps> = ({ co
 
   const { isOk: isCompleted, isCancelled } = useOutcomeFlags(code);
 
+  // Empty the cart on a completed payment, same as the multi/auth flows: an
+  // anonymous user who added a single notice to the cart and paid must not
+  // find it still inside afterwards.
+  useClearCartOnSuccess(isCompleted);
+
   const installmentsMutation = loaders.public.usePublicInstallmentsByIuvOrNav(brokerId!);
   const downloadReceiptMutation = loaders.public.usePublicDownloadReceipt({ brokerId: brokerId! });
 
@@ -169,7 +181,7 @@ const AnonymousSingleCourtesyActions: React.FC<CourtesyPageActionsProps> = ({ co
 
   const handleRetry = useCallback(() => {
     if (!installment) {
-      navigate(routes.public.COURTESY_PAGE.replace(':outcome', String(OUTCOMES['sconosciuto'])));
+      navigate(routes.public.COURTESY_PAGE.replace(':outcome', 'sconosciuto'));
       return;
     }
 
@@ -298,7 +310,7 @@ const AnonymousMultiCourtesyActions: React.FC<CourtesyPageActionsProps> = ({ cod
   const { isOk, isRetryableOutcome } = useOutcomeFlags(code);
 
   useClearCartOnSuccess(isOk);
-  useEmptyCartGuard(isRetryableOutcome, routes.public.COURTESY_PAGE);
+  useEmptyCartGuard(isRetryableOutcome, routes.public.COURTESY_PAGE, cart.items.length === 0);
 
   const { postCarts, retry } = useCheckoutRetry();
 
@@ -364,15 +376,23 @@ const AuthenticatedCourtesyActions: React.FC<CourtesyPageActionsProps> = ({ code
 
   const { isOk, isKo, isRetryableOutcome } = useOutcomeFlags(code);
 
+  // Direct "Paga subito" / installment payments don't populate the visible
+  // cart, so on return from checkout the cart is empty. Fall back to the
+  // notices persisted at payment time (see usePostCarts) so KO/CANCEL still
+  // displays and can be retried instead of bouncing to 'sconosciuto'.
+  const persisted = getCheckoutNotices();
+  const notices = cart.items.length > 0 ? cart.items : persisted.notices;
+  const email = cart.items.length > 0 ? cart.email : persisted.email;
+
   useClearCartOnSuccess(isOk);
-  useEmptyCartGuard(isRetryableOutcome, routes.COURTESY_PAGE);
+  useEmptyCartGuard(isRetryableOutcome, routes.COURTESY_PAGE, notices.length === 0);
 
   const { postCarts, retry } = useCheckoutRetry();
 
   const handleRetry = useCallback(() => {
-    if (cart.items.length === 0) return;
-    retry(cart.items, cart.email);
-  }, [cart.items, cart.email, retry]);
+    if (notices.length === 0) return;
+    retry(notices, email);
+  }, [notices, email, retry]);
 
   return (
     <Stack gap={2} alignItems="center">
