@@ -32,12 +32,10 @@ const SELECT = (props: computedPROPS & { multiple?: boolean }) => {
     }
   };
 
-  const orderedOptions = [...options].sort((a, b) => a.label.localeCompare(b.label));
-
   return (
     <FormControl fullWidth error={hasError} required={required}>
       <Autocomplete
-        options={orderedOptions}
+        options={options}
         onChange={handleChange}
         onBlur={onBlur}
         noOptionsText={t('errors.empty.search')}
