@@ -77,13 +77,13 @@ const Login = () => {
           </Typography>
         </Stack>
         <Stack gap={2.5} width={{ xs: '100%', sm: '40%', lg: '85%', xl: '60%' }}>
-          <Button variant="contrast" size="large" onClick={handleCTA1}>
+          <Button variant="contrast" size="large" onClick={handleCTA1} data-testid="loginPage-cta1">
             {t('app.login.noAuth.CTA1')}
           </Button>
-          <Button variant="contrast" size="large" onClick={handleCTA2}>
+          <Button variant="contrast" size="large" onClick={handleCTA2} data-testid="loginPage-cta2">
             {t('app.login.noAuth.CTA2')}
           </Button>
-          <Button variant="contrast" size="large" onClick={handleCTA3}>
+          <Button variant="contrast" size="large" onClick={handleCTA3} data-testid="loginPage-cta3">
             {t('app.login.noAuth.CTA3')}
           </Button>
         </Stack>

@@ -137,10 +137,18 @@ export const Actions = ({ installment }: ActionsProps) => {
 
   const PaidActions = () => (
     <Stack key={installment.installmentId} alignItems="center" direction="row" gap={2}>
-      <IconButton aria-label={t('actions.download')} onClick={onDownloadReceipt}>
+      <IconButton
+        aria-label={t('actions.download')}
+        onClick={onDownloadReceipt}
+        data-testid="download-receipt-button">
         <Download />
       </IconButton>
-      <Button fullWidth size="large" variant="contained" onClick={navigateToDetail}>
+      <Button
+        fullWidth
+        size="large"
+        variant="contained"
+        onClick={navigateToDetail}
+        data-testid="detail-button">
         {t('actions.detail')}
       </Button>
     </Stack>
@@ -153,6 +161,7 @@ export const Actions = ({ installment }: ActionsProps) => {
       aria-label={t('actions.download')}
       size="large"
       variant="contained"
+      data-testid="download-payment-notice-button"
       onClick={onDownloadPaymentNotice}>
       {t('app.debtPositionsSearch.actions.download')}
     </Button>
@@ -165,13 +174,24 @@ export const Actions = ({ installment }: ActionsProps) => {
       direction="row"
       gap={0.5}
       justifyContent="space-between">
-      <IconButton aria-label={t('actions.download')} onClick={onDownloadPaymentNotice}>
+      <IconButton
+        aria-label={t('actions.download')}
+        onClick={onDownloadPaymentNotice}
+        data-testid="download-payment-notice-button">
         <Download />
       </IconButton>
-      <IconButton aria-label={t('actions.addToCart')} onClick={addToCart}>
+      <IconButton
+        aria-label={t('actions.addToCart')}
+        onClick={addToCart}
+        data-testid="add-to-cart-button">
         <ShoppingCart />
       </IconButton>
-      <Button fullWidth size="large" variant="contained" onClick={goToPayment}>
+      <Button
+        fullWidth
+        size="large"
+        variant="contained"
+        onClick={goToPayment}
+        data-testid="pay-now-button">
         {t('actions.payNow')}
       </Button>
     </Stack>
