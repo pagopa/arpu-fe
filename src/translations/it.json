@@ -421,7 +421,10 @@
   "errors": {
     "resourceNotAvailable": "Risorsa non disponibile",
     "form": {
-      "required": "Questo campo non puoi essere vuoto."
+      "required": "Questo campo non puoi essere vuoto.",
+      "iuvOrNav": "Inserisci un Codice Avviso (18 cifre) o IUV (17 cifre) valido.",
+      "fiscalCode": "Inserisci un Codice Fiscale valido.",
+      "piva": "Inserisci un Codice Fiscale o una P.IVA valida."
     },
     "toast": {
       "403": "Non hai i permessi per eseguire questa azione.",
