@@ -314,6 +314,94 @@ describe('IuvSearch', () => {
       });
     });
 
+    it('does not show validation errors before clicking search', () => {
+      render(<IuvSearch {...defaultProps} />);
+
+      fireEvent.change(screen.getByLabelText('fields.iuv'), { target: { value: '123' } });
+      fireEvent.blur(screen.getByLabelText('fields.iuv'));
+
+      expect(screen.queryByText('errors.form.iuvOrNav')).not.toBeInTheDocument();
+      expect(screen.getByLabelText('fields.iuv')).not.toHaveAttribute('aria-invalid', 'true');
+    });
+
+    it('shows format error for invalid iuv/nav length', async () => {
+      render(<IuvSearch {...defaultProps} />);
+
+      fireEvent.change(screen.getByLabelText('fields.iuv'), { target: { value: '12345' } });
+      fireEvent.change(screen.getByLabelText('fields.fiscalcode'), {
+        target: { value: 'RSSMRA80A01H501U' }
+      });
+      fireEvent.click(screen.getByText('actions.search'));
+
+      await waitFor(() => {
+        expect(screen.getByText('errors.form.iuvOrNav')).toBeInTheDocument();
+      });
+    });
+
+    it('accepts a 17-digit IUV', async () => {
+      render(<IuvSearch {...defaultProps} />);
+
+      fireEvent.change(screen.getByLabelText('fields.iuv'), {
+        target: { value: '12345678901234567' }
+      });
+      fireEvent.change(screen.getByLabelText('fields.fiscalcode'), {
+        target: { value: 'RSSMRA80A01H501U' }
+      });
+      fireEvent.click(screen.getByText('actions.search'));
+
+      await waitFor(() => {
+        expect(screen.queryByText('errors.form.iuvOrNav')).not.toBeInTheDocument();
+      });
+    });
+
+    it('shows format error for invalid fiscal code', async () => {
+      render(<IuvSearch {...defaultProps} />);
+
+      fireEvent.change(screen.getByLabelText('fields.iuv'), {
+        target: { value: '123456789012345678' }
+      });
+      fireEvent.change(screen.getByLabelText('fields.fiscalcode'), {
+        target: { value: 'NOTACODE' }
+      });
+      fireEvent.click(screen.getByText('actions.search'));
+
+      await waitFor(() => {
+        expect(screen.getByText('errors.form.fiscalCode')).toBeInTheDocument();
+      });
+    });
+
+    it('accepts a CF on the company tab', async () => {
+      render(<IuvSearch {...defaultProps} />);
+      fireEvent.click(screen.getByText('common.company'));
+
+      fireEvent.change(screen.getByLabelText('fields.iuv'), {
+        target: { value: '123456789012345678' }
+      });
+      fireEvent.change(screen.getByLabelText('fields.piva'), {
+        target: { value: 'RSSMRA80A01H501U' }
+      });
+      fireEvent.click(screen.getByText('actions.search'));
+
+      await waitFor(() => {
+        expect(screen.queryByText('errors.form.piva')).not.toBeInTheDocument();
+      });
+    });
+
+    it('shows format error for invalid vat/cf on company tab', async () => {
+      render(<IuvSearch {...defaultProps} />);
+      fireEvent.click(screen.getByText('common.company'));
+
+      fireEvent.change(screen.getByLabelText('fields.iuv'), {
+        target: { value: '123456789012345678' }
+      });
+      fireEvent.change(screen.getByLabelText('fields.piva'), { target: { value: '123' } });
+      fireEvent.click(screen.getByText('actions.search'));
+
+      await waitFor(() => {
+        expect(screen.getByText('errors.form.piva')).toBeInTheDocument();
+      });
+    });
+
     it('shows validation error for iuv when empty', async () => {
       render(<IuvSearch {...defaultProps} />);
 

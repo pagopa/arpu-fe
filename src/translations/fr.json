@@ -418,7 +418,10 @@
   "errors": {
     "resourceNotAvailable": "Ressource non disponible",
     "form": {
-      "required": "Ce champ ne peut pas être vide."
+      "required": "Ce champ ne peut pas être vide.",
+      "iuvOrNav": "Saisissez un code d'avis (18 chiffres) ou un IUV (17 chiffres) valide.",
+      "fiscalCode": "Saisissez un code fiscal valide.",
+      "piva": "Saisissez un code fiscal ou un code TVA valide."
     },
     "toast": {
       "403": "Vous n'avez pas les autorisations nécessaires pour effectuer cette action.",

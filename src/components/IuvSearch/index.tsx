@@ -20,6 +20,7 @@ import { Results } from './components/Results';
 import notify from 'utils/notify';
 import storage from 'utils/storage';
 import URI from 'utils/URI';
+import { isValidIuvOrNav, isValidFiscalCode, isValidVatNumber } from 'utils/validators';
 import { ArrowBack } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
 
@@ -82,10 +83,22 @@ export const IuvSearch = ({
 
     if (!values.iuvOrNav || values.iuvOrNav.trim() === '') {
       errors.iuvOrNav = t('errors.form.required');
+    } else if (!isValidIuvOrNav(values.iuvOrNav)) {
+      errors.iuvOrNav = t('errors.form.iuvOrNav');
     }
 
-    if (!values.anonymous && (!values.fiscalCode || values.fiscalCode.trim() === '')) {
-      errors.fiscalCode = t('errors.form.required');
+    if (!values.anonymous) {
+      if (!values.fiscalCode || values.fiscalCode.trim() === '') {
+        errors.fiscalCode = t('errors.form.required');
+      } else if (isTab1 && !isValidFiscalCode(values.fiscalCode)) {
+        errors.fiscalCode = t('errors.form.fiscalCode');
+      } else if (
+        !isTab1 &&
+        !isValidVatNumber(values.fiscalCode) &&
+        !isValidFiscalCode(values.fiscalCode)
+      ) {
+        errors.fiscalCode = t('errors.form.piva');
+      }
     }
 
     return errors;
@@ -126,6 +139,8 @@ export const IuvSearch = ({
   const formik = useFormik({
     initialValues,
     validate,
+    validateOnChange: false,
+    validateOnBlur: false,
     onSubmit
   });
 
@@ -178,8 +193,8 @@ export const IuvSearch = ({
                   label={t('fields.iuv')}
                   name="iuvOrNav"
                   id="iuvOrNav"
-                  error={formik.touched.iuvOrNav && Boolean(formik.errors.iuvOrNav)}
-                  helperText={formik.touched.iuvOrNav && formik.errors.iuvOrNav}
+                  error={formik.submitCount > 0 && Boolean(formik.errors.iuvOrNav)}
+                  helperText={formik.submitCount > 0 && formik.errors.iuvOrNav}
                   value={formik.values.iuvOrNav}
                   onChange={formik.handleChange}
                   onBlur={formik.handleBlur}
@@ -191,8 +206,8 @@ export const IuvSearch = ({
                   name="fiscalCode"
                   id="fiscalCode"
                   disabled={formik.values.anonymous}
-                  error={formik.touched.fiscalCode && Boolean(formik.errors.fiscalCode)}
-                  helperText={formik.touched.fiscalCode && formik.errors.fiscalCode}
+                  error={formik.submitCount > 0 && Boolean(formik.errors.fiscalCode)}
+                  helperText={formik.submitCount > 0 && formik.errors.fiscalCode}
                   value={formik.values.anonymous ? '' : formik.values.fiscalCode}
                   onChange={formik.handleChange}
                   onBlur={formik.handleBlur}
