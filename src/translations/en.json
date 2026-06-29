@@ -418,7 +418,10 @@
   "errors": {
     "resourceNotAvailable": "Resource not available",
     "form": {
-      "required": "This field cannot be empty."
+      "required": "This field cannot be empty.",
+      "iuvOrNav": "Enter a valid Notice Code (18 digits) or IUV (17 digits).",
+      "fiscalCode": "Enter a valid Tax Code.",
+      "piva": "Enter a valid Fiscal Code or VAT Number."
     },
     "toast": {
       "403": "You do not have permissions to perform this action.",

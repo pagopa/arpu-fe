@@ -418,7 +418,10 @@
   "errors": {
     "resourceNotAvailable": "Ressource nicht verfügbar",
     "form": {
-      "required": "Dieses Feld darf nicht leer sein."
+      "required": "Dieses Feld darf nicht leer sein.",
+      "iuvOrNav": "Geben Sie einen gültigen Hinweis-Code (18 Ziffern) oder IUV (17 Ziffern) ein.",
+      "fiscalCode": "Geben Sie eine gültige Steuernummer ein.",
+      "piva": "Geben Sie eine gültige Steuernummer oder USt-IdNr. ein."
     },
     "toast": {
       "403": "Sie haben keine Berechtigung, diese Aktion durchzuführen.",
