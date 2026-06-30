@@ -178,7 +178,7 @@ describe('Layout', () => {
         render(<Layout anonymous />);
 
         const link = screen.getByRole('link', { name: 'Test Broker' });
-        expect(link).toHaveAttribute('href', ROUTES.DASHBOARD);
+        expect(link).toHaveAttribute('href', ROUTES.HOME);
       });
     });
   });
