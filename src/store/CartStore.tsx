@@ -17,6 +17,15 @@ export const { state: cartState } = usePersistentSignal<CartState>(SessionItems.
   initialValue: defaultCart
 });
 
+// Drawer visibility is transient UI state, but it lives inside the persisted
+// cart. On a fresh page load (hard navigation / reload) never restore it as
+// "open": otherwise leaving the cart route via the address bar would land on
+// the next page with the drawer still open. The cart route re-opens it through
+// its own mount effect.
+if (cartState.value.isOpen) {
+  cartState.value = { ...cartState.value, isOpen: false };
+}
+
 export function setCart(cart: CartState) {
   cartState.value = cart;
 }
