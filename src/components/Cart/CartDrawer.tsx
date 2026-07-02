@@ -8,7 +8,7 @@ import { Alert, Divider, useTheme, Link } from '@mui/material';
 import { toggleCartDrawer } from 'store/CartStore';
 import { ButtonNaked } from '@pagopa/mui-italia';
 import { Trans, useTranslation } from 'react-i18next';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { ROUTES } from 'routes/routes';
 import { cartDrawerStyles } from './CartDrawer.styles';
 import { useStore } from 'store/GlobalStore';
@@ -22,6 +22,11 @@ export const CartDrawer = () => {
   const theme = useTheme();
   const styles = cartDrawerStyles(theme);
   const navigate = useNavigate();
+  const { pathname } = useLocation();
+
+  // On the dedicated cart route the drawer is the whole page: it must not be
+  // dismissable (no close icon, no overlay click-to-close).
+  const isLocked = pathname === ROUTES.CART || pathname === ROUTES.public.CART;
 
   const carts = usePostCarts({
     onSuccess: (url) => {
@@ -56,12 +61,14 @@ export const CartDrawer = () => {
           {/* Header Section */}
           <Box>
             <Stack direction="row" sx={styles.header}>
-              <ButtonNaked
-                onClick={toggleCartDrawer}
-                aria-label={t('app.cart.header.close')}
-                sx={{ padding: 0 }}>
-                <CloseIcon />
-              </ButtonNaked>
+              {!isLocked && (
+                <ButtonNaked
+                  onClick={toggleCartDrawer}
+                  aria-label={t('app.cart.header.close')}
+                  sx={{ padding: 0 }}>
+                  <CloseIcon />
+                </ButtonNaked>
+              )}
             </Stack>
             <Stack sx={styles.cartSummary}>
               <Typography component="span" variant="h6">
@@ -141,7 +148,7 @@ export const CartDrawer = () => {
           sx={styles.overlay}
           aria-hidden="true"
           role="presentation"
-          onClick={toggleCartDrawer}
+          onClick={isLocked ? undefined : toggleCartDrawer}
         />
       )}
     </>
