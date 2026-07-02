@@ -29,6 +29,14 @@ export function toggleCartDrawer() {
   cartState.value = { ...cartState.value, isOpen: !cartState.value.isOpen };
 }
 
+export function openCartDrawer() {
+  cartState.value = { ...cartState.value, isOpen: true };
+}
+
+export function closeCartDrawer() {
+  cartState.value = { ...cartState.value, isOpen: false };
+}
+
 function setCartAmount(amount: number) {
   cartState.value = { ...cartState.value, amount: amount };
 }
