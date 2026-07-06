@@ -68,7 +68,7 @@ export function Layout(props: { anonymous?: boolean }) {
 
   const rootLink: RootLinkType = {
     label: appStore.value.brokerInfo?.brokerName || '',
-    href: appStore.value.brokerInfo?.config?.brokerLink || ROUTES.DASHBOARD,
+    href: appStore.value.brokerInfo?.config?.brokerLink || ROUTES.HOME,
     ariaLabel: appStore.value.brokerInfo?.brokerName || '',
     title: appStore.value.brokerInfo?.brokerName || ''
   };
@@ -161,7 +161,10 @@ export function Layout(props: { anonymous?: boolean }) {
 }
 
 const withGuard = (Component: () => React.JSX.Element) => (
-  <RouteGuard itemKeys={[StorageItems.TOKEN]} storage={window.localStorage}>
+  <RouteGuard
+    itemKeys={[StorageItems.TOKEN]}
+    storage={window.localStorage}
+    redirectTo={ROUTES.HOME}>
     <Component />
   </RouteGuard>
 );

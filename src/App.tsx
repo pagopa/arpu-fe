@@ -22,6 +22,7 @@ import AuthCallback from 'routes/AuthCallback';
 import { getTokenOneidentity } from 'utils/loaders';
 import { ApiClient } from 'components/ApiClient';
 import Spontanei from 'routes/Spontanei';
+import Cart from 'routes/Cart';
 import { ReceiptsList } from 'routes/Receipts/list';
 import { ReceiptDetail } from 'routes/Receipts/detail';
 import { DebtPositionsList } from 'routes/DebtPositions/list';
@@ -230,6 +231,15 @@ const router = createBrowserRouter([
             handle: {
               titleKey: 'pageTitles.courtesy'
             } as RouteHandleObject
+          },
+          {
+            path: ROUTES.public.CART,
+            element: <Cart />,
+            handle: {
+              titleKey: 'pageTitles.cart',
+              subHeader: false,
+              gutters: false
+            } as RouteHandleObject
           }
         ]
       },
@@ -374,6 +384,15 @@ const router = createBrowserRouter([
               titleKey: 'pageTitles.courtesy',
               backButton: false,
               subHeader: true,
+              sidebar: false,
+              gutters: false
+            } as RouteHandleObject
+          },
+          {
+            path: ROUTES.CART,
+            element: <Cart />,
+            handle: {
+              titleKey: 'pageTitles.cart',
               sidebar: false,
               gutters: false
             } as RouteHandleObject

@@ -3,7 +3,7 @@ import { describe, it, expect, Mock } from 'vitest';
 import { render, screen, fireEvent } from '@testing-library/react';
 import { CartDrawer } from './CartDrawer';
 import { toggleCartDrawer } from 'store/CartStore';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ROUTES } from 'routes/routes';
 import utils from 'utils';
@@ -24,7 +24,8 @@ vi.mock('store/GlobalStore', () => {
 });
 
 vi.mock('react-router-dom', () => ({
-  useNavigate: vi.fn()
+  useNavigate: vi.fn(),
+  useLocation: vi.fn()
 }));
 
 describe('CartDrawer', () => {
@@ -33,6 +34,8 @@ describe('CartDrawer', () => {
 
   beforeEach(() => {
     (useNavigate as Mock).mockReturnValue(mockNavigate);
+    // default: not on the locked cart route, so the drawer is dismissable
+    (useLocation as Mock).mockReturnValue({ pathname: '/somewhere' });
   });
 
   it('renders the cart drawer when empty', () => {
@@ -67,6 +70,28 @@ describe('CartDrawer', () => {
     fireEvent.click(closeButton);
 
     expect(toggleCartDrawer).toHaveBeenCalled();
+  });
+
+  it('hides the close button on the locked cart route', () => {
+    (useLocation as Mock).mockReturnValue({ pathname: ROUTES.CART });
+    mockUseStore.mockReturnValue({
+      state: {
+        cart: {
+          items: [],
+          isOpen: true
+        }
+      }
+    });
+
+    render(
+      <QueryClientProvider client={queryClient}>
+        <CartDrawer />
+      </QueryClientProvider>
+    );
+
+    // drawer still renders, but cannot be dismissed
+    expect(screen.getByLabelText('app.cart.header.title')).toBeInTheDocument();
+    expect(screen.queryByLabelText('app.cart.header.close')).not.toBeInTheDocument();
   });
 
   it('navigates to the payment notices page when the button is clicked', () => {

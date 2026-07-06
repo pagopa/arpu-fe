@@ -2,6 +2,8 @@ import { describe, it, expect, beforeEach } from 'vitest';
 import {
   cartState,
   toggleCartDrawer,
+  openCartDrawer,
+  closeCartDrawer,
   addItem,
   deleteItem,
   resetCart,
@@ -21,6 +23,23 @@ describe('cartStore', () => {
     expect(cartState.value.isOpen).toBeTruthy();
     toggleCartDrawer();
     expect(cartState.value.isOpen).toBeFalsy();
+  });
+
+  it('opens the cart drawer regardless of previous state', () => {
+    openCartDrawer();
+    expect(cartState.value.isOpen).toBe(true);
+    // idempotent: stays open
+    openCartDrawer();
+    expect(cartState.value.isOpen).toBe(true);
+  });
+
+  it('closes the cart drawer regardless of previous state', () => {
+    openCartDrawer();
+    closeCartDrawer();
+    expect(cartState.value.isOpen).toBe(false);
+    // idempotent: stays closed
+    closeCartDrawer();
+    expect(cartState.value.isOpen).toBe(false);
   });
 
   it('adds item to the cart correctly', () => {
@@ -53,29 +72,6 @@ describe('cartStore', () => {
     expect(getCartItems()).toStrictEqual([item, anotherItem]);
     expect(getCartItems().length).toBe(2);
     expect(getTotalAmout()).toBe(item.amount + anotherItem.amount);
-  });
-
-  it('does not add item to the cart if already present', () => {
-    const item: CartItem = {
-      amount: 100,
-      paFullName: 'ACI',
-      paTaxCode: '77777777',
-      nav: '00001',
-      iuv: '00001',
-      description: 'A nice description',
-      allCCP: false
-    };
-    addItem(item);
-
-    expect(getCartItems()).toStrictEqual([item]);
-    expect(getCartItems().length).toBe(1);
-    expect(getTotalAmout()).toBe(item.amount);
-
-    addItem(item);
-
-    expect(getCartItems()).toStrictEqual([item]);
-    expect(getCartItems().length).toBe(1);
-    expect(getTotalAmout()).toBe(item.amount);
   });
 
   it('does not add item to the cart if already present', () => {

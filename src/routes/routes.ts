@@ -24,7 +24,9 @@ export const ROUTES = {
   PRIVACY_POLICY: `${rootPrefix}/informativa-privacy`,
   PAYMENTS_ON_THE_FLY: `${rootPrefix}/spontanei`,
   PAYMENTS_ON_THE_FLY_DOWNLOAD: `${rootPrefix}/spontanei/download/:orgId/:nav`,
+  CART: `${rootPrefix}/carrello`,
   public: {
+    CART: `${rootPrefix}/public/carrello`,
     PAYMENTS_ON_THE_FLY: `${rootPrefix}/public/spontanei`,
     PAYMENTS_ON_THE_FLY_DOWNLOAD: `${rootPrefix}/public/spontanei/download/:orgId/:nav`,
     COURTESY_PAGE: `${rootPrefix}/public/esito/:outcome`,
