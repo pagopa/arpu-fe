@@ -3,6 +3,7 @@ import utils from 'utils';
 import { ZodSchema } from 'zod';
 import * as zodSchema from '../../generated/zod-schema';
 import { DebtPositionRequestDTO, InstallmentStatus } from '../../generated/data-contracts';
+import { CartItem } from 'models/Cart';
 import { FilteredRequest } from 'models/Filters';
 import { STATE } from 'store/types';
 import { getResourceUrl, ResourceType } from './resources';
@@ -423,6 +424,46 @@ const usePublicInstallmentsByIuvOrNav = (brokerId: number | null) =>
     }
   });
 
+/**
+ * Given the notices sent to checkout, verify which ones are already PAID.
+ *
+ * Used by the cart flow: checkout answers 422 ("Invalid payment notice data")
+ * without telling WHICH notice is unpayable, so on 422 we probe every notice
+ * (max 5) via the public installments endpoint filtered by PAID and return the
+ * subset that turns out already paid, so the caller can remove them from the
+ * cart and show a talking error. Probing runs only after the 422 to avoid
+ * useless overhead on the happy path.
+ *
+ * Failures on a single probe are swallowed (that notice is treated as "not
+ * proven paid"): a network hiccup must not turn a payable notice into a removed
+ * one.
+ */
+const useVerifyPaidNotices = (brokerId: number | null) =>
+  useMutation({
+    mutationKey: ['verifyPaidNotices', brokerId],
+    mutationFn: async (notices: CartItem[]): Promise<CartItem[]> => {
+      if (brokerId === null) throw new Error('brokerId required');
+      const results = await Promise.all(
+        notices.map(async (notice) => {
+          try {
+            const { data } = await utils.apiClient.public.getPublicInstallmentsByIuvOrNav(
+              brokerId,
+              {
+                iuvOrNav: notice.nav,
+                orgFiscalCode: notice.paTaxCode,
+                statuses: [InstallmentStatus.PAID]
+              }
+            );
+            return data.length > 0 ? notice : null;
+          } catch {
+            return null;
+          }
+        })
+      );
+      return results.filter((notice): notice is CartItem => notice !== null);
+    }
+  });
+
 const getDebtPositionDetail = (
   brokerId: number | null,
   debtPositionId: number,
@@ -572,6 +613,7 @@ export default {
     getPublicOrganizationsWithSpontaneous,
     getPublicPaymentNotice,
     usePublicInstallmentsByIuvOrNav,
+    useVerifyPaidNotices,
     usePublicDownloadReceipt,
     usePublicReceiptDetail,
     getPublicMostUsedSpontaneousDebtPositionTypeOrgsForCurrentYear,

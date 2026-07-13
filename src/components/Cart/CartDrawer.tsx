@@ -5,15 +5,16 @@ import Typography from '@mui/material/Typography';
 import Button from '@mui/material/Button';
 import CloseIcon from '@mui/icons-material/Close';
 import { Alert, Divider, useTheme, Link } from '@mui/material';
-import { toggleCartDrawer } from 'store/CartStore';
+import { deleteItem, toggleCartDrawer } from 'store/CartStore';
 import { ButtonNaked } from '@pagopa/mui-italia';
 import { Trans, useTranslation } from 'react-i18next';
-import { useLocation, useNavigate } from 'react-router-dom';
-import { ROUTES } from 'routes/routes';
+import { generatePath, useLocation, useNavigate } from 'react-router-dom';
+import { OUTCOMES, ROUTES } from 'routes/routes';
 import { cartDrawerStyles } from './CartDrawer.styles';
 import { useStore } from 'store/GlobalStore';
 import { toEuroOrMissingValue } from 'utils/converters';
 import { usePostCarts } from 'hooks/usePostCarts';
+import loaders from 'utils/loaders';
 import CartItem from './CartItem';
 import utils from 'utils';
 
@@ -28,11 +29,35 @@ export const CartDrawer = () => {
   // dismissable (no close icon, no overlay click-to-close).
   const isLocked = pathname === ROUTES.CART || pathname === ROUTES.public.CART;
 
+  const brokerId = utils.storage.app.getBrokerId();
+  const verifyPaidNotices = loaders.public.useVerifyPaidNotices(brokerId);
+
+  const goToCourtesy = (outcome: string) =>
+    navigate(generatePath(ROUTES.COURTESY_PAGE, { outcome }));
+
   const carts = usePostCarts({
     onSuccess: (url) => {
       window.location.replace(url);
     },
-    onError: (error: string) => navigate(ROUTES.COURTESY_PAGE.replace(':error', error))
+    onError: (error: string) => goToCourtesy(error),
+    // Checkout returns 422 without telling which notice is unpayable. Probe each
+    // notice for PAID status: if any turns out already paid, remove it from the
+    // cart and show the talking "removed from cart" page. If none is paid (every
+    // notice is payable, so the 422 has another cause), fall back to the generic
+    // error page — same as when the probe itself fails.
+    onUnprocessable: async (notices) => {
+      try {
+        const paidNotices = await verifyPaidNotices.mutateAsync(notices);
+        if (paidNotices.length > 0) {
+          paidNotices.forEach((notice) => deleteItem(notice.iuv));
+          goToCourtesy(OUTCOMES[428]);
+        } else {
+          goToCourtesy(OUTCOMES[400]);
+        }
+      } catch {
+        goToCourtesy(OUTCOMES[400]);
+      }
+    }
   });
 
   const {

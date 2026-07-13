@@ -23,7 +23,8 @@ vi.mock('store/GlobalStore', () => {
   };
 });
 
-vi.mock('react-router-dom', () => ({
+vi.mock('react-router-dom', async (importActual) => ({
+  ...(await importActual<typeof import('react-router-dom')>()),
   useNavigate: vi.fn(),
   useLocation: vi.fn()
 }));
