@@ -589,7 +589,7 @@
           "requiredField": "* Campo obbligatorio",
           "debtor": {
             "title": "Dati del debitore",
-            "useYourData": "Usa i tuoi dati",
+            "useYourData": "Precompila con i tuoi dati",
             "F": {
               "title": "Persona fisica",
               "name": "Nome e Cognome debitore",

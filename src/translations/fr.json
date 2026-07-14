@@ -568,7 +568,7 @@
           "step": "Saisir les informations",
           "requiredField": "* Champ obligatoire",
           "debtor": {
-            "useYourData": "Utilisez vos données",
+            "useYourData": "Pré-remplir avec vos données",
             "F": {
               "title": "Personne physique"
             },

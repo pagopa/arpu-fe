@@ -568,7 +568,7 @@
           "step": "Daten eingeben",
           "requiredField": "* Obligatorisches Feld",
           "debtor": {
-            "useYourData": "Nutzen Sie Ihre Daten",
+            "useYourData": "Mit Ihren Daten vorausfüllen",
             "F": {
               "title": "Natürliche Person"
             },

@@ -568,7 +568,7 @@
           "step": "Enter data",
           "requiredField": "* Required field",
           "debtor": {
-            "useYourData": "Use your data",
+            "useYourData": "Pre-fill with your data",
             "F": {
               "title": "Person"
             },
