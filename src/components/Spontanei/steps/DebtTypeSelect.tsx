@@ -121,8 +121,6 @@ const DebtTypeSelect = () => {
 
   const errorMessage = formik.touched.debtType ? formik.errors.debtType : '';
 
-  console.log('mostUsedDebtTypeOptions', mostUsedDebtTypeOptions);
-  console.log('debtTypeOptions', debtTypeOptions);
   return (
     <>
       <StepWrapper isPending={isDebtPositionTypeOrgsWithSpontaneousPending}>
