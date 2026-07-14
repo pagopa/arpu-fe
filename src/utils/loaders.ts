@@ -464,8 +464,7 @@ const getDebtorReceipts = (
 
 const getMostUsedSpontaneousDebtPositionTypeOrgsForCurrentYear = (
   brokerId: number | null,
-  organizationId: number,
-  shouldShowMostUsedDebtTypes?: boolean
+  organizationId: number
 ) =>
   useQuery({
     queryKey: [
@@ -481,7 +480,6 @@ const getMostUsedSpontaneousDebtPositionTypeOrgsForCurrentYear = (
         );
       return data;
     },
-    enabled: shouldShowMostUsedDebtTypes && brokerId !== null && organizationId != null,
     staleTime: Infinity
   });
 
