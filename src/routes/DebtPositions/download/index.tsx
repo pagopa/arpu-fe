@@ -10,6 +10,7 @@ import { useAppRoutes } from 'hooks/useAppRoutes';
 import { useRecaptcha } from 'components/RecaptchaProvider/RecaptchaProvider';
 import queryString from 'query-string';
 import appStore from 'store/appStore';
+import i18next from 'i18next';
 
 export const DebtPositionDownload = () => {
   const { t } = useTranslation();
@@ -82,16 +83,18 @@ export const DebtPositionDownload = () => {
           />
         </Typography>
         <Typography variant="body1" component="p">
-          <Trans
-            i18nKey="app.debtPositions.download.info"
-            components={{
-              CustomLink: downloadInfoLink ? (
-                <MuiLink href={downloadInfoLink} target="_blank" rel="noopener" />
-              ) : (
-                <MuiLink onClick={onDownload} sx={{ cursor: 'pointer' }} />
-              )
-            }}
-          />
+          {i18next.exists(`app.debtPositions.download.info`) ? (
+            <Trans
+              i18nKey="app.debtPositions.download.info"
+              components={{
+                CustomLink: downloadInfoLink ? (
+                  <MuiLink href={downloadInfoLink} target="_blank" rel="noopener" />
+                ) : (
+                  <MuiLink onClick={onDownload} sx={{ cursor: 'pointer' }} />
+                )
+              }}
+            />
+          ) : null}
         </Typography>
       </Stack>
       {homeLink ? (
