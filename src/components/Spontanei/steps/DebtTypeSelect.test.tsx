@@ -186,7 +186,7 @@ describe('DebtTypeSelect Component', () => {
     );
     expect(
       utils.loaders.public.getPublicMostUsedSpontaneousDebtPositionTypeOrgsForCurrentYear
-    ).toHaveBeenCalledWith('broker123', 100, true);
+    ).toHaveBeenCalledWith('broker123', 100);
   });
 
   it('shows error message when clicking continue without selection', async () => {
@@ -254,6 +254,9 @@ describe('DebtTypeSelect Component', () => {
       (utils.loaders.getDebtPositionTypeOrgsWithSpontaneous as Mock).mockReturnValue({
         data: i18nDebtTypes
       });
+      (
+        utils.loaders.getMostUsedSpontaneousDebtPositionTypeOrgsForCurrentYear as Mock
+      ).mockReturnValue({ data: i18nDebtTypes });
 
       renderDebtTypeSelect();
 
@@ -274,6 +277,9 @@ describe('DebtTypeSelect Component', () => {
       (utils.loaders.getDebtPositionTypeOrgsWithSpontaneous as Mock).mockReturnValue({
         data: i18nDebtTypes
       });
+      (
+        utils.loaders.getMostUsedSpontaneousDebtPositionTypeOrgsForCurrentYear as Mock
+      ).mockReturnValue({ data: i18nDebtTypes });
 
       renderDebtTypeSelect();
 
@@ -292,6 +298,9 @@ describe('DebtTypeSelect Component', () => {
       (utils.loaders.getDebtPositionTypeOrgsWithSpontaneous as Mock).mockReturnValue({
         data: i18nDebtTypes
       });
+      (
+        utils.loaders.getMostUsedSpontaneousDebtPositionTypeOrgsForCurrentYear as Mock
+      ).mockReturnValue({ data: i18nDebtTypes });
 
       renderDebtTypeSelect();
 

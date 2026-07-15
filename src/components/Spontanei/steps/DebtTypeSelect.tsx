@@ -43,14 +43,11 @@ const DebtTypeSelect = () => {
   const organizationId = org.value?.organizationId || 0;
 
   const {
-    data: DebtPositionTypeOrgsWithSpontaneous,
+    data: debtPositionTypeOrgsWithSpontaneous,
     isPending: isDebtPositionTypeOrgsWithSpontaneousPending
   } = isAnonymous
     ? utils.loaders.public.getPublicDebtPositionTypeOrgsWithSpontaneous(brokerId, organizationId)
     : utils.loaders.getDebtPositionTypeOrgsWithSpontaneous(brokerId, organizationId);
-
-  const debtTypeOptions: DebtPositionTypeOrgsWithSpontaneousDTO[] =
-    DebtPositionTypeOrgsWithSpontaneous || [];
 
   const handleDebtTypeChange = (
     _event: React.SyntheticEvent<Element, Event> | null,
@@ -79,21 +76,23 @@ const DebtTypeSelect = () => {
     }
   };
 
-  const debtTypeOptionsLength = DebtPositionTypeOrgsWithSpontaneous?.length || 0;
+  const debtTypeOptionsLength = debtPositionTypeOrgsWithSpontaneous?.length || 0;
 
-  const shouldShowMostUsedDebtTypes = debtTypeOptionsLength > LIMIT_DEBT_TYPE;
-
-  const mostUsedDebtTypesQuery = isAnonymous
+  const { data: mostUsedDebtPositionTypeOrgsWithSpontaneous } = isAnonymous
     ? utils.loaders.public.getPublicMostUsedSpontaneousDebtPositionTypeOrgsForCurrentYear(
         brokerId,
-        organizationId,
-        shouldShowMostUsedDebtTypes
+        organizationId
       )
     : utils.loaders.getMostUsedSpontaneousDebtPositionTypeOrgsForCurrentYear(
         brokerId,
-        organizationId,
-        shouldShowMostUsedDebtTypes
+        organizationId
       );
+
+  const debtTypeOptions: DebtPositionTypeOrgsWithSpontaneousDTO[] =
+    debtPositionTypeOrgsWithSpontaneous || [];
+
+  const mostUsedDebtTypeOptions: DebtPositionTypeOrgsWithSpontaneousDTO[] =
+    mostUsedDebtPositionTypeOrgsWithSpontaneous || [];
 
   const onChange = async (debtType: DebtPositionTypeOrgsWithSpontaneousDTO) => {
     await formik.validateForm();
@@ -134,14 +133,79 @@ const DebtTypeSelect = () => {
               {t('spontanei.form.steps.step2.description')}
             </Typography>
           </Stack>
-          {!shouldShowMostUsedDebtTypes ? (
+          {debtTypeOptionsLength > LIMIT_DEBT_TYPE ? (
+            <>
+              <Autocomplete
+                data-testid="spontanei-step2-search-input"
+                onChange={handleDebtTypeChange}
+                freeSolo
+                options={debtTypeOptions}
+                value={debtType.value}
+                getOptionKey={(option) =>
+                  (option as DebtPositionTypeOrgsWithSpontaneousDTO).debtPositionTypeOrgId
+                }
+                getOptionLabel={(option) => {
+                  const item = option as DebtPositionTypeOrgsWithSpontaneousDTO;
+                  return getLocalizedDescription(
+                    item.descriptionI18n,
+                    i18n.language,
+                    item.description
+                  );
+                }}
+                renderInput={(params) => (
+                  <TextField
+                    {...params}
+                    label={t('spontanei.form.steps.step2.search')}
+                    error={!!errorMessage}
+                  />
+                )}
+              />
+              {mostUsedDebtTypeOptions.length > 0 && (
+                <>
+                  <Typography variant="subtitle1" data-testid="spontanei-step2-mostUsedDebtTypes">
+                    {t('spontanei.form.steps.step2.mostUsedDebtTypes')}
+                  </Typography>
+                  <FormControl>
+                    <RadioGroup
+                      aria-label="debt-type"
+                      name="debtTypeCode"
+                      data-testid="spontanei-step2-radioGroup"
+                      value={debtType.value?.debtPositionTypeOrgId}>
+                      {mostUsedDebtTypeOptions.map((MostUsedDebtType, index) => (
+                        <Box key={MostUsedDebtType.debtPositionTypeOrgId}>
+                          <FormControlLabel
+                            variant="radio"
+                            value={MostUsedDebtType.debtPositionTypeOrgId}
+                            control={
+                              <Radio
+                                inputRef={index === 0 ? firstRadioRef : null}
+                                onChange={() => onChange(MostUsedDebtType)}
+                              />
+                            }
+                            label={getLocalizedDescription(
+                              MostUsedDebtType.descriptionI18n,
+                              i18n.language,
+                              MostUsedDebtType.description
+                            )}
+                          />
+                          {index !== mostUsedDebtTypeOptions.length - 1 && (
+                            <Divider aria-hidden="true" />
+                          )}
+                        </Box>
+                      ))}
+                    </RadioGroup>
+                  </FormControl>
+                </>
+              )}
+            </>
+          ) : (
             <FormControl>
               <RadioGroup
                 aria-labelledby="spontanei-step2-radioGroup"
                 name="controlled-radio-buttons-group"
                 value={debtType.value?.debtPositionTypeOrgId}
                 onChange={handleDebtTypeChange}>
-                {debtTypeOptions.map((debtTypeOption, index) => (
+                {mostUsedDebtTypeOptions.map((debtTypeOption, index) => (
                   <Box key={debtTypeOption.debtPositionTypeOrgId}>
                     <FormControlLabel
                       variant="radio"
@@ -153,77 +217,12 @@ const DebtTypeSelect = () => {
                         debtTypeOption.description
                       )}
                     />
-                    {index !== debtTypeOptions.length - 1 && <Divider aria-hidden="true" />}
+                    {index !== mostUsedDebtTypeOptions.length - 1 && <Divider aria-hidden="true" />}
                   </Box>
                 ))}
               </RadioGroup>
             </FormControl>
-          ) : (
-            <Autocomplete
-              data-testid="spontanei-step2-search-input"
-              onChange={handleDebtTypeChange}
-              freeSolo
-              options={debtTypeOptions}
-              value={debtType.value}
-              getOptionKey={(option) =>
-                (option as DebtPositionTypeOrgsWithSpontaneousDTO).debtPositionTypeOrgId
-              }
-              getOptionLabel={(option) => {
-                const item = option as DebtPositionTypeOrgsWithSpontaneousDTO;
-                return getLocalizedDescription(
-                  item.descriptionI18n,
-                  i18n.language,
-                  item.description
-                );
-              }}
-              renderInput={(params) => (
-                <TextField
-                  {...params}
-                  label={t('spontanei.form.steps.step2.search')}
-                  error={!!errorMessage}
-                />
-              )}
-            />
           )}
-          {shouldShowMostUsedDebtTypes &&
-            mostUsedDebtTypesQuery.data &&
-            mostUsedDebtTypesQuery.data.length > 0 && (
-              <>
-                <Typography variant="subtitle1" data-testid="spontanei-step2-mostUsedDebtTypes">
-                  {t('spontanei.form.steps.step2.mostUsedDebtTypes')}
-                </Typography>
-                <FormControl>
-                  <RadioGroup
-                    aria-label="debt-type"
-                    name="debtTypeCode"
-                    data-testid="spontanei-step2-radioGroup"
-                    value={debtType.value?.debtPositionTypeOrgId}>
-                    {mostUsedDebtTypesQuery.data.map((MostUsedDebtType, index) => (
-                      <Box key={MostUsedDebtType.debtPositionTypeOrgId}>
-                        <FormControlLabel
-                          variant="radio"
-                          value={MostUsedDebtType.debtPositionTypeOrgId}
-                          control={
-                            <Radio
-                              inputRef={index === 0 ? firstRadioRef : null}
-                              onChange={() => onChange(MostUsedDebtType)}
-                            />
-                          }
-                          label={getLocalizedDescription(
-                            MostUsedDebtType.descriptionI18n,
-                            i18n.language,
-                            MostUsedDebtType.description
-                          )}
-                        />
-                        {index !== mostUsedDebtTypesQuery.data!.length - 1 && (
-                          <Divider aria-hidden="true" />
-                        )}
-                      </Box>
-                    ))}
-                  </RadioGroup>
-                </FormControl>
-              </>
-            )}
           {debtTypeMeta.touched && debtTypeMeta.error && (
             <Typography color="error">{t(debtTypeMeta.error)}</Typography>
           )}
