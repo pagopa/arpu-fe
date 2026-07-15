@@ -57,31 +57,31 @@ import { useFavicon } from 'hooks/useFavicon';
  */
 const makeCourtesyPageLoader =
   (isPublic: boolean) =>
-    ({ params, request }: LoaderFunctionArgs) => {
-      const url = new URL(request.url);
-      const outcome = params.outcome as keyof typeof OUTCOMES;
-      const code = OUTCOMES[outcome];
+  ({ params, request }: LoaderFunctionArgs) => {
+    const url = new URL(request.url);
+    const outcome = params.outcome as keyof typeof OUTCOMES;
+    const code = OUTCOMES[outcome];
 
-      // Anonymous PLURI (2+ notices) carries no query params — it relies on the
-      // cart in sessionStorage — so don't require nav/org_fiscal_code there.
-      const isPluriCart = cartState.value.items.length > 1;
-      const needsParams =
-        isPublic &&
-        !isPluriCart &&
-        (code === OUTCOMES['pagamento-non-riuscito'] ||
-          code === OUTCOMES['pagamento-annullato'] ||
-          code === OUTCOMES['pagamento-avviso-completato']);
+    // Anonymous PLURI (2+ notices) carries no query params — it relies on the
+    // cart in sessionStorage — so don't require nav/org_fiscal_code there.
+    const isPluriCart = cartState.value.items.length > 1;
+    const needsParams =
+      isPublic &&
+      !isPluriCart &&
+      (code === OUTCOMES['pagamento-non-riuscito'] ||
+        code === OUTCOMES['pagamento-annullato'] ||
+        code === OUTCOMES['pagamento-avviso-completato']);
 
-      if (needsParams) {
-        const nav = url.searchParams.get('nav');
-        const orgFiscalCode = url.searchParams.get('org_fiscal_code');
-        if (!nav || !orgFiscalCode) {
-          throw new Error('Missing required query params');
-        }
+    if (needsParams) {
+      const nav = url.searchParams.get('nav');
+      const orgFiscalCode = url.searchParams.get('org_fiscal_code');
+      if (!nav || !orgFiscalCode) {
+        throw new Error('Missing required query params');
       }
+    }
 
-      return params.outcome ?? null;
-    };
+    return params.outcome ?? null;
+  };
 
 const courtesyPagePublicLoader = makeCourtesyPageLoader(true);
 const courtesyPageAuthLoader = makeCourtesyPageLoader(false);
