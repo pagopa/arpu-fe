@@ -7,7 +7,7 @@ import CloseIcon from '@mui/icons-material/Close';
 import { useTheme } from '@mui/material';
 import { ButtonNaked } from '@pagopa/mui-italia';
 import { useTranslation } from 'react-i18next';
-import { useNavigate } from 'react-router-dom';
+import { generatePath, useNavigate } from 'react-router-dom';
 import { ROUTES } from 'routes/routes';
 import { installmentsDrawerStyles } from './InstallmentsDrawer.styles';
 import { useStore } from 'store/GlobalStore';
@@ -36,7 +36,7 @@ const InstallmentsDrawer = () => {
     onSuccess: (url) => {
       window.location.replace(url);
     },
-    onError: (error: string) => navigate(ROUTES.COURTESY_PAGE.replace(':error', error))
+    onError: (error: string) => navigate(generatePath(ROUTES.COURTESY_PAGE, { outcome: error }))
   });
 
   const email = useUserEmail();

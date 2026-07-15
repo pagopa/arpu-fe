@@ -1,11 +1,13 @@
 import React from 'react';
-import { Button, Typography, Container, Box } from '@mui/material';
+import { Button, Typography, Container, Box, Stack } from '@mui/material';
 import { useParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { OUTCOMES } from '../../routes/routes';
 import i18next from 'i18next';
 import { CourtesyPageActions } from './components/CourtesyPageActions';
 import { useAppRoutes } from 'hooks/useAppRoutes';
+import { useStore } from 'store/GlobalStore';
+import { useCheckoutRetry, useEmptyCartGuard } from './hooks/useCourtesyPageActions';
 import utils from 'utils';
 
 interface ErrorIconComponentProps {
@@ -18,6 +20,7 @@ export const ErrorIconComponent: React.FC<ErrorIconComponentProps> = ({ code }) 
       return <img src="/cittadini/pictograms/paymentcompleted.svg" title="OK" aria-hidden="true" />;
     case OUTCOMES['accesso-non-autorizzato']:
     case OUTCOMES['avviso-non-pagabile']:
+    case OUTCOMES['avvisi-rimossi-dal-carrello']:
       return <img src="/cittadini/pictograms/genericerror.svg" title="Error" aria-hidden="true" />;
     case OUTCOMES['pagamento-non-riuscito']:
     case OUTCOMES['pagamento-annullato']:
@@ -52,6 +55,51 @@ export const ErrorIconComponent: React.FC<ErrorIconComponentProps> = ({ code }) 
   }
 };
 
+/**
+ * Actions for the "avvisi-rimossi-dal-carrello" (428) outcome: after the cart
+ * checkout returned 422 and the already-paid notices were dropped, let the user
+ * retry the payment with what remains in the cart. If nothing remains (every
+ * notice was paid), there's nothing to retry: fall back to the generic outcome.
+ */
+export const CartRetryActions: React.FC<{ code: OUTCOMES }> = ({ code }) => {
+  const { t } = useTranslation();
+  const { routes } = useAppRoutes();
+  const {
+    state: { cart }
+  } = useStore();
+
+  useEmptyCartGuard(true, routes.COURTESY_PAGE, cart.items.length === 0);
+
+  const { postCarts, retry } = useCheckoutRetry();
+
+  const handleRetry = () => {
+    if (cart.items.length === 0) return;
+    retry(cart.items, cart.email);
+  };
+
+  return (
+    <Stack gap={2} alignItems="center">
+      <Button
+        variant="contained"
+        size="large"
+        color="primary"
+        onClick={handleRetry}
+        disabled={postCarts.isPending || cart.items.length === 0}
+        data-testid="courtesyPage.cta">
+        {t(`courtesyPage.${code}.cta`)}
+      </Button>
+
+      <Button
+        component="a"
+        href={routes.DASHBOARD}
+        variant="text"
+        data-testid="courtesyPage.homeCta">
+        {t(`courtesyPage.${code}.homeCta`)}
+      </Button>
+    </Stack>
+  );
+};
+
 export const CourtesyPage = () => {
   const { t } = useTranslation();
   const { routes } = useAppRoutes();
@@ -69,6 +117,9 @@ export const CourtesyPage = () => {
     code === OUTCOMES['pagamento-non-riuscito'] ||
     code === OUTCOMES['pagamento-annullato'] ||
     code === OUTCOMES['pagamento-avviso-completato'];
+
+  // Paid notices removed from the cart: offer a retry of the remaining cart.
+  const isRemovedFromCart = code === OUTCOMES['avvisi-rimossi-dal-carrello'];
 
   // The OK outcome (420) has distinct title/body for the authenticated flow:
   // it lives under `420.auth.*`. The anonymous OK flow keeps the flat keys
@@ -114,6 +165,8 @@ export const CourtesyPage = () => {
 
         {hasCustomActions ? (
           <CourtesyPageActions code={code} />
+        ) : isRemovedFromCart ? (
+          <CartRetryActions code={code} />
         ) : (
           i18next.exists(`courtesyPage.${code}.cta`) && (
             <Button

@@ -8,6 +8,7 @@ import { render } from '__tests__/renderers';
 import utils from 'utils';
 import { Mock } from 'vitest';
 import { CourtesyPageActions } from './components/CourtesyPageActions';
+import { CartRetryActions } from './index';
 
 const mockNavigate = vi.fn();
 
@@ -144,6 +145,7 @@ vi.mock('store/CartStore', async (importOriginal) => {
 const CODE_420 = OUTCOMES['pagamento-avviso-completato'];
 const CODE_424 = OUTCOMES['pagamento-non-riuscito'];
 const CODE_425 = OUTCOMES['pagamento-annullato'];
+const CODE_428 = OUTCOMES['avvisi-rimossi-dal-carrello'];
 
 i18nTestSetup({
   courtesyPage: {
@@ -161,6 +163,10 @@ i18nTestSetup({
     [CODE_425]: {
       cta: 'Back to home',
       downloadCta: 'Download notice',
+      homeCta: 'Back to home'
+    },
+    [CODE_428]: {
+      cta: 'Retry payment',
       homeCta: 'Back to home'
     },
     default: {
@@ -666,5 +672,39 @@ describe('CourtesyPageActions – pagamento-avviso-completato (420), authenticat
     });
 
     expect(mockNavigate).not.toHaveBeenCalled();
+  });
+});
+
+describe('CartRetryActions – avvisi-rimossi-dal-carrello (428)', () => {
+  beforeEach(() => setAnonymous(false));
+
+  it('renders a retry CTA and a home link', () => {
+    setCartItems([CART_ITEM_1, CART_ITEM_2], 'user@test.it');
+    render(<CartRetryActions code={CODE_428} />);
+
+    expect(screen.getByTestId('courtesyPage.cta')).toHaveTextContent('Retry payment');
+    expect(screen.getByTestId('courtesyPage.homeCta')).toHaveTextContent('Back to home');
+  });
+
+  it('retries the payment with the remaining cart items on click', () => {
+    setCartItems([CART_ITEM_1, CART_ITEM_2], 'user@test.it');
+    render(<CartRetryActions code={CODE_428} />);
+
+    fireEvent.click(screen.getByTestId('courtesyPage.cta'));
+
+    expect(mockPostCartsMutate).toHaveBeenCalledWith({
+      notices: [CART_ITEM_1, CART_ITEM_2],
+      email: 'user@test.it'
+    });
+  });
+
+  it('redirects to the generic outcome when nothing remains to retry', () => {
+    setCartItems([]);
+    render(<CartRetryActions code={CODE_428} />);
+
+    expect(mockNavigate).toHaveBeenCalledWith(
+      ROUTES.COURTESY_PAGE.replace(':outcome', 'sconosciuto')
+    );
+    expect(screen.getByTestId('courtesyPage.cta')).toBeDisabled();
   });
 });

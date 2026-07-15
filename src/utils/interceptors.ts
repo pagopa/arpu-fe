@@ -49,6 +49,9 @@ export const setupInterceptors = (client: Client) => {
         utils.notify.emit(t('errors.toast.404'));
       } else if ((error.response?.status ?? 0) >= 500) {
         utils.notify.emit(t('errors.toast.500'));
+      } else if (error.response?.status === 422) {
+        // 422 is handled by the calling mutation (e.g. checkout cart) which drives a
+        // talking courtesy page — do not emit the generic toast on top of it.
       } else {
         utils.notify.emit(t('errors.toast.default'));
       }

@@ -815,6 +815,58 @@ describe('usePublicInstallmentsByIuvOrNav', () => {
   });
 });
 
+describe('useVerifyPaidNotices', () => {
+  const notices = [
+    { paTaxCode: 'ORG1', nav: 'NAV1', iuv: 'IUV1' },
+    { paTaxCode: 'ORG2', nav: 'NAV2', iuv: 'IUV2' }
+  ] as any;
+
+  afterEach(() => {
+    vi.clearAllMocks();
+  });
+
+  it('returns only the notices that come back PAID and probes each with PAID filter', async () => {
+    vi.spyOn(utils.apiClient.public, 'getPublicInstallmentsByIuvOrNav').mockImplementation(
+      (_brokerId: number, query: any) =>
+        Promise.resolve({
+          data: query.iuvOrNav === 'NAV1' ? [{ status: 'PAID' }] : []
+        } as any)
+    );
+
+    const { result } = renderHook(() => loaders.public.useVerifyPaidNotices(999));
+
+    const paid = await result.current.mutateAsync(notices);
+
+    expect(paid).toEqual([notices[0]]);
+    expect(utils.apiClient.public.getPublicInstallmentsByIuvOrNav).toHaveBeenCalledWith(999, {
+      iuvOrNav: 'NAV1',
+      orgFiscalCode: 'ORG1',
+      statuses: ['PAID']
+    });
+  });
+
+  it('treats a failed probe as not-paid and does not throw', async () => {
+    vi.spyOn(utils.apiClient.public, 'getPublicInstallmentsByIuvOrNav').mockImplementation(
+      (_brokerId: number, query: any) =>
+        query.iuvOrNav === 'NAV1'
+          ? Promise.reject(new Error('boom'))
+          : Promise.resolve({ data: [{ status: 'PAID' }] } as any)
+    );
+
+    const { result } = renderHook(() => loaders.public.useVerifyPaidNotices(999));
+
+    const paid = await result.current.mutateAsync(notices);
+
+    expect(paid).toEqual([notices[1]]);
+  });
+
+  it('throws when brokerId is null', async () => {
+    const { result } = renderHook(() => loaders.public.useVerifyPaidNotices(null));
+
+    await expect(result.current.mutateAsync(notices)).rejects.toThrow('brokerId required');
+  });
+});
+
 describe('getDebtPositionDetail', () => {
   it('calls API enpoint correctly', async () => {
     const dataMock = createMock(debtorUnpaidDebtPositionOverviewDTOSchema);

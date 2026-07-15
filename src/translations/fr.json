@@ -493,6 +493,12 @@
       "body": "Pour plus d'informations sur l'avis, contactez l'organisme créancier.",
       "cta": "Fermer"
     },
+    "428": {
+      "title": "Un ou plusieurs avis ont déjà été payés",
+      "body": "Les avis déjà payés seront retirés du panier. Vous pouvez procéder au paiement des autres.",
+      "cta": "Réessayer le paiement",
+      "homeCta": "Retour à l'accueil"
+    },
     "424": {
       "title": "Le paiement a échoué",
       "body": "Vous pouvez réessayer ou télécharger l'avis pagoPA et payer sur tous les canaux activés.",

@@ -5,7 +5,7 @@ import { addItem, isItemInCart, setCartEmail, toggleCartDrawer } from 'store/Car
 import notify from 'utils/notify';
 import { useStore } from 'store/GlobalStore';
 import utils from 'utils';
-import { Link, useNavigate } from 'react-router-dom';
+import { generatePath, Link, useNavigate } from 'react-router-dom';
 import { DebtPositionRequestDTO } from '../../../../generated/data-contracts';
 import { useField, useFormikContext } from 'formik';
 import { PaymentNoticeInfo } from '..';
@@ -154,7 +154,7 @@ const Payment = () => {
     onSuccess: (url) => {
       window.location.replace(url);
     },
-    onError: (error: string) => navigate(ROUTES.COURTESY_PAGE.replace(':error', error))
+    onError: (error: string) => navigate(generatePath(ROUTES.COURTESY_PAGE, { outcome: error }))
   });
 
   const pay = () => {

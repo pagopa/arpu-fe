@@ -505,6 +505,12 @@
       "body": "Per avere maggiori informazioni sull’avviso contatta l’Ente Creditore.",
       "cta": "Chiudi"
     },
+    "428": {
+      "title": "Uno o più avvisi risultano già pagati",
+      "body": "Gli avvisi già pagati verranno rimossi dal carrello. Puoi procedere con il pagamento dei restanti.",
+      "cta": "Riprova il pagamento",
+      "homeCta": "Torna alla home"
+    },
     "424": {
       "title": "Il pagamento non è andato a buon fine",
       "body": "Puoi riprovare oppure scaricare l'avviso pagoPA e pagare presso tutti i canali abilitati.",
