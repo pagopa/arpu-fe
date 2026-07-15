@@ -32,8 +32,12 @@ export const CartDrawer = () => {
   const brokerId = utils.storage.app.getBrokerId();
   const verifyPaidNotices = loaders.public.useVerifyPaidNotices(brokerId);
 
-  const goToCourtesy = (outcome: string) =>
-    navigate(generatePath(ROUTES.COURTESY_PAGE, { outcome }));
+  const goToCourtesy = (outcome: string) => {
+    const route = utils.storage.user.isAnonymous()
+      ? ROUTES.public.COURTESY_PAGE
+      : ROUTES.COURTESY_PAGE;
+    navigate(generatePath(route, { outcome }));
+  };
 
   const carts = usePostCarts({
     onSuccess: (url) => {

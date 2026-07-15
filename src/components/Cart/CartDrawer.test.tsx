@@ -2,19 +2,29 @@ import React from 'react';
 import { describe, it, expect, Mock } from 'vitest';
 import { render, screen, fireEvent } from '@testing-library/react';
 import { CartDrawer } from './CartDrawer';
-import { toggleCartDrawer } from 'store/CartStore';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { deleteItem, toggleCartDrawer } from 'store/CartStore';
+import { generatePath, useLocation, useNavigate } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { ROUTES } from 'routes/routes';
+import { OUTCOMES, ROUTES } from 'routes/routes';
 import utils from 'utils';
 
 vi.mock(import('store/CartStore'), async (importOriginal) => {
   const actual = await importOriginal();
   return {
     ...actual,
-    toggleCartDrawer: vi.fn(actual.toggleCartDrawer)
+    toggleCartDrawer: vi.fn(actual.toggleCartDrawer),
+    deleteItem: vi.fn()
   };
 });
+
+// Capture the options passed to usePostCarts so we can drive onError/onUnprocessable directly.
+const mockUsePostCarts = vi.hoisted(() => vi.fn());
+vi.mock('hooks/usePostCarts', () => ({ usePostCarts: mockUsePostCarts }));
+
+const mockVerifyMutateAsync = vi.hoisted(() => vi.fn());
+vi.mock('utils/loaders', () => ({
+  default: { public: { useVerifyPaidNotices: () => ({ mutateAsync: mockVerifyMutateAsync }) } }
+}));
 
 const mockUseStore = vi.hoisted(() => vi.fn());
 vi.mock('store/GlobalStore', () => {
@@ -32,11 +42,19 @@ vi.mock('react-router-dom', async (importActual) => ({
 describe('CartDrawer', () => {
   const mockNavigate = vi.fn();
   const queryClient = new QueryClient();
+  // last options object CartDrawer passed to usePostCarts
+  let postCartsOptions: Parameters<typeof import('hooks/usePostCarts').usePostCarts>[0];
 
   beforeEach(() => {
+    vi.clearAllMocks();
     (useNavigate as Mock).mockReturnValue(mockNavigate);
     // default: not on the locked cart route, so the drawer is dismissable
     (useLocation as Mock).mockReturnValue({ pathname: '/somewhere' });
+    mockUsePostCarts.mockImplementation((opts) => {
+      postCartsOptions = opts;
+      return { mutate: vi.fn() };
+    });
+    vi.spyOn(utils.storage.user, 'isAnonymous').mockReturnValue(false);
   });
 
   it('renders the cart drawer when empty', () => {
@@ -151,5 +169,85 @@ describe('CartDrawer', () => {
     );
     const backButton = screen.queryByTestId('cart-back-button');
     expect(backButton).not.toBeInTheDocument();
+  });
+
+  describe('checkout 422 handling', () => {
+    const notices = [
+      {
+        amount: 100,
+        iuv: 'iuvPaid',
+        nav: 'navPaid',
+        paFullName: 'pa',
+        paTaxCode: 'tax',
+        description: 'd',
+        allCCP: false
+      },
+      {
+        amount: 200,
+        iuv: 'iuvOpen',
+        nav: 'navOpen',
+        paFullName: 'pa',
+        paTaxCode: 'tax',
+        description: 'd',
+        allCCP: false
+      }
+    ];
+
+    const renderDrawer = () => {
+      mockUseStore.mockReturnValue({ state: { cart: { items: notices } } });
+      render(
+        <QueryClientProvider client={queryClient}>
+          <CartDrawer />
+        </QueryClientProvider>
+      );
+    };
+
+    it('removes paid notices and redirects to the removed-from-cart page on 422', async () => {
+      mockVerifyMutateAsync.mockResolvedValue([notices[0]]);
+      renderDrawer();
+
+      await postCartsOptions.onUnprocessable!(notices);
+
+      expect(deleteItem).toHaveBeenCalledWith('iuvPaid');
+      expect(deleteItem).toHaveBeenCalledTimes(1);
+      expect(mockNavigate).toHaveBeenCalledWith(
+        generatePath(ROUTES.COURTESY_PAGE, { outcome: OUTCOMES[428] })
+      );
+    });
+
+    it('redirects to the generic error page when no notice is paid', async () => {
+      mockVerifyMutateAsync.mockResolvedValue([]);
+      renderDrawer();
+
+      await postCartsOptions.onUnprocessable!(notices);
+
+      expect(deleteItem).not.toHaveBeenCalled();
+      expect(mockNavigate).toHaveBeenCalledWith(
+        generatePath(ROUTES.COURTESY_PAGE, { outcome: OUTCOMES[400] })
+      );
+    });
+
+    it('redirects to the generic error page when the verify call fails', async () => {
+      mockVerifyMutateAsync.mockRejectedValue(new Error('boom'));
+      renderDrawer();
+
+      await postCartsOptions.onUnprocessable!(notices);
+
+      expect(deleteItem).not.toHaveBeenCalled();
+      expect(mockNavigate).toHaveBeenCalledWith(
+        generatePath(ROUTES.COURTESY_PAGE, { outcome: OUTCOMES[400] })
+      );
+    });
+
+    it('redirects an anonymous user to the public courtesy page', () => {
+      vi.spyOn(utils.storage.user, 'isAnonymous').mockReturnValue(true);
+      renderDrawer();
+
+      postCartsOptions.onError!(OUTCOMES[400]);
+
+      expect(mockNavigate).toHaveBeenCalledWith(
+        generatePath(ROUTES.public.COURTESY_PAGE, { outcome: OUTCOMES[400] })
+      );
+    });
   });
 });

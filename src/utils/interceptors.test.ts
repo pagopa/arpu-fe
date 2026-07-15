@@ -199,6 +199,18 @@ describe('setupInterceptors', () => {
     expect(notifyEmitMock).toHaveBeenCalledWith('errors.toast.default');
   });
 
+  it('should not emit a toast on 422 (handled by the calling mutation)', async () => {
+    const error = { response: { status: 422 } };
+    const notifyEmitMock = vi.spyOn(utils.notify, 'emit');
+
+    setupInterceptors(client);
+    const responseInterceptor = (client.instance.interceptors.response.use as Mock).mock
+      .calls[0][1];
+
+    await expect(responseInterceptor(error)).rejects.toEqual(error);
+    expect(notifyEmitMock).not.toHaveBeenCalled();
+  });
+
   it('should reject the promise on 401', async () => {
     const error = { response: { status: 401 } };
 
