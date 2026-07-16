@@ -493,6 +493,12 @@
       "body": "Weitere Informationen über die Bekanntmachung erhalten Sie von der Gläubigerstelle.",
       "cta": "Schließen Sie"
     },
+    "428": {
+      "title": "Eine oder mehrere Zahlungsaufforderungen wurden bereits bezahlt",
+      "body": "Die bereits bezahlten Zahlungsaufforderungen werden aus dem Warenkorb entfernt. Sie können mit der Zahlung der übrigen fortfahren.",
+      "cta": "Zahlung erneut versuchen",
+      "homeCta": "Zurück zur Startseite"
+    },
     "424": {
       "title": "Die Zahlung ist fehlgeschlagen",
       "body": "Sie können es erneut versuchen oder die pagoPA-Benachrichtigung herunterladen und auf allen freigegebenen Kanälen bezahlen.",
@@ -524,6 +530,7 @@
     "login": "Eintragen",
     "debtPositions": "Zu zahlende Beträge",
     "debtPositionDetail": "Verschuldungsgrad",
+    "debtPositionDownload": "Hinweis herunterladen",
     "debtPositionsSearch": "Suche nach einer Ausschreibung",
     "debtPositionsList": "Zu zahlende Beträge",
     "paymentReceipt": "Zahlungseingang",
@@ -568,7 +575,7 @@
           "step": "Daten eingeben",
           "requiredField": "* Obligatorisches Feld",
           "debtor": {
-            "useYourData": "Nutzen Sie Ihre Daten",
+            "useYourData": "Mit Ihren Daten vorausfüllen",
             "F": {
               "title": "Natürliche Person"
             },

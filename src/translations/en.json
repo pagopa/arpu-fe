@@ -493,6 +493,12 @@
       "body": "To get more information about the notice contact the Payee.",
       "cta": "Close"
     },
+    "428": {
+      "title": "One or more notices have already been paid",
+      "body": "The already paid notices will be removed from the cart. You can proceed to pay the remaining ones.",
+      "cta": "Retry payment",
+      "homeCta": "Back to home"
+    },
     "424": {
       "title": "The payment failed",
       "body": "You can try again or download the pagoPA notice and pay at all enabled channels.",
@@ -524,6 +530,7 @@
     "login": "Sign in",
     "debtPositions": "Amounts to be paid",
     "debtPositionDetail": "Debt position",
+    "debtPositionDownload": "Download notice",
     "debtPositionsSearch": "Search for a notice",
     "debtPositionsList": "Amounts to be paid",
     "paymentReceipt": "Payment Receipt",
@@ -568,7 +575,7 @@
           "step": "Enter data",
           "requiredField": "* Required field",
           "debtor": {
-            "useYourData": "Use your data",
+            "useYourData": "Pre-fill with your data",
             "F": {
               "title": "Person"
             },

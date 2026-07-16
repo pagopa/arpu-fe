@@ -158,7 +158,7 @@ const router = createBrowserRouter([
                   </Guard>
                 ),
                 handle: {
-                  titleKey: 'pageTitles.spontanei'
+                  titleKey: 'pageTitles.debtPositionDownload'
                 } as RouteHandleObject
               }
             ]
@@ -183,7 +183,7 @@ const router = createBrowserRouter([
               </Guard>
             ),
             handle: {
-              titleKey: 'pageTitles.debtPositionsDownload'
+              titleKey: 'pageTitles.debtPositionDownload'
             } as RouteHandleObject
           },
           {
@@ -329,7 +329,7 @@ const router = createBrowserRouter([
               </Guard>
             ),
             handle: {
-              titleKey: 'pageTitles.debtPositionsDownload'
+              titleKey: 'pageTitles.debtPositionDownload'
             }
           },
           {
@@ -359,7 +359,7 @@ const router = createBrowserRouter([
                 ),
                 handle: {
                   backButton: false,
-                  titleKey: 'pageTitles.spontanei'
+                  titleKey: 'pageTitles.debtPositionDownload'
                 } as RouteHandleObject
               }
             ]

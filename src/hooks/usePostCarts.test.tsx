@@ -4,8 +4,8 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import utils from 'utils';
 import React, { ReactNode } from 'react';
 
-import { AxiosResponse } from 'axios';
-import { ROUTES } from 'routes/routes';
+import { AxiosError, AxiosResponse } from 'axios';
+import { OUTCOMES, ROUTES } from 'routes/routes';
 import { CartItem } from 'models/Cart';
 import { generatePath } from 'react-router-dom';
 
@@ -80,5 +80,50 @@ describe('usePostCarts', () => {
     });
     expect(mockOnSuccess).toHaveBeenCalledWith('https://redirect.com');
     expect(mockOnError).not.toHaveBeenCalled();
+  });
+
+  const make422 = () => {
+    const error = new AxiosError('Unprocessable', 'ERR_BAD_REQUEST');
+    error.response = { status: 422 } as AxiosResponse;
+    return error;
+  };
+
+  it('should call onUnprocessable with the sent notices on 422 when provided', async () => {
+    vi.spyOn(utils.cartsClient, 'postCarts').mockRejectedValue(make422());
+    vi.spyOn(utils.storage.user, 'isAnonymous').mockReturnValue(false);
+    const mockOnUnprocessable = vi.fn();
+
+    const { result } = renderHook(
+      () =>
+        usePostCarts({
+          onSuccess: mockOnSuccess,
+          onError: mockOnError,
+          onUnprocessable: mockOnUnprocessable
+        }),
+      { wrapper: createWrapper() }
+    );
+
+    await act(async () => {
+      await result.current.mutateAsync({ notices: mockCartItems }).catch(() => undefined);
+    });
+
+    await waitFor(() => expect(mockOnUnprocessable).toHaveBeenCalledWith(mockCartItems));
+    expect(mockOnError).not.toHaveBeenCalled();
+  });
+
+  it('should fall back to onError(422) when onUnprocessable is not provided', async () => {
+    vi.spyOn(utils.cartsClient, 'postCarts').mockRejectedValue(make422());
+    vi.spyOn(utils.storage.user, 'isAnonymous').mockReturnValue(false);
+
+    const { result } = renderHook(
+      () => usePostCarts({ onSuccess: mockOnSuccess, onError: mockOnError }),
+      { wrapper: createWrapper() }
+    );
+
+    await act(async () => {
+      await result.current.mutateAsync({ notices: mockCartItems }).catch(() => undefined);
+    });
+
+    await waitFor(() => expect(mockOnError).toHaveBeenCalledWith(OUTCOMES['422']));
   });
 });

@@ -493,6 +493,12 @@
       "body": "Pour plus d'informations sur l'avis, contactez l'organisme créancier.",
       "cta": "Fermer"
     },
+    "428": {
+      "title": "Un ou plusieurs avis ont déjà été payés",
+      "body": "Les avis déjà payés seront retirés du panier. Vous pouvez procéder au paiement des autres.",
+      "cta": "Réessayer le paiement",
+      "homeCta": "Retour à l'accueil"
+    },
     "424": {
       "title": "Le paiement a échoué",
       "body": "Vous pouvez réessayer ou télécharger l'avis pagoPA et payer sur tous les canaux activés.",
@@ -524,6 +530,7 @@
     "login": "Se connecter",
     "debtPositions": "Montants à payer",
     "debtPositionDetail": "Situation de dette",
+    "debtPositionDownload": "Télécharger l'avis",
     "debtPositionsSearch": "Rechercher un avis",
     "debtPositionsList": "Montants à payer",
     "paymentReceipt": "Reçu de paiement",
@@ -568,7 +575,7 @@
           "step": "Saisir les informations",
           "requiredField": "* Champ obligatoire",
           "debtor": {
-            "useYourData": "Utilisez vos données",
+            "useYourData": "Pré-remplir avec vos données",
             "F": {
               "title": "Personne physique"
             },

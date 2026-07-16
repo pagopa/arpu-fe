@@ -55,5 +55,7 @@ export enum OUTCOMES {
   'pagamento-annullato' = 425,
   /** reCAPTCHA verification failed */
   'verifica-non-riuscita' = 426,
+  /** cart checkout returned 422 and one or more notices were verified PAID and removed from the cart */
+  'avvisi-rimossi-dal-carrello' = 428,
   'errore-server' = 500
 }

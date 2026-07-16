@@ -105,11 +105,11 @@ vi.mock('routes/routes', () => ({
   ROUTES: {
     RECEIPT: '/receipt/:organizationId/:receiptId',
     DEBT_POSITION_DOWNLOAD: '/download/:nav/:orgId',
-    COURTESY_PAGE: '/courtesy/:error',
+    COURTESY_PAGE: '/courtesy/:outcome',
     public: {
       RECEIPT: '/public/receipt/:organizationId/:receiptId',
       DEBT_POSITION_DOWNLOAD: '/public/download/:nav/:orgId',
-      COURTESY_PAGE: '/public/courtesy/:error'
+      COURTESY_PAGE: '/public/courtesy/:outcome'
     }
   }
 }));

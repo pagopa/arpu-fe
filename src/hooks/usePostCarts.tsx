@@ -17,10 +17,15 @@ const getRedirect = (data: string) => {
 
 export const usePostCarts = ({
   onSuccess,
-  onError
+  onError,
+  onUnprocessable
 }: {
   onSuccess: (url: string) => void;
   onError?: (error: string) => void;
+  // Called instead of `onError` when checkout answers 422 (unprocessable). Gets
+  // the notices sent so the caller can probe which are already paid. When not
+  // provided, 422 falls back to `onError(OUTCOMES['422'])` (legacy behavior).
+  onUnprocessable?: (notices: CartItem[]) => void;
 }) => {
   const carts = useMutation({
     mutationFn: async ({ notices, email }: { notices: CartItem[]; email?: string }) => {
@@ -36,12 +41,12 @@ export const usePostCarts = ({
       return data;
     },
     onSuccess: (data: string) => onSuccess(getRedirect(data)),
-    onError: (error: AxiosError) => {
-      if (!onError) return;
+    onError: (error: AxiosError, { notices }) => {
       if (error.code == 'ERR_BAD_REQUEST' && error.response?.status === 422) {
-        return onError(OUTCOMES['422']);
+        if (onUnprocessable) return onUnprocessable(notices);
+        return onError?.(OUTCOMES['422']);
       }
-      onError(OUTCOMES['423']);
+      onError?.(OUTCOMES['423']);
     }
   });
 

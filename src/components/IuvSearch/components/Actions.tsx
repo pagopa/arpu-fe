@@ -34,7 +34,8 @@ export const Actions = ({ installment }: ActionsProps) => {
     onSuccess: (url) => {
       window.location.replace(url);
     },
-    onError: (error: string) => navigate(ROUTES.public.COURTESY_PAGE.replace(':error', error))
+    onError: (error: string) =>
+      navigate(generatePath(ROUTES.public.COURTESY_PAGE, { outcome: error }))
   });
 
   const receiptPdf = isAnonymous
