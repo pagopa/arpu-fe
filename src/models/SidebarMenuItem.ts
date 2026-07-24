@@ -7,5 +7,5 @@ export interface ISidebarMenuItem {
   /* The end prop changes the matching logic for the active and pending states to only match to the "end" of the NavLink's to path.
   If the URL is longer than to, it will no longer be considered active. */
   end?: boolean;
-  dataTestId?: string;
+  dataTestId: string;
 }
