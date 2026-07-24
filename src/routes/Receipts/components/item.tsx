@@ -36,7 +36,7 @@ export const ReceiptItem = ({
       icon={<PayeeIcon orgFiscalCode={orgFiscalCode} visible={smUp} alt={orgName} />}
       detailPath={detailPath}
       detailAriaLabel={t('actions.goToDetail')}
-      detailTestId="receipt-details-button"
+      detailTestId={`receipt-detail-button-${receiptId}`}
       fields={[
         {
           label: t('app.receipts.amount'),

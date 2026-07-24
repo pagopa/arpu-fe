@@ -149,7 +149,7 @@ export const Actions = ({ installment }: ActionsProps) => {
         size="large"
         variant="contained"
         onClick={navigateToDetail}
-        data-testid="detail-button">
+        data-testid="search-item-detail-button">
         {t('actions.detail')}
       </Button>
     </Stack>
