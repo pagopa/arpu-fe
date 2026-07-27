@@ -97,7 +97,7 @@ describe('ReceiptItem', () => {
   it('passes correct detail path and renders detail button', () => {
     render(<ReceiptItem receipt={receiptMock} />);
 
-    const detailButton = screen.getByTestId('receipt-details-button');
+    const detailButton = screen.getByTestId('receipt-detail-button-receipt-123');
     expect(detailButton).toBeInTheDocument();
 
     expect(generatePath).toHaveBeenCalledWith(expect.anything(), {

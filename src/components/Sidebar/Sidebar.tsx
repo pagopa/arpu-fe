@@ -42,17 +42,20 @@ export const Sidebar: React.FC = () => {
       label: t('menu.homepage'),
       icon: ViewSidebarIcon,
       route: ROUTES.DASHBOARD,
-      end: true
+      end: true,
+      dataTestId: 'sidebar-menu-item-homepage'
     },
     {
       label: t('menu.debtPositions'),
       icon: Payments,
-      route: ROUTES.DEBT_POSITIONS
+      route: ROUTES.DEBT_POSITIONS,
+      dataTestId: 'sidebar-menu-item-debt-positions'
     },
     {
       label: t('menu.receipts.menuTitle'),
       icon: () => <ReceiptLongIcon sx={{ marginLeft: '-1px' }} />,
-      route: ROUTES.RECEIPTS
+      route: ROUTES.RECEIPTS,
+      dataTestId: 'sidebar-menu-item-receipts'
     }
   ];
 

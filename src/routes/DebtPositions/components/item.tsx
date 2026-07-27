@@ -43,7 +43,7 @@ export const DebtPositionItem = ({
       icon={<Icon />}
       detailPath={detailPath}
       detailAriaLabel={t('actions.goToDetail')}
-      detailTestId="receipt-details-button"
+      detailTestId={`debt-position-detail-button-${debtPositionId}`}
       fields={fields}
     />
   );
