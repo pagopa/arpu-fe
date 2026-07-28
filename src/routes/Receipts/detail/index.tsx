@@ -71,6 +71,7 @@ export const ReceiptDetail = () => {
                 variant="contained"
                 size={smUp ? 'medium' : 'small'}
                 onClick={onDownload}
+                data-testid="receipt-detail-download-button"
                 startIcon={<Download />}>
                 {t('app.receiptDetail.download')}
               </Button>
@@ -147,7 +148,12 @@ export const ReceiptDetail = () => {
             <Button size="large" variant="outlined" onClick={onBack} startIcon={<ArrowBack />}>
               {t('app.routes.back')}
             </Button>
-            <Button variant="contained" size="large" onClick={onDownload} startIcon={<Download />}>
+            <Button
+              variant="contained"
+              size="large"
+              onClick={onDownload}
+              startIcon={<Download />}
+              data-testid="receipt-detail-download-button">
               {t('app.receiptDetail.download')}
             </Button>
           </Stack>

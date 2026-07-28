@@ -59,6 +59,7 @@ export const ListItem = ({
             variant="body2"
             component="h3"
             fontWeight={600}
+            data-testid="list-item-ec"
             sx={{
               whiteSpace: 'nowrap',
               overflow: 'hidden',
@@ -71,6 +72,7 @@ export const ListItem = ({
             <Typography
               variant="body2"
               component="h4"
+              data-testid="list-item-description"
               sx={{
                 whiteSpace: 'nowrap',
                 overflow: 'hidden',
