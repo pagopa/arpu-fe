@@ -131,7 +131,7 @@
       }
     },
     "dashboard": {
-      "title": "Auf Wiedersehen, {{username}}",
+      "title": "Auf Wiedersehen {{username}}",
       "greetings": "Willkommen",
       "newPayment": "Eine Zahlung leisten",
       "lastTransactions": "Ihre Quittungen",

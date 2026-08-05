@@ -131,7 +131,7 @@
       }
     },
     "dashboard": {
-      "title": "Au revoir, {{username}}",
+      "title": "Au revoir {{username}}",
       "greetings": "Bienvenue",
       "newPayment": "Effectuer un paiement",
       "lastTransactions": "Vos reçus",

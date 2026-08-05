@@ -27,13 +27,14 @@ export const Receipts = () => {
   return (
     <Stack gap={2}>
       <Stack gap={3} direction="row" justifyContent="space-between" alignItems="center">
-        <Typography variant="h6" component="h2" marginInlineStart={1}>
+        <Typography variant="h6" component="h2" fontWeight={700}>
           {t('app.dashboard.lastTransactions')}
         </Typography>
         {receipts.query.data?.content?.length ? (
           <Button
             component={Link}
             to={ROUTES.RECEIPTS}
+            sx={{ fontWeight: 700 }}
             aria-label={`${t('app.dashboard.seeAllTransactions')} ${t('app.dashboard.lastTransactions')}`}>
             {t('app.dashboard.seeAllTransactions')}
           </Button>
