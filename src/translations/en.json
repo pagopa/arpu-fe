@@ -131,7 +131,7 @@
       }
     },
     "dashboard": {
-      "title": "Hello, {{username}}",
+      "title": "Hello {{username}}",
       "greetings": "Welcome",
       "newPayment": "Pay now",
       "lastTransactions": "Your receipts",
