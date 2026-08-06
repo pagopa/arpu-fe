@@ -494,9 +494,9 @@
       "cta": "Schließen Sie"
     },
     "428": {
-      "title": "Eine oder mehrere Zahlungsaufforderungen wurden bereits bezahlt",
-      "body": "Die bereits bezahlten Zahlungsaufforderungen werden aus dem Warenkorb entfernt. Sie können mit der Zahlung der übrigen fortfahren.",
-      "cta": "Zahlung erneut versuchen",
+      "title": "Wir haben die bereits bezahlten Zahlungsaufforderungen aus dem Warenkorb entfernt",
+      "body": "Fahren Sie mit den noch offenen Zahlungsaufforderungen fort.",
+      "cta": "Weiter",
       "homeCta": "Zurück zur Startseite"
     },
     "424": {

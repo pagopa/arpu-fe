@@ -20,8 +20,9 @@ export const ErrorIconComponent: React.FC<ErrorIconComponentProps> = ({ code }) 
       return <img src="/cittadini/pictograms/paymentcompleted.svg" title="OK" aria-hidden="true" />;
     case OUTCOMES['accesso-non-autorizzato']:
     case OUTCOMES['avviso-non-pagabile']:
-    case OUTCOMES['avvisi-rimossi-dal-carrello']:
       return <img src="/cittadini/pictograms/genericerror.svg" title="Error" aria-hidden="true" />;
+    case OUTCOMES['avvisi-rimossi-dal-carrello']:
+      return <img src="/cittadini/pictograms/snapfingers.svg" title="Done" aria-hidden="true" />;
     case OUTCOMES['pagamento-non-riuscito']:
     case OUTCOMES['pagamento-annullato']:
       return <img src="/cittadini/pictograms/warning.svg" title="Error" aria-hidden="true" />;

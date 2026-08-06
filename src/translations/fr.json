@@ -494,9 +494,9 @@
       "cta": "Fermer"
     },
     "428": {
-      "title": "Un ou plusieurs avis ont déjà été payés",
-      "body": "Les avis déjà payés seront retirés du panier. Vous pouvez procéder au paiement des autres.",
-      "cta": "Réessayer le paiement",
+      "title": "Nous avons retiré du panier les avis déjà payés",
+      "body": "Continuez avec les avis encore à payer.",
+      "cta": "Continuer",
       "homeCta": "Retour à l'accueil"
     },
     "424": {
