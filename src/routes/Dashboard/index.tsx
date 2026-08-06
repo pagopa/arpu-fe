@@ -18,11 +18,11 @@ const Dashboard = () => {
         justifyContent={'space-between'}
         alignItems={{ sm: 'center' }}
         gap={3}
-        mb={5}>
+        mb={3}>
         <Typography
           variant="h3"
           component={'h1'}
-          aria-label={t('app.dashboard.greeting')}
+          aria-label={t('app.dashboard.greetings')}
           sx={{ textTransform: 'capitalize' }}>
           {userInfo?.name &&
             t('app.dashboard.title', {

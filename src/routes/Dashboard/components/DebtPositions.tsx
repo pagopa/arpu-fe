@@ -27,13 +27,14 @@ export const DebtPositions = () => {
   return (
     <Stack gap={2}>
       <Stack gap={3} direction="row" justifyContent="space-between" alignItems="center">
-        <Typography variant="h6" component="h2" marginInlineStart={1}>
+        <Typography variant="h6" component="h2" fontWeight={700}>
           {t('app.dashboard.lastDebtPositions')}
         </Typography>
         {debtPositions.query.data?.content?.length ? (
           <Button
             component={Link}
             to={ROUTES.DEBT_POSITIONS}
+            sx={{ fontWeight: 700 }}
             aria-label={`${t('app.dashboard.seeAllTransactions')} ${t('app.dashboard.lastDebtPositions')}`}>
             {t('app.dashboard.seeAllTransactions')}
           </Button>
