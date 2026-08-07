@@ -494,9 +494,9 @@
       "cta": "Close"
     },
     "428": {
-      "title": "One or more notices have already been paid",
-      "body": "The already paid notices will be removed from the cart. You can proceed to pay the remaining ones.",
-      "cta": "Retry payment",
+      "title": "We removed the already paid notices from the cart",
+      "body": "Continue with the notices still to be paid.",
+      "cta": "Continue",
       "homeCta": "Back to home"
     },
     "424": {
