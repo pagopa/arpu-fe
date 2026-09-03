@@ -132,12 +132,12 @@
       }
     },
     "dashboard": {
-      "title": "Ciao, {{username}}",
+      "title": "Ciao {{username}}",
       "greetings": "Benvenuto",
       "newPayment": "Fai un pagamento",
       "lastTransactions": "Le tue ricevute",
-      "seeAllTransactions": "Vedi tutte",
-      "lastDebtPositions": "Le tue posizioni debitorie",
+      "seeAllTransactions": "Vedi tutti",
+      "lastDebtPositions": "Pagamenti da efffettuare",
       "IOAlert": {
         "title": "Vuoi accedere alle tue ricevute e pagare gli avvisi più velocemente?",
         "description": "Visualizza e gestisci i tuoi metodi di pagamento e tutte le tue ricevute",
@@ -412,7 +412,7 @@
     },
     "navigationMenu": "Menù di navigazione",
     "menu": "Menu",
-    "debtPositions": "Importi da pagare"
+    "debtPositions": "Da pagare"
   },
   "sidebar": {
     "collapse": "Comprimi il menu",
@@ -506,9 +506,9 @@
       "cta": "Chiudi"
     },
     "428": {
-      "title": "Uno o più avvisi risultano già pagati",
-      "body": "Gli avvisi già pagati verranno rimossi dal carrello. Puoi procedere con il pagamento dei restanti.",
-      "cta": "Riprova il pagamento",
+      "title": "Abbiamo rimosso dal carrello gli avvisi già pagati",
+      "body": "Continua con gli avvisi ancora da pagare.",
+      "cta": "Continua",
       "homeCta": "Torna alla home"
     },
     "424": {

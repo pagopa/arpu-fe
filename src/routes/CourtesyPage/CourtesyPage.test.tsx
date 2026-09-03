@@ -166,7 +166,7 @@ i18nTestSetup({
       homeCta: 'Back to home'
     },
     [CODE_428]: {
-      cta: 'Retry payment',
+      cta: 'Continue',
       homeCta: 'Back to home'
     },
     default: {
@@ -682,7 +682,7 @@ describe('CartRetryActions – avvisi-rimossi-dal-carrello (428)', () => {
     setCartItems([CART_ITEM_1, CART_ITEM_2], 'user@test.it');
     render(<CartRetryActions code={CODE_428} />);
 
-    expect(screen.getByTestId('courtesyPage.cta')).toHaveTextContent('Retry payment');
+    expect(screen.getByTestId('courtesyPage.cta')).toHaveTextContent('Continue');
     expect(screen.getByTestId('courtesyPage.homeCta')).toHaveTextContent('Back to home');
   });
 

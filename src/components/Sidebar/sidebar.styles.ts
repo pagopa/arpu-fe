@@ -8,9 +8,21 @@ export const sidebarStyles = (theme: Theme, collapsed: boolean): Record<string, 
     top: 0,
     height: '100vh',
     transition: 'width 0.3s ease, height 0.3s ease', // Add transition for smooth resizing
-    [theme.breakpoints.between('sm', 'lg')]: { width: collapsed ? '100%' : 'fit-content' },
-    [theme.breakpoints.up('lg')]: { width: 'fit-content', position: 'sticky', zIndex: 1 },
-    [theme.breakpoints.down('lg')]: { height: collapsed ? 'fit-content' : '100%' }
+    [theme.breakpoints.between('sm', 'lg')]: { width: collapsed ? '100%' : 300 },
+    [theme.breakpoints.up('lg')]: {
+      width: collapsed ? 'fit-content' : 300,
+      position: 'sticky',
+      zIndex: 1,
+      // stretch to the row height so the sidebar always reaches the footer
+      height: 'auto',
+      minHeight: '100vh',
+      bgcolor: 'background.paper'
+    },
+    [theme.breakpoints.down('lg')]: {
+      height: collapsed ? 'fit-content' : '100%',
+      // no width tween: the drawer would visibly shrink from full width to 300px
+      transition: 'height 0.3s ease'
+    }
   },
   nav: {
     minHeight: collapsed ? '1vh' : '50vh',
