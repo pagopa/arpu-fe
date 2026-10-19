@@ -20,7 +20,8 @@
     "test": "vitest",
     "coverage": "vitest --coverage",
     "serve-coverage-html-report": "npx serve coverage/lcov-report -c ./../../serve.json",
-    "dependency-licenses": "license-checker --production --csv > dependency-licenses/licenses.csv"
+    "dependency-licenses": "license-checker --production --csv > dependency-licenses/licenses.csv",
+    "postinstall": "yarn dependency-licenses"
   },
   "devDependencies": {
     "@babel/plugin-transform-modules-commonjs": "^7.24.1",
